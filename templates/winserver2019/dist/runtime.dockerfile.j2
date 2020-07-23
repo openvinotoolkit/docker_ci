@@ -1,0 +1,10 @@
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+# runtime package
+WORKDIR ${INTEL_OPENVINO_DIR}
+RUN python -m pip install --no-cache-dir setuptools && `
+    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt"
+
+WORKDIR ${TEMP_DIR}
+COPY scripts\install_requirements.bat install_requirements.bat
+RUN install_requirements.bat %INTEL_OPENVINO_DIR%

@@ -1,0 +1,8 @@
+*.pyc
+.idea
+.pytest_cache
+venv
+tmp
+logs
+*.exe
+*.zip

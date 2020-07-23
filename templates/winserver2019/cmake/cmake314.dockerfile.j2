@@ -1,0 +1,15 @@
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+# setup CMake
+{% if HTTPS_PROXY is defined %}
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://cmake.org/files/v3.14/cmake-3.14.7-win64-x64.msi -Proxy %HTTPS_PROXY% -OutFile %TMP%\\cmake-3.14.7-win64-x64.msi ; `
+    Start-Process %TMP%\\cmake-3.14.7-win64-x64.msi -ArgumentList '/quiet /norestart' -Wait ; `
+    Remove-Item %TMP%\\cmake-3.14.7-win64-x64.msi -Force
+{% else %}
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://cmake.org/files/v3.14/cmake-3.14.7-win64-x64.msi -OutFile %TMP%\\cmake-3.14.7-win64-x64.msi ; `
+    Start-Process %TMP%\\cmake-3.14.7-win64-x64.msi -ArgumentList '/quiet /norestart' -Wait ; `
+    Remove-Item %TMP%\\cmake-3.14.7-win64-x64.msi -Force
+{% endif %}
+RUN SETX /M PATH "C:\Program Files\CMake\Bin;%PATH%"

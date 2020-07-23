@@ -1,0 +1,12 @@
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+# setup MSBuild 2019
+ARG VS_DIR=/temp/msbuild2019
+
+WORKDIR ${VS_DIR}
+COPY scripts\msbuild2019\ ${VS_DIR}
+RUN vs_buildtools__1627812474.1585209146.exe --quiet --norestart --wait --nocache --noUpdateInstaller --noWeb `
+     --add Microsoft.VisualStudio.Workload.MSBuildTools `
+     --add Microsoft.VisualStudio.Workload.UniversalBuildTools `
+     --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended `
+     --channelUri C:\doesntExist.chman && powershell set-executionpolicy remotesigned

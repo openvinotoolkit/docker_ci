@@ -1,0 +1,13 @@
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+# install product by installation script
+ARG build_id
+ENV INTEL_OPENVINO_DIR C:\intel
+
+RUN powershell.exe -Command `
+    Start-Process "./*.exe" -ArgumentList '--s --a install --eula=accept --installdir=%INTEL_OPENVINO_DIR% --output=%TMP%\openvino_install_out.log --components=OPENVINO_COMMON,INFERENCE_ENGINE,INFERENCE_ENGINE_SDK,INFERENCE_ENGINE_SAMPLES,OMZ_TOOLS,POT,INFERENCE_ENGINE_CPU,INFERENCE_ENGINE_GPU,MODEL_OPTIMIZER,OMZ_DEV,OPENCV_PYTHON,OPENCV_RUNTIME,OPENCV,DOCS,SETUPVARS,VC_REDIST_2017_X64,icl_redist' -Wait
+
+ENV INTEL_OPENVINO_DIR C:\intel\openvino_${build_id}
+
+# Post-installation cleanup
+RUN rmdir /S /Q "%USERPROFILE%\Downloads\Intel"

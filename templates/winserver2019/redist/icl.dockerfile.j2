@@ -1,0 +1,15 @@
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+# Setup Redistributable Libraries for Intel(R) C++ Compiler for Windows*
+{% if HTTPS_PROXY is defined %}
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://software.intel.com/sites/default/files/managed/59/aa/ww_icl_redist_msi_2018.3.210.zip -Proxy %HTTPS_PROXY%  -OutFile "%TMP%\ww_icl_redist_msi_2018.3.210.zip" ; `
+    Expand-Archive -Path "%TMP%\ww_icl_redist_msi_2018.3.210.zip" -DestinationPath "%TMP%\ww_icl_redist_msi_2018.3.210" -Force ; `
+    Remove-Item "%TMP%\ww_icl_redist_msi_2018.3.210.zip" -Force
+{% else %}
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://software.intel.com/sites/default/files/managed/59/aa/ww_icl_redist_msi_2018.3.210.zip -OutFile "%TMP%\ww_icl_redist_msi_2018.3.210.zip" ; `
+    Expand-Archive -Path "%TMP%\ww_icl_redist_msi_2018.3.210.zip" -DestinationPath "%TMP%\ww_icl_redist_msi_2018.3.210" -Force ; `
+    Remove-Item "%TMP%\ww_icl_redist_msi_2018.3.210.zip" -Force
+{% endif %}
+RUN %TMP%\ww_icl_redist_msi_2018.3.210\ww_icl_redist_intel64_2018.3.210.msi /quiet /passive /log "%TMP%\redist.log"

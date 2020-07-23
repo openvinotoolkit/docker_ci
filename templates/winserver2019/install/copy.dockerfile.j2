@@ -1,0 +1,16 @@
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+# install product by copying archive content
+ARG build_id
+ENV INTEL_OPENVINO_DIR C:\intel\openvino_${build_id}
+
+RUN powershell.exe -Command `
+    Expand-Archive -Path "./*.zip" -DestinationPath "%INTEL_OPENVINO_DIR%" -Force ; `
+    Remove-Item "./*.zip" -Force
+
+WORKDIR C:\intel
+RUN mklink /D openvino %INTEL_OPENVINO_DIR%
+
+WORKDIR ${TEMP_DIR}
+COPY scripts\create_symlinks.bat create_symlinks.bat
+RUN create_symlinks.bat %INTEL_OPENVINO_DIR%
