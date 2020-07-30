@@ -16,13 +16,14 @@ jobs:
     steps:
       - name: Code checkout
         uses: actions/checkout@v2
-      - name: Checking repo
-        run: ls -lAh
+#       - name: Checking repo
+#         run: ls -lAh
       - name: Setting up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.7'
-
+      - name: Setting up Python dependencies
+        run: python -m pip install -r requirements.txt
       - name: Pinging Docker daemon
         run: docker info
       - name: Pinging project
