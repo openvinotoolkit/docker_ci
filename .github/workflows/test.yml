@@ -24,10 +24,10 @@ jobs:
           python-version: '3.7'
       - name: Setting up Python dependencies
         run: python -m pip install -r requirements.txt
-      - name: Pinging Docker daemon
-        run: docker info
+#       - name: Pinging Docker daemon
+#         run: docker info
       - name: Generating Dockerfile
-        run: python docker_openvino.py gen_dockerfile --dist propietary --source url --install_type install --package_url ${{ github.event.inputs.package_url }}
+        run: python docker_openvino.py gen_dockerfile --dist proprietary --source url --install_type install --package_url ${{ github.event.inputs.package_url }}
 #       - name: Pinging Docker daemon from Python
 #         run: python actions_docker_test.py
 
