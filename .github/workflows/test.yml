@@ -31,15 +31,18 @@ jobs:
 #       - name: Pinging Docker daemon from Python
 #         run: python actions_docker_test.py
       - name: Checking resulting image
+        if: ${{ always() }}
         run: docker images
 
       - name: Collecting artifacts
+        if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: logs
           path: logs/
-      - name: Collecting Dockerfiles
-        uses: actions/upload-artifact@v2
-        with:
-          name: dockerfiles
-          path: dockerfiles/
+#       - name: Collecting Dockerfiles
+#         if: ${{ always() }}
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: dockerfiles
+#           path: dockerfiles/
