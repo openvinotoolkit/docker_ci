@@ -1,0 +1,37 @@
+name: Test Workflow
+on:
+  workflow_dispatch:
+    inputs:
+      package_url:
+        description: 'URL to OpenVINO package'
+        required: true
+        default: 'Some text'
+#       home:
+#         description: 'location'
+#         required: false
+
+jobs:
+  say_hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v2
+      - name: Checking repo
+        run: ls -lAh
+      - name: Setting up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+
+      - name: Pinging Docker daemon
+        run: docker info
+      - name: Pinging project
+        run: python docker_openvino.py --help
+#       - name: Pinging Docker daemon from Python
+#         run: python actions_docker_test.py
+
+#       - name: Collecting artifacts
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: docker_version
+#           path: version.txt
