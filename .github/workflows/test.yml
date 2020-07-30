@@ -27,9 +27,11 @@ jobs:
 #       - name: Pinging Docker daemon
 #         run: docker info
       - name: Generating Dockerfile
-        run: python docker_openvino.py gen_dockerfile --dist proprietary --source url --install_type install --package_url ${{ github.event.inputs.package_url }}
+        run: python docker_openvino.py build --dist proprietary --source url --install_type install --package_url ${{ github.event.inputs.package_url }}
 #       - name: Pinging Docker daemon from Python
 #         run: python actions_docker_test.py
+      - name: Checking resulting image
+        run: docker images
 
       - name: Collecting artifacts
         uses: actions/upload-artifact@v2
