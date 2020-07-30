@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -16,13 +15,14 @@ log = logging.getLogger('project')
 
 
 class DockerImageBuilder(DockerAPI):
+    """Wrapper for docker.api.client implementing customized build command and logging"""
+
     def build_docker_image(self,
                            dockerfile: pathlib.Path,
                            tag: str,
                            directory: typing.Optional[str] = None,
                            build_args: typing.Optional[typing.Dict[str, str]] = None,
                            logfile: typing.Optional[pathlib.Path] = None) -> typing.Optional[Image]:
-        """Wrapper for building docker images with given arguments and capturing logs"""
         if not build_args:
             build_args = {}
         if not directory:

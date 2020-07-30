@@ -1,6 +1,8 @@
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:18.04 AS ov_base
 
-LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL Description="This is the proprietary image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
 LABEL Vendor="Intel Corporation"
 
 USER root
@@ -45,7 +47,7 @@ ENV PYTHON python3.6
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON}=3.6.9-1~18.04 && \
+    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON}=3.6.9-1~18.04ubuntu1 && \
     rm -rf /var/lib/apt/lists/*
 
 # get product from URL
@@ -56,25 +58,18 @@ WORKDIR ${TEMP_DIR}
 # hadolint ignore=DL3020
 ADD ${package_url} ${TEMP_DIR}
 
-# install product by copying archive content
-ARG TEMP_DIR=/tmp/openvino_installer
+# install product by installation script
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-RUN export OV_BUILD OV_FOLDER
-
-RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
-    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | cut -d_ -f7)" && \
-    OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
-    mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
-    cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
-    rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
-    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
+RUN tar -xzf ${TEMP_DIR}/*.tgz --strip 1
+RUN sed -i 's/decline/accept/g' silent.cfg && \
+    ${TEMP_DIR}/install.sh -s silent.cfg && \
     ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
     cp ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/97-myriad-usbboot.rules /etc/udev/rules.d/ && \
     ldconfig
 
 WORKDIR /tmp
-RUN rm -rf "${TEMP_DIR}"
+RUN rm -rf ${TEMP_DIR}
 
 
 
@@ -133,17 +128,33 @@ RUN apt-get update && \
         libjson-c3=0.12.1-1.3 libxxf86vm-dev=1:1.1.4-1 && \
     rm -rf /var/lib/apt/lists/*
 
-# runtime package
+# proprietary package
 WORKDIR /tmp
+
 RUN ${PYTHON} -m pip install --no-cache-dir setuptools && \
     find "${INTEL_OPENVINO_DIR}/" -type f -name "*requirements*.*" -path "*/${PYTHON}/*" -exec ${PYTHON} -m pip install --no-cache-dir -r "{}" \; && \
     find "${INTEL_OPENVINO_DIR}/" -type f -name "*requirements*.*" -not -path "*/post_training_optimization_toolkit/*" -not -name "*windows.txt"  -not -name "*ubuntu16.txt" -not -path "*/python3*/*" -not -path "*/python2*/*" -exec ${PYTHON} -m pip install --no-cache-dir -r "{}" \;
+
+WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker
+RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
+    ${PYTHON} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements.in && \
+    ${PYTHON} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install
+
+WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
+RUN if [ -f requirements.txt ]; then \
+        ${PYTHON} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
+        ${PYTHON} ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/setup.py install; \
+    fi;
 
 
 # Post-installation cleanup and setting up OpenVINO environment variables
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc; \
+    fi;
+RUN if [ -d "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk ]; then \
+        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
+        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
 RUN find "${INTEL_OPENVINO_DIR}/" -name "*.*sh" -type f -exec dos2unix {} \;
 
@@ -153,40 +164,3 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
 
 # Setup custom layers
-
-# Model Server layer for runtime distribution
-# FROM openvino/ubuntu18_runtime:latest
-
-USER root
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-            ca-certificates \
-            curl \
-            libgomp1 \
-            python3-dev \
-            python3-pip \
-            virtualenv \
-            usbutils \
-            gnupg2 \
-            wget \
-            git \
-        && rm -rf /var/lib/apt/lists/*
-
-RUN mkdir /ie-serving-py && chown openvino /ie-serving-py
-
-USER openvino
-
-ENV PYTHONPATH=$PYTHONPATH:/opt/intel/openvino/python/python3.6 \
-    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64:/opt/intel/openvino/deployment_tools/ngraph/lib
-
-WORKDIR /ie-serving-py
-RUN git clone https://github.com/IntelAI/OpenVINO-model-server.git
-RUN cp OpenVINO-model-server/requirements.txt /ie-serving-py/
-RUN virtualenv -p python3 .venv && \
-    . .venv/bin/activate && \
-    pip3 --no-cache-dir install -r requirements.txt
-
-RUN cp OpenVINO-model-server/start_server.sh /ie-serving-py/
-RUN cp OpenVINO-model-server/setup.py /ie-serving-py/
-RUN cp -r OpenVINO-model-server/ie_serving /ie-serving-py/ie_serving
-RUN . .venv/bin/activate && pip3 install .

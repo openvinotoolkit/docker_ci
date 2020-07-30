@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -16,7 +15,6 @@ from utils.docker_api import DockerAPI
 from utils.exceptions import FailedTest
 from utils.tester import DockerImageTester
 from utils.utilities import download_file
-
 
 log = logging.getLogger('project')
 
@@ -36,38 +34,54 @@ def pytest_configure(config):
     )
     dist = config.getoption('--distribution')
     if dist == 'runtime':
-        log.info('setting up runtime mount dependencies')
+        log.info('Setting up runtime image dependencies')
         mount_root = pathlib.Path(config.getoption('--mount_root'))
-        package_url = config.getoption('--package_url')
+        package_url = str(config.getoption('--package_url'))
         image_os = config.getoption('--image_os')
-        if not str(package_url).startswith(('http://', 'https://', 'ftp://')):
-            err_msg = 'testing dependent distribution type is only supported with archives provided via http://, https:// or ftp:// schemes'
-            log.error(err_msg)
-            raise FailedTest(err_msg)
-        if not (pathlib.Path(mount_root) / 'openvino_dev').exists():
+        if not (mount_root / 'openvino_dev').exists():
             mount_root.mkdir(parents=True, exist_ok=True)
-            log.info('downloading file...')
-            if image_os == 'ubuntu18':
-                download_file(str(package_url).replace('_runtime_', '_dev_'),
-                              filename=pathlib.Path(mount_root) / 'dldt.tgz',
-                              parents_=True, exist_ok_=True)
-                with tarfile.open(str(pathlib.Path(mount_root) / 'dldt.tgz'), 'r') as tar_file:
-                    tar_file.extractall(str(pathlib.Path(mount_root) / 'openvino_dev'))
-            elif image_os == 'winserver2019':
-                download_file(str(package_url).replace('_runtime_', '_dev_'),
-                              filename=pathlib.Path(mount_root) / 'dldt.zip',
-                              parents_=True, exist_ok_=True)
-                with zipfile.ZipFile(str(pathlib.Path(mount_root) / 'dldt.zip'), 'r') as zip_file:
-                    zip_file.extractall(str(pathlib.Path(mount_root) / 'openvino_dev'))
-            log.info('file downloaded and extracted')
+            if package_url.startswith(('http://', 'https://', 'ftp://')):
+                log.info('Downloading dependent package...')
+                if image_os == 'ubuntu18':
+                    download_file(package_url.replace('_runtime_', '_dev_'),
+                                  filename=mount_root / 'dldt.tgz',
+                                  parents_=True, exist_ok_=True)
+                    log.info('Extracting dependent package...')
+                    with tarfile.open(str(mount_root / 'dldt.tgz'), 'r') as tar_file:
+                        tar_file.extractall(str(mount_root / 'openvino_dev'))
+                elif image_os == 'winserver2019':
+                    download_file(package_url.replace('_runtime_', '_dev_'),
+                                  filename=mount_root / 'dldt.zip',
+                                  parents_=True, exist_ok_=True)
+                    log.info('Extracting dependent package...')
+                    with zipfile.ZipFile(str(mount_root / 'dldt.zip'), 'r') as zip_file:
+                        zip_file.extractall(str(mount_root / 'openvino_dev'))
+                log.info('Dependent package downloaded and extracted')
+            else:
+                runtime_archive = pathlib.Path(package_url.replace('_runtime_', '_dev_'))
+                if runtime_archive.exists():
+                    if image_os == 'ubuntu18':
+                        with tarfile.open(str(runtime_archive), 'r') as tar_file:
+                            tar_file.extractall(str(mount_root / 'openvino_dev'))
+                    elif image_os == 'winserver2019':
+                        with zipfile.ZipFile(str(runtime_archive), 'r') as zip_file:
+                            zip_file.extractall(str(mount_root / 'openvino_dev'))
+                    log.info('Dependent package extracted')
+                else:
+                    err_msg = f"""Provided path of the dependent package should be an http/https/ftp access scheme
+                                    or a local file in the project location as dependent package: {package_url}"""
+                    log.error(err_msg)
+                    raise FailedTest(err_msg)
+        else:
+            log.info('Directory for runtime testing dependency already exists, skipping dependency preparation')
 
 
 def pytest_unconfigure(config):
     temp_folder = pathlib.Path(__file__).parent / 'tmp'
     if temp_folder.exists():
-        log.info('removing mount dependencies')
+        log.info('Removing mount dependencies')
         shutil.rmtree(temp_folder)
-    log.info('cleanup completed')
+    log.info('Cleanup completed')
 
 
 @pytest.fixture(scope='session')
@@ -166,6 +180,7 @@ def pytest_runtest_setup(item):
     for mark in item.iter_markers():
         if 'hddl' in mark.name and sys.platform.startswith('linux'):
             process = subprocess.run(['/bin/bash', '-c', f'pidof hddldaemon autoboot'],
-                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, check=False)  # nosec
+                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                     shell=False, check=False)  # nosec
             if process.returncode != 0:
                 pytest.skip(f'Test requires running HDDL driver on the host machine')

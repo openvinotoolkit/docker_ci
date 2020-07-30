@@ -1,3 +1,5 @@
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:18.04 as base
 
 USER root

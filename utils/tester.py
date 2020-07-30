@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -21,6 +20,8 @@ log = logging.getLogger('project')
 
 
 class DockerImageTester(DockerAPI):
+    """Wrapper for docker.api.client implementing custom docker.image.run execution and logging"""
+
     def __init__(self):
         super().__init__()
         self.container: typing.Optional[Container] = None
@@ -33,6 +34,7 @@ class DockerImageTester(DockerAPI):
     def test_docker_image(self,
                           image: typing.Tuple[Image, str],
                           commands: typing.List[str], test_name: str, **kwargs: typing.Optional):
+        """Running list of commands inside the container, logging the output and handling possible exceptions"""
         if isinstance(image, Image):
             file_tag = str(image.tags[0]).replace('/', '_').replace(':', '_')
         elif isinstance(image, str):
@@ -79,8 +81,8 @@ class DockerImageTester(DockerAPI):
                     raise FailedTest(f'Test command {command} have returned non-zero exit code {exit_code}')
                 self.container.reload()
                 if self.container.status != 'running':
-                    raise FailedTest(f'Test command exit code is 0, but container status != "running" '
-                                     f'after this command')
+                    raise FailedTest('Test command exit code is 0, but container status != "running" '
+                                     'after this command')
             logger.switch_to_custom(logfile.name, str(logfile.parent))
             for output in output_total:
                 log.info(str(output))
@@ -91,10 +93,13 @@ class DockerImageTester(DockerAPI):
 
 
 class ProxyTestPlugin:
+    """Proxy handler to use in tests"""
+
     def __init__(self, args: argparse.Namespace):
         self.__name__ = 'proxy_plugin'
         self.proxy = args.proxy
 
     @pytest.fixture
     def get_proxy(self):
+        """Fixture for using custom proxies in tests"""
         return self.proxy

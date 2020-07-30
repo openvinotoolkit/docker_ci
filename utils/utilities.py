@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -13,6 +12,7 @@ import requests
 
 
 def format_timedelta(timedelta: datetime.timedelta) -> str:
+    """Custom date & time formatter"""
     days = timedelta.days
     hours = timedelta.seconds // 3600
     minutes = (timedelta.seconds % 3600) // 60
@@ -29,6 +29,7 @@ def format_timedelta(timedelta: datetime.timedelta) -> str:
 
 
 def get_folder_structure_recursively(src: str, ignore: typing.Optional[typing.Tuple[str]] = ()) -> typing.List[str]:
+    """Custom directory traverser that supports regex-based filtering"""
     def should_skip(item):
         skip = False
         for ignore_pattern in ignore_patterns:
@@ -53,9 +54,10 @@ def get_folder_structure_recursively(src: str, ignore: typing.Optional[typing.Tu
 
 
 def get_system_proxy() -> typing.Dict[str, str]:
+    """Getting system proxy"""
     system_proxy: typing.Dict[str, str] = {}
     env = os.environ.copy()
-    for name in ['http_proxy', 'https_proxy', 'ftp_proxy', 'no_proxy']:
+    for name in ('http_proxy', 'https_proxy', 'ftp_proxy', 'no_proxy'):
         if name in env:
             system_proxy[name] = env[name]
             system_proxy[name.upper()] = env[name]
@@ -66,9 +68,10 @@ def get_system_proxy() -> typing.Dict[str, str]:
 
 
 def get_converted_system_proxy() -> typing.Dict[str, str]:
+    """Getting custom-formatted system proxy"""
     proxy: typing.Dict[str, str] = {}
     env = os.environ.copy()
-    for name in ['http_proxy', 'https_proxy', 'ftp_proxy']:
+    for name in ('http_proxy', 'https_proxy', 'ftp_proxy'):
         if name in env:
             proxy[name.split('_')[0]] = env[name]
         elif name.upper() in env:
@@ -81,12 +84,15 @@ def get_converted_system_proxy() -> typing.Dict[str, str]:
     return proxy
 
 
-def download_file(url: str, filename: pathlib.Path, proxy: typing.Optional[typing.Dict[str, str]] = None, parents_: bool = False, exist_ok_: bool = False):
+def download_file(url: str, filename: pathlib.Path,
+                  proxy: typing.Optional[typing.Dict[str, str]] = None,
+                  parents_: bool = False, exist_ok_: bool = True):
+    """Custom file downloader that supports careful target save path handling"""
     if proxy is None:
         proxy = get_converted_system_proxy()
     filename.parent.mkdir(parents=parents_, exist_ok=exist_ok_)
     r = requests.get(url, allow_redirects=True, proxies=proxy)
-    with open(filename, 'wb') as f:
+    with open(str(filename), 'wb') as f:
         f.write(r.content)
 
 
@@ -99,12 +105,12 @@ def set_windows_system_proxy(system_proxy: typing.Dict[str, str]) -> typing.List
     if not system_proxy:
         system_proxy = get_converted_system_proxy()
     proxy = []
-    if hasattr(system_proxy, 'http'):
+    if 'http' in system_proxy:
         proxy.append(f'set HTTP_PROXY={system_proxy["http"]}')
-    if hasattr(system_proxy, 'https'):
+    if 'https' in system_proxy:
         proxy.append(f'set HTTPS_PROXY={system_proxy["https"]}')
-    if hasattr(system_proxy, 'ftp'):
+    if 'ftp' in system_proxy:
         proxy.append(f'set FTP_PROXY={system_proxy["ftp"]}')
-    if hasattr(system_proxy, 'no_proxy'):
+    if 'no_proxy' in system_proxy:
         proxy.append(f'set NO_PROXY={system_proxy["no_proxy"]}')
     return proxy

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -8,7 +7,7 @@ import sys
 
 import pytest
 
-from setup import SNYK_TOKEN
+from setup import SNYK_API, SNYK_TOKEN
 from utils.loader import SNYK_URL
 from utils.utilities import download_file, set_windows_system_proxy
 
@@ -23,12 +22,13 @@ class TestSDLImage:
         yield
         docker_api.client.images.remove(image_name)
 
-    @pytest.mark.skipif(not sys.platform.startswith('linux'), reason="Windows doesn't support linux images")
+    @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Snyk Linux docker image '
+                                                                     'can not scan windows images')
     @pytest.mark.skipif(SNYK_TOKEN is None, reason='Missing snyk token to do test. Specify it in setup.py file')
     def test_snyk_linux(self, image, snyk_pull):
-        cmd_line = ['docker', 'run', '--rm', '-it',
+        cmd_line = ['docker', 'run', '--rm', '-e', f'SNYK_API={SNYK_API}',
                     '-e', f'SNYK_TOKEN={SNYK_TOKEN}', '-e', 'MONITOR=true',
-                    '-v', f'{str(pathlib.Path(__file__).parent.parent)}:/project',
+                    '-v', f'"{str(pathlib.Path(__file__).parent.parent.parent)}:/project"',
                     '-v', '/var/run/docker.sock:/var/run/docker.sock',
                     'snyk/snyk-cli:docker', 'test', '--docker', image]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec
@@ -42,9 +42,10 @@ class TestSDLImage:
     def test_snyk_windows(self, get_proxy, image):
         location = pathlib.Path(__file__).parent
         snyk_file = location / 'snyk.exe'
-        download_file(SNYK_URL['windows'], str(snyk_file), get_proxy)
+        download_file(SNYK_URL['windows'], snyk_file, get_proxy)
         proxy = set_windows_system_proxy(get_proxy)
-        cmd_line = [' && '.join(proxy), '&&', str(snyk_file), 'auth', SNYK_TOKEN, '&&', str(snyk_file), 'test',
+        cmd_line = [f'{" && ".join(proxy)} && ' if proxy else '', f'set SNYK_API={SNYK_API}', '&&',
+                    f'"{str(snyk_file)}"', 'auth', SNYK_TOKEN, '&&', f'"{str(snyk_file)}"', 'test',
                     '--docker', image]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec
         if process.returncode != 0:

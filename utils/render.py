@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -17,6 +16,8 @@ log = logging.getLogger('project')
 
 
 class DockerFileRender:
+    """Handles the creation of dockerfile based on templates and CLI parameters"""
+
     def __init__(self, os_target: str):
         self.log = jinja2.make_logging_undefined(logger=log)
         self.location = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -26,9 +27,11 @@ class DockerFileRender:
         self.env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.templates_folders), autoescape=True)
 
     def get_base_template(self) -> jinja2.environment.Template:
+        """Getting base template, above which all additional layers will be applied"""
         return self.env.get_template('base.dockerfile.j2')
 
     def get_template(self, name: str, kwargs: typing.Dict[str, str]) -> jinja2.environment.Template:
+        """Getting needed template file"""
         try:
             return self.env.get_template(f'{name}.dockerfile.j2', globals=kwargs)
         except jinja2.exceptions.TemplateNotFound:
@@ -37,6 +40,7 @@ class DockerFileRender:
                                 f'<project_root>/templates/<image_os>/layers folder')
 
     def generate_dockerfile(self, args: argparse.Namespace, kwargs: typing.Dict[str, str]) -> pathlib.Path:
+        """Creating of dockerfile based on templates and CLI parameters"""
         settings = []
         if 'win' in args.os:
             if args.msbuild:

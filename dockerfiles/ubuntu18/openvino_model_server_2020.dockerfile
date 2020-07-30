@@ -1,3 +1,5 @@
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:18.04 AS ov_base
 
 LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
@@ -45,7 +47,7 @@ ENV PYTHON python3.6
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON}=3.6.9-1~18.04 && \
+    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON}=3.6.9-1~18.04ubuntu1 && \
     rm -rf /var/lib/apt/lists/*
 
 # get product from URL
@@ -63,7 +65,7 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 RUN export OV_BUILD OV_FOLDER
 
 RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
-    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | cut -d_ -f7)" && \
+    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
     OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
     mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
     cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
@@ -145,6 +147,10 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc; \
     fi;
+RUN if [ -d "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk ]; then \
+        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
+        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
+    fi;
 RUN find "${INTEL_OPENVINO_DIR}/" -name "*.*sh" -type f -exec dos2unix {} \;
 
 USER openvino
@@ -153,3 +159,40 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
 
 # Setup custom layers
+
+# Model Server layer for runtime distribution
+# FROM openvino/ubuntu18_runtime:latest
+
+USER root
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+            ca-certificates \
+            curl \
+            libgomp1 \
+            python3-dev \
+            python3-pip \
+            virtualenv \
+            usbutils \
+            gnupg2 \
+            wget \
+            git \
+        && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /ie-serving-py && chown openvino /ie-serving-py
+
+USER openvino
+
+ENV PYTHONPATH=$PYTHONPATH:/opt/intel/openvino/python/python3.6 \
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64:/opt/intel/openvino/deployment_tools/ngraph/lib
+
+WORKDIR /ie-serving-py
+RUN git clone https://github.com/IntelAI/OpenVINO-model-server.git
+RUN cp OpenVINO-model-server/requirements.txt /ie-serving-py/
+RUN virtualenv -p python3 .venv && \
+    . .venv/bin/activate && \
+    pip3 --no-cache-dir install -r requirements.txt
+
+RUN cp OpenVINO-model-server/start_server.sh /ie-serving-py/
+RUN cp OpenVINO-model-server/setup.py /ie-serving-py/
+RUN cp -r OpenVINO-model-server/ie_serving /ie-serving-py/ie_serving
+RUN . .venv/bin/activate && pip3 install .

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -38,8 +37,8 @@ class TestLinterImage:
     def test_dive_windows(self, get_proxy, image):
         location = pathlib.Path(__file__).parent
         dive_zip_file = location / 'dive.zip'
-        download_file(DIVE_URL['windows'], str(dive_zip_file), get_proxy)
-        unzip_file(dive_zip_file, str(location))
+        download_file(DIVE_URL['windows'], dive_zip_file, get_proxy)
+        unzip_file(str(dive_zip_file), str(location))
         dive_file = location / 'dive.exe'
         cmd_line = [str(dive_file), '--ci', image]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec

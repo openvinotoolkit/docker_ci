@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -12,24 +11,28 @@ from utils.loader import INTEL_OCL_RELEASE, INTEL_OPENVINO_VERSION
 
 
 class DockerArgumentParser(argparse.ArgumentParser):
+    """CLI argument parser for this framework"""
+
     def __init__(self, prog: typing.Optional[str] = None, description: typing.Optional[str] = None):
         super().__init__(prog=prog, description=description,
                          formatter_class=argparse.RawTextHelpFormatter, add_help=True)
 
     @staticmethod
     def add_image_args(parser: argparse.ArgumentParser):
+        """Adding args needed to manage the built Docker image"""
         parser.add_argument(
             '-t',
             '--tags',
             metavar='IMAGE_NAME:TAG',
             action='append',
-            required=True if ' test' in parser.prog else False,
+            required=' test' in parser.prog,
             help='Source image name and optionally a tags in the "IMAGE_NAME:TAG" format. '
                  'Default is <os>_<distribution>:<product_version> and latest. You can specify some tags.',
         )
 
     @staticmethod
     def add_build_args(parser: argparse.ArgumentParser):
+        """Adding args needed to build the Docker image"""
         parser.add_argument(
             '--path',
             help="Path which will be used as docker build context. Default is the project's root folder",
@@ -43,6 +46,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
 
     @staticmethod
     def add_test_args(parser: argparse.ArgumentParser):
+        """Adding args needed to run tests on the built Docker image"""
         parser.add_argument(
             '-k',
             metavar='EXPRESSION',
@@ -70,14 +74,9 @@ class DockerArgumentParser(argparse.ArgumentParser):
             help=argparse.SUPPRESS,  # Setup tests after deploy for regular builds
         )
 
-        parser.add_argument(
-            '--nightly_save_path',
-            default='',
-            help=argparse.SUPPRESS,  # Setup saving docker image as a binary file
-        )
-
     @staticmethod
     def add_deploy_args(parser: argparse.ArgumentParser):
+        """Adding args needed to publish the built Docker image to a repository"""
         parser.add_argument(
             '-r',
             '--registry',
@@ -86,8 +85,15 @@ class DockerArgumentParser(argparse.ArgumentParser):
             help='Registry host and optionally a port in the "host:port" format',
         )
 
+        parser.add_argument(
+            '--nightly_save_path',
+            default='',
+            help=argparse.SUPPRESS,  # Setup saving docker image as a binary file
+        )
+
     @staticmethod
     def add_dockerfile_args(parser: argparse.ArgumentParser):
+        """Adding args needed to specify what dockerfile to use for building Docker image"""
         parser.add_argument(
             '--dockerfile_name',
             metavar='NAME',
@@ -97,6 +103,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
 
     @staticmethod
     def add_template_args(parser: argparse.ArgumentParser):
+        """Adding args needed to customize the generated dockerfile"""
         parser.add_argument(
             '-d',
             '--device',
@@ -109,9 +116,11 @@ class DockerArgumentParser(argparse.ArgumentParser):
             '-dist',
             '--distribution',
             choices=['base', 'runtime', 'dev', 'data_dev', 'internal_dev', 'proprietary'],
-            required=True if ' test' in parser.prog else False,
-            help='Distribution type: dev, data_dev, runtime, internal_dev, proprietary packages or '
-                 'base with CPU only and without installing dependencies',
+            required=' test' in parser.prog,
+            help='Distribution type: dev, data_dev, runtime, internal_dev, proprietary or '
+                 'base (with CPU only and without installing dependencies). '
+                 'Using key --file <path_to_dockerfile> is mandatory to build base distribution image.'
+                 'base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder.',
         )
 
         parser.add_argument(
@@ -212,6 +221,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
 
     @staticmethod
     def add_common_args(parser: argparse.ArgumentParser):
+        """Adding other general-purpose args"""
         parser.add_argument(
             '--http_proxy',
             metavar='URL',
@@ -243,6 +253,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
 
     @staticmethod
     def setup_proxy(args: argparse.Namespace) -> typing.Dict[str, str]:
+        """Convert Namespace proxies to dict proxies"""
         proxy: typing.Dict[str, str] = {}
         if args.http_proxy:
             proxy['http'] = args.http_proxy
@@ -263,6 +274,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
 
 
 def parse_args(name: str, description: str):
+    """Parse all the args set up above"""
     parser = DockerArgumentParser(name, description)
 
     subparsers = parser.add_subparsers(dest='mode')
@@ -313,7 +325,7 @@ def parse_args(name: str, description: str):
     try:
         args = parser.parse_args()
 
-        if args.mode in ['gen_dockerfile', 'build', 'build_test', 'all'] and (
+        if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all') and (
                 not args.install_type and not args.product_version):
             parser.error('The following arguments are required: -s/--source, --install_type')
 
@@ -325,8 +337,15 @@ def parse_args(name: str, description: str):
                 'hadolint' not in args.linter_check and 'dive' not in args.linter_check):
             parser.error('Incorrect arguments for --linter_check. Available tests: hadolint, dive')
 
-        if args.mode not in ['deploy', 'test'] and not args.package_url and args.distribution not in ['base',
-                                                                                                      'internal_dev']:
+        if args.distribution == 'base' and args.mode in ('build', 'build_test', 'all') and not args.file:
+            parser.error('The following argument is required: -f/--file')
+
+        if args.mode == 'gen_dockerfile' and args.distribution == 'base':
+            parser.error('Generating dockerfile for base distribution is not available. '
+                         'Use generated base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder')
+
+        if args.mode not in ('deploy', 'test') and not args.package_url and args.distribution not in ('base',
+                                                                                                      'internal_dev'):
             if not args.distribution or not args.product_version:
                 parser.error('Insufficient arguments. Provide --package_url or --dist and --product_version arguments')
             if args.mode != 'gen_dockerfile':
@@ -335,14 +354,19 @@ def parse_args(name: str, description: str):
                     product_version = product_version.group(1)
                 else:
                     parser.error(f'Cannot find package url for product version: {args.product_version}')
-                args.package_url = INTEL_OPENVINO_VERSION[product_version][
+                args.package_url = INTEL_OPENVINO_VERSION[str(product_version)][
                     'linux' if 'ubuntu18' in args.os else 'windows'][args.distribution]
             if args.distribution == 'proprietary':
                 args.install_type = 'install'
             else:
                 args.install_type = 'copy'
 
-        if args.mode not in ['deploy', 'test'] and args.package_url and not args.product_version:
+        if args.mode == 'test' and args.distribution == 'runtime' and not args.package_url:
+            parser.error("""Insufficient arguments. Provide --package_url key with path to dev distribution package in
+                              http/https/ftp access scheme or a local file in the project location
+                              as dependent package""")
+
+        if args.mode not in ('deploy', 'test') and args.package_url and not args.product_version:
             product_version = re.search(r'p_(\d{4}\.\d)', args.package_url)
             if product_version:
                 args.product_version = product_version.group(1)
@@ -350,14 +374,14 @@ def parse_args(name: str, description: str):
         args.build_id = None
         if hasattr(args, 'product_version') and args.product_version:
             args.build_id = args.product_version
-        if args.mode not in ['deploy', 'test'] and args.package_url:
+        if args.mode not in ('deploy', 'test') and args.package_url:
             build_id = re.search(r'p_(\d{4}\.\d\.\d{3})', args.package_url)
             if build_id:
                 args.build_id = build_id.group(1)
             else:
                 parser.error(f'Cannot get build number from the package url provided: {args.package_url}')
 
-        if args.mode not in ['deploy', 'test'] and not args.distribution and args.package_url:
+        if args.mode not in ('deploy', 'test') and not args.distribution and args.package_url:
             if '_internal_' in args.package_url:
                 args.distribution = 'internal_dev'
             elif '_runtime_' in args.package_url:
@@ -370,7 +394,7 @@ def parse_args(name: str, description: str):
                 parser.error('Cannot get distribution type from the URL provided')
 
         # workaround for https://bugs.python.org/issue16399 issue
-        if args.mode not in ['deploy', 'test']:
+        if args.mode not in ('deploy', 'test'):
             if not args.device and 'win' not in args.os:
                 if args.distribution == 'base':
                     args.device = ['cpu']
@@ -379,26 +403,30 @@ def parse_args(name: str, description: str):
             else:
                 args.device = ['cpu']
 
-        if args.mode in ['gen_dockerfile', 'build', 'build_test', 'all']:
+        if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all'):
             if args.ocl_release not in INTEL_OCL_RELEASE:
-                parser.error('Provided Intel(R) Graphics Compute Runtime for OpenCL(TM) release is not acceptable')
-            if args.source == 'local' and not (args.package_url.startswith(('http://', 'https://', 'ftp://') or
-                                               pathlib.Path(args.package_url).exists())):
+                parser.error('Provided Intel(R) Graphics Compute Runtime for OpenCL(TM) release is not acceptable.')
+            if args.source == 'local' and not (
+                    args.package_url.startswith(('http://', 'https://', 'ftp://',
+                                                 )) or pathlib.Path(args.package_url).exists()):
                 parser.error(f'Provided local path of the package should be relative to <root_project> folder '
-                             'or should be an http/https/ftp web address: '
+                             'or should be an http/https/ftp access scheme: '
                              f'{args.package_url}')
-            elif args.source != 'local' and args.distribution != 'base' and args.package_url and (
-                    'http://' not in args.package_url) and ('https://' not in args.package_url) and (
-                        'ftp://' not in args.package_url):
+            elif args.source == 'url' and args.distribution != 'base' and not args.package_url.startswith(
+                    ('http://', 'https://', 'ftp://')):
                 parser.error('Provided URL is not supported, use http://, https:// or ftp:// access scheme')
+            elif args.source == 'local' and not args.package_url.startswith(('http://', 'https://', 'ftp://'),
+                                                                            ) and pathlib.Path(args.package_url,
+                                                                                               ).is_symlink():
+                parser.error('Do not use symlink and hard link to specify local package url. It is an insecure way.')
 
-        if args.mode not in ['deploy', 'test'] and not args.python:
+        if args.mode not in ('deploy', 'test') and not args.python:
             if 'ubuntu18' in args.os:
                 args.python = 'python36'
             else:
                 args.python = 'python37'
 
-        if args.mode not in ['deploy', 'test'] and not args.dockerfile_name:
+        if args.mode not in ('deploy', 'test') and not args.dockerfile_name:
             devices = ''.join([d[0] for d in args.device])
             layers = '_'.join(args.layers)
             if layers:
@@ -422,6 +450,8 @@ def parse_args(name: str, description: str):
                              f'{args.os}_{args.distribution}:latest']
         if hasattr(args, 'file') and args.file:
             args.file = pathlib.Path(args.file).absolute()
+            if args.file.is_symlink():
+                parser.error('Do not use symlink and hard link for --file key. It is an insecure way. ')
             if not args.file.exists():
                 parser.error(f'Cannot find specified Dockerfile: {str(args.file)}')
         args.proxy = parser.setup_proxy(args)

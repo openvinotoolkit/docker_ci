@@ -1,4 +1,6 @@
 # escape=`
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS ov_base
 
 LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
@@ -9,9 +11,7 @@ SHELL ["cmd", "/S", "/C"]
 
 USER ContainerAdministrator
 
-
 # Setup Redistributable Libraries for Intel(R) C++ Compiler for Windows*
-
 RUN powershell.exe -Command `
     Invoke-WebRequest -URI https://software.intel.com/sites/default/files/managed/59/aa/ww_icl_redist_msi_2018.3.210.zip -OutFile "%TMP%\ww_icl_redist_msi_2018.3.210.zip" ; `
     Expand-Archive -Path "%TMP%\ww_icl_redist_msi_2018.3.210.zip" -DestinationPath "%TMP%\ww_icl_redist_msi_2018.3.210" -Force ; `
@@ -20,7 +20,6 @@ RUN powershell.exe -Command `
 RUN %TMP%\ww_icl_redist_msi_2018.3.210\ww_icl_redist_intel64_2018.3.210.msi /quiet /passive /log "%TMP%\redist.log"
 
 # setup CMake
-
 RUN powershell.exe -Command `
     Invoke-WebRequest -URI https://cmake.org/files/v3.14/cmake-3.14.7-win64-x64.msi -OutFile %TMP%\\cmake-3.14.7-win64-x64.msi ; `
     Start-Process %TMP%\\cmake-3.14.7-win64-x64.msi -ArgumentList '/quiet /norestart' -Wait ; `
@@ -31,14 +30,13 @@ RUN SETX /M PATH "C:\Program Files\CMake\Bin;%PATH%"
 # setup Python
 ARG PYTHON_VER=python3.7
 
-
 RUN powershell.exe -Command `
-  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.6/python-3.7.6-amd64.exe -OutFile %TMP%\\python-3.7.exe ; `
-  Start-Process %TMP%\\python-3.7.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python37' -Wait ; `
-  Remove-Item %TMP%\\python-3.7.exe -Force
+    Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.6/python-3.7.6-amd64.exe -OutFile %TMP%\\python-3.7.exe ; `
+    Start-Process %TMP%\\python-3.7.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python37' -Wait ; `
+    Remove-Item %TMP%\\python-3.7.exe -Force
 
 RUN python -m pip install --upgrade pip
-RUN python -m pip install cmake
+RUN python -m pip install cmake wheel
 
 # download package from external URL
 ARG package_url
@@ -70,10 +68,10 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 RUN python -m pip install --no-cache-dir setuptools && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt"
 
-WORKDIR ${TEMP_DIR}
-COPY scripts\install_requirements.bat install_requirements.bat
-RUN install_requirements.bat %INTEL_OPENVINO_DIR%
-
+RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter *requirements*.* | ForEach-Object { `
+       if (($_.Fullname -like '*post_training_optimization_toolkit*') -or ($_.Fullname -like '*accuracy_checker*') -or ($_.Fullname -like '*python3*') -or ($_.Fullname -like '*python2*') -or ($_.Fullname -like '*requirements_ubuntu*')) `
+       {echo 'skipping dependency'} else {echo 'installing dependency'; python -m pip install --no-cache-dir -r $_.FullName} `
+   }"
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -13,6 +12,7 @@ LINE_DOUBLE = '=' * 79
 
 
 def init_logger(logdir: typing.Optional[str] = None) -> pathlib.Path:
+    """Initializing the logger"""
     if logdir is None:
         logfile = pathlib.Path(__file__).parent.parent / 'logs' / 'summary.log'
     else:
@@ -66,6 +66,8 @@ def init_logger(logdir: typing.Optional[str] = None) -> pathlib.Path:
 
 
 def decorate_logger(logger: typing.Type[logging.Logger], func: typing.Callable[..., None]):
+    """Handling custom indentations in logger"""
+
     def my_decorator(self, level, msg, args, exc_info=None, extra=None):
         msg = ' ' * self._indent + str(msg)
         func(self, level, msg, args, exc_info, extra)
@@ -85,6 +87,7 @@ def decorate_logger(logger: typing.Type[logging.Logger], func: typing.Callable[.
 
 
 def switch_to_custom(name: str, logdir: typing.Optional[str] = 'logs'):
+    """Switching between additional loggers"""
     logger = logging.getLogger('project')
 
     remove_summary()
@@ -95,6 +98,7 @@ def switch_to_custom(name: str, logdir: typing.Optional[str] = 'logs'):
 
 
 def add_summary():
+    """Adding main logger"""
     logger = logging.getLogger('project')
 
     if hasattr(logger, '_main_handlers'):
@@ -104,16 +108,18 @@ def add_summary():
 
 
 def remove_summary():
+    """Removing main logger"""
     logger = logging.getLogger('project')
 
     handlers = logger.handlers[:]
     for handler in handlers:
         name = getattr(handler, '_name')
-        if name in ['summary', 'console']:
+        if name in ('summary', 'console'):
             logger.removeHandler(handler)
 
 
 def remove_customs():
+    """Removing custom logger"""
     logger = logging.getLogger('project')
 
     handlers = logger.handlers[:]
@@ -123,6 +129,7 @@ def remove_customs():
 
 
 def switch_to_summary():
+    """Switching from custom logger to main logger"""
     remove_customs()
     add_summary()
 
@@ -150,6 +157,8 @@ class UniqueFileHandler(logging.FileHandler):
 
 
 class CustomFormatter(logging.Formatter):
+    """Custom wrapper for logging.Formatter"""
+
     def __init__(self, set_time: typing.Optional[bool] = True, fmt: typing.Optional[str] = None,
                  datefmt: typing.Optional[str] = None):
         super().__init__(fmt, datefmt)

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -107,7 +106,8 @@ class TestDemosLinux:
              '--precisions FP16 -o /root/omz_demos_build/intel64/Release/"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/crossroad_camera_demo '
-             '-m /root/omz_demos_build/intel64/Release/intel/person-vehicle-bike-detection-crossroad-0078/FP16/person-vehicle-bike-detection-crossroad-0078.xml '
+             '-m /root/omz_demos_build/intel64/Release/intel/person-vehicle-bike-detection-crossroad-0078/FP16/'
+             'person-vehicle-bike-detection-crossroad-0078.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU -no_show"',
              ],
             self.test_crossroad_cpp_gpu.__name__, **kwargs,
@@ -160,7 +160,8 @@ class TestDemosLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
+             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
              ],
@@ -177,7 +178,8 @@ class TestDemosLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
+             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
              ],
@@ -197,7 +199,8 @@ class TestDemosLinux:
              '--name semantic-segmentation-adas-0001 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/segmentation_demo '
-             '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
+             '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/'
+             'semantic-segmentation-adas-0001.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU -no_show"',
              ],
             self.test_segmentation_cpp_cpu.__name__, **kwargs,
@@ -216,7 +219,8 @@ class TestDemosLinux:
              '--name semantic-segmentation-adas-0001 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/segmentation_demo '
-             '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
+             '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/'
+             'semantic-segmentation-adas-0001.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU -no_show"',
              ],
             self.test_segmentation_cpp_gpu.__name__, **kwargs,
@@ -231,7 +235,8 @@ class TestDemosLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/segmentation_demo/segmentation_demo.py '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
+             'segmentation_demo/segmentation_demo.py '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU"',
              ],
@@ -248,7 +253,8 @@ class TestDemosLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/segmentation_demo/segmentation_demo.py '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
+             'segmentation_demo/segmentation_demo.py '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU"',
              ],
@@ -267,7 +273,8 @@ class TestDemosLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/converter.py '
              '--name ctdet_coco_dlav0_384 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/object_detection_demo_centernet/object_detection_demo_centernet.py '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
+             'object_detection_demo_centernet/object_detection_demo_centernet.py '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
              ],
@@ -287,31 +294,37 @@ class TestDemosLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/converter.py '
              '--name ctdet_coco_dlav0_384 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/object_detection_demo_centernet/object_detection_demo_centernet.py '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
+             'object_detection_demo_centernet/object_detection_demo_centernet.py '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
              ],
             self.test_object_detection_centernet_python_gpu.__name__, **kwargs,
         )
 
-    # @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    # @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
-    # def test_action_recognition_python_cpu(self, is_distribution, is_image_os, tester, image):
-    #     tester.test_docker_image(
-    #         image,
-    #         ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
-    #          '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 https://github.com/intel-iot-devkit/sample-videos/blob/master/head-pose-face-detection-female.mp4?raw=true"',
-    #          '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-    #          'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-    #          '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
-    #          '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-    #          'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/action_recognition/action_recognition.py '
-    #          '-m_en /opt/intel/openvino/intel/action-recognition-0001-encoder/FP16/action-recognition-0001-encoder.xml '
-    #          '-m_de /opt/intel/openvino/intel/action-recognition-0001-decoder/FP16/action-recognition-0001-decoder.xml '
-    #          '-i /root/action_recognition.mp4 -d CPU --no_show"',
-    #          ],
-    #         self.test_action_recognition_python_cpu.__name__,
-    #     )
+    @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    def test_action_recognition_python_cpu(self, is_distribution, is_image_os, tester, image):
+        tester.test_docker_image(
+            image,
+            ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
+             '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
+             'https://github.com/intel-iot-devkit/sample-videos/blob/master/'
+             'head-pose-face-detection-female.mp4?raw=true"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+             '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
+             'action_recognition/action_recognition.py '
+             '-m_en /opt/intel/openvino/intel/action-recognition-0001-encoder/FP16/'
+             'action-recognition-0001-encoder.xml '
+             '-m_de /opt/intel/openvino/intel/action-recognition-0001-decoder/FP16/'
+             'action-recognition-0001-decoder.xml '
+             '-i /root/action_recognition.mp4 -d CPU --no_show"',
+             ],
+            self.test_action_recognition_python_cpu.__name__,
+        )
 
 
 class TestDemosWindows:

@@ -6,3 +6,5 @@ tmp
 logs
 *.exe
 *.zip
+*.tgz
+.vscode

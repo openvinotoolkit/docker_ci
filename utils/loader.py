@@ -1,7 +1,9 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+"""Auxiliary structure for simplifying build process for
+officially released/supported versions of product and dependencies
+"""
 INTEL_OCL_RELEASE = {
     '20.03.15346': {
         'GMMLIB': '19.4.1',
@@ -81,10 +83,44 @@ INTEL_OPENVINO_VERSION = {
                             'l_openvino_toolkit_data_dev_ubuntu18_p_2020.2.120.tgz',
             },
     },
+    '2020.3': {
+        'windows':
+            {
+                'dev': '',
+                'runtime': '',
+                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16667/'
+                               'w_openvino_toolkit_p_2020.3.194.exe',
+            },
+        'linux':
+            {
+                'dev': '',
+                'runtime': '',
+                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16670/'
+                               'l_openvino_toolkit_p_2020.3.194.tgz',
+                'data_dev': '',
+            },
+    },
+    '2020.4': {
+        'windows':
+            {
+                'dev': '',
+                'runtime': '',
+                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16801/'
+                               'w_openvino_toolkit_p_2020.4.287.exe',
+            },
+        'linux':
+            {
+                'dev': '',
+                'runtime': '',
+                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/'
+                               'l_openvino_toolkit_p_2020.4.287.tgz',
+                'data_dev': '',
+            },
+    },
 }
 DIVE_URL = {
     'windows': 'https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_windows_amd64.zip',
 }
 SNYK_URL = {
-    'windows': 'https://github.com/snyk/snyk/releases/download/v1.294.0/snyk-win.exe',
+    'windows': 'https://github.com/snyk/snyk/releases/download/v1.369.1/snyk-win.exe',
 }

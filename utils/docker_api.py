@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
@@ -19,6 +18,8 @@ log = logging.getLogger('project')
 
 
 class DockerAPI:
+    """Wrapper for docker.api.client"""
+
     def __init__(self):
         # custom timeout to use Image.save() on large images - https://github.com/docker/docker-py/issues/2077
         self.client = docker.from_env(timeout=300)
@@ -36,6 +37,7 @@ class DockerAPI:
         self.client.close()
 
     def version(self):
+        """Logging-friendly Docker version getter"""
         vers = self.client.version()
-        for name in ['Version', 'ApiVersion', 'MinAPIVersion', 'Os', 'Arch', 'KernelVersion']:
+        for name in ('Version', 'ApiVersion', 'MinAPIVersion', 'Os', 'Arch', 'KernelVersion'):
             log.info(f'{name}: {vers[name]}')
