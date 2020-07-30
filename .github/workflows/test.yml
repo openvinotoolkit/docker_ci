@@ -5,7 +5,7 @@ on:
       package_url:
         description: 'URL to OpenVINO package'
         required: true
-        default: 'Some text'
+        default: 'https://registrationcenter-download.intel.com/akldm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz'
 #       home:
 #         description: 'location'
 #         required: false
@@ -26,13 +26,18 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Pinging Docker daemon
         run: docker info
-      - name: Pinging project
-        run: python docker_openvino.py --help
+      - name: Generating Dockerfile
+        run: python docker_openvino.py gen_dockerfile --dist propietary --source url --install_type install --package_url ${{ github.event.inputs.package_url }}
 #       - name: Pinging Docker daemon from Python
 #         run: python actions_docker_test.py
 
-#       - name: Collecting artifacts
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: docker_version
-#           path: version.txt
+      - name: Collecting artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: logs
+          path: logs/
+      - name: Collecting Dockerfiles
+        uses: actions/upload-artifact@v2
+        with:
+          name: dockerfiles
+          path: dockerfiles/
