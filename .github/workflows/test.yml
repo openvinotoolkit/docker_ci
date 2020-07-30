@@ -5,7 +5,7 @@ on:
       package_url:
         description: 'URL to OpenVINO package'
         required: true
-        default: 'http://registrationcenter-download.intel.com/akldm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz'
+        default: 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz'
 #       home:
 #         description: 'location'
 #         required: false
