@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-import datetime
+"""Module handling auxiliary functions for the framework"""
 import os
 import pathlib
 import re
@@ -10,14 +10,15 @@ import zipfile
 
 import requests
 
+DEFAULT_DATA_CHUNK_SIZE = 64 * 1024  # Chunk size for file downloader (64 KB)
 
-def format_timedelta(timedelta: datetime.timedelta) -> str:
+
+def format_timedelta(timedelta: float) -> str:
     """Custom date & time formatter"""
-    days = timedelta.days
-    hours = timedelta.seconds // 3600
-    minutes = (timedelta.seconds % 3600) // 60
-    seconds = (timedelta.seconds - hours * 3600) - minutes * 60
-    seconds = 0 if seconds < 0 else seconds
+    days = int(timedelta // (24 * 3600))
+    hours = int(timedelta % (24 * 3600) / 3600)
+    minutes = int(timedelta % 3600 / 60)
+    seconds = int(timedelta % 60)
     str_date = ''
     if days:
         str_date += f'{days} day' + 's' * (days != 1) + ' '
@@ -28,7 +29,7 @@ def format_timedelta(timedelta: datetime.timedelta) -> str:
     return str_date
 
 
-def get_folder_structure_recursively(src: str, ignore: typing.Optional[typing.Tuple[str]] = ()) -> typing.List[str]:
+def get_folder_structure_recursively(src: str, ignore: typing.Tuple[str, ...] = ()) -> typing.List[str]:
     """Custom directory traverser that supports regex-based filtering"""
     def should_skip(item):
         skip = False
@@ -40,7 +41,7 @@ def get_folder_structure_recursively(src: str, ignore: typing.Optional[typing.Tu
     if not os.path.exists(src):
         return []
 
-    ignore_patterns = ('CVS', '.git', '.svn', *ignore)
+    ignore_patterns: typing.Tuple[str, ...] = ('CVS', '.git', '.svn') + ignore
 
     folder_structure = []
 
@@ -86,22 +87,26 @@ def get_converted_system_proxy() -> typing.Dict[str, str]:
 
 def download_file(url: str, filename: pathlib.Path,
                   proxy: typing.Optional[typing.Dict[str, str]] = None,
-                  parents_: bool = False, exist_ok_: bool = True):
+                  parents_: bool = False, exist_ok_: bool = True, chunk_size: int = DEFAULT_DATA_CHUNK_SIZE):
     """Custom file downloader that supports careful target save path handling"""
-    if proxy is None:
+    if not proxy:
         proxy = get_converted_system_proxy()
     filename.parent.mkdir(parents=parents_, exist_ok=exist_ok_)
-    r = requests.get(url, allow_redirects=True, proxies=proxy)
-    with open(str(filename), 'wb') as f:
-        f.write(r.content)
+    with requests.get(url, allow_redirects=True, proxies=proxy, stream=True) as r:
+        r.raise_for_status()
+        with open(str(filename), 'wb') as f:
+            for chunk in r.iter_content(chunk_size):
+                if chunk:
+                    f.write(chunk)
 
 
 def unzip_file(file_path: str, target_dir: str):
+    """Unpack ZIP-archive to specified directory"""
     with zipfile.ZipFile(file_path, 'r') as zip_ref:
         zip_ref.extractall(target_dir)
 
 
-def set_windows_system_proxy(system_proxy: typing.Dict[str, str]) -> typing.List[str]:
+def set_windows_system_proxy(system_proxy: typing.Dict[str, str] = None) -> typing.List[str]:
     if not system_proxy:
         system_proxy = get_converted_system_proxy()
     proxy = []

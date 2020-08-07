@@ -8,3 +8,4 @@ logs
 *.zip
 *.tgz
 .vscode
+.mypy_cache

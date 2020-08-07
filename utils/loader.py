@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-"""Auxiliary structure for simplifying build process for
-officially released/supported versions of product and dependencies
+"""Auxiliary structure for simplifying build process
+
+Supports released/supported versions of product/its dependencies
 """
 INTEL_OCL_RELEASE = {
     '20.03.15346': {

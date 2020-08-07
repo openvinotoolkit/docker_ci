@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+"""Module for handling connection with Docker daemon/service"""
 import logging
 import os
 import pathlib
@@ -29,15 +30,16 @@ class DockerAPI:
         except requests.exceptions.ConnectionError:
             raise FailedStep('Docker Engine is not running. Please start the docker daemon.')
         except pywintypes.error as ex:
-            if ex.winerror == 2 and ex.funcname == 'WaitNamedPipe':
+            if ex.winerror == 2 and ex.funcname in ('WaitNamedPipe', 'CreateFile'):
                 raise FailedStep('Docker Engine is not running. Please start the docker daemon.')
             raise ex
 
     def __del__(self):
+        """Custom __del__ needed to manually close connection to client"""
         self.client.close()
 
     def version(self):
         """Logging-friendly Docker version getter"""
         vers = self.client.version()
         for name in ('Version', 'ApiVersion', 'MinAPIVersion', 'Os', 'Arch', 'KernelVersion'):
-            log.info(f'{name}: {vers[name]}')
+            log.info(f'{name}: {vers.get(name, "Unknown")}')

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+"""Module that handles running tests on Docker image"""
 import argparse
 import logging
 import pathlib
@@ -27,13 +28,14 @@ class DockerImageTester(DockerAPI):
         self.container: typing.Optional[Container] = None
 
     def __del__(self):
+        """Custom __del__ to manually stop (but not remove) testing container"""
         if self.container:
             self.container.stop()
         super().__del__()
 
     def test_docker_image(self,
                           image: typing.Tuple[Image, str],
-                          commands: typing.List[str], test_name: str, **kwargs: typing.Optional):
+                          commands: typing.List[str], test_name: str, **kwargs: typing.Optional[typing.Dict]):
         """Running list of commands inside the container, logging the output and handling possible exceptions"""
         if isinstance(image, Image):
             file_tag = str(image.tags[0]).replace('/', '_').replace(':', '_')

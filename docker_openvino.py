@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+"""Main script of this framework, putting all the logic together"""
 import argparse
-import datetime
 import enum
 import logging
 import os
@@ -11,19 +11,21 @@ import pathlib
 import platform
 import shutil
 import sys
+import timeit
 import traceback
 import typing
 
+import pytest  # noqa: I001
 from docker.errors import APIError, ImageNotFound
 from docker.models.images import Image
-import pytest  # noqa: I001
 from pytest import ExitCode as PytestExitCode
 
 from utils import logger
 from utils.arg_parser import parse_args
 from utils.builder import DockerImageBuilder
 from utils.docker_api import DockerAPI
-from utils.exceptions import FailedBuild, FailedDeploy, FailedStep, FailedTest
+from utils.exceptions import (FailedBuild, FailedDeploy,  # noqa: I001
+                              FailedSave, FailedStep, FailedTest)
 from utils.loader import INTEL_OCL_RELEASE
 from utils.render import DockerFileRender
 from utils.tester import ProxyTestPlugin
@@ -41,6 +43,7 @@ class ExitCode(enum.Enum):
     failed_build = 11
     failed_test = 12
     failed_deploy = 13
+    failed_save = 14
     interrupted = 130
     wrong_args = 127
 
@@ -55,7 +58,7 @@ class Launcher:
         self.args = arguments
         self.image: typing.Optional[Image] = None
         self.image_name = arguments.tags[0]
-        self.kwargs = {}
+        self.kwargs: typing.Dict[str, str] = {}
         self.location = pathlib.Path(os.path.realpath(__file__)).parent
         self.mount_root: pathlib.Path = self.location / 'tests' / 'tmp' / 'mount'
         self.proxy_plugin = ProxyTestPlugin(self.args)
@@ -118,7 +121,8 @@ class Launcher:
             archive_name = self.args.old_package_url.split('/')[-1]
             tmp_folder = self.location / 'tmp'
 
-            download_file(str(self.args.package_url), tmp_folder / archive_name, parents_=True, exist_ok_=False)
+            download_file(str(self.args.package_url), tmp_folder / archive_name, proxy=self.args.proxy,
+                          parents_=True)
 
             self.args.package_url = (tmp_folder / archive_name).relative_to(self.location)
             self.args.package_url = str(pathlib.PurePosixPath(self.args.package_url))
@@ -134,13 +138,13 @@ class Launcher:
         if self.args.file.is_absolute():
             self.args.file = pathlib.Path(self.args.file).relative_to(self.args.path)
         self.builder = DockerImageBuilder()
-        curr_time = datetime.datetime.now()
+        curr_time = timeit.default_timer()
         self.image = self.builder.build_docker_image(dockerfile=self.args.file,
                                                      directory=str(self.args.path),
                                                      tag=self.image_name,
                                                      build_args=self.kwargs,
                                                      logfile=self.logdir / 'image_build.log')
-        log.info(f'Build time: {format_timedelta(datetime.datetime.now() - curr_time)}')
+        log.info(f'Build time: {format_timedelta(timeit.default_timer() - curr_time)}')
         log.info(f"Build log location: {self.logdir / 'image_build.log'}")
         if not self.image:
             raise FailedBuild(f'Error building Docker image {self.args.tags}')
@@ -159,14 +163,14 @@ class Launcher:
         log.info('Running dive checks on the docker image...')
         log.info('This may take some time for big image...')
         dive_report = self.logdir / 'image_linter_dive.html'
-        curr_time = datetime.datetime.now()
+        curr_time = timeit.default_timer()
         result = pytest.main(args=[f'{self.location / "tests" / "linters"}', '-k', 'dive', '--image',
                                    self.image_name,
                                    f'--junitxml={self.logdir / "dive.xml"}',
                                    f'--html={dive_report}',
                                    '--self-contained-html', '--tb=no', '--color=yes'],
                              plugins=[self.proxy_plugin])
-        log.info(f'Testing time: {format_timedelta(datetime.datetime.now() - curr_time)}')
+        log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
         if result == PytestExitCode.OK:
             log.info('Dive checks: PASSED')
         else:
@@ -174,14 +178,16 @@ class Launcher:
         log.info(f'Dive report location: {dive_report}')
 
     def sdl_check(self):
-        """Checking the Docker image security using:
-            * docker-bench-security (https://github.com/docker/docker-bench-security)
-            * Snyk (https://snyk.io/product/container-vulnerability-management/)
+        """Checking the Docker image security
+
+        Learn more:
+        * docker-bench-security (https://github.com/docker/docker-bench-security)
+        * Snyk (https://snyk.io/product/container-vulnerability-management/)
         """
         log.info(logger.LINE_DOUBLE)
         log.info('Running SDL checks on host and the image...')
         sdl_report = str(self.logdir / 'sdl.html')
-        curr_time = datetime.datetime.now()
+        curr_time = timeit.default_timer()
         sdl_check = ' or '.join(self.args.sdl_check)
         result = pytest.main(args=[f'{self.location / "tests" / "security"}', '-k', sdl_check,
                                    '--image', self.image_name,
@@ -189,7 +195,7 @@ class Launcher:
                                    f'--html={sdl_report}',
                                    '--self-contained-html', '--tb=no', '--color=yes'],
                              plugins=[self.proxy_plugin])
-        log.info(f'Testing time: {format_timedelta(datetime.datetime.now() - curr_time)}')
+        log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
         if result == PytestExitCode.OK:
             log.info('SDL checks: PASSED')
         else:
@@ -205,7 +211,7 @@ class Launcher:
         if 'dive' in self.args.linter_check:
             self.dive_linter_check()
         test_report = self.logdir / 'tests.html'
-        curr_time = datetime.datetime.now()
+        curr_time = timeit.default_timer()
         test_expression = ''
         if self.args.test_expression:
             test_expression = self.args.test_expression
@@ -219,7 +225,7 @@ class Launcher:
                               f"--junitxml={self.logdir / 'tests.xml'}",
                               f'--html={test_report}',
                               '--self-contained-html', '--tb=no', '--color=yes'])
-        log.info(f'Testing time: {format_timedelta(datetime.datetime.now() - curr_time)}')
+        log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
         if result == PytestExitCode.OK:
             log.info('Tests: PASSED')
             log.info(f'Testing report location: {test_report}')
@@ -236,27 +242,31 @@ class Launcher:
         log.info('Tagging built Docker image...')
         try:
             for tag in self.args.tags:
-                is_passed = self.docker_api.client.images.get(self.image_name).tag(
-                    self.args.registry + '/' + tag)
-                if not is_passed:
-                    raise FailedDeploy(f"Can't tag {self.image_name} image to {self.args.registry}/{tag}")
-                log.info(f'Image {self.image_name} successfully tagged as {self.args.registry}/{tag}')
+                if self.args.registry not in self.image_name:
+                    is_passed = self.docker_api.client.images.get(self.image_name).tag(
+                        self.args.registry + '/' + tag)
+                    if not is_passed:
+                        raise FailedDeploy(f"Can't tag {self.image_name} image to {self.args.registry}/{tag}")
+                    log.info(f'Image {self.image_name} successfully tagged as {self.args.registry}/{tag}')
         except ImageNotFound as err:
             raise FailedDeploy(f'{err}')
         except APIError as err:
             raise FailedDeploy(f'Tagging failed: {err}')
 
     def deploy(self):
-        """Push built Docker image to repo specified in CLI """
+        """Push built Docker image to repo specified in CLI"""
         log.info(logger.LINE_DOUBLE)
         log.info('Publishing built Docker image...')
         try:
-            curr_time = datetime.datetime.now()
+            curr_time = timeit.default_timer()
             for tag in self.args.tags:
-                log_generator = self.docker_api.client.images.push(
-                    self.args.registry + '/' + tag,
-                    stream=True, decode=True)
-                log.info(f'Push time: {format_timedelta(datetime.datetime.now() - curr_time)}')
+                if self.args.registry in tag:
+                    log_generator = self.docker_api.client.images.push(tag,
+                                                                       stream=True, decode=True)
+                else:
+                    log_generator = self.docker_api.client.images.push(self.args.registry + '/' + tag,
+                                                                       stream=True, decode=True)
+                log.info(f'Push time: {format_timedelta(timeit.default_timer() - curr_time)}')
                 log_name = f'deploy_{tag.replace("/", "_").replace(":", "_")}.log'
                 log_path_file = self.logdir / log_name
                 log.info(f'Image {tag} push log location: {log_path_file}')
@@ -274,21 +284,27 @@ class Launcher:
 
     def save(self):
         """Save Docker image as a local binary file"""
+        log.info(logger.LINE_DOUBLE)
+        log.info('Saving built Docker image...')
+        curr_time = timeit.default_timer()
         share_root = pathlib.Path(self.args.nightly_save_path)
         archive_name = ''
         for tag in self.args.tags:
             if not tag.endswith('latest'):
-                archive_name = tag.replace(':', '_')
+                tag = tag.split('/')[-1]  # remove registry from tag
+                archive_name = f'{tag.replace(":", "_")}.bin'
                 break
-        archive_name += '.bin'
         try:
+            if not self.image:
+                self.image = self.docker_api.client.images.get(self.args.tags[0])
             with open(share_root / archive_name, 'wb') as file:
-                for chunk in self.image.save():
+                for chunk in self.image.save(chunk_size=None):
                     file.write(chunk)
+            log.info(f'Save time: {format_timedelta(timeit.default_timer() - curr_time)}')
         except (PermissionError, FileExistsError, FileNotFoundError) as file_err:
-            raise FailedDeploy(f'Save had failed due to file-related error: {file_err}')
+            raise FailedSave(f'Saving the image was failed due to file-related error: {file_err}')
         except APIError as err:
-            raise FailedDeploy(f'Save had failed: {err}')
+            raise FailedSave(f'Saving the image was failed: {err}')
 
     def rmi(self):
         """Remove Docker image from the host machine"""
@@ -296,7 +312,7 @@ class Launcher:
 
 
 if __name__ == '__main__':
-    started_time = datetime.datetime.now()
+    started_time = timeit.default_timer()
     exit_code = ExitCode.success
     try:
         logfile = logger.init_logger()
@@ -358,7 +374,7 @@ if __name__ == '__main__':
                 launcher.save()
             if args.nightly:
                 launcher.test()
-            launcher.rmi()  # doesn't check anything here because any error before this step should `raise` itself
+                launcher.rmi()  # doesn't check anything here because any error before this step should `raise` itself
 
     except FailedStep as error:
         logger.switch_to_summary()
@@ -376,6 +392,10 @@ if __name__ == '__main__':
         logger.switch_to_summary()
         log.error(f'{error}')
         exit_code = ExitCode.failed_deploy
+    except FailedSave as error:
+        logger.switch_to_summary()
+        log.error(f'{error}')
+        exit_code = ExitCode.failed_save
     except KeyboardInterrupt:
         logger.switch_to_summary()
         log.info(logger.LINE_SINGLE)
@@ -392,7 +412,7 @@ if __name__ == '__main__':
         log.info(logger.LINE_SINGLE)
         exit_code = ExitCode.failed
     log.info(logger.LINE_DOUBLE)
-    log.info(f'Total time elapsed: {format_timedelta(datetime.datetime.now() - started_time)}')
+    log.info(f'Total time elapsed: {format_timedelta(timeit.default_timer() - started_time)}')
     log.info(f'Exit code: {exit_code.value}')
 
     sys.exit(exit_code.value)

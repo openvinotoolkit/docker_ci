@@ -38,7 +38,7 @@ class TestDemosLinux:
     @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
     @pytest.mark.hddl
     def test_security_hddl(self, is_distribution, is_image_os, tester, image):
-        kwargs = {'devices': ['/dev/ion:/dev/ion'], 'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}
+        kwargs = {'devices': ['/dev/ion:/dev/ion'], 'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # noqa: S108
         tester.test_docker_image(
             image,
             ['apt update',

@@ -179,8 +179,8 @@ def is_image(request):
 def pytest_runtest_setup(item):
     for mark in item.iter_markers():
         if 'hddl' in mark.name and sys.platform.startswith('linux'):
-            process = subprocess.run(['/bin/bash', '-c', f'pidof hddldaemon autoboot'],
+            process = subprocess.run(['/bin/bash', '-c', 'pidof hddldaemon autoboot'],
                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                     shell=False, check=False)  # nosec
+                                     shell=False)  # nosec
             if process.returncode != 0:
-                pytest.skip(f'Test requires running HDDL driver on the host machine')
+                pytest.skip('Test requires running HDDL driver on the host machine')

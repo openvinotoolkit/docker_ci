@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+"""CLI arguments parser for this framework"""
 import argparse
 import pathlib
 import re
@@ -248,6 +249,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
 
     @staticmethod
     def set_default_subparser(name: str):
+        """Set default subparser"""
         if not sys.argv[1:]:
             sys.argv.insert(1, name)
 
@@ -337,8 +339,11 @@ def parse_args(name: str, description: str):
                 'hadolint' not in args.linter_check and 'dive' not in args.linter_check):
             parser.error('Incorrect arguments for --linter_check. Available tests: hadolint, dive')
 
-        if args.distribution == 'base' and args.mode in ('build', 'build_test', 'all') and not args.file:
+        if args.mode in ('build', 'build_test', 'all') and args.distribution == 'base' and not args.file:
             parser.error('The following argument is required: -f/--file')
+
+        if args.mode == 'deploy' and not args.tags:
+            parser.error('The following argument is required: -t/--tags')
 
         if args.mode == 'gen_dockerfile' and args.distribution == 'base':
             parser.error('Generating dockerfile for base distribution is not available. '

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+"""Custom logger for this framework based on logging package from standard Python library"""
 import inspect
 import logging
 import logging.config
@@ -135,7 +136,7 @@ def switch_to_summary():
 
 
 class UniqueFileHandler(logging.FileHandler):
-    """ Handler that creates log file into custom logging directory """
+    """Custom file handler that supports log file creation"""
 
     def __init__(self, filename, dir_=None, **kwargs):
         if not dir_:
@@ -151,6 +152,7 @@ class UniqueFileHandler(logging.FileHandler):
         self._handler.setLevel(logging.DEBUG)
 
     def __getattr__(self, n):
+        """Custom attribute handler for correct attribute access redirecting"""
         if hasattr(self._handler, n):
             return getattr(self._handler, n)
         raise AttributeError
@@ -199,6 +201,7 @@ class CustomFormatter(logging.Formatter):
 
     @staticmethod
     def format_exception_better(text: str) -> str:
+        """Custom exception output formatter"""
         t = text.split('\n')
         s = ''
         for i in t:

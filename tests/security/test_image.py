@@ -28,7 +28,7 @@ class TestSDLImage:
     def test_snyk_linux(self, image, snyk_pull):
         cmd_line = ['docker', 'run', '--rm', '-e', f'SNYK_API={SNYK_API}',
                     '-e', f'SNYK_TOKEN={SNYK_TOKEN}', '-e', 'MONITOR=true',
-                    '-v', f'"{str(pathlib.Path(__file__).parent.parent.parent)}:/project"',
+                    '-v', f'{str(pathlib.Path(__file__).parent.parent.parent)}:/project',
                     '-v', '/var/run/docker.sock:/var/run/docker.sock',
                     'snyk/snyk-cli:docker', 'test', '--docker', image]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec

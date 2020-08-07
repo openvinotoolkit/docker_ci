@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+"""Module handling Docker image building"""
 import logging
 import pathlib
 import typing
@@ -18,25 +19,26 @@ class DockerImageBuilder(DockerAPI):
     """Wrapper for docker.api.client implementing customized build command and logging"""
 
     def build_docker_image(self,
-                           dockerfile: pathlib.Path,
+                           dockerfile: typing.Union[str, pathlib.Path],
                            tag: str,
                            directory: typing.Optional[str] = None,
                            build_args: typing.Optional[typing.Dict[str, str]] = None,
-                           logfile: typing.Optional[pathlib.Path] = None) -> typing.Optional[Image]:
+                           logfile: typing.Optional[pathlib.Path] = None) -> Image:
+        """Build Docker image"""
         if not build_args:
             build_args = {}
         if not directory:
-            directory = self.location
+            directory = str(self.location)
         if not logfile:
             logfile = pathlib.Path(directory) / 'logs' / tag / 'build.log'
-        dockerfile = pathlib.PurePosixPath(str(dockerfile))
+        dockerfile = str(pathlib.PurePosixPath(str(dockerfile)))
 
         logfile.parent.mkdir(exist_ok=True, parents=True)
 
         try:
             image, log_generator = self.client.images.build(path=directory,
                                                             tag=tag,
-                                                            dockerfile=str(dockerfile),
+                                                            dockerfile=dockerfile,
                                                             rm=True,
                                                             use_config_proxy=True,
                                                             buildargs=build_args)
