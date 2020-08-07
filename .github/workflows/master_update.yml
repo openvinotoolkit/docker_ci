@@ -32,7 +32,7 @@ jobs:
       - name: Running Python codestyle checks
 #         if: ${{ always() }}
         run: |
-          flake8 --output-file=flake8_check.log .
+          flake8 --output-file=flake8_check.log --exit-zero .
           mypy . > mypy_check.log
 
       - name: Collecting log artifacts

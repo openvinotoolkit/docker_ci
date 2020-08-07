@@ -1,4 +1,4 @@
-name: Test Workflow
+name: Image building and testing
 on:
   workflow_dispatch:
     inputs:
@@ -27,7 +27,7 @@ jobs:
 #       - name: Pinging Docker daemon
 #         run: docker info
       - name: Generating Dockerfile
-        run: python docker_openvino.py build --dist proprietary --source url --install_type install --package_url ${{ github.event.inputs.package_url }}
+        run: python docker_openvino.py build_test --dist proprietary --source url --install_type install --package_url ${{ github.event.inputs.package_url }}
 #       - name: Pinging Docker daemon from Python
 #         run: python actions_docker_test.py
       - name: Checking resulting image
@@ -39,7 +39,10 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: logs
-          path: logs/
+          path: |
+            logs/
+            ./*.html
+            ./*.log
 #       - name: Collecting Dockerfiles
 #         if: ${{ always() }}
 #         uses: actions/upload-artifact@v2
