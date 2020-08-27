@@ -55,6 +55,6 @@ jobs:
           name: codestyle_checks
           path: |
             ./bandit.html
-            ./flake.log
+            ./flake8.log
             ./mypy.log
             ./utils_unittests.html
