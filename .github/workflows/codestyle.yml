@@ -1,6 +1,6 @@
 name: Codestyle checks
 
-on: [ push, pull_request ]
+on: [ push, pull_request, workflow_dispatch ]
 
 #  push:
 #    branches: [ master ]
@@ -28,19 +28,19 @@ jobs:
           naming radon flake8-rst-docstrings more-itertools packaging pluggy py mypy bandit pytest
 
       - name: Running Bandit
-        run: bandit -f html -o bandit.html
+        run: python3 -m bandit -f html -o bandit.html
           
       - name: Running PEP checks
         if: ${{ always() }}
-        run: flake8 --output-file=flake8.log .
+        run: python3 -m flake8 --output-file=flake8.log .
 
       - name: Running MyPy checks
         if: ${{ always() }}
-        run: mypy --show-error-context --show-column-numbers --pretty . &> mypy.log
+        run: python3 -m mypy --show-error-context --show-column-numbers --pretty . &> mypy.log
 
       - name: Running pytest (not Docker image tests)
         if: ${{ always() }}
-        run: pytest --self-contained-html --html=utils_unittests.html ./utils/tests
+        run: python3 -m pytest --self-contained-html --html=utils_unittests.html ./utils/tests
         
 #      - name: Collecting log artifacts
 #        if: ${{ always() }}

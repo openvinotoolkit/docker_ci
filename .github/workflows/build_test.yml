@@ -19,7 +19,7 @@ jobs:
 #       - name: Pinging Docker daemon
 #         run: docker info
       - name: Generating Dockerfile
-        run: python docker_openvino.py build_test --dist proprietary --source url --install_type install --package_url ${{ github.event.inputs.package_url }}
+        run: python docker_openvino.py build_test --dist proprietary --source url --install_type install --package_url https://registrationcenter-download.intel.com/akdlm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz
 #       - name: Pinging Docker daemon from Python
 #         run: python actions_docker_test.py
       - name: Checking resulting image
