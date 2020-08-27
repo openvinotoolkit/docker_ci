@@ -25,7 +25,7 @@ jobs:
           python3 -m pip install --user flake8 flake8-annotations-complexity flake8-bandit flake8-broken-line
           flake8-bugbear flake8-comprehensions flake8-debugger flake8-eradicate flake8-executable flake8-print
           flake8-string-format flake8_builtins flake8_coding flake8_commas flake8_pep3101 flake8_quotes import-order
-          naming radon flake8-rst-docstrings more-itertools packaging pluggy py mypy bandit pytest pytest-html
+          naming radon flake8-rst-docstrings more-itertools packaging pluggy py mypy bandit pytest pytest-html requests
 
       - name: Running Bandit
         run: python3 -m bandit ./ -f html -o bandit.html
