@@ -1,3 +1,6 @@
+![Codestyle](https://github.com/openvinotoolkit/docker_ci/workflows/Codestyle%20checks/badge.svg)
+![Build & Test](https://github.com/openvinotoolkit/docker_ci/workflows/Image%20building%20and%20testing/badge.svg)
+
 # DockerHub CI for [Intel® Distribution of OpenVINO™ toolkit](https://github.com/openvinotoolkit/openvino)
 The Framework can generate a Dockerfile, build, test and deploy an image with the Intel® Distribution of OpenVINO™ toolkit.
 You can add your layer and customize image of OpenVINO™ for your needs. 
@@ -9,6 +12,7 @@ As Docker\* is (mostly) just an isolation tool, the OpenVINO toolkit inside the 
 so the [OpenVINO documentation](https://docs.openvinotoolkit.org/) is fully applicable to containerized OpenVINO distribution.
 Additionally, we provide receipts on how to manually build a Docker image with OpenVINO inside both for 
 [Linux](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_docker_linux.html) and [Windows](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_docker_windows.html) containers.
+As well you can use available dockerfiles from `<root_project>/dockerfiles/<image_os>` folder.
 
 ## Supported Operation systems for Docker image:
  - Ubuntu 18.04 LTS
@@ -16,14 +20,14 @@ Additionally, we provide receipts on how to manually build a Docker image with O
 
 ## Prebuilt images
 
-Prebuilt images are available on Docker Hub at https://hub.docker.com/u/openvino
+Prebuilt images are available on [Docker Hub](https://hub.docker.com/u/openvino)
 
 ## Licenses
-The DockerHub CI framework for Intel® Distribution of OpenVINO™ toolkit is licensed under [Apache License Version 2.0](LICENSE).
+The DockerHub CI framework for Intel® Distribution of OpenVINO™ toolkit is licensed under [Apache License Version 2.0](./LICENSE).
 By contributing to the project, you agree to the license and copyright terms therein and release your contribution under these terms.
 
 By downloading and using this container and the included software, you agree to the terms and conditions of the software license agreements located [here](https://software.intel.com/en-us/license/eula-for-intel-software-development-products).
-Please, review content inside '<openvino_install_root'>/licensing folder for more details.
+Please, review content inside `<openvino_install_root>/licensing` folder for more details.
 As for any pre-built image usage, it is the image user's responsibility to ensure that any use of this image complies with any relevant licenses and potential fees for all software contained within. 
 We will have no indemnity or warranty coverage from suppliers.
 
@@ -31,6 +35,9 @@ Components:
 - Ubuntu: https://hub.docker.com/_/ubuntu
 - Windows Server Core base OS: https://hub.docker.com/_/microsoft-windows-servercore
 - Intel® Distribution of OpenVINO™ toolkit: https://software.intel.com/en-us/license/eula-for-intel-software-development-products
+
+## Security guideline
+See [SECURITY](./SECURITY.md) guide for details.
 
 
 ## How to Contribute

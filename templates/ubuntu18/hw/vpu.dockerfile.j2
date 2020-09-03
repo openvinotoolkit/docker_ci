@@ -1,4 +1,8 @@
 # for VPU
+
+RUN cp ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/97-myriad-usbboot.rules /etc/udev/rules.d/ && \
+    ldconfig
+
 WORKDIR /opt
 RUN curl -L https://github.com/libusb/libusb/archive/v1.0.22.zip --output v1.0.22.zip && \
     unzip v1.0.22.zip

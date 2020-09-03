@@ -1,11 +1,11 @@
 *.pyc
 .idea
 .pytest_cache
-venv
+.vscode
 tmp
 logs
+venv
 *.exe
 *.zip
 *.tgz
-.vscode
-.mypy_cache
+*.html

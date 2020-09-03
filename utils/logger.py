@@ -12,12 +12,12 @@ LINE_SINGLE = '-' * 79
 LINE_DOUBLE = '=' * 79
 
 
-def init_logger(logdir: typing.Optional[str] = None) -> pathlib.Path:
+def init_logger(logdir: pathlib.Path = None) -> pathlib.Path:
     """Initializing the logger"""
     if logdir is None:
         logfile = pathlib.Path(__file__).parent.parent / 'logs' / 'summary.log'
     else:
-        logfile = pathlib.Path(logdir) / 'summary.log'
+        logfile = logdir / 'summary.log'
 
     if not logfile.parent.exists():
         logfile.parent.mkdir()
@@ -87,7 +87,7 @@ def decorate_logger(logger: typing.Type[logging.Logger], func: typing.Callable[.
     logger._main_handlers = logger_project.handlers[:]
 
 
-def switch_to_custom(name: str, logdir: typing.Optional[str] = 'logs'):
+def switch_to_custom(name: typing.Union[str, pathlib.Path], logdir: typing.Optional[str] = 'logs'):
     """Switching between additional loggers"""
     logger = logging.getLogger('project')
 

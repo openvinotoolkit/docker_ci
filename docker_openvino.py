@@ -12,24 +12,22 @@ import platform
 import shutil
 import sys
 import timeit
-import traceback
 import typing
 
-import pytest  # noqa: I001
 from docker.errors import APIError, ImageNotFound
 from docker.models.images import Image
-from pytest import ExitCode as PytestExitCode
+
+import pytest
 
 from utils import logger
 from utils.arg_parser import parse_args
 from utils.builder import DockerImageBuilder
 from utils.docker_api import DockerAPI
-from utils.exceptions import (FailedBuild, FailedDeploy,  # noqa: I001
-                              FailedSave, FailedStep, FailedTest)
+from utils.exceptions import FailedBuild, FailedDeploy, FailedStep, FailedTest
 from utils.loader import INTEL_OCL_RELEASE
 from utils.render import DockerFileRender
-from utils.tester import ProxyTestPlugin
-from utils.utilities import download_file, format_timedelta, get_system_proxy
+from utils.utilities import (DEFAULT_DATA_CHUNK_SIZE, download_file,
+                             format_timedelta, get_system_proxy)
 
 __version__ = '0.1'
 log = logging.getLogger('project')
@@ -51,7 +49,7 @@ class ExitCode(enum.Enum):
 class Launcher:
     """Main class implementing high-end framework logic"""
 
-    def __init__(self, product: str, arguments: argparse.Namespace):
+    def __init__(self, product: str, arguments: argparse.Namespace, log_dir: pathlib.Path):
         self.render: typing.Optional[DockerFileRender] = None
         self.builder: typing.Optional[DockerImageBuilder] = None
         self.product_name = product
@@ -61,9 +59,8 @@ class Launcher:
         self.kwargs: typing.Dict[str, str] = {}
         self.location = pathlib.Path(os.path.realpath(__file__)).parent
         self.mount_root: pathlib.Path = self.location / 'tests' / 'tmp' / 'mount'
-        self.proxy_plugin = ProxyTestPlugin(self.args)
         self.docker_api: typing.Optional[DockerAPI] = None
-        self.logdir: pathlib.Path = self.location / 'logs' / str(self.image_name).replace('/', '_').replace(':', '_')
+        self.logdir = log_dir
 
     def set_docker_api(self):
         """Setting up Docker Python API client"""
@@ -75,13 +72,10 @@ class Launcher:
             'name': self.product_name,
             'package_url': self.args.package_url,
             'build_id': self.args.build_id,
+            'year': self.args.year,
             'distribution': self.args.distribution,
         })
-        if self.args.proxy:
-            self.kwargs.update(self.args.proxy)
-        else:
-            self.kwargs.update(get_system_proxy())
-
+        self.kwargs.update(get_system_proxy())
         self.kwargs.update(INTEL_OCL_RELEASE[self.args.ocl_release])
 
         if self.args.build_arg:
@@ -101,9 +95,8 @@ class Launcher:
                                        '--dockerfile', str(self.args.file),
                                        f'--junitxml={self.logdir / "hadolint.xml"}',
                                        f'--html={handolint_report}',
-                                       '--self-contained-html', '--tb=no', '--color=yes'],
-                                 plugins=[self.proxy_plugin])
-            if result == PytestExitCode.OK:
+                                       '--self-contained-html', '--tb=no', '--color=yes'])
+            if result == pytest.ExitCode.OK:
                 log.info('Linter checks: PASSED')
             else:
                 log.warning('Linter checks: FAILED')
@@ -121,8 +114,7 @@ class Launcher:
             archive_name = self.args.old_package_url.split('/')[-1]
             tmp_folder = self.location / 'tmp'
 
-            download_file(str(self.args.package_url), tmp_folder / archive_name, proxy=self.args.proxy,
-                          parents_=True)
+            download_file(self.args.package_url, tmp_folder / archive_name, parents_=True)
 
             self.args.package_url = (tmp_folder / archive_name).relative_to(self.location)
             self.args.package_url = str(pathlib.PurePosixPath(self.args.package_url))
@@ -130,17 +122,13 @@ class Launcher:
         self.kwargs['package_url'] = self.args.package_url
 
         log.info('Building Docker image...')
-        if not self.args.path:
-            self.args.path = self.location
-        else:
-            self.args.path = pathlib.Path(self.args.path)
         self.args.file = pathlib.Path(self.args.file)
         if self.args.file.is_absolute():
-            self.args.file = pathlib.Path(self.args.file).relative_to(self.args.path)
+            self.args.file = pathlib.Path(self.args.file).relative_to(self.location)
         self.builder = DockerImageBuilder()
         curr_time = timeit.default_timer()
         self.image = self.builder.build_docker_image(dockerfile=self.args.file,
-                                                     directory=str(self.args.path),
+                                                     directory=str(self.location),
                                                      tag=self.image_name,
                                                      build_args=self.kwargs,
                                                      logfile=self.logdir / 'image_build.log')
@@ -150,14 +138,14 @@ class Launcher:
             raise FailedBuild(f'Error building Docker image {self.args.tags}')
         log.info(f'Docker image {self.args.tags} built successfully')
 
-        if self.args.old_package_url != '':
+        if self.args.old_package_url:
             self.args.package_url, self.args.old_package_url = self.args.old_package_url, self.args.package_url
             self.kwargs['package_url'] = self.args.package_url
-        if tmp_folder != '' and tmp_folder.exists():
-            shutil.rmtree(tmp_folder)
+        if tmp_folder and tmp_folder.exists():
+            shutil.rmtree(tmp_folder, ignore_errors=True)
         log.info('Build dependencies deleted')
 
-    def dive_linter_check(self):
+    def dive_linter_check(self) -> pytest.ExitCode:
         """Checking the Docker image size optimality using the Dive tool (https://github.com/wagoodman/dive)"""
         log.info(logger.LINE_DOUBLE)
         log.info('Running dive checks on the docker image...')
@@ -168,16 +156,16 @@ class Launcher:
                                    self.image_name,
                                    f'--junitxml={self.logdir / "dive.xml"}',
                                    f'--html={dive_report}',
-                                   '--self-contained-html', '--tb=no', '--color=yes'],
-                             plugins=[self.proxy_plugin])
+                                   '--self-contained-html', '--tb=no', '--color=yes'])
         log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
-        if result == PytestExitCode.OK:
+        if result == pytest.ExitCode.OK:
             log.info('Dive checks: PASSED')
         else:
             log.warning('Dive image checks: FAILED')
         log.info(f'Dive report location: {dive_report}')
+        return result
 
-    def sdl_check(self):
+    def sdl_check(self) -> pytest.ExitCode:
         """Checking the Docker image security
 
         Learn more:
@@ -189,52 +177,69 @@ class Launcher:
         sdl_report = str(self.logdir / 'sdl.html')
         curr_time = timeit.default_timer()
         sdl_check = ' or '.join(self.args.sdl_check)
+        dockerfile_args = []
+        if self.args.file:
+            dockerfile_args.extend(['--dockerfile', str(self.args.file.absolute())])
+
         result = pytest.main(args=[f'{self.location / "tests" / "security"}', '-k', sdl_check,
                                    '--image', self.image_name,
+                                   *dockerfile_args,
                                    f'--junitxml={self.logdir / "sdl.xml"}',
                                    f'--html={sdl_report}',
-                                   '--self-contained-html', '--tb=no', '--color=yes'],
-                             plugins=[self.proxy_plugin])
+                                   '--self-contained-html', '--tb=no', '--color=yes'])
         log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
-        if result == PytestExitCode.OK:
+        if result == pytest.ExitCode.OK:
             log.info('SDL checks: PASSED')
         else:
             log.warning('SDL checks: FAILED')
         log.info(f'SDL report location: {sdl_report}')
+        return result
 
     def test(self):
         """Run pytest-based tests on the built Docker image"""
         log.info(logger.LINE_DOUBLE)
         log.info(f'Preparing to run tests on the Docker image {self.image_name}...')
-        if self.args.sdl_check:
-            self.sdl_check()
-        if 'dive' in self.args.linter_check:
-            self.dive_linter_check()
-        test_report = self.logdir / 'tests.html'
         curr_time = timeit.default_timer()
+        result = pytest.ExitCode.OK
+        if self.args.sdl_check:
+            result_sdl = self.sdl_check()
+            if result_sdl != pytest.ExitCode.OK:
+                result = result_sdl
+        if 'dive' in self.args.linter_check:
+            result_dive = self.dive_linter_check()
+            if result_dive != pytest.ExitCode.OK:
+                result = result_dive
+        test_report = self.logdir / 'tests.html'
         test_expression = ''
         if self.args.test_expression:
             test_expression = self.args.test_expression
-        result = pytest.main([f'{self.location / "tests" / "functional"}', '-k', test_expression,
-                              '--image', self.image_name,
-                              '--distribution', self.args.distribution,
-                              '--image_os', self.args.os,
-                              '--mount_root', str(self.mount_root),
-                              # package_url is now mandatory for test-only runtime testing
-                              '--package_url', self.args.package_url,
-                              f"--junitxml={self.logdir / 'tests.xml'}",
-                              f'--html={test_report}',
-                              '--self-contained-html', '--tb=no', '--color=yes'])
+        # package_url is now mandatory for test-only runtime testing
+        package_url = ''
+        if self.args.distribution == 'runtime':
+            package_url = self.args.package_url
+        result_tests = pytest.main([
+            f'{self.location / "tests" / "functional"}',
+            '-k', test_expression,
+            '--image', self.image_name,
+            '--distribution', self.args.distribution,
+            '--image_os', self.args.os,
+            '--mount_root', str(self.mount_root),
+            '--package_url', package_url,
+            f"--junitxml={self.logdir / 'tests.xml'}",
+            f'--html={test_report}',
+            '--self-contained-html',
+            '--tb=no',
+            '--color=yes',
+        ])
         log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
-        if result == PytestExitCode.OK:
+        log.info(f'Testing report location: {test_report}')
+        log.info(f'Testing detailed logs location: {test_report.parent}')
+        if result_tests != pytest.ExitCode.OK and result_tests != pytest.ExitCode.NO_TESTS_COLLECTED:
+            result = result_tests
+        if result == pytest.ExitCode.OK:
             log.info('Tests: PASSED')
-            log.info(f'Testing report location: {test_report}')
-            log.info(f'Testing detailed logs location: {test_report.parent}')
         else:
-            log.error('Tests: FAILED')
-            log.info(f'Testing report location: {test_report}')
-            log.info(f'Testing detailed logs location: {test_report.parent}')
-            raise FailedTest('Tests failed')
+            raise FailedTest('Tests: FAILED')
 
     def tag(self):
         """Tag built Docker image"""
@@ -248,8 +253,8 @@ class Launcher:
                     if not is_passed:
                         raise FailedDeploy(f"Can't tag {self.image_name} image to {self.args.registry}/{tag}")
                     log.info(f'Image {self.image_name} successfully tagged as {self.args.registry}/{tag}')
-        except ImageNotFound as err:
-            raise FailedDeploy(f'{err}')
+        except ImageNotFound:
+            raise FailedDeploy(f'Image not found: {self.image_name}')
         except APIError as err:
             raise FailedDeploy(f'Tagging failed: {err}')
 
@@ -270,11 +275,10 @@ class Launcher:
                 log_name = f'deploy_{tag.replace("/", "_").replace(":", "_")}.log'
                 log_path_file = self.logdir / log_name
                 log.info(f'Image {tag} push log location: {log_path_file}')
-                logger.switch_to_custom(log_name)
+                logger.switch_to_custom(log_path_file)
                 for line in log_generator:
                     for key, value in line.items():
                         if 'error' in key or 'errorDetail' in key:
-                            log.error(f'{value}')
                             raise FailedDeploy(f'{value}')
                         log.info(f'{value}')
                 logger.switch_to_summary()
@@ -297,14 +301,18 @@ class Launcher:
         try:
             if not self.image:
                 self.image = self.docker_api.client.images.get(self.args.tags[0])
-            with open(share_root / archive_name, 'wb') as file:
-                for chunk in self.image.save(chunk_size=None):
-                    file.write(chunk)
+            with open(str(pathlib.PurePosixPath(share_root / archive_name)), 'wb') as file:
+                for chunk in self.image.save(chunk_size=DEFAULT_DATA_CHUNK_SIZE):
+                    if chunk:
+                        file.write(chunk)
             log.info(f'Save time: {format_timedelta(timeit.default_timer() - curr_time)}')
         except (PermissionError, FileExistsError, FileNotFoundError) as file_err:
-            raise FailedSave(f'Saving the image was failed due to file-related error: {file_err}')
+            log.exception(f'Saving the image was failed due to file-related error: {file_err}')
+            return ExitCode.failed_save
         except APIError as err:
-            raise FailedSave(f'Saving the image was failed: {err}')
+            log.exception(f'Saving the image was failed: {err}')
+            return ExitCode.failed_save
+        return ExitCode.success
 
     def rmi(self):
         """Remove Docker image from the host machine"""
@@ -315,11 +323,15 @@ if __name__ == '__main__':
     started_time = timeit.default_timer()
     exit_code = ExitCode.success
     try:
-        logfile = logger.init_logger()
         product_name = 'Intel(R) Distribution of OpenVINO(TM) toolkit'
         des = f'DockerHub CI framework for {product_name}'
         args = parse_args(name=os.path.basename(__file__), description=des)
-        launcher = Launcher(product_name, args)
+        logdir: pathlib.Path = pathlib.Path(os.path.realpath(__file__),
+                                            ).parent / 'logs' / args.tags[0].replace('/', '_').replace(':', '_')
+        if not logdir.parent.exists():
+            logdir.parent.mkdir()
+        logfile = logger.init_logger(logdir)
+        launcher = Launcher(product_name, args, logdir)
 
         log.info(logger.LINE_DOUBLE)
         log.info(f'{des} v{__version__}')
@@ -334,9 +346,9 @@ if __name__ == '__main__':
         if args.mode == 'deploy':
             launcher.set_docker_api()
             launcher.tag()
-            launcher.deploy()
             if args.nightly_save_path:
-                launcher.save()
+                exit_code = launcher.save()
+            launcher.deploy()
 
         if args.mode == 'gen_dockerfile':
             launcher.setup_build_args()
@@ -369,46 +381,41 @@ if __name__ == '__main__':
             if not args.nightly:
                 launcher.test()
             launcher.tag()
-            launcher.deploy()
             if args.nightly_save_path:
-                launcher.save()
+                exit_code = launcher.save()
+            launcher.deploy()
             if args.nightly:
                 launcher.test()
                 launcher.rmi()  # doesn't check anything here because any error before this step should `raise` itself
 
     except FailedStep as error:
         logger.switch_to_summary()
-        log.error(f'{error}')
+        log.exception(error)  # noqa G200
         exit_code = ExitCode.failed
     except FailedBuild as error:
         logger.switch_to_summary()
-        log.error(f'{error}')
+        log.exception(error)  # noqa G200
         exit_code = ExitCode.failed_build
     except FailedTest as error:
         logger.switch_to_summary()
-        log.error(f'{error}')
+        log.exception(error)  # noqa G200
         exit_code = ExitCode.failed_test
     except FailedDeploy as error:
         logger.switch_to_summary()
-        log.error(f'{error}')
+        log.exception(error)  # noqa G200
         exit_code = ExitCode.failed_deploy
-    except FailedSave as error:
-        logger.switch_to_summary()
-        log.error(f'{error}')
-        exit_code = ExitCode.failed_save
     except KeyboardInterrupt:
         logger.switch_to_summary()
         log.info(logger.LINE_SINGLE)
-        log.error(f'{__file__} was interrupted')
+        log.exception(f'{__file__} was interrupted')
         log.info(logger.LINE_SINGLE)
         exit_code = ExitCode.interrupted
     except SystemExit:
         sys.exit(ExitCode.wrong_args.value)
-    except Exception as ex:
+    except Exception:
         logger.switch_to_summary()
         log.info(logger.LINE_SINGLE)
-        log.error(f'Something goes wrong **FAILED**: {ex}')
-        log.error(f'Error: {traceback.format_exc()}')
+        log.exception('Something goes wrong **FAILED**')
         log.info(logger.LINE_SINGLE)
         exit_code = ExitCode.failed
     log.info(logger.LINE_DOUBLE)

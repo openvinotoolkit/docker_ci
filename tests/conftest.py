@@ -36,7 +36,7 @@ def pytest_configure(config):
     if dist == 'runtime':
         log.info('Setting up runtime image dependencies')
         mount_root = pathlib.Path(config.getoption('--mount_root'))
-        package_url = str(config.getoption('--package_url'))
+        package_url = config.getoption('--package_url')
         image_os = config.getoption('--image_os')
         if not (mount_root / 'openvino_dev').exists():
             mount_root.mkdir(parents=True, exist_ok=True)
@@ -78,10 +78,15 @@ def pytest_configure(config):
 
 def pytest_unconfigure(config):
     temp_folder = pathlib.Path(__file__).parent / 'tmp'
-    if temp_folder.exists():
-        log.info('Removing mount dependencies')
-        shutil.rmtree(temp_folder)
+    if not temp_folder.exists():
+        return
+    log.info('Removing mount dependencies')
+    shutil.rmtree(temp_folder, ignore_errors=True)
     log.info('Cleanup completed')
+
+
+def pytest_sessionfinish(session, exitstatus):
+    log.info(f'Tests failed={session.testsfailed} collected={session.testscollected}')
 
 
 @pytest.fixture(scope='session')

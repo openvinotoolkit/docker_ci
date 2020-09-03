@@ -1,7 +1,9 @@
 # setup Python
-ENV PYTHON python3.6
+ENV PYTHON_VER python3.6
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON} && \
+    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON_VER} && \
     rm -rf /var/lib/apt/lists/*
+
+RUN ${PYTHON_VER} -m pip install --upgrade pip

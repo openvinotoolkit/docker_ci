@@ -2,7 +2,6 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 """Module that handles running tests on Docker image"""
-import argparse
 import logging
 import pathlib
 import typing
@@ -10,7 +9,6 @@ import typing
 from docker.errors import APIError
 from docker.models.containers import Container
 from docker.models.images import Image
-import pytest  # noqa: I001
 
 from utils import logger
 from utils.docker_api import DockerAPI
@@ -35,10 +33,11 @@ class DockerImageTester(DockerAPI):
 
     def test_docker_image(self,
                           image: typing.Tuple[Image, str],
-                          commands: typing.List[str], test_name: str, **kwargs: typing.Optional[typing.Dict]):
+                          commands: typing.List[str], test_name: str,
+                          is_cached: bool = False, **kwargs: typing.Optional[typing.Dict]):
         """Running list of commands inside the container, logging the output and handling possible exceptions"""
         if isinstance(image, Image):
-            file_tag = str(image.tags[0]).replace('/', '_').replace(':', '_')
+            file_tag = image.tags[0].replace('/', '_').replace(':', '_')
         elif isinstance(image, str):
             file_tag = image.replace('/', '_').replace(':', '_')
         else:
@@ -59,7 +58,7 @@ class DockerImageTester(DockerAPI):
             if self.container and image not in self.container.image.tags:
                 self.container.stop()
                 self.container = None
-            if not self.container:
+            if not self.container or not is_cached:
                 self.container = self.client.containers.run(image=image, **run_kwargs)
         except APIError as err:
             raise FailedTest(f'Docker daemon API error while starting the container: {err}')
@@ -74,34 +73,22 @@ class DockerImageTester(DockerAPI):
                 exit_code, output = self.container.exec_run(cmd=command)
                 output_total.append(output.decode('utf-8'))
                 if exit_code != 0:
-                    log.error(f'Test command {command} have returned non-zero exit code {exit_code}')
+                    log.error(f'- Test {test_name}: command {command} have returned non-zero exit code {exit_code}')
                     log.error(f'Failed command stdout: {output_total[-1]}')
-                    logger.switch_to_custom(logfile.name, str(logfile.parent))
+                    logger.switch_to_custom(logfile, str(logfile.parent))
                     for output in output_total:
                         log.error(str(output))
                     logger.switch_to_summary()
-                    raise FailedTest(f'Test command {command} have returned non-zero exit code {exit_code}')
+                    raise FailedTest(f'Test {test_name}: command {command} '
+                                     f'have returned non-zero exit code {exit_code}')
                 self.container.reload()
                 if self.container.status != 'running':
-                    raise FailedTest('Test command exit code is 0, but container status != "running" '
+                    raise FailedTest(f'Test {test_name}: command exit code is 0, but container status != "running" '
                                      'after this command')
-            logger.switch_to_custom(logfile.name, str(logfile.parent))
+            logger.switch_to_custom(logfile, str(logfile.parent))
             for output in output_total:
                 log.info(str(output))
             logger.switch_to_summary()
 
         except APIError as err:
-            raise FailedTest(f'Docker daemon API error while executing test command: {err}')
-
-
-class ProxyTestPlugin:
-    """Proxy handler to use in tests"""
-
-    def __init__(self, args: argparse.Namespace):
-        self.__name__ = 'proxy_plugin'
-        self.proxy = args.proxy
-
-    @pytest.fixture
-    def get_proxy(self):
-        """Fixture for using custom proxies in tests"""
-        return self.proxy
+            raise FailedTest(f'Docker daemon API error while executing test {test_name}: {err}')

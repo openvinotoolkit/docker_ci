@@ -19,11 +19,6 @@ class FailedDeploy(Exception):
     pass
 
 
-class FailedSave(Exception):
-    """Exception on failed Docker image save"""
-    pass
-
-
 class FailedTest(Exception):
     """Exception on failed Docker image test"""
     pass
@@ -31,4 +26,9 @@ class FailedTest(Exception):
 
 class LayerNotFound(Exception):
     """Exception on missing layer template for Dockerfile render"""
+    pass
+
+
+class InputNotValid(Exception):
+    """Exception on invalid UTF-8 string"""
     pass

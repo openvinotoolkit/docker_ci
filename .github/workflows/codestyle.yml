@@ -10,12 +10,13 @@ on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
   codestyle:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, windows-2019]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Code checkout
         uses: actions/checkout@v2
-#       - name: Checking repo
-#         run: ls -lAh
       - name: Setting up Python
         uses: actions/setup-python@v2
         with:
@@ -34,11 +35,11 @@ jobs:
           
       - name: Running PEP checks
         if: ${{ always() }}
-        run: python3 -m flake8 ./ --output-file=flake8.log
+        run: python3 -m flake8 ./ --config=setup.cfg --output-file=flake8.log
 
       - name: Running MyPy checks
         if: ${{ always() }}
-        run: python3 -m mypy ./ --show-error-context --show-column-numbers --pretty &> mypy.log
+        run: python3 -m mypy ./ --config-file ./setup.cfg --show-error-context --show-column-numbers --pretty &> mypy.log
 
       - name: Running pytest (not Docker image tests)
         if: ${{ always() }}

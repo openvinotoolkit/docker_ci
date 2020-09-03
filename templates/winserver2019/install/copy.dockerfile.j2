@@ -6,8 +6,10 @@ RUN powershell.exe -Command `
     Expand-Archive -Path "./*.zip" -DestinationPath "%INTEL_OPENVINO_DIR%" -Force ; `
     Remove-Item "./*.zip" -Force
 
+ARG year
 WORKDIR C:\intel
-RUN mklink /D openvino %INTEL_OPENVINO_DIR%
+RUN mklink /D openvino %INTEL_OPENVINO_DIR% && `
+    mklink /D openvino_%year% %INTEL_OPENVINO_DIR%
 
 WORKDIR ${TEMP_DIR}
 COPY scripts\create_symlinks.bat create_symlinks.bat

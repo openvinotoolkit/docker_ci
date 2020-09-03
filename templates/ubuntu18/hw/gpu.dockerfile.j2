@@ -9,7 +9,7 @@ ARG TEMP_DIR=/tmp/opencl
 
 WORKDIR ${TEMP_DIR}
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ocl-icd-libopencl1=2.2.11-1ubuntu1 && \
+    apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
     rm -rf /var/lib/apt/lists/* && \
     curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-gmmlib_${GMMLIB}_amd64.deb" --output "intel-gmmlib_${GMMLIB}_amd64.deb" && \
     curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-core_${IGC_CORE}_amd64.deb" --output "intel-igc-core_${IGC_CORE}_amd64.deb" && \

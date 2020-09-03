@@ -34,10 +34,10 @@ class TestLinterImage:
             print(f'Linter dive output: {process.stdout.decode()}')
 
     @pytest.mark.skipif(not sys.platform.startswith('win32'), reason="Linux doesn't support windows executable files")
-    def test_dive_windows(self, get_proxy, image):
+    def test_dive_windows(self, image):
         location = pathlib.Path(__file__).parent
         dive_zip_file = location / 'dive.zip'
-        download_file(DIVE_URL['windows'], dive_zip_file, get_proxy)
+        download_file(DIVE_URL['windows'], dive_zip_file)
         unzip_file(str(dive_zip_file), str(location))
         dive_file = location / 'dive.exe'
         cmd_line = [str(dive_file), '--ci', image]

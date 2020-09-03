@@ -1,0 +1,6 @@
+.idea
+.git
+.pytest_cache
+.vscode
+logs
+venv

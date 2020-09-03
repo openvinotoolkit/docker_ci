@@ -6,7 +6,6 @@ import subprocess  # nosec
 import sys
 
 import pytest
-
 from tests.conftest import switch_container_engine
 
 

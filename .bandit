@@ -1,0 +1,4 @@
+[bandit]
+# wait pull request 'Add skip configuration to assert_used #633'
+assert_used:
+  skips: ['^test*.py$']

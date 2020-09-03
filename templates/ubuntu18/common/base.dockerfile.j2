@@ -31,7 +31,7 @@ ARG DEPENDENCIES="autoconf \
                   dos2unix"
 
 # hadolint ignore=DL3008
-RUN apt-get update && \
+RUN apt-get update && apt upgrade -y --no-install-recommends && \
     apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
@@ -61,7 +61,7 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 
 CMD ["/bin/bash"]
 
-# Setup custom layers
+# Setup custom layers below
 {% for layer in layers %}
 {{ layer|safe }}
 {% endfor %}

@@ -10,15 +10,16 @@ With this guide, you will learn how to:
 6. [Run built image](#run-built-image)  
 
 ## Generate Dockerfile
-To generate Dockerfile with your settings, run the following command in the repository's root:  
+You can use available dockerfiles from `<root_project>/dockerfiles/<image_os>` folder or generate Dockerfile with your settings. 
+Run the following command in the repository's root:  
 ```python
 python3 docker_openvino.py gen_dockerfile --distribution dev --install_type copy --product_version 2020.4
 ``` 
-You can find generated dockerfile in <root_project>/dockerfiles/<image_os> folder.
+You can find generated dockerfile in `<root_project>/dockerfiles/<image_os>` folder. By default, Dockerfile name format is `openvino_<devices>_<distribution>_<product_version>.dockerfile`.
 
 Select a product distribution:
 ```cmd
-  -d, --distribution TYPE  Available types: dev, data_dev, runtime, internal_dev, proprietary or 
+  -dist, --distribution TYPE  Available types: dev, data_dev, runtime, internal_dev, proprietary or 
                            base (with CPU only and without installing dependencies). 
                            Using key --file <path_to_dockerfile> is mandatory to build base distribution image.
                            base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder.
@@ -35,6 +36,11 @@ Or if you have a product package link, you can specify directly:
   -u, --package_url URL  Package external or local url, use http://, https://, ftp:// access scheme or relative <root_project> local path
 ```
 
+**Note:** This is required that OpenVINO package is named in the right way, which is, 
+distribution type (runtime, dev) and build number (e.g., 2019.4.420) have to be part of the URI, 
+for example, `openvino_dev_2019.3.376.tgz` fits the requirements, while `ov_R3.tgz` is not. 
+Otherwise, you should specify `--distribution` and `--product_version` directly.
+
 Specify the product package source and install type:
 ```cmd
   -s, --source {url,local}  Source of the package: external URL or relative <root_project> local path. By default: url.
@@ -48,7 +54,9 @@ Select an image operation system:
 
 You can customize platform targets and minimize image size:
 ```cmd
-  -d, --device NAME  Target inference hardware: cpu, gpu, vpu, hddl. Default is all.
+  -d, --device NAME  Target inference hardware: cpu, gpu, vpu, hddl. Default is all. 
+                     Dockerfile name format has the first letter from device name, 
+                     e.g. for CPU, HDDL it will be openvino_ch_<distribution>_<product_version>.dockerfile
 ```
 
 **Prerequisite:** Install the dependencies Microsoft Visual Studio* with C++ 2019, 2017, or 2015 with MSBuild
@@ -56,7 +64,7 @@ You can customize platform targets and minimize image size:
 You can add Visual Studio Build Tools to Windows OS docker image. Previously you need to add offline installer layout in scripts/msbuild2019 folder, 
 please follow the official Microsoft [documentation](https://docs.microsoft.com/en-us/visualstudio/install/create-an-offline-installation-of-visual-studio?view=vs-2019).
 Or use Build Tools online installer, follow the [documentation](https://docs.microsoft.com/en-us/visualstudio/install/build-tools-container?view=vs-2019) and 
-update <repository_root>/templates/winserver2019/msbuild/msbuild2019.dockerfile.j2 dockerfile.
+update `<repository_root>/templates/winserver2019/msbuild/msbuild2019.dockerfile.j2` dockerfile.
 Visual Studio Build Tools are licensed as a supplement your existing Visual Studio license. 
 Any images built with these tools should be for your personal use or for use in your organization in accordance with your existing Visual Studio and Windows licenses.
 Please don’t share the image with Visual Studio Build Tools on a public Docker hub.
@@ -68,7 +76,7 @@ You can add your layer and customize image:
 ```cmd
   -l, --layers NAME  Setup your layer. 
                      Use name of <your_layer>.dockerfile.j2 file located in <project_root>/templates/<image_os>/layers folder. 
-                     Layer will be added to the end of product dockerfile. Available layer: model_server (https://github.com/IntelAI/OpenVINO-model-server).
+                     Layer will be added to the end of product dockerfile. Available layer: model_server (https://github.com/openvinotoolkit/model_server).
 ```
 You can add your build arguments as well:
 ```cmd
@@ -82,9 +90,9 @@ To build images from Dockerfiles, run the following command in the repository's 
 python3 docker_openvino.py build --package_url <url> --install_type copy
 ``` 
 
-You can use previously generated dockerfiles from <repository_root>/dockerfiles/<os_image>
+By default, 'build' mode will generate a dockerfile, but you can specify dockerfile directly:
 ```cmd
-  -f, --file NAME  Name of the Dockerfile, that will be used to build an image.
+  -f, --file NAME  Name of the Dockerfile, that uses to build an image.
 ```
 Specify a tag for image
 ```cmd
@@ -93,13 +101,14 @@ Specify a tag for image
 ```
 
 ## Deploy image
-**Prerequisite:** previously login to your registry: docker login <registry_url>
+**Prerequisite:** previously login to your registry: `docker login <registry_url>`
+
 To deploy image, run the following command in the repository's root:  
 ```python
 python3 docker_openvino.py deploy --registry docker.io/openvino --tags my_openvino_image:123 --tags my_openvino_image:latest
 ``` 
 
-**[Mandatory]** Specify a registry and tags for image deploy:
+**Mandatory:** Specify a registry and tags for image deploy:
 ```cmd
    -r, --registry URL:PORT Registry host and optionally a port in the "host:port" format
    -t , --tags IMAGE_NAME:TAG  Source image name and optionally a tags in the "IMAGE_NAME:TAG" format.
@@ -129,32 +138,25 @@ To only test your local image:
 python3 docker_openvino.py test --tags <image_name:tag> -os <image_os> --distribution <type>
 ``` 
 
-**[Mandatory]** Options tag and distribution are mandatory. Image operation system is 'ubuntu18' by default.
+**Mandatory:** Options tag and distribution are mandatory. Image operation system is 'ubuntu18' by default.
 
 ## All in one
-**Prerequisite:** previously login to your registry: docker login <registry_url>
+**Prerequisite:** previously login to your registry: `docker login <registry_url>`
+
 To gen_dockerfile, build, test and deploy image, run the following command in the repository's root:  
 ```python
 python3 docker_openvino.py all --distribution dev --install_type copy --product_version 2020.2 --registry docker.io/openvino 
 ``` 
-See build and tests logs in <repository_root>/logs/<image_tag> folder and summary.log in <repository_root>/logs
+See build and tests logs in `<repository_root>/logs/<image_tag>` folder and summary.log in `<repository_root>/logs`
 
-**Note**: if you are building the images on the computer behind the proxy, add needed proxies to the command above 
-using the following options:
-```
-  --http_proxy URL      HTTP proxy settings. By default use system settings.
-  --https_proxy URL     HTTPS proxy settings. By default use system settings.
-  --ftp_proxy URL       FTP proxy settings. By default use system settings.
-  --no_proxy URL        No proxy settings. By default use system settings.
-```
+**Note:** if you are building the images on the computer behind the proxy, system proxy will be used by default.
 
 There is a number of other parameters that can be passed to `docker_openvino.py`, 
 You can see all of them and their descriptions by running:
-Available modes: gen_dockerfile, build, build_test, test, deploy, **all**(by default)
 ```python
 python3 docker_openvino.py <mode> --help
 ```
-
+Available modes: gen_dockerfile, build, build_test, test, deploy, **all**(by default)
 ## Run built image
 
 To start the interactive session, run the following command allows inference on the CPU:
@@ -163,7 +165,7 @@ To start the interactive session, run the following command allows inference on 
 ```bash
 docker run -it --rm openvino/<image_name>:latest
 ```
-**Windows image** (currently support only CPU target):
+**Windows image:** (currently support only CPU target):
 ```cmd
 docker run -it --rm openvino/<image_name>:latest
 ```
@@ -173,7 +175,7 @@ If you want to try some demos then run image with the root privileges (some addi
 ```bash
 docker run -itu root:root --rm openvino/<image_name>:latest /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d CPU -sample-options -no_show"
 ```
-**Windows image** (currently support only CPU target):
+**Windows image:** (currently support only CPU target):
 ```cmd
 docker run -itu ContainerAdministrator --rm openvino/<image_name>:latest cmd /S /C "cd deployment_tools\demo && demo_security_barrier_camera.bat -d CPU -sample-options -no_show"
 ```

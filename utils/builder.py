@@ -41,8 +41,9 @@ class DockerImageBuilder(DockerAPI):
                                                             dockerfile=dockerfile,
                                                             rm=True,
                                                             use_config_proxy=True,
+                                                            nocache=True,
                                                             buildargs=build_args)
-            logger.switch_to_custom(logfile.name, str(logfile.parent))
+            logger.switch_to_custom(logfile, str(logfile.parent))
             log.info(f'build command: docker build {directory} -f {dockerfile} '
                      f'{"".join([f"--build-arg {k}={v} " for k, v in build_args.items()])}')
             for line in log_generator:
@@ -56,7 +57,7 @@ class DockerImageBuilder(DockerAPI):
             log.error(f'Docker server error: {error}')
 
         except BuildError as error:
-            logger.switch_to_custom(logfile.name, str(logfile.parent))
+            logger.switch_to_custom(logfile, str(logfile.parent))
             log.error(f'build command: docker build {directory} -f {dockerfile} '
                       f'{"".join([f"--build-arg {k}={v} " for k, v in build_args.items()])}')
             for line in error.build_log:

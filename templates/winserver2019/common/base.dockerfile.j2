@@ -30,7 +30,7 @@ USER ContainerUser
 
 CMD ["cmd.exe"]
 
-# Setup custom layers
+# Setup custom layers below
 {% for layer in layers %}
 {{ layer|safe }}
 {% endfor %}
