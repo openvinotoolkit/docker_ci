@@ -5,6 +5,7 @@
 """Main script of this framework, putting all the logic together"""
 import argparse
 import enum
+import json
 import logging
 import os
 import pathlib
@@ -136,6 +137,16 @@ class Launcher:
         log.info(f"Build log location: {self.logdir / 'image_build.log'}")
         if not self.image:
             raise FailedBuild(f'Error building Docker image {self.args.tags}')
+        log.info(f'Save image data in {self.args.image_json_path} file')
+        try:
+            if not self.args.image_json_path.parent.exists():
+                self.args.image_json_path.parent.mkdir()
+            with self.args.image_json_path.open(mode='w', encoding='utf-8') as f:
+                json.dump({'image_name': self.image_name,
+                           'distribution': self.args.distribution}, f, ensure_ascii=False, indent=4)
+        except Exception:
+            log.exception(f'Failed to save image data in {self.args.image_json_path} file')
+
         log.info(f'Docker image {self.args.tags} built successfully')
 
         if self.args.old_package_url:
@@ -331,6 +342,8 @@ if __name__ == '__main__':
         if not logdir.parent.exists():
             logdir.parent.mkdir()
         logfile = logger.init_logger(logdir)
+        if not args.image_json_path:
+            args.image_json_path = logdir / 'image_data.json'
         launcher = Launcher(product_name, args, logdir)
 
         log.info(logger.LINE_DOUBLE)
@@ -384,9 +397,6 @@ if __name__ == '__main__':
             if args.nightly_save_path:
                 exit_code = launcher.save()
             launcher.deploy()
-            if args.nightly:
-                launcher.test()
-                launcher.rmi()  # doesn't check anything here because any error before this step should `raise` itself
 
     except FailedStep as error:
         logger.switch_to_summary()

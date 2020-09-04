@@ -44,6 +44,11 @@ class DockerArgumentParser(argparse.ArgumentParser):
             help='Name of the Dockerfile, that uses to build an image.',
         )
 
+        parser.add_argument(
+            '--image_json_path',
+            help='Provide path to save image data in .json format file. '
+                 'By default, it is stored in the logs folder.')
+
     @staticmethod
     def add_test_args(parser: argparse.ArgumentParser):
         """Adding args needed to run tests on the built Docker image"""
@@ -283,7 +288,7 @@ def parse_args(name: str, description: str):
             elif isinstance(arg_val, str):
                 check_printable_utf8_chars(arg_val)
 
-        for attr_name in ('package_url', 'file'):
+        for attr_name in ('package_url', 'file', 'image_json_path'):
             if hasattr(args, attr_name) and getattr(args, attr_name):
                 check_internal_local_path(getattr(args, attr_name))
 
@@ -323,6 +328,11 @@ def parse_args(name: str, description: str):
 
         if args.distribution == 'proprietary' and args.install_type == 'copy':
             parser.error('For proprietary distribution set install type=install.')
+
+        if hasattr(args, 'image_json_path') and args.image_json_path:
+            args.image_json_path = pathlib.Path(args.image_json_path).absolute()
+            if args.image_json_path.is_symlink():
+                parser.error('Do not use symlink and hard link for --image_json_path key. It is an insecure way. ')
 
         if hasattr(args, 'file') and args.file:
             args.file = pathlib.Path(args.file).absolute()

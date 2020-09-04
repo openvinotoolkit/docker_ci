@@ -39,14 +39,16 @@ default_args = {
             'source': 'local',
             'install_type': 'copy',
             'product_version': '2020.1',
+            'image_json_path': 'image_data.json',
         },
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
             'dockerfile_name': 'openvino_cgvh_dev_2020.1.dockerfile',
             'python': 'python36',
             'tags': ['ubuntu18_dev:2020.1', 'ubuntu18_dev:latest'],
+            'image_json_path': 'image_data.json',
         },
-        id='set product_version and distribution manually',
+        id='set product_version, distribution and image_json_path manually',
     ),
     pytest.param(
         {
