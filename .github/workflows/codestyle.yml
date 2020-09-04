@@ -2,12 +2,6 @@ name: Codestyle checks
 
 on: [ push, pull_request, workflow_dispatch ]
 
-#  push:
-#    branches: [ master ]
-#  workflow_dispatch:
-#   pull_request:
-#     branches: [ master ]
-
 jobs:
   codestyle:
     strategy:
@@ -31,33 +25,16 @@ jobs:
           naming radon flake8-rst-docstrings more-itertools packaging pluggy py pytest pytest-html pytest-metadata
 
       - name: Running Bandit
-        run: python3 -m bandit ./ -f html -o bandit.html
+        run: python3 -m bandit -r ./ -f screen
           
       - name: Running PEP checks
         if: ${{ always() }}
-        run: python3 -m flake8 ./ --config=setup.cfg --output-file=flake8.log
+        run: python3 -m flake8 ./ --config=setup.cfg --show-source
 
       - name: Running MyPy checks
         if: ${{ always() }}
-        run: python3 -m mypy ./ --config-file ./setup.cfg --show-error-context --show-column-numbers --pretty &> mypy.log
+        run: python3 -m mypy ./ --config-file ./setup.cfg --show-error-context --show-column-numbers --pretty
 
       - name: Running pytest (not Docker image tests)
         if: ${{ always() }}
-        run: python3 -m pytest ./utils/tests --self-contained-html --html=utils_unittests.html
-        
-#      - name: Collecting log artifacts
-#        if: ${{ always() }}
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: logs
-#          path: logs/
-      - name: Collecting codestyle artifacts
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: codestyle_checks
-          path: |
-            ./bandit.html
-            ./flake8.log
-            ./mypy.log
-            ./utils_unittests.html
+        run: python3 -m pytest ./utils/tests

@@ -49,7 +49,7 @@ def temp_zip(tmp_path, temp_file):
     ),
 ])
 def test_format_timedelta(date, res):
-    assert utilities.format_timedelta(date) == res  # noqa: S101
+    assert utilities.format_timedelta(date) == res  # noqa: S101  # nosec
 
 
 class TestDownloadFile:
@@ -107,7 +107,7 @@ class TestDownloadFile:
                 filename=temp_file,
             )
         except Exception as e:
-            assert str(e) == 'Proxy check'  # noqa: S101
+            assert str(e) == 'Proxy check'  # noqa: S101  # nosec
 
     @pytest.mark.parametrize('proxy, exception', [
         pytest.param(
@@ -152,7 +152,7 @@ class TestDownloadFile:
 def test_get_system_proxy(mock_data, res):
     with mock.patch('os.environ.copy') as mock_env:
         mock_env.return_value = mock_data
-        assert utilities.get_system_proxy() == res  # noqa: S101
+        assert utilities.get_system_proxy() == res  # noqa: S101  # nosec
 
 
 class TestUnzipFile:
@@ -197,7 +197,7 @@ def test_get_folder_structure_recursively(mock_exists, mock_walk, mock_data, ign
     mock_exists.return_value = True
     mock_walk.return_value = mock_data
     out = list(map(lambda path: pathlib.Path(path).as_posix(), utilities.get_folder_structure_recursively('', ignore)))
-    assert out == res  # noqa: S101
+    assert out == res  # noqa: S101  # nosec
 
 
 class TestCheckPrintableUTF8Chars:
@@ -224,7 +224,7 @@ class TestCheckPrintableUTF8Chars:
         ),
     ])
     def test_valid_input(self, string):
-        assert utilities.check_printable_utf8_chars(string) == string  # noqa: S101
+        assert utilities.check_printable_utf8_chars(string) == string  # noqa: S101  # nosec
 
     @pytest.mark.parametrize('string', [
         pytest.param(
@@ -266,7 +266,7 @@ class TestCheckInternalLocalPath:
 
     ])
     def test_valid_relative_path(self, path):
-        assert utilities.check_internal_local_path(path) == path  # noqa: S101
+        assert utilities.check_internal_local_path(path) == path  # noqa: S101  # nosec
 
     @pytest.mark.parametrize('path', [
         pytest.param(
@@ -315,7 +315,7 @@ class TestCheckInternalLocalPath:
         temp_mock = mock.MagicMock(**{'absolute.return_value': path})
         temp_mock.parent = root
         mock_path.return_value = temp_mock
-        assert utilities.check_internal_local_path(path) == path  # noqa: S101
+        assert utilities.check_internal_local_path(path) == path  # noqa: S101  # nosec
 
     @pytest.mark.parametrize('root, path', [
         pytest.param(

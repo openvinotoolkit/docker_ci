@@ -2,6 +2,7 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import argparse
+import pathlib
 from unittest import mock
 
 import pytest
@@ -46,7 +47,7 @@ default_args = {
             'dockerfile_name': 'openvino_cgvh_dev_2020.1.dockerfile',
             'python': 'python36',
             'tags': ['ubuntu18_dev:2020.1', 'ubuntu18_dev:latest'],
-            'image_json_path': 'image_data.json',
+            'image_json_path': pathlib.Path('image_data.json').absolute(),
         },
         id='set product_version, distribution and image_json_path manually',
     ),
