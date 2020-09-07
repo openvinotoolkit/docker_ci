@@ -24,7 +24,7 @@ class TestSDLImage:
 
     @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Snyk Linux docker image '
                                                                      'can not scan windows images')
-    @pytest.mark.skipif(SNYK_TOKEN == '',  # noqa: S105
+    @pytest.mark.skipif(SNYK_TOKEN == '',  # noqa: S105 # nosec
                         reason='Missing snyk token to do test. Specify it in setup.py file')
     def test_snyk_linux(self, image, snyk_pull, dockerfile):
         dockerfile_args = []
@@ -43,7 +43,7 @@ class TestSDLImage:
             print(f'SDL snyk output: {process_out}')
 
     @pytest.mark.skipif(not sys.platform.startswith('win32'), reason="Linux doesn't support windows executable files")
-    @pytest.mark.skipif(SNYK_TOKEN == '',  # noqa: S105
+    @pytest.mark.skipif(SNYK_TOKEN == '',  # noqa: S105 # nosec
                         reason='Missing snyk token to do test. Specify it in setup.py file')
     def test_snyk_windows(self, image, dockerfile):
         location = pathlib.Path(__file__).parent

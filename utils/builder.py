@@ -60,3 +60,5 @@ class DockerImageBuilder(DockerAPI):
 
         except APIError as error:
             log.error(f'Docker server error: {error}')
+
+        return None

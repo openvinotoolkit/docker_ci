@@ -58,6 +58,8 @@ class DockerImageTester(DockerAPI):
             if self.container and image not in self.container.image.tags:
                 self.container.stop()
                 self.container = None
+            if self.container and not is_cached:
+                self.container.stop()
             if not self.container or not is_cached:
                 self.container = self.client.containers.run(image=image, **run_kwargs)
         except APIError as err:

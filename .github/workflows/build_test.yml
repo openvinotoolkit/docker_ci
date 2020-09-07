@@ -13,7 +13,7 @@ jobs:
             cli_opts: "-os ubuntu18"
           - os: windows-2019
             package_url: https://registrationcenter-download.intel.com/akdlm/irc_nas/16801/w_openvino_toolkit_p_2020.4.287.exe
-            cli_opts: "-os winserver2019 --msbuild msbuild2019"
+            cli_opts: "-os winserver2019"
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:

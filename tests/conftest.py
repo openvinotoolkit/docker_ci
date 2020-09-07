@@ -42,14 +42,14 @@ def pytest_configure(config):
             mount_root.mkdir(parents=True, exist_ok=True)
             if package_url.startswith(('http://', 'https://', 'ftp://')):
                 log.info('Downloading dependent package...')
-                if image_os == 'ubuntu18':
+                if image_os == 'ubuntu':
                     download_file(package_url.replace('_runtime_', '_dev_'),
                                   filename=mount_root / 'dldt.tgz',
                                   parents_=True, exist_ok_=True)
                     log.info('Extracting dependent package...')
                     with tarfile.open(str(mount_root / 'dldt.tgz'), 'r') as tar_file:
                         tar_file.extractall(str(mount_root / 'openvino_dev'))
-                elif image_os == 'winserver2019':
+                elif image_os == 'win':
                     download_file(package_url.replace('_runtime_', '_dev_'),
                                   filename=mount_root / 'dldt.zip',
                                   parents_=True, exist_ok_=True)

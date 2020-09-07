@@ -157,7 +157,7 @@ class Launcher:
             shutil.rmtree(tmp_folder, ignore_errors=True)
         log.info('Build dependencies deleted')
 
-    def dive_linter_check(self) -> pytest.ExitCode:
+    def dive_linter_check(self) -> typing.Union[int, ExitCode]:
         """Checking the Docker image size optimality using the Dive tool (https://github.com/wagoodman/dive)"""
         log.info(logger.LINE_DOUBLE)
         log.info('Running dive checks on the docker image...')
@@ -177,7 +177,7 @@ class Launcher:
         log.info(f'Dive report location: {dive_report}')
         return result
 
-    def sdl_check(self) -> pytest.ExitCode:
+    def sdl_check(self) -> typing.Union[int, ExitCode]:
         """Checking the Docker image security
 
         Learn more:

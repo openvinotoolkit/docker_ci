@@ -24,6 +24,7 @@ RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone) /etc/localtime
 ARG DEPENDENCIES="autoconf \
                   automake \
                   build-essential \
+                  cpio \
                   gnupg2 \
                   libdrm2 \
                   lsb-release \
