@@ -26,6 +26,9 @@ Prebuilt images are available on [Docker Hub](https://hub.docker.com/u/openvino)
 The DockerHub CI framework for Intel® Distribution of OpenVINO™ toolkit is licensed under [Apache License Version 2.0](./LICENSE).
 By contributing to the project, you agree to the license and copyright terms therein and release your contribution under these terms.
 
+**LEGAL NOTICE: By accessing, downloading or using this software and any required dependent software (the “Software Package”), you agree to the terms and conditions of the software license agreements for the Software Package, which may also include notices, disclaimers, or license terms for third party software included with the Software Package. 
+Please refer to the “third-party-programs.txt” or other similarly-named text file for additional details.**
+
 By downloading and using this container and the included software, you agree to the terms and conditions of the software license agreements located [here](https://software.intel.com/en-us/license/eula-for-intel-software-development-products).
 Please, review content inside `<openvino_install_root>/licensing` folder for more details.
 As for any pre-built image usage, it is the image user's responsibility to ensure that any use of this image complies with any relevant licenses and potential fees for all software contained within. 
