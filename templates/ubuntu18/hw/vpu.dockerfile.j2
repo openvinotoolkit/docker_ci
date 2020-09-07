@@ -11,9 +11,6 @@ WORKDIR /opt/libusb-1.0.22
 RUN ./bootstrap.sh && \
     ./configure --disable-udev --enable-shared && \
     make -j4
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libusb-1.0-0-dev=2:1.0.21-2 && \
-    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/libusb-1.0.22/libusb
 RUN /bin/mkdir -p '/usr/local/lib' && \
