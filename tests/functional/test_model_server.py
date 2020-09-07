@@ -8,7 +8,7 @@ import pytest
 
 class TestModelServerLinux:
 
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.parametrize('is_image', ('model_server',), indirect=True)
     def test_model_server_unit(self, is_image_os, is_image, tester, image, mount_root):
         # TODO: migrate duplicate code to separate function and change way to get dev_root

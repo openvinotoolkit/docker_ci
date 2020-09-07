@@ -9,7 +9,7 @@ import pytest
 class TestSamplesLinux:
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -29,7 +29,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_hello_classification_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -50,7 +50,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_hello_classification_cpp_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -73,7 +73,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_hello_reshape_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -93,7 +93,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_hello_reshape_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -114,7 +114,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_hello_reshape_cpp_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -137,7 +137,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_object_detection_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -157,7 +157,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_object_detection_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -178,7 +178,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_object_detection_cpp_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -201,7 +201,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_classification_async_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -224,7 +224,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_classification_async_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -248,7 +248,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_classification_async_cpp_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -277,7 +277,7 @@ class TestSamplesLinux:
 class TestSamplesLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', (['runtime'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -317,7 +317,7 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', (['runtime'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_hello_classification_cpp_gpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -355,7 +355,7 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', (['runtime'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_hello_reshape_cpp_cpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -395,7 +395,7 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', (['runtime'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_hello_reshape_cpp_gpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -433,7 +433,7 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', (['runtime'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_object_detection_cpp_cpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -470,7 +470,7 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', (['runtime'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_object_detection_cpp_gpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -508,7 +508,7 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', (['runtime'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_classification_async_cpp_cpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -554,7 +554,7 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', (['runtime'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_classification_async_cpp_gpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {

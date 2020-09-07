@@ -7,7 +7,7 @@ import pytest
 class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_security_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -19,7 +19,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_security_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -32,7 +32,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_security_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -47,7 +47,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_squeezenet_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -58,7 +58,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_squeezenet_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -70,7 +70,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_squeezenet_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -84,7 +84,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_crossroad_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -105,7 +105,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_crossroad_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -126,7 +126,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_crossroad_cpp_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -149,7 +149,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_text_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -168,7 +168,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_text_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -187,7 +187,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_text_cpp_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -208,7 +208,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_detection_ssd_python_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -225,14 +225,14 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_detection_ssd_python_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name semantic-segmentation-adas-0001 --precision FP16"',
+             '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
              'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
@@ -243,7 +243,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_detection_ssd_python_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -252,7 +252,7 @@ class TestDemosLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name semantic-segmentation-adas-0001 --precision FP16"',
+             '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
              'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
@@ -263,7 +263,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_segmentation_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -283,7 +283,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_segmentation_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -303,7 +303,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_segmentation_cpp_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -325,7 +325,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_segmentation_python_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -342,7 +342,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_segmentation_python_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -360,7 +360,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_segmentation_python_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -380,7 +380,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_object_detection_centernet_python_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -400,7 +400,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_object_detection_centernet_python_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -421,7 +421,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_object_detection_centernet_python_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -444,7 +444,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     def test_action_recognition_python_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -468,7 +468,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('is_distribution', (['dev', 'proprietary'],), indirect=True)
-    @pytest.mark.parametrize('is_image_os', ('ubuntu18',), indirect=True)
+    @pytest.mark.parametrize('is_image_os', ('ubuntu18', 'ubuntu20',), indirect=True)
     @pytest.mark.hddl
     def test_action_recognition_python_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
