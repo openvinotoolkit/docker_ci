@@ -128,13 +128,14 @@ class Launcher:
             self.args.file = pathlib.Path(self.args.file).relative_to(self.location)
         self.builder = DockerImageBuilder()
         curr_time = timeit.default_timer()
+        log.info(f"Build log location: {self.logdir / 'image_build.log'}")
         self.image = self.builder.build_docker_image(dockerfile=self.args.file,
                                                      directory=str(self.location),
                                                      tag=self.image_name,
                                                      build_args=self.kwargs,
                                                      logfile=self.logdir / 'image_build.log')
         log.info(f'Build time: {format_timedelta(timeit.default_timer() - curr_time)}')
-        log.info(f"Build log location: {self.logdir / 'image_build.log'}")
+
         if not self.image:
             raise FailedBuild(f'Error building Docker image {self.args.tags}')
         log.info(f'Save image data in {self.args.image_json_path} file')

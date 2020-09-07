@@ -6,7 +6,7 @@ import logging
 import pathlib
 import typing
 
-from docker.errors import APIError, BuildError
+from docker.errors import APIError
 from docker.models.images import Image
 
 from utils import logger
@@ -23,7 +23,7 @@ class DockerImageBuilder(DockerAPI):
                            tag: str,
                            directory: typing.Optional[str] = None,
                            build_args: typing.Optional[typing.Dict[str, str]] = None,
-                           logfile: typing.Optional[pathlib.Path] = None) -> Image:
+                           logfile: typing.Optional[pathlib.Path] = None) -> typing.Optional[Image]:
         """Build Docker image"""
         if not build_args:
             build_args = {}
@@ -36,34 +36,27 @@ class DockerImageBuilder(DockerAPI):
         logfile.parent.mkdir(exist_ok=True, parents=True)
 
         try:
-            image, log_generator = self.client.images.build(path=directory,
-                                                            tag=tag,
-                                                            dockerfile=dockerfile,
-                                                            rm=True,
-                                                            use_config_proxy=True,
-                                                            nocache=True,
-                                                            buildargs=build_args)
+            log_generator = self.client.api.build(path=directory,
+                                                  tag=tag,
+                                                  dockerfile=dockerfile,
+                                                  rm=True,
+                                                  use_config_proxy=True,
+                                                  nocache=True,
+                                                  pull=True,
+                                                  buildargs=build_args,
+                                                  decode=True)
             logger.switch_to_custom(logfile, str(logfile.parent))
             log.info(f'build command: docker build {directory} -f {dockerfile} '
                      f'{"".join([f"--build-arg {k}={v} " for k, v in build_args.items()])}')
+
             for line in log_generator:
                 for key, value in line.items():
                     log.info(f'{key} {value}')
+                    if key == 'error':
+                        logger.switch_to_summary()
+                        return None
             logger.switch_to_summary()
-
-            return image
+            return self.client.images.get(tag)
 
         except APIError as error:
             log.error(f'Docker server error: {error}')
-
-        except BuildError as error:
-            logger.switch_to_custom(logfile, str(logfile.parent))
-            log.error(f'build command: docker build {directory} -f {dockerfile} '
-                      f'{"".join([f"--build-arg {k}={v} " for k, v in build_args.items()])}')
-            for line in error.build_log:
-                if isinstance(line, dict):
-                    for key, value in line.items():
-                        log.error(f'{key} {value}')
-                else:
-                    log.error(line)
-            logger.switch_to_summary()
