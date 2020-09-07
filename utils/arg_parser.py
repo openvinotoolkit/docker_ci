@@ -147,7 +147,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
 
         parser.add_argument(
             '-os',
-            choices=['ubuntu18', 'winserver2019'],
+            choices=['ubuntu18', 'ubuntu20', 'winserver2019'],
             default='ubuntu18',
             help='Operation System for docker image. By default: ubuntu18',
         )
@@ -155,9 +155,9 @@ class DockerArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-py',
             '--python',
-            choices=['python36', 'python37'],
+            choices=['python36', 'python37', 'python38'],
             help='Python interpreter for docker image, currently default for OS. ubuntu18: python36, '
-                 'winserver2019:python37',
+                 'ubuntu20: python38, winserver2019:python37',
         )
 
         parser.add_argument(
@@ -358,6 +358,8 @@ def parse_args(name: str, description: str):
             if not args.python:
                 if 'ubuntu18' in args.os:
                     args.python = 'python36'
+                elif 'ubuntu20' in args.os:
+                    args.python = 'python38'
                 else:
                     args.python = 'python37'
 
@@ -396,8 +398,7 @@ def parse_args(name: str, description: str):
                     else:
                         parser.error(f'Cannot find package url for {args.product_version} version')
                     with contextlib.suppress(KeyError):
-                        args.package_url = INTEL_OPENVINO_VERSION[args.product_version][
-                            'linux' if 'ubuntu18' in args.os else 'windows'][args.distribution]
+                        args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][args.distribution]
                     if not args.package_url:
                         parser.error(f'Cannot find package url for {args.product_version} version '
                                      f'and {args.distribution} distribution. Please specify --package_url directly.')
