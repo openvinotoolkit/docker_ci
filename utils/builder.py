@@ -31,7 +31,9 @@ class DockerImageBuilder(DockerAPI):
             directory = str(self.location)
         if not logfile:
             logfile = pathlib.Path(directory) / 'logs' / tag / 'build.log'
-        dockerfile = str(pathlib.PurePosixPath(str(dockerfile)))
+
+        directory = str(pathlib.Path(directory).as_posix())
+        dockerfile = str(pathlib.Path(dockerfile).as_posix())
 
         logfile.parent.mkdir(exist_ok=True, parents=True)
 
