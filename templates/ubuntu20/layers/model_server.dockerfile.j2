@@ -25,12 +25,13 @@ ENV PYTHONPATH=$PYTHONPATH:/opt/intel/openvino/python/${PYTHON_VER} \
 
 WORKDIR /ie-serving-py
 RUN git clone https://github.com/openvinotoolkit/model_server.git
-RUN cp OpenVINO-model-server/requirements.txt /ie-serving-py/
-RUN virtualenv -p python3 .venv && \
-    . .venv/bin/activate && \
-    pip3 --no-cache-dir install -r requirements.txt
 
-RUN cp OpenVINO-model-server/start_server.sh /ie-serving-py/
-RUN cp OpenVINO-model-server/setup.py /ie-serving-py/
-RUN cp -r OpenVINO-model-server/ie_serving /ie-serving-py/ie_serving
+RUN cp OpenVINO-model-server/requirements.txt /ie-serving-py/ && \
+    virtualenv -p python3 .venv && \
+    . .venv/bin/activate && \
+    pip3 --no-cache-dir install -r requirements.txt && \
+    cp OpenVINO-model-server/start_server.sh /ie-serving-py/ && \
+    cp OpenVINO-model-server/setup.py /ie-serving-py/ && \
+    cp -r OpenVINO-model-server/ie_serving /ie-serving-py/ie_serving
+
 RUN . .venv/bin/activate && pip3 install .
