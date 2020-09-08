@@ -20,11 +20,11 @@ RUN mkdir /ie-serving-py && chown openvino /ie-serving-py
 
 USER openvino
 
-ENV PYTHONPATH=$PYTHONPATH:/opt/intel/openvino/python/python3.6 \
+ENV PYTHONPATH=$PYTHONPATH:/opt/intel/openvino/python/${PYTHON_VER} \
     LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/lib:/opt/intel/openvino/deployment_tools/inference_engine/external/mkltiny_lnx/lib:/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64:/opt/intel/openvino/deployment_tools/ngraph/lib
 
 WORKDIR /ie-serving-py
-RUN git clone https://github.com/IntelAI/OpenVINO-model-server.git
+RUN git clone https://github.com/openvinotoolkit/model_server.git
 RUN cp OpenVINO-model-server/requirements.txt /ie-serving-py/
 RUN virtualenv -p python3 .venv && \
     . .venv/bin/activate && \
