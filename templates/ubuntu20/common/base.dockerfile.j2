@@ -21,12 +21,8 @@ RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone) /etc/localtime
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
-ARG DEPENDENCIES="autoconf \
-                  automake \
-                  build-essential \
+ARG DEPENDENCIES="build-essential \
                   cpio \
-                  gnupg2 \
-                  libdrm2 \
                   lsb-release \
                   libtool \
                   udev \
