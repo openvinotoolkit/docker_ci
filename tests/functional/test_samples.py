@@ -587,6 +587,7 @@ class TestSamplesLinuxRuntime:
              '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/deployment_tools/model_optimizer && '
+             'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
              'python3 -B mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
              '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
              'alexnet.caffemodel"',
