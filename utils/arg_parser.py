@@ -155,9 +155,9 @@ class DockerArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-py',
             '--python',
-            choices=['python36', 'python37'],
+            choices=['python36', 'python37', 'python38'],
             help='Python interpreter for docker image, currently default for OS. ubuntu18: python36, '
-                 'winserver2019:python37',
+                 'winserver2019:python37 or python38',
         )
 
         parser.add_argument(
@@ -355,12 +355,6 @@ def parse_args(name: str, description: str):
                     parser.error('Do not use symlink and hard link to specify local package url. '
                                  'It is an insecure way.')
 
-            if not args.python:
-                if 'ubuntu18' in args.os:
-                    args.python = 'python36'
-                else:
-                    args.python = 'python37'
-
             if not args.distribution and args.package_url:
                 if '_internal_' in args.package_url:
                     args.distribution = 'internal_dev'
@@ -371,7 +365,7 @@ def parse_args(name: str, description: str):
                 elif '_dev_' in args.package_url:
                     args.distribution = 'dev'
                 else:
-                    parser.error(f'Cannot get distribution type from the package URL provided. {args.package_url}'
+                    parser.error(f'Cannot get distribution type from the package URL provided. {args.package_url} '
                                  'Please specify --distribution directly.')
 
             # workaround for https://bugs.python.org/issue16399 issue
@@ -420,6 +414,15 @@ def parse_args(name: str, description: str):
                     args.dockerfile_name = f'openvino_{layers}_{args.product_version}.dockerfile'
                 else:
                     args.dockerfile_name = f'openvino_{devices}_{args.distribution}_{args.product_version}.dockerfile'
+
+            if not args.python:
+                year = args.build_id[:4] if args.build_id else args.product_version[:4]
+                if 'ubuntu18' in args.os:
+                    args.python = 'python36'
+                elif '2021' in year and 'win' in args.os:
+                    args.python = 'python38'
+                else:
+                    args.python = 'python37'
 
         if not hasattr(args, 'tags') or not args.tags:
             layers = '_'.join(args.layers)
