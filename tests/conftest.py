@@ -33,7 +33,7 @@ def pytest_configure(config):
         'markers', 'hddl: run tests on HDDL device',
     )
     dist = config.getoption('--distribution')
-    if dist == 'runtime':
+    if dist == 'runtime' and 'model_server' not in config.getoption('--image'):
         log.info('Setting up runtime image dependencies')
         mount_root = pathlib.Path(config.getoption('--mount_root'))
         package_url = config.getoption('--package_url')
@@ -178,6 +178,18 @@ def is_image(request):
         settings = request.param
     if not any(map(lambda x: x in request.config.getoption('--image'), settings)):
         pytest.skip(f'Test requires the image should be {request.param} but get '
+                    f'{request.config.getoption("--image")}')
+
+
+@pytest.fixture(scope='session')
+def is_not_image(request):
+    settings = []
+    if isinstance(request.param, str):
+        settings.append(request.param)
+    else:
+        settings = request.param
+    if any(map(lambda x: x in request.config.getoption('--image'), settings)):
+        pytest.skip(f'Test requires the image should not be {request.param} but get '
                     f'{request.config.getoption("--image")}')
 
 

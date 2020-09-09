@@ -15,9 +15,10 @@ import sys
 import timeit
 import typing
 
-import pytest
 from docker.errors import APIError, ImageNotFound
 from docker.models.images import Image
+
+import pytest
 
 from utils import logger
 from utils.arg_parser import parse_args

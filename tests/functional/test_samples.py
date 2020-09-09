@@ -278,6 +278,7 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -318,6 +319,7 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     def test_hello_classification_cpp_gpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -356,6 +358,7 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     def test_hello_reshape_cpp_cpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -396,6 +399,7 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     def test_hello_reshape_cpp_gpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -434,6 +438,7 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     def test_object_detection_cpp_cpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -471,6 +476,7 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     def test_object_detection_cpp_gpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -509,6 +515,7 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     def test_classification_async_cpp_cpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -555,6 +562,7 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     def test_classification_async_cpp_gpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {

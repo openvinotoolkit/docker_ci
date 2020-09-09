@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-import pathlib
-
 import pytest
 
 
@@ -10,20 +8,10 @@ class TestModelServerLinux:
 
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_image', ['model_server'], indirect=True)
-    def test_model_server_unit(self, is_image_os, is_image, tester, image, mount_root):
-        # TODO: migrate duplicate code to separate function and change way to get dev_root
-        dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
+    def test_model_server_unit(self, is_image_os, is_image, tester, image):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
-            'volumes': {dev_root / 'deployment_tools' / 'inference_engine' / 'samples' / 'cpp': {
-                'bind': '/opt/intel/openvino/inference_engine/samples/cpp'},
-                dev_root / 'deployment_tools' / 'demo': {'bind': '/opt/intel/openvino/deployment_tools/demo'},
-                dev_root / 'deployment_tools' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/open_model_zoo'},
-                dev_root / 'deployment_tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/deployment_tools/model_optimizer'},
-            },
         }
         tester.test_docker_image(
             image,

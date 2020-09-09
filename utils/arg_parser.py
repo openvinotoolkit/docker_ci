@@ -317,7 +317,8 @@ def parse_args(name: str, description: str):
             parser.error('Generating dockerfile for base distribution is not available. '
                          'Use generated base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder')
 
-        if args.mode == 'test' and args.distribution == 'runtime' and not args.package_url:
+        if (args.mode == 'test' and args.distribution == 'runtime') and (
+                'model_server' not in args.tags[0] and not args.package_url):
             parser.error("""Insufficient arguments. Provide --package_url key with path to dev distribution package in
                               http/https/ftp access scheme or a local file in the project location
                               as dependent package""")
