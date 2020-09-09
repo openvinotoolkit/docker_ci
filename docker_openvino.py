@@ -328,7 +328,8 @@ class Launcher:
 
     def rmi(self):
         """Remove Docker image from the host machine"""
-        self.docker_api.client.images.remove(self.image_name, force=True)
+        image = self.docker_api.client.images.get(self.image_name)
+        self.docker_api.client.images.remove(image.short_id, force=True)
 
 
 if __name__ == '__main__':
