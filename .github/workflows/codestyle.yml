@@ -42,11 +42,11 @@ jobs:
 
       - name: Collecting codestyle artifacts
         if: ${{ always() }}
-          uses: actions/upload-artifact@v2
-          with:
-            name: codestyle_checks
-            path: |
-              ./bandit.html
-              ./flake8.log
-              ./mypy.log
-              ./utils_unittests.html
+        uses: actions/upload-artifact@v2
+        with:
+          name: codestyle_checks
+          path: |
+            ./bandit.html
+            ./flake8.log
+            ./mypy.log
+            ./utils_unittests.html
