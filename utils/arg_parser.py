@@ -157,7 +157,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
             '--python',
             choices=['python36', 'python37', 'python38'],
             help='Python interpreter for docker image, currently default for OS. ubuntu18: python36, '
-                 'ubuntu20: python38, winserver2019:python37',
+                 'ubuntu20: python38, winserver2019:python37 or python38',
         )
 
         parser.add_argument(
@@ -376,7 +376,7 @@ def parse_args(name: str, description: str):
                 elif '_dev_' in args.package_url:
                     args.distribution = 'dev'
                 else:
-                    parser.error(f'Cannot get distribution type from the package URL provided. {args.package_url}'
+                    parser.error(f'Cannot get distribution type from the package URL provided. {args.package_url} '
                                  'Please specify --distribution directly.')
 
             # workaround for https://bugs.python.org/issue16399 issue

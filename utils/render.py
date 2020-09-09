@@ -47,7 +47,12 @@ class DockerFileRender:
             if args.msbuild:
                 settings.append(args.msbuild)
             settings.extend(['icl', args.cmake])
-        settings.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
+        settings.extend([args.python, args.source, args.install_type, *args.device])
+        if 'win' in args.os:
+            if args.msbuild:
+                settings.append(args.distribution)
+        if 'ubuntu' in args.os:
+            settings.append(args.distribution)
         commands = [self.get_template(arg, kwargs).render() for arg in settings]
         layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
         save_to_dir = pathlib.Path(self.location) / 'dockerfiles' / args.os

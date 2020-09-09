@@ -326,6 +326,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.xfail(reason='38545 issue')
     def test_segmentation_python_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -570,6 +571,7 @@ class TestDemosWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
+    @pytest.mark.xfail(reason='38545 issue')
     def test_detection_ssd_python_cpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(

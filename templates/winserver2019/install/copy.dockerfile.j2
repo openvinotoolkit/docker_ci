@@ -7,10 +7,32 @@ RUN powershell.exe -Command `
     Remove-Item "./*.zip" -Force
 
 ARG year
-WORKDIR C:\intel
-RUN mklink /D openvino %INTEL_OPENVINO_DIR% && `
-    mklink /D openvino_%year% %INTEL_OPENVINO_DIR%
-
-WORKDIR ${TEMP_DIR}
-COPY scripts\create_symlinks.bat create_symlinks.bat
-RUN create_symlinks.bat %INTEL_OPENVINO_DIR%
+RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
+                    {`
+                        New-Item -Path C:\intel\openvino -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%`
+                    }`
+                    if ( -not (Test-Path -Path C:\intel\openvino_%year%) ) `
+                    {`
+                        New-Item -Path C:\intel\openvino_%year% -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%`
+                    }`
+                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\inference_engine)`
+                    {`
+                        New-Item -Path %INTEL_OPENVINO_DIR%\inference_engine -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\inference_engine`
+                    }`
+                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\models\intel)`
+                    {`
+                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\models\intel ;`
+                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\models\intel`
+                    }`
+                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\downloader)`
+                    {`
+                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\tools\model_downloader -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\downloader`
+                    }`
+                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\demos)`
+                    {`
+                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\inference_engine\demos -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\demos`
+                    }`
+                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo)`
+                    {`
+                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\libs\open_model_zoo -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo`
+                    }

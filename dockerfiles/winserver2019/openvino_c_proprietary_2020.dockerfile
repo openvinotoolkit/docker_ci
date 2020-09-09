@@ -55,6 +55,11 @@ RUN powershell.exe -Command `
 
 ENV INTEL_OPENVINO_DIR C:\intel\openvino_${build_id}
 
+RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
+                    {`
+                        New-Item -Path C:\intel\openvino -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%`
+                    }
+
 # Post-installation cleanup
 RUN rmdir /S /Q "%USERPROFILE%\Downloads\Intel"
 
