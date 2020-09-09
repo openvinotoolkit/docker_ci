@@ -25,15 +25,15 @@ jobs:
           naming radon flake8-rst-docstrings more-itertools packaging pluggy py pytest pytest-html pytest-metadata
 
       - name: Running Bandit
-        if: ${{ matrix.os == ubuntu-18.04 }}
+        if: ${{ matrix.os == 'ubuntu-18.04' }}
         run: python -m bandit -r ./ -f screen
           
       - name: Running PEP checks
-        if: ${{ matrix.os == ubuntu-18.04 }}
+        if: ${{ matrix.os == 'ubuntu-18.04' }}
         run: python -m flake8 ./ --config=setup.cfg --show-source
 
       - name: Running MyPy checks
-        if: ${{ matrix.os == ubuntu-18.04 }}
+        if: ${{ matrix.os == 'ubuntu-18.04' }}
         run: python -m mypy ./ --config-file ./setup.cfg --show-error-context --show-column-numbers --pretty
 
       - name: Running pytest (not Docker image tests)
