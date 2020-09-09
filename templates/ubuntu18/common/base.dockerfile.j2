@@ -21,7 +21,8 @@ RUN apt-get update && apt upgrade -y --no-install-recommends && \
 
 RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone) /etc/localtime
 
-ARG DEPENDENCIES="build-essential \
+ARG DEPENDENCIES="autoconf \
+                  build-essential \
                   cpio \
                   lsb-release \
                   libtool \
