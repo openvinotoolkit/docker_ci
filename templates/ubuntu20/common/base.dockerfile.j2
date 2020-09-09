@@ -46,8 +46,8 @@ RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
 
 # Post-installation cleanup and setting up OpenVINO environment variables
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
-        printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
-        printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc; \
+        printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\nexport TBB_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/cmake\n" >> /home/openvino/.bashrc; \
+        printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\nexport TBB_DIR=/opt/intel/openvino/deployment_tools/inference_engine/external/tbb/cmake\n" >> /root/.bashrc; \
     fi;
 RUN if [ -d "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=/opt/intel/openvino/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
