@@ -22,6 +22,7 @@ RUN apt-get update && apt upgrade -y --no-install-recommends && \
 RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone) /etc/localtime
 
 ARG DEPENDENCIES="autoconf \
+                  automake \
                   build-essential \
                   cpio \
                   lsb-release \
