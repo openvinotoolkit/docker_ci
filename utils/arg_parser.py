@@ -416,11 +416,8 @@ def parse_args(name: str, description: str):
                     args.dockerfile_name = f'openvino_{devices}_{args.distribution}_{args.product_version}.dockerfile'
 
             if not args.python:
-                year = args.build_id[:4] if args.build_id else args.product_version[:4]
                 if 'ubuntu18' in args.os:
                     args.python = 'python36'
-                elif '2021' in year and 'win' in args.os:
-                    args.python = 'python38'
                 else:
                     args.python = 'python37'
 
