@@ -1,0 +1,20 @@
+# install product by copying archive content
+ARG TEMP_DIR=/tmp/openvino_installer
+ENV INTEL_OPENVINO_DIR /opt/intel/openvino
+
+RUN export OV_BUILD OV_FOLDER
+
+RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
+    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
+    OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
+    OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
+    mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
+    cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
+    rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
+    ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+
+
+WORKDIR /tmp
+RUN rm -rf "${TEMP_DIR}"

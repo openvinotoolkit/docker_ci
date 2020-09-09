@@ -1,8 +1,8 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:18.04 AS ov_base
+FROM ubuntu:20.04 AS ov_base
 
-LABEL Description="This is the {{ distribution }} image for {{ name }} on Ubuntu 18.04 LTS"
+LABEL Description="This is the {{ distribution }} image for {{ name }} on Ubuntu 20.04 LTS"
 LABEL Vendor="Intel Corporation"
 
 USER root
@@ -10,16 +10,16 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-# Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
-RUN useradd -ms /bin/bash -G video,users openvino && \
-    chown openvino -R /home/openvino
-
 # hadolint ignore=DL3008
 RUN apt-get update && apt upgrade -y --no-install-recommends && \
     apt-get install -y --no-install-recommends curl && \
     rm -rf /var/lib/apt/lists/*
 
 RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
+
+# Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
+RUN useradd -ms /bin/bash -G video,users openvino && \
+    chown openvino -R /home/openvino
 
 ARG DEPENDENCIES="autoconf \
                   automake \

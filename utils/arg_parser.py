@@ -147,7 +147,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
 
         parser.add_argument(
             '-os',
-            choices=['ubuntu18', 'winserver2019'],
+            choices=['ubuntu18', 'ubuntu20', 'winserver2019'],
             default='ubuntu18',
             help='Operation System for docker image. By default: ubuntu18',
         )
@@ -157,7 +157,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
             '--python',
             choices=['python36', 'python37', 'python38'],
             help='Python interpreter for docker image, currently default for OS. ubuntu18: python36, '
-                 'winserver2019:python37 or python38',
+                 'ubuntu20: python38, winserver2019:python37 or python38',
         )
 
         parser.add_argument(
@@ -292,6 +292,9 @@ def parse_args(name: str, description: str):
             if hasattr(args, attr_name) and getattr(args, attr_name):
                 check_internal_local_path(getattr(args, attr_name))
 
+        if args.package_url and args.source == 'local':
+            args.package_url = str(pathlib.Path(args.package_url).as_posix())
+
         if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all') and (
                 not args.install_type and not args.product_version):
             parser.error('The following argument is required: --install_type')
@@ -355,6 +358,14 @@ def parse_args(name: str, description: str):
                     parser.error('Do not use symlink and hard link to specify local package url. '
                                  'It is an insecure way.')
 
+            if not args.python:
+                if 'ubuntu18' in args.os:
+                    args.python = 'python36'
+                elif 'ubuntu20' in args.os:
+                    args.python = 'python38'
+                else:
+                    args.python = 'python37'
+
             if not args.distribution and args.package_url:
                 if '_internal_' in args.package_url:
                     args.distribution = 'internal_dev'
@@ -390,8 +401,7 @@ def parse_args(name: str, description: str):
                     else:
                         parser.error(f'Cannot find package url for {args.product_version} version')
                     with contextlib.suppress(KeyError):
-                        args.package_url = INTEL_OPENVINO_VERSION[args.product_version][
-                            'linux' if 'ubuntu18' in args.os else 'windows'][args.distribution]
+                        args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][args.distribution]
                     if not args.package_url:
                         parser.error(f'Cannot find package url for {args.product_version} version '
                                      f'and {args.distribution} distribution. Please specify --package_url directly.')
@@ -414,12 +424,6 @@ def parse_args(name: str, description: str):
                     args.dockerfile_name = f'openvino_{layers}_{args.product_version}.dockerfile'
                 else:
                     args.dockerfile_name = f'openvino_{devices}_{args.distribution}_{args.product_version}.dockerfile'
-
-            if not args.python:
-                if 'ubuntu18' in args.os:
-                    args.python = 'python36'
-                else:
-                    args.python = 'python37'
 
         if not hasattr(args, 'tags') or not args.tags:
             layers = '_'.join(args.layers)

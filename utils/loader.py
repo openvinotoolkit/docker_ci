@@ -30,14 +30,14 @@ INTEL_OCL_RELEASE = {
 }
 INTEL_OPENVINO_VERSION = {
     '2019.3': {
-        'windows':
+        'winserver2019':
             {
                 'dev': '',
                 'runtime': '',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16039/'
                                'w_openvino_toolkit_p_2019.3.379.exe',
             },
-        'linux':
+        'ubuntu18':
             {
                 'dev': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16057/'
                        'l_openvino_toolkit_dev_ubuntu18_p_2019.3.376.tgz',
@@ -48,14 +48,14 @@ INTEL_OPENVINO_VERSION = {
             },
     },
     '2020.1': {
-        'windows':
+        'winserver2019':
             {
                 'dev': '',
                 'runtime': '',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16359/'
                                'w_openvino_toolkit_p_2020.1.033.exe',
             },
-        'linux':
+        'ubuntu18':
             {
                 'dev': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/'
                        'l_openvino_toolkit_dev_ubuntu18_p_2020.1.023_pot.tgz',
@@ -66,14 +66,14 @@ INTEL_OPENVINO_VERSION = {
             },
     },
     '2020.2': {
-        'windows':
+        'winserver2019':
             {
                 'dev': '',
                 'runtime': '',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16613/'
                                'w_openvino_toolkit_p_2020.2.117.exe',
             },
-        'linux':
+        'ubuntu18':
             {
                 'dev': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16612/'
                        'l_openvino_toolkit_dev_ubuntu18_p_2020.2.120.tgz',
@@ -85,14 +85,14 @@ INTEL_OPENVINO_VERSION = {
             },
     },
     '2020.3': {
-        'windows':
+        'winserver2019':
             {
                 'dev': '',
                 'runtime': '',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16667/'
                                'w_openvino_toolkit_p_2020.3.194.exe',
             },
-        'linux':
+        'ubuntu18':
             {
                 'dev': '',
                 'runtime': '',
@@ -102,14 +102,14 @@ INTEL_OPENVINO_VERSION = {
             },
     },
     '2020.4': {
-        'windows':
+        'winserver2019':
             {
                 'dev': '',
                 'runtime': '',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16801/'
                                'w_openvino_toolkit_p_2020.4.287.exe',
             },
-        'linux':
+        'ubuntu18':
             {
                 'dev': '',
                 'runtime': '',
