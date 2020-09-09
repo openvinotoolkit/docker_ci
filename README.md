@@ -16,6 +16,7 @@ As well you can use available dockerfiles from `<root_project>/dockerfiles/<imag
 
 ## Supported Operation systems for Docker image:
  - Ubuntu 18.04 LTS
+ - Ubuntu 20.04 LTS
  - Windows Server Core base OS LTSC 2019
 
 ## Prebuilt images

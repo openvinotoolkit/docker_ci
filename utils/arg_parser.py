@@ -76,7 +76,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
             '--nightly',
             action='store_true',
             default=False,
-            help=argparse.SUPPRESS,  # Setup tests after deploy for regular builds
+            help=argparse.SUPPRESS,  # Skip tests for regular builds
         )
 
     @staticmethod

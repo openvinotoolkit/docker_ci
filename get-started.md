@@ -49,7 +49,7 @@ Specify the product package source and install type:
 
 Select an image operation system:
 ```cmd
-  -os {ubuntu18,winserver2019} Operation System for docker image. By default: ubuntu18
+  -os {ubuntu18,ubuntu20,winserver2019} Operation System for docker image. By default: ubuntu18
 ```
 
 You can customize platform targets and minimize image size:
