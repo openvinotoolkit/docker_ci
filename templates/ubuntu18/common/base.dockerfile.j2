@@ -19,7 +19,7 @@ RUN apt-get update && apt upgrade -y --no-install-recommends && \
     apt-get install -y --no-install-recommends curl && \
     rm -rf /var/lib/apt/lists/*
 
-RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone) /etc/localtime
+RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
 
 ARG DEPENDENCIES="autoconf \
                   automake \
