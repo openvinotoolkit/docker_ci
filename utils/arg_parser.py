@@ -169,7 +169,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
 
         parser.add_argument(
             '--msbuild',
-            choices=['msbuild2019'],
+            choices=['msbuild2019', 'msbuild2019_online'],
             help='MSBuild Tools for Windows docker image.'
                  'MSBuild Tools are licensed as a supplement your existing Visual Studio license. '
                  'Please don’t share the image with MSBuild 2019 on a public Docker hub.',

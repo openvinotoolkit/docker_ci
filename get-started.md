@@ -61,15 +61,16 @@ You can customize platform targets and minimize image size:
 
 **Prerequisite:** Install the dependencies Microsoft Visual Studio* with C++ 2019, 2017, or 2015 with MSBuild
 
-You can add Visual Studio Build Tools to Windows OS docker image. Previously you need to add offline installer layout in scripts/msbuild2019 folder, 
+You can add Visual Studio Build Tools to Windows OS docker image. Previously you need to add offline installer layout in scripts/msbuild2019 folder then 
+update `<repository_root>/templates/winserver2019/msbuild/msbuild2019.dockerfile.j2` dockerfile, 
 please follow the official Microsoft [documentation](https://docs.microsoft.com/en-us/visualstudio/install/create-an-offline-installation-of-visual-studio?view=vs-2019).
 Or use Build Tools online installer, follow the [documentation](https://docs.microsoft.com/en-us/visualstudio/install/build-tools-container?view=vs-2019) and 
-update `<repository_root>/templates/winserver2019/msbuild/msbuild2019.dockerfile.j2` dockerfile.
+update `<repository_root>/templates/winserver2019/msbuild/msbuild2019_online.dockerfile.j2` dockerfile.
 Visual Studio Build Tools are licensed as a supplement your existing Visual Studio license. 
 Any images built with these tools should be for your personal use or for use in your organization in accordance with your existing Visual Studio and Windows licenses.
 Please don’t share the image with Visual Studio Build Tools on a public Docker hub.
 ```cmd
-  --msbuild {msbuild2019} MSBuild Tools for Windows docker image.
+  --msbuild {msbuild2019, msbuild2019_online} MSBuild Tools for Windows docker image.
 ```
 
 You can add your layer and customize image:
