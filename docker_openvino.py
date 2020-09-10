@@ -344,7 +344,7 @@ if __name__ == '__main__':
         if not logdir.parent.exists():
             logdir.parent.mkdir()
         logfile = logger.init_logger(logdir)
-        if not args.image_json_path:
+        if hasattr(args, 'image_json_path') and not args.image_json_path:
             args.image_json_path = logdir / 'image_data.json'
         launcher = Launcher(product_name, args, logdir)
 
