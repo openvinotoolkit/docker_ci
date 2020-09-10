@@ -16,8 +16,8 @@ class TestModelServerLinux:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac "source .venv/bin/activate && '
-             'python -m pip install -r OpenVINO-model-server/requirements-dev.txt && '
-             'pytest -s -v OpenVINO-model-server/tests/unit"',
+             'python -m pip install -r model_server/requirements-dev.txt && '
+             'pytest -s -v model_server/tests/unit"',
              ],
             self.test_model_server_unit.__name__, **kwargs,
         )
