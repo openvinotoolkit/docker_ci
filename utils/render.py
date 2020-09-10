@@ -46,7 +46,10 @@ class DockerFileRender:
         if 'win' in args.os:
             if args.msbuild:
                 settings.append(args.msbuild)
-            settings.extend(['icl', args.cmake])
+            if '2021' in args.year:
+                settings.extend(['vs', args.cmake])
+            else:
+                settings.extend(['icl', args.cmake])
         settings.extend([args.python, args.source, args.install_type, *args.device])
         if 'win' in args.os:
             if args.msbuild:
