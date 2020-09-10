@@ -129,13 +129,13 @@ default_args = {
             'package_url': 'openvino_dev_p_2020.1.320.zip',
             'install_type': 'copy',
             'source': 'local',
-            'tags': 'my_tag:latest',
+            'tags': ['my_tag:latest'],
         },
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
             'python': 'python36',
             'dockerfile_name': 'openvino_cgvh_dev_2020.1.dockerfile',
-            'tags': 'my_tag:latest',
+            'tags': ['my_tag:latest'],
             'distribution': 'dev',
             'product_version': '2020.1',
         },
@@ -145,7 +145,7 @@ default_args = {
         {
             'mode': 'test',
             'distribution': 'dev',
-            'tags': 'my_tag:latest',
+            'tags': ['my_tag:latest'],
             'test_expression': 'cpu',
         },
         {
@@ -172,9 +172,19 @@ default_args = {
     ),
     pytest.param(
         {
+            'mode': 'test',
+            'distribution': 'runtime',
+            'tags': ['model_server'],
+        },
+        {
+        },
+        id='Test model server without package_url',
+    ),
+    pytest.param(
+        {
             'mode': 'deploy',
             'registry': 'https://deploy',
-            'tags': 'deploy:latest',
+            'tags': ['deploy:latest'],
         },
         {
         },
@@ -229,6 +239,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'test',
             'distribution': 'runtime',
+            'tags': ['qqq'],
         },
         'Provide --package_url key with path to dev distribution package',
         id='Test runtime without package_url',
@@ -323,16 +334,16 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
             'distribution': 'dev',
             'test_expression': 'cpu',
         },
-        'Options tag and distribution are mandatory. Image operation system is "ubuntu18" by default.',
+        'Options --tags and --distribution are mandatory. Image operation system is "ubuntu18" by default.',
         id='Test without --tags',
     ),
     pytest.param(
         {
             'mode': 'test',
             'test_expression': 'cpu',
-            'tags': 'test:latest',
+            'tags': ['test:latest'],
         },
-        'Options tag and distribution are mandatory. Image operation system is "ubuntu18" by default.',
+        'Options --tags and --distribution are mandatory. Image operation system is "ubuntu18" by default.',
         id='Test without --distribution',
     ),
     pytest.param(
@@ -346,7 +357,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
     pytest.param(
         {
             'mode': 'deploy',
-            'tags': 'deploy:latest',
+            'tags': ['deploy:latest'],
         },
         'Option --registry is mandatory for this mode.',
         id='Deploy without --registry',
@@ -359,6 +370,16 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         },
         'Option --registry is mandatory for this mode.',
         id='All without --registry',
+    ),
+    pytest.param(
+        {
+            'mode': 'build',
+            'package_url': 'http://openvino_dev_p_2020.1.314.zip',
+            'install_type': 'copy',
+            'distribution': 'proprietary',
+        },
+        'For proprietary distribution set install type: --install_type install',
+        id='For proprietary distribution set install type',
     ),
 ])
 @ mock.patch('utils.arg_parser.DockerArgumentParser.parse_args')
@@ -439,6 +460,51 @@ def test_local_path(mock_is_symlink, mock_exists, mock_parser, args, exists, is_
     mock_parser.return_value = argparse.Namespace(**args)
 
     mock_exists.return_value = exists
+    mock_is_symlink.return_value = is_symlink
+
+    with pytest.raises(SystemExit):
+        parse_args('', '')
+
+    out, err = capsys.readouterr()
+    if parser_out not in err:
+        pytest.fail(err)
+
+
+@ pytest.mark.parametrize('args, is_symlink, parser_out', [
+    pytest.param(
+        {
+            'mode': 'all',
+            'package_url': 'openvino_dev_p_2020.1.320.zip',
+            'install_type': 'copy',
+            'source': 'local',
+            'registry': 'https://deploy',
+            'image_json_path': 'qqq/qqq.json',
+        },
+        True,
+        'Do not use symlink and hard link for --image_json_path key. It is an insecure way.',
+        id='image_json_path is symlink',
+    ),
+    pytest.param(
+        {
+            'mode': 'all',
+            'package_url': 'openvino_dev_p_2020.1.320.zip',
+            'install_type': 'copy',
+            'source': 'local',
+            'registry': 'https://deploy',
+            'image_json_path': 'qqq/qqq.json',
+        },
+        False,
+        'Provided local path of the package should be relative to <root_project> folder or '
+        'should be an http/https/ftp access scheme',
+        id='image_json_path is not symlink but package_url local',
+    ),
+])
+@ mock.patch('utils.arg_parser.DockerArgumentParser.parse_args')
+@ mock.patch('pathlib.Path.is_symlink')
+def test_symlink(mock_is_symlink, mock_parser, args, is_symlink, parser_out, capsys):
+    args = dict(list(default_args.items()) + list(args.items()))
+    mock_parser.return_value = argparse.Namespace(**args)
+
     mock_is_symlink.return_value = is_symlink
 
     with pytest.raises(SystemExit):
