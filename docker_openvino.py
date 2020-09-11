@@ -20,6 +20,8 @@ from docker.models.images import Image
 
 import pytest
 
+from requests.packages.urllib3.exceptions import ReadTimeoutError
+
 from utils import logger
 from utils.arg_parser import parse_args
 from utils.builder import DockerImageBuilder
@@ -318,7 +320,7 @@ class Launcher:
                     if chunk:
                         file.write(chunk)
             log.info(f'Save time: {format_timedelta(timeit.default_timer() - curr_time)}')
-        except (PermissionError, FileExistsError, FileNotFoundError) as file_err:
+        except (PermissionError, FileExistsError, FileNotFoundError, ReadTimeoutError) as file_err:
             log.exception(f'Saving the image was failed due to file-related error: {file_err}')
             return ExitCode.failed_save
         except APIError as err:
