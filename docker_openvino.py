@@ -277,8 +277,8 @@ class Launcher:
         log.info(logger.LINE_DOUBLE)
         log.info('Publishing built Docker image...')
         try:
-            curr_time = timeit.default_timer()
             for tag in self.args.tags:
+                curr_time = timeit.default_timer()
                 if self.args.registry in tag:
                     log_generator = self.docker_api.client.images.push(tag,
                                                                        stream=True, decode=True)
