@@ -254,7 +254,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td VPU -no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td MYRIAD -no_show"',
              ],
             self.test_text_cpp_vpu.__name__, **kwargs,
         )
