@@ -68,7 +68,7 @@ class TestSamplesLinux:
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
              '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP32/'
              'vehicle-detection-adas-0002.xml '
-             '/opt/intel/openvino/deployment_tools/demo/car.png VPU"',
+             '/opt/intel/openvino/deployment_tools/demo/car.png MYRIAD"',
              ], self.test_hello_classification_cpp_vpu.__name__, **kwargs,
         )
 
@@ -155,7 +155,7 @@ class TestSamplesLinux:
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
              '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
              'vehicle-detection-adas-0002.xml '
-             '/opt/intel/openvino/deployment_tools/demo/car_1.bmp VPU 1"',
+             '/opt/intel/openvino/deployment_tools/demo/car_1.bmp MYRIAD 1"',
              ], self.test_hello_reshape_cpp_vpu.__name__, **kwargs,
         )
 
@@ -242,7 +242,7 @@ class TestSamplesLinux:
              '/root/inference_engine_cpp_samples_build/intel64/Release/object_detection_sample_ssd '
              '-m /root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
              'vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d VPU"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD"',
              ], self.test_object_detection_cpp_vpu.__name__, **kwargs,
         )
 
@@ -338,7 +338,7 @@ class TestSamplesLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
              '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d VPU"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD"',
              ], self.test_classification_async_cpp_vpu.__name__, **kwargs,
         )
 

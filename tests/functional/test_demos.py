@@ -41,7 +41,7 @@ class TestDemosLinux:
             image,
             ['apt update',
              'apt install -y sudo',
-             '/opt/intel/openvino/deployment_tools/demo/demo_security_barrier_camera.sh -d VPU '
+             '/opt/intel/openvino/deployment_tools/demo/demo_security_barrier_camera.sh -d MYRIAD '
              '-sample-options -no_show',
              ], self.test_security_vpu.__name__, **kwargs,
         )
@@ -94,7 +94,7 @@ class TestDemosLinux:
             image,
             ['apt update',
              'apt install -y sudo',
-             '/opt/intel/openvino/deployment_tools/demo/demo_squeezenet_download_convert_run.sh -d VPU',
+             '/opt/intel/openvino/deployment_tools/demo/demo_squeezenet_download_convert_run.sh -d MYRIAD',
              ], self.test_squeezenet_vpu.__name__, **kwargs,
         )
 
@@ -172,7 +172,7 @@ class TestDemosLinux:
              '/root/omz_demos_build/intel64/Release/crossroad_camera_demo '
              '-m /root/omz_demos_build/intel64/Release/intel/person-vehicle-bike-detection-crossroad-0078/FP16/'
              'person-vehicle-bike-detection-crossroad-0078.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d VPU -no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD -no_show"',
              ],
             self.test_crossroad_cpp_vpu.__name__, **kwargs,
         )
@@ -330,7 +330,7 @@ class TestDemosLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
              'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d VPU --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
              ],
             self.test_detection_ssd_python_vpu.__name__, **kwargs,
         )
@@ -412,7 +412,7 @@ class TestDemosLinux:
              '/root/omz_demos_build/intel64/Release/segmentation_demo '
              '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/'
              'semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d VPU -no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD -no_show"',
              ],
             self.test_segmentation_cpp_vpu.__name__, **kwargs,
         )
@@ -490,7 +490,7 @@ class TestDemosLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
              'segmentation_demo/segmentation_demo.py '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d VPU"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD"',
              ],
             self.test_segmentation_python_vpu.__name__, **kwargs,
         )
@@ -574,7 +574,7 @@ class TestDemosLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
              'object_detection_demo_centernet/object_detection_demo_centernet.py '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d VPU --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
              ],
             self.test_object_detection_centernet_python_vpu.__name__, **kwargs,
         )
@@ -648,7 +648,7 @@ class TestDemosLinux:
              'action-recognition-0001-encoder.xml '
              '-m_de /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-decoder/FP16/'
              'action-recognition-0001-decoder.xml '
-             '-i /root/action_recognition.mp4 -d VPU --no_show"',
+             '-i /root/action_recognition.mp4 -d MYRIAD --no_show"',
              ],
             self.test_action_recognition_python_vpu.__name__, **kwargs,
         )
