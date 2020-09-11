@@ -285,7 +285,6 @@ class Launcher:
                 else:
                     log_generator = self.docker_api.client.images.push(self.args.registry + '/' + tag,
                                                                        stream=True, decode=True)
-                log.info(f'Push time: {format_timedelta(timeit.default_timer() - curr_time)}')
                 log_name = f'deploy_{tag.replace("/", "_").replace(":", "_")}.log'
                 log_path_file = self.logdir / log_name
                 log.info(f'Image {tag} push log location: {log_path_file}')
@@ -296,6 +295,7 @@ class Launcher:
                             raise FailedDeploy(f'{value}')
                         log.info(f'{value}')
                 logger.switch_to_summary()
+                log.info(f'Push time: {format_timedelta(timeit.default_timer() - curr_time)}')
                 log.info('Image successfully published')
         except APIError as err:
             raise FailedDeploy(f'Push had failed: {err}')
