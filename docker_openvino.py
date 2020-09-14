@@ -20,6 +20,8 @@ from docker.models.images import Image
 
 import pytest
 
+from requests.packages.urllib3.exceptions import ReadTimeoutError
+
 from utils import logger
 from utils.arg_parser import parse_args
 from utils.builder import DockerImageBuilder
@@ -275,15 +277,14 @@ class Launcher:
         log.info(logger.LINE_DOUBLE)
         log.info('Publishing built Docker image...')
         try:
-            curr_time = timeit.default_timer()
             for tag in self.args.tags:
+                curr_time = timeit.default_timer()
                 if self.args.registry in tag:
                     log_generator = self.docker_api.client.images.push(tag,
                                                                        stream=True, decode=True)
                 else:
                     log_generator = self.docker_api.client.images.push(self.args.registry + '/' + tag,
                                                                        stream=True, decode=True)
-                log.info(f'Push time: {format_timedelta(timeit.default_timer() - curr_time)}')
                 log_name = f'deploy_{tag.replace("/", "_").replace(":", "_")}.log'
                 log_path_file = self.logdir / log_name
                 log.info(f'Image {tag} push log location: {log_path_file}')
@@ -294,6 +295,7 @@ class Launcher:
                             raise FailedDeploy(f'{value}')
                         log.info(f'{value}')
                 logger.switch_to_summary()
+                log.info(f'Push time: {format_timedelta(timeit.default_timer() - curr_time)}')
                 log.info('Image successfully published')
         except APIError as err:
             raise FailedDeploy(f'Push had failed: {err}')
@@ -318,7 +320,7 @@ class Launcher:
                     if chunk:
                         file.write(chunk)
             log.info(f'Save time: {format_timedelta(timeit.default_timer() - curr_time)}')
-        except (PermissionError, FileExistsError, FileNotFoundError) as file_err:
+        except (PermissionError, FileExistsError, FileNotFoundError, ReadTimeoutError) as file_err:
             log.exception(f'Saving the image was failed due to file-related error: {file_err}')
             return ExitCode.failed_save
         except APIError as err:
