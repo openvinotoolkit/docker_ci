@@ -141,6 +141,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '--install_type',
             choices=['copy', 'install'],
+            default='copy',
             help='Installation method for the package. '
                  'This is "copy" for simple archive and "install" - for exe or archive with installer.',
         )
@@ -296,10 +297,6 @@ def parse_args(name: str, description: str):
                 'http://', 'https://', 'ftp://')):
             args.package_url = str(pathlib.Path(args.package_url).as_posix())
 
-        if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all') and (
-                not args.install_type and not args.product_version):
-            parser.error('The following argument is required: --install_type')
-
         if hasattr(args, 'sdl_check') and args.sdl_check and (
                 'snyk' not in args.sdl_check and 'bench_security' not in args.sdl_check):
             parser.error('Incorrect arguments for --sdl_check. Available tests: snyk, bench_security')
@@ -333,6 +330,9 @@ def parse_args(name: str, description: str):
 
         if args.distribution == 'proprietary' and args.install_type == 'copy':
             parser.error('For proprietary distribution set install type: --install_type install')
+
+        if args.distribution != 'proprietary' and args.install_type == 'install':
+            parser.error(f'For {args.distribution} distribution set copy type: --install_type copy')
 
         if hasattr(args, 'image_json_path') and args.image_json_path:
             args.image_json_path = pathlib.Path(args.image_json_path).absolute()

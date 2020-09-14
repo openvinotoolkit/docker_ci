@@ -257,8 +257,9 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
             'mode': 'build',
             'package_url': 'https://openvino_p_2020.1.314_pack.zip',
             'distribution': 'dev',
+            'install_type': 'install',
         },
-        'The following argument is required: --install_type',
+        'For dev distribution set copy type: --install_type copy',
         id='install_type error',
     ),
     pytest.param(
