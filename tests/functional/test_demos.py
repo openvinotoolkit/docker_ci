@@ -631,6 +631,30 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    def test_action_recognition_python_gpu(self, is_distribution, is_image_os, tester, image):
+        tester.test_docker_image(
+            image,
+            ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
+             '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
+             'https://github.com/intel-iot-devkit/sample-videos/blob/master/'
+             'head-pose-face-detection-female.mp4?raw=true"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+             '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
+             'action_recognition/action_recognition.py '
+             '-m_en /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-encoder/FP16/'
+             'action-recognition-0001-encoder.xml '
+             '-m_de /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-decoder/FP16/'
+             'action-recognition-0001-decoder.xml '
+             '-i /root/action_recognition.mp4 -d GPU --no_show"',
+             ],
+            self.test_action_recognition_python_gpu.__name__,
+        )
+
+    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
     def test_action_recognition_python_vpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
