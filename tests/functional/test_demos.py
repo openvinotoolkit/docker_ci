@@ -189,6 +189,7 @@ class TestDemosLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
+    @pytest.mark.xfail(reason='38557 issue')
     def test_text_cpp_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -305,6 +306,7 @@ class TestDemosLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
+    @pytest.mark.xfail(reason='38557 issue')
     def test_segmentation_cpp_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -363,6 +365,7 @@ class TestDemosLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
+    @pytest.mark.xfail(reason='38557 issue')
     def test_segmentation_python_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
