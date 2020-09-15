@@ -16,7 +16,6 @@ default_args = {
     'distribution': None,
     'dockerfile_name': None,
     'file': None,
-    'install_type': None,
     'layers': [],
     'linter_check': [],
     # 'mode':'build',
@@ -36,18 +35,18 @@ default_args = {
         {
             'mode': 'build',
             'package_url': 'openvino.zip',
-            'distribution': 'dev',
+            'distribution': 'proprietary',
             'source': 'local',
-            'install_type': 'copy',
             'product_version': '2020.1',
             'image_json_path': 'image_data.json',
         },
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
-            'dockerfile_name': 'openvino_cgvh_dev_2020.1.dockerfile',
+            'dockerfile_name': 'openvino_cgvh_proprietary_2020.1.dockerfile',
             'python': 'python36',
-            'tags': ['ubuntu18_dev:2020.1', 'ubuntu18_dev:latest'],
+            'tags': ['ubuntu18_proprietary:2020.1', 'ubuntu18_proprietary:latest'],
             'image_json_path': pathlib.Path('image_data.json').absolute(),
+            'install_type': 'install',
         },
         id='set product_version, distribution and image_json_path manually',
     ),
@@ -56,7 +55,6 @@ default_args = {
             'mode': 'build',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
             'source': 'local',
-            'install_type': 'copy',
         },
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
@@ -64,6 +62,7 @@ default_args = {
             'python': 'python36',
             'tags': ['ubuntu18_dev:2020.1.320', 'ubuntu18_dev:latest'],
             'distribution': 'dev',
+            'install_type': 'copy',
             'product_version': '2020.1',
         },
         id='parse product_version and distribution from package_url',
@@ -73,7 +72,6 @@ default_args = {
             'mode': 'build',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
             'source': 'local',
-            'install_type': 'copy',
             'os': 'winserver2019',
         },
         {
@@ -92,7 +90,6 @@ default_args = {
             'package_url': 'openvino_dev_p_2020.1.320.zip',
             'distribution': 'base',
             'file': 'openvino_c_base_2020.1.dockerfile',
-            'install_type': 'copy',
             'source': 'local',
         },
         {
@@ -109,7 +106,6 @@ default_args = {
         {
             'mode': 'build',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
-            'install_type': 'copy',
             'source': 'local',
             'product_version': '2020.1',
         },
@@ -127,7 +123,6 @@ default_args = {
         {
             'mode': 'build',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
-            'install_type': 'copy',
             'source': 'local',
             'tags': ['my_tag:latest'],
         },
@@ -156,7 +151,6 @@ default_args = {
         {
             'mode': 'all',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
-            'install_type': 'copy',
             'source': 'local',
             'registry': 'https://deploy',
         },
@@ -212,7 +206,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'gen_dockerfile',
             'distribution': 'base',
-            'install_type': 'copy',
         },
         'Generating dockerfile for base distribution is not available',
         id='gen_dockerfile base error',
@@ -221,7 +214,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'all',
             'distribution': 'base',
-            'install_type': 'copy',
         },
         'The following argument is required: -f/--file',
         id='Build base image without --file',
@@ -255,17 +247,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
     pytest.param(
         {
             'mode': 'build',
-            'package_url': 'https://openvino_p_2020.1.314_pack.zip',
-            'distribution': 'dev',
-            'install_type': 'install',
-        },
-        'For dev distribution set copy type: --install_type copy',
-        id='install_type error',
-    ),
-    pytest.param(
-        {
-            'mode': 'build',
-            'install_type': 'copy',
             'distribution': 'dev',
         },
         'Insufficient arguments. Provide --package_url or --distribution and --product_version arguments',
@@ -275,7 +256,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'build',
             'package_url': 'https://openvino_p_2020.1.314_pack.zip',
-            'install_type': 'copy',
         },
         'Cannot get distribution type from the package URL provided',
         id='distribution error',
@@ -284,7 +264,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'build',
             'package_url': 'https://openvino_p_2020.1.314_dev_pack.zip',
-            'install_type': 'copy',
             'ocl_release': '1234',
         },
         'Provided Intel(R) Graphics Compute Runtime for OpenCL(TM) release is not acceptable',
@@ -294,7 +273,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'build',
             'package_url': 'openvino_dev_p_2020.1.314.zip',
-            'install_type': 'copy',
             'source': 'local',
         },
         'Provided local path of the package should be relative to',
@@ -304,7 +282,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'build',
             'package_url': 'openvino_dev_p_2020.1.314.zip',
-            'install_type': 'copy',
         },
         'Provided URL is not supported, use http://, https:// or ftp:// access scheme',
         id='Local package path with --source url',
@@ -313,7 +290,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'build',
             'package_url': 'http://openvino_dev_p_2020.1.314.zip',
-            'install_type': 'copy',
             'sdl_check': ['kek'],
         },
         'Incorrect arguments for --sdl_check. Available tests: snyk, bench_security',
@@ -323,7 +299,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'build',
             'package_url': 'http://openvino_dev_p_2020.1.314.zip',
-            'install_type': 'copy',
             'linter_check': ['kek'],
         },
         'Incorrect arguments for --linter_check. Available tests: hadolint, dive',
@@ -367,20 +342,9 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'all',
             'package_url': 'http://openvino_dev_p_2020.1.314.zip',
-            'install_type': 'copy',
         },
         'Option --registry is mandatory for this mode.',
         id='All without --registry',
-    ),
-    pytest.param(
-        {
-            'mode': 'build',
-            'package_url': 'http://openvino_dev_p_2020.1.314.zip',
-            'install_type': 'copy',
-            'distribution': 'proprietary',
-        },
-        'For proprietary distribution set install type: --install_type install',
-        id='For proprietary distribution set install type',
     ),
 ])
 @ mock.patch('utils.arg_parser.DockerArgumentParser.parse_args')
@@ -402,7 +366,6 @@ def test_arg_parser_error(mock_parser, args, capsys, parser_out):
         {
             'mode': 'all',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
-            'install_type': 'copy',
             'source': 'local',
             'registry': 'https://deploy',
         },
@@ -415,7 +378,6 @@ def test_arg_parser_error(mock_parser, args, capsys, parser_out):
         {
             'mode': 'all',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
-            'install_type': 'copy',
             'source': 'local',
             'registry': 'https://deploy',
         },
@@ -428,7 +390,6 @@ def test_arg_parser_error(mock_parser, args, capsys, parser_out):
         {
             'mode': 'all',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
-            'install_type': 'copy',
             'source': 'local',
             'registry': 'https://deploy',
             'file': 'dockerfile',
@@ -442,7 +403,6 @@ def test_arg_parser_error(mock_parser, args, capsys, parser_out):
         {
             'mode': 'all',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
-            'install_type': 'copy',
             'source': 'local',
             'registry': 'https://deploy',
             'file': 'dockerfile',
@@ -476,7 +436,6 @@ def test_local_path(mock_is_symlink, mock_exists, mock_parser, args, exists, is_
         {
             'mode': 'all',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
-            'install_type': 'copy',
             'source': 'local',
             'registry': 'https://deploy',
             'image_json_path': 'qqq/qqq.json',
@@ -489,7 +448,6 @@ def test_local_path(mock_is_symlink, mock_exists, mock_parser, args, exists, is_
         {
             'mode': 'all',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
-            'install_type': 'copy',
             'source': 'local',
             'registry': 'https://deploy',
             'image_json_path': 'qqq/qqq.json',

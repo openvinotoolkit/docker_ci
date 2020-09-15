@@ -139,14 +139,6 @@ class DockerArgumentParser(argparse.ArgumentParser):
         )
 
         parser.add_argument(
-            '--install_type',
-            choices=['copy', 'install'],
-            default='copy',
-            help='Installation method for the package. '
-                 'This is "copy" for simple archive and "install" - for exe or archive with installer.',
-        )
-
-        parser.add_argument(
             '-os',
             choices=['ubuntu18', 'ubuntu20', 'winserver2019'],
             default='ubuntu18',
@@ -328,12 +320,6 @@ def parse_args(name: str, description: str):
         if args.mode in ('deploy', 'all') and not hasattr(args, 'registry'):
             parser.error('Option --registry is mandatory for this mode.')
 
-        if args.distribution == 'proprietary' and args.install_type == 'copy':
-            parser.error('For proprietary distribution set install type: --install_type install')
-
-        if args.distribution != 'proprietary' and args.install_type == 'install':
-            parser.error(f'For {args.distribution} distribution set copy type: --install_type copy')
-
         if hasattr(args, 'image_json_path') and args.image_json_path:
             args.image_json_path = pathlib.Path(args.image_json_path).absolute()
             if args.image_json_path.is_symlink():
@@ -380,6 +366,11 @@ def parse_args(name: str, description: str):
                 else:
                     parser.error(f'Cannot get distribution type from the package URL provided. {args.package_url} '
                                  'Please specify --distribution directly.')
+            #  set installation method for the package
+            if args.distribution == 'proprietary':
+                args.install_type = 'install'
+            else:
+                args.install_type = 'copy'
 
             # workaround for https://bugs.python.org/issue16399 issue
             if not args.device and 'win' not in args.os:
