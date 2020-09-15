@@ -24,6 +24,12 @@ RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localt
 ARG DEPENDENCIES="autoconf \
                   automake \
                   build-essential \
+                  libgtk-3-0 \
+                  libcairo2-dev \
+                  gobject-introspection \
+                  libglib2.0-0 \
+                  libgdk-pixbuf2.0-0 \
+                  cmake \
                   cpio \
                   libtool \
                   udev \
