@@ -139,13 +139,6 @@ class DockerArgumentParser(argparse.ArgumentParser):
         )
 
         parser.add_argument(
-            '--install_type',
-            choices=['copy', 'install'],
-            help='Installation method for the package. '
-                 'This is "copy" for simple archive and "install" - for exe or archive with installer.',
-        )
-
-        parser.add_argument(
             '-os',
             choices=['ubuntu18', 'ubuntu20', 'winserver2019'],
             default='ubuntu18',
@@ -296,10 +289,6 @@ def parse_args(name: str, description: str):
                 'http://', 'https://', 'ftp://')):
             args.package_url = str(pathlib.Path(args.package_url).as_posix())
 
-        if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all') and (
-                not args.install_type and not args.product_version):
-            parser.error('The following argument is required: --install_type')
-
         if hasattr(args, 'sdl_check') and args.sdl_check and (
                 'snyk' not in args.sdl_check and 'bench_security' not in args.sdl_check):
             parser.error('Incorrect arguments for --sdl_check. Available tests: snyk, bench_security')
@@ -330,9 +319,6 @@ def parse_args(name: str, description: str):
 
         if args.mode in ('deploy', 'all') and not hasattr(args, 'registry'):
             parser.error('Option --registry is mandatory for this mode.')
-
-        if args.distribution == 'proprietary' and args.install_type == 'copy':
-            parser.error('For proprietary distribution set install type: --install_type install')
 
         if hasattr(args, 'image_json_path') and args.image_json_path:
             args.image_json_path = pathlib.Path(args.image_json_path).absolute()
@@ -380,6 +366,11 @@ def parse_args(name: str, description: str):
                 else:
                     parser.error(f'Cannot get distribution type from the package URL provided. {args.package_url} '
                                  'Please specify --distribution directly.')
+            #  set installation method for the package
+            if args.distribution == 'proprietary':
+                args.install_type = 'install'
+            else:
+                args.install_type = 'copy'
 
             # workaround for https://bugs.python.org/issue16399 issue
             if not args.device and 'win' not in args.os:

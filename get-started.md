@@ -13,7 +13,7 @@ With this guide, you will learn how to:
 You can use available dockerfiles from `<root_project>/dockerfiles/<image_os>` folder or generate Dockerfile with your settings. 
 Run the following command in the repository's root:  
 ```python
-python3 docker_openvino.py gen_dockerfile --distribution dev --install_type copy --product_version 2020.4
+python3 docker_openvino.py gen_dockerfile --distribution dev --product_version 2020.4
 ``` 
 You can find generated dockerfile in `<root_project>/dockerfiles/<image_os>` folder. By default, Dockerfile name format is `openvino_<devices>_<distribution>_<product_version>.dockerfile`.
 
@@ -41,11 +41,10 @@ distribution type (runtime, dev) and build number (e.g., 2019.4.420) have to be 
 for example, `openvino_dev_2019.3.376.tgz` fits the requirements, while `ov_R3.tgz` is not. 
 Otherwise, you should specify `--distribution` and `--product_version` directly.
 
-Specify the product package source and install type:
+Specify the product package source:
 ```cmd
   -s, --source {url,local}  Source of the package: external URL or relative <root_project> local path. By default: url.
-  --install_type {copy,install}  Installation method for the package. This is "copy" for simple archive and "install" - for exe or archive with installer.
-```
+ ```
 
 Select an image operation system:
 ```cmd
@@ -88,7 +87,7 @@ You can add your build arguments as well:
 
 To build images from Dockerfiles, run the following command in the repository's root:  
 ```python
-python3 docker_openvino.py build --package_url <url> --install_type copy
+python3 docker_openvino.py build --package_url <url>
 ``` 
 
 By default, 'build' mode will generate a dockerfile, but you can specify dockerfile directly:
@@ -118,7 +117,7 @@ python3 docker_openvino.py deploy --registry docker.io/openvino --tags my_openvi
 ## Test image
 To build and test the image, run the following command in the repository's root:  
 ```python
-python3 docker_openvino.py build_test --package_url <url> --install_type copy
+python3 docker_openvino.py build_test --package_url <url>
 ``` 
 
 You can specify a part of the tests to run via option:
@@ -146,7 +145,7 @@ python3 docker_openvino.py test --tags <image_name:tag> -os <image_os> --distrib
 
 To gen_dockerfile, build, test and deploy image, run the following command in the repository's root:  
 ```python
-python3 docker_openvino.py all --distribution dev --install_type copy --product_version 2020.2 --registry docker.io/openvino 
+python3 docker_openvino.py all --distribution dev --product_version 2020.2 --registry docker.io/openvino 
 ``` 
 See build and tests logs in `<repository_root>/logs/<image_tag>` folder and summary.log in `<repository_root>/logs`
 

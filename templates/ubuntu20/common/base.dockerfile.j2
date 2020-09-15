@@ -24,8 +24,13 @@ RUN useradd -ms /bin/bash -G video,users openvino && \
 ARG DEPENDENCIES="autoconf \
                   automake \
                   build-essential \
+                  libgtk-3-0 \
+                  libcairo2-dev \
+                  gobject-introspection \
+                  libglib2.0-0 \
+                  libgdk-pixbuf2.0-0 \
+                  cmake \
                   cpio \
-                  lsb-release \
                   libtool \
                   udev \
                   unzip \
