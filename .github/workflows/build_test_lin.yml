@@ -33,11 +33,10 @@ jobs:
       - name: Setting up Python dependencies
         run: python -m pip install -r requirements.txt
       - name: Build and test image
-        run: python docker_openvino.py build_test --dist ${{ distribution }} --source url --package_url ${{ package_url }} -k cpu ${{ args }}
+        run: python docker_openvino.py build_test --dist ${{ distribution }} -os ${{ os }} --package_url ${{ package_url }} -k cpu ${{ args }}
       - name: Checking resulting image
         if: ${{ always() }}
         run: docker images
-
       - name: Collecting artifacts
         if: ${{ always() }}
         uses: actions/upload-artifact@v2

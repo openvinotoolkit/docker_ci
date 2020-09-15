@@ -1,5 +1,6 @@
 ![Codestyle](https://github.com/openvinotoolkit/docker_ci/workflows/Codestyle%20checks/badge.svg)
-![Build & Test](https://github.com/openvinotoolkit/docker_ci/workflows/Image%20building%20and%20testing/badge.svg)
+![Image build/test on Linux](https://github.com/openvinotoolkit/docker_ci/workflows/Image%20building%20and%20testing%20on%20Linux/badge.svg)
+![Image build/test on Win](https://github.com/openvinotoolkit/docker_ci/workflows/Image%20building%20and%20testing%20on%20Windows/badge.svg?branch=master)
 
 # DockerHub CI for [Intel® Distribution of OpenVINO™ toolkit](https://github.com/openvinotoolkit/openvino)
 The Framework can generate a Dockerfile, build, test and deploy an image with the Intel® Distribution of OpenVINO™ toolkit.
