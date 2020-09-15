@@ -38,7 +38,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 #      - name: Build and publish image
-#        run: python docker_openvino.py all --dist ${{ distribution }} -os ${{ os }} --package_url ${{ package_url }} --nightly -r openvino ${{ args }}
+#        run: python docker_openvino.py all --dist ${{ inputs.distribution }} -os ${{ inputs.os }} --package_url ${{ inputs.package_url }} --nightly -r openvino ${{ inputs.args }}
 #      - name: Checking resulting image
 #        run: docker images
 #

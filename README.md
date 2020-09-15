@@ -1,5 +1,5 @@
-![Codestyle](https://github.com/openvinotoolkit/docker_ci/workflows/Codestyle%20checks/badge.svg)
-![Image build/test on Linux](https://github.com/openvinotoolkit/docker_ci/workflows/Image%20building%20and%20testing%20on%20Linux/badge.svg)
+![Codestyle](https://github.com/openvinotoolkit/docker_ci/workflows/Codestyle%20checks/badge.svg?branch=master)
+![Image build/test on Linux](https://github.com/openvinotoolkit/docker_ci/workflows/Image%20building%20and%20testing%20on%20Linux/badge.svg?branch=master)
 ![Image build/test on Win](https://github.com/openvinotoolkit/docker_ci/workflows/Image%20building%20and%20testing%20on%20Windows/badge.svg?branch=master)
 
 # DockerHub CI for [Intel® Distribution of OpenVINO™ toolkit](https://github.com/openvinotoolkit/openvino)
