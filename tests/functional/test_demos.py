@@ -204,6 +204,8 @@ class TestDemosLinux:
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     def test_text_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'mem_limit': '3g'}
+        options = '-dt image' if '2021' not in image else ''  # legacy option, removed in 2021R
+
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -214,7 +216,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td CPU -no_show"',
+             f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp {options} -d_td CPU -no_show"',
              ],
             self.test_text_cpp_cpu.__name__, **kwargs,
         )
@@ -223,6 +225,7 @@ class TestDemosLinux:
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     def test_text_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+        options = '-dt image' if '2021' not in image else ''
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -233,7 +236,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td GPU -no_show"',
+             f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp {options} -d_td GPU -no_show"',
              ],
             self.test_text_cpp_gpu.__name__, **kwargs,
         )
@@ -266,6 +269,7 @@ class TestDemosLinux:
     def test_text_cpp_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+        options = '-dt image' if '2021' not in image else ''
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -276,7 +280,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td HDDL -no_show"',
+             f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp {options} -d_td HDDL -no_show"',
              ],
             self.test_text_cpp_hddl.__name__, **kwargs,
         )
@@ -607,6 +611,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.xfail(reason='39131 issue')
     def test_action_recognition_python_cpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -683,6 +688,7 @@ class TestDemosLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
+    @pytest.mark.xfail(reason='39131 issue')
     def test_action_recognition_python_hddl(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108

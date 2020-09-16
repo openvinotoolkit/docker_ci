@@ -21,7 +21,7 @@ on:
         default: ''
 
 jobs:
-  publish:
+  publish_lin:
     runs-on: ubuntu-18.04
     steps:
       - name: Code checkout
@@ -33,12 +33,12 @@ jobs:
       - name: Setting up Python dependencies
         run: python -m pip install -r requirements.txt
       - name: Docker login to registry
-        run: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+        run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 #      - name: Build and publish image
-#        run: python docker_openvino.py all --dist ${{ inputs.distribution }} -os ${{ inputs.os }} --package_url ${{ inputs.package_url }} --nightly -r openvino ${{ inputs.args }}
+#        run: python docker_openvino.py all --dist ${{ github.event.inputs.distribution }} -os ${{ github.event.inputs.os }} --package_url ${{ github.event.inputs.package_url }} --nightly -r openvino ${{ github.event.inputs.args }}
 #      - name: Checking resulting image
 #        run: docker images
 #
