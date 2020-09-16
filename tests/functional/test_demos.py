@@ -636,6 +636,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.xfail(reason='39131 issue')
     def test_action_recognition_python_gpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
@@ -661,6 +662,7 @@ class TestDemosLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
+    @pytest.mark.xfail(reason='39131 issue')
     def test_action_recognition_python_vpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
