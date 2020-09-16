@@ -285,7 +285,7 @@ def parse_args(name: str, description: str):
             if hasattr(args, attr_name) and getattr(args, attr_name):
                 check_internal_local_path(getattr(args, attr_name))
 
-        if args.package_url and args.source == 'local' and not args.package_url.startswith((
+        if args.mode != 'deploy' and args.package_url and args.source == 'local' and not args.package_url.startswith((
                 'http://', 'https://', 'ftp://')):
             args.package_url = str(pathlib.Path(args.package_url).as_posix())
 
