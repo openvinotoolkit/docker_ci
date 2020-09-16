@@ -207,4 +207,4 @@ def pytest_runtest_setup(item):
                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                      shell=False)  # nosec
             if process.returncode != 0:
-                pytest.skip('Test requires running VPU driver on the host machine')
+                pytest.skip('Test requires connected VPU device on the host machine')
