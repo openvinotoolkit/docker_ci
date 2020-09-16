@@ -297,7 +297,7 @@ class Launcher:
                 logger.switch_to_summary()
                 log.info(f'Push time: {format_timedelta(timeit.default_timer() - curr_time)}')
                 log.info('Image successfully published')
-        except APIError as err:
+        except (APIError, ReadTimeoutError) as err:
             raise FailedDeploy(f'Push had failed: {err}')
 
     def save(self):
