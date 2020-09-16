@@ -9,6 +9,10 @@ When you will use a docker container based on the image, several new security vu
 ```cmd
 apt update && apt upgrade -y --no-install-recommends && rm -rf /var/lib/apt/lists/*
 ```
+We recommend to use the latest version of PyPi packages installer to resolve dependency issues as well.
+```cmd
+python -m pip install --upgrade pip
+```
 
 As well we recommend to use the official Intel® Distribution of OpenVINO™ toolkit packages from trusted resources. 
 See more on the [product page](https://software.intel.com/content/www/us/en/develop/tools/openvino-toolkit/choose-download.html).
