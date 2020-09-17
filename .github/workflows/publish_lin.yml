@@ -38,7 +38,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and publish image
-        run: python docker_openvino.py all --dist ${{ github.event.inputs.distribution }} -os ${{ github.event.inputs.os }} --package_url ${{ github.event.inputs.package_url }} --nightly -r mmmaksim ${{ github.event.inputs.args }}
+        run: python docker_openvino.py all --dist ${{ github.event.inputs.distribution }} -os ${{ github.event.inputs.os }} --package_url ${{ github.event.inputs.package_url }} --nightly -r openvino ${{ github.event.inputs.args }}
       - name: Collecting artifacts
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
