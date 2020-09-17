@@ -6,11 +6,11 @@ on:
       package_url:
         description: 'URL to OpenVINO package'
         required: true
-        default: 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/l_openvino_toolkit_p_2020.4.287.tgz'
+        default: ''
       distribution:
         description: 'Distribution for OpenVINO package: dev, runtime, data_dev'
         required: true
-        default: 'proprietary'
+        default: 'dev'
       os:
         description: 'Operation System for docker image: ubuntu18, ubuntu20'
         required: true
