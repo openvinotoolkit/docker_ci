@@ -17,11 +17,8 @@ python -m pip install --upgrade pip
 As well we recommend to use the official Intel® Distribution of OpenVINO™ toolkit packages from trusted resources. 
 See more on the [product page](https://software.intel.com/content/www/us/en/develop/tools/openvino-toolkit/choose-download.html).
 
-## Reporting a Vulnerability 
+## Report a Vulnerability 
 
-Please report (suspected) security vulnerabilities to
-**[openvino_docker@intel.com](mailto:openvino_docker@intel.com)**. 
-
-You will receive a response from
-us within 48 hours. If the issue is confirmed, we will release a patch as soon
-as possible depending on complexity but historically within a few days.
+Please report security issues or vulnerabilities to the [Intel® Security Center](https://www.intel.com/security).
+For more information on how Intel® works to resolve security issues, see
+[Vulnerability Handling Guidelines](https://www.intel.com/content/www/us/en/security-center/vulnerability-handling-guidelines.html).
