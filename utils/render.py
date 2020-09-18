@@ -46,16 +46,13 @@ class DockerFileRender:
         if 'win' in args.os:
             if args.msbuild:
                 settings.append(args.msbuild)
+                settings.append(args.cmake)
             if '2021' in args.year:
-                settings.extend(['vs', args.cmake])
+                settings.append('vs')
             else:
-                settings.extend(['icl', args.cmake])
-        settings.extend([args.python, args.source, args.install_type, *args.device])
-        if 'win' in args.os:
-            if args.msbuild:
-                settings.append(args.distribution)
-        if 'ubuntu' in args.os:
-            settings.append(args.distribution)
+                settings.append('icl')
+        settings.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
+
         commands = [self.get_template(arg, kwargs).render() for arg in settings]
         layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
         save_to_dir = pathlib.Path(self.location) / 'dockerfiles' / args.os

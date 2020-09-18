@@ -50,8 +50,10 @@ INTEL_OPENVINO_VERSION = {
     '2020.1': {
         'winserver2019':
             {
-                'dev': '',
-                'runtime': '',
+                'dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.1/'
+                       'w_openvino_toolkit_dev_p_2020.1.033.zip',
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.1/'
+                           'w_openvino_toolkit_runtime_p_2020.1.033.zip',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16359/'
                                'w_openvino_toolkit_p_2020.1.033.exe',
             },
@@ -59,7 +61,7 @@ INTEL_OPENVINO_VERSION = {
             {
                 'dev': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/'
                        'l_openvino_toolkit_dev_ubuntu18_p_2020.1.023_pot.tgz',
-                'runtime': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/'
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.1/'
                            'l_openvino_toolkit_runtime_ubuntu18_p_2020.1.023.tgz',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16345/'
                                'l_openvino_toolkit_p_2020.1.023.tgz',
@@ -68,10 +70,14 @@ INTEL_OPENVINO_VERSION = {
     '2020.2': {
         'winserver2019':
             {
-                'dev': '',
-                'runtime': '',
+                'dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.2/'
+                       'w_openvino_toolkit_dev_p_2020.2.117.zip',
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.2/'
+                           'w_openvino_toolkit_runtime_p_2020.2.117.zip',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16613/'
                                'w_openvino_toolkit_p_2020.2.117.exe',
+                'data_dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.2/'
+                            'w_openvino_toolkit_data_dev_p_2020.2.117.zip',
             },
         'ubuntu18':
             {
@@ -79,7 +85,8 @@ INTEL_OPENVINO_VERSION = {
                        'l_openvino_toolkit_dev_ubuntu18_p_2020.2.120.tgz',
                 'runtime': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16612/'
                            'l_openvino_toolkit_runtime_ubuntu18_p_2020.2.120.tgz',
-                'proprietary': '',
+                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16612/'
+                               'l_openvino_toolkit_p_2020.2.120.tgz',
                 'data_dev': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16612/'
                             'l_openvino_toolkit_data_dev_ubuntu18_p_2020.2.120.tgz',
             },
@@ -87,35 +94,49 @@ INTEL_OPENVINO_VERSION = {
     '2020.3': {
         'winserver2019':
             {
-                'dev': '',
-                'runtime': '',
+                'dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.3/'
+                       'w_openvino_toolkit_dev_p_2020.3.194.zip',
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.3/'
+                           'w_openvino_toolkit_runtime_p_2020.3.194.zip',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16667/'
                                'w_openvino_toolkit_p_2020.3.194.exe',
+                'data_dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.3/'
+                            'w_openvino_toolkit_data_dev_p_2020.3.194.zip',
             },
         'ubuntu18':
             {
-                'dev': '',
-                'runtime': '',
+                'dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.3/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2020.3.194.tgz',
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.3/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2020.3.194.tgz',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16670/'
                                'l_openvino_toolkit_p_2020.3.194.tgz',
-                'data_dev': '',
+                'data_dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.3/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2020.3.194.tgz',
             },
     },
     '2020.4': {
         'winserver2019':
             {
-                'dev': '',
-                'runtime': '',
+                'dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.4/'
+                       'w_openvino_toolkit_dev_p_2020.4.287.zip',
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.4/'
+                           'w_openvino_toolkit_runtime_p_2020.4.287.zip',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16801/'
                                'w_openvino_toolkit_p_2020.4.287.exe',
+                'data_dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.4/'
+                            'w_openvino_toolkit_data_dev_p_2020.4.287.zip',
             },
         'ubuntu18':
             {
-                'dev': '',
-                'runtime': '',
+                'dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.4/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2020.4.287.tgz',
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.4/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2020.4.287.tgz',
                 'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16803/'
                                'l_openvino_toolkit_p_2020.4.287.tgz',
-                'data_dev': '',
+                'data_dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2020.4/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2020.4.287.tgz',
             },
     },
 }
@@ -123,5 +144,5 @@ DIVE_URL = {
     'windows': 'https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_windows_amd64.zip',
 }
 SNYK_URL = {
-    'windows': 'https://github.com/snyk/snyk/releases/download/v1.369.1/snyk-win.exe',
+    'windows': 'https://github.com/snyk/snyk/releases/download/v1.398.1/snyk-win.exe',
 }
