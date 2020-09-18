@@ -20,6 +20,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.gpu
     def test_security_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -74,6 +75,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.gpu
     def test_squeezenet_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -135,6 +137,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.gpu
     def test_crossroad_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -223,6 +226,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.gpu
     def test_text_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         options = '-dt image' if '2021' not in image else ''
@@ -304,6 +308,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.gpu
     def test_detection_ssd_python_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -382,6 +387,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.gpu
     def test_segmentation_cpp_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -465,6 +471,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.gpu
     def test_segmentation_python_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -544,6 +551,7 @@ class TestDemosLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.gpu
     def test_object_detection_centernet_python_gpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -637,6 +645,7 @@ class TestDemosLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.xfail(reason='39131 issue')
+    @pytest.mark.gpu
     def test_action_recognition_python_gpu(self, is_distribution, is_image_os, tester, image):
         tester.test_docker_image(
             image,
