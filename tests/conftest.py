@@ -210,7 +210,7 @@ def pytest_runtest_setup(item):
                 pytest.skip('Test requires connected VPU device on the host machine')
 
         if 'gpu' in mark.name and sys.platform.startswith('linux'):
-            process = subprocess.run(['/bin/bash', '-c', 'lspci | grep -E "VGA|3D" | grep Intel'],
+            process = subprocess.run(['/bin/bash', '-c', 'lspci | grep -E "VGA|3D"'],
                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                      shell=False)  # nosec
             if process.returncode != 0:
