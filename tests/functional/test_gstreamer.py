@@ -10,12 +10,12 @@ import pytest
 class TestGstreamerLinux:
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_image', ['data_dev'], indirect=True)
-    def test_gstreamer(self, is_image_os, is_image, tester, image):
+    def test_gstreamer_python(self, is_image_os, is_image, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
-                root / 'tests' / 'gst_test': {'bind': '/opt/intel/openvino/gst_test'},
+                root / 'tests' / 'resources' / 'gst_test': {'bind': '/opt/intel/openvino/gst_test'},
             },
         }
         tester.test_docker_image(
