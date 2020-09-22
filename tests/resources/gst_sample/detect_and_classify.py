@@ -5,11 +5,9 @@ import sys
 from argparse import ArgumentParser
 
 import gi
-from gi.repository import Gst, GstVideo
-from gstgva import VideoFrame, util
-
-gi.require_version('GstVideo', '1.0')
 gi.require_version('Gst', '1.0')
+from gi.repository import Gst
+from gstgva import VideoFrame, util
 
 DETECT_THRESHOLD = 0.5
 
