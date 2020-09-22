@@ -20,8 +20,8 @@ class TestGstreamerLinux:
         }
         tester.test_docker_image(
             image,
-            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
-             'apt install -y python3-gst-1.0',
+            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '. /opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
              '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
@@ -31,8 +31,8 @@ class TestGstreamerLinux:
              'python3 -B /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name age-gender-recognition-retail-0013 --precisions FP16 -o /tmp/"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
              'cd /opt/intel/openvino/gst_sample && '
+             'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
              'python3 detect_and_classify.py -i face-demographics-walking.mp4 '
              '-d /tmp/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.xml '
              '-c /tmp/intel/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml"'
