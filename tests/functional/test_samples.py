@@ -515,9 +515,7 @@ class TestSamplesLinuxRuntime:
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
             'volumes': {
-                '/var/tmp': {
-                    'bind': '/var/tmp',
-                },
+                '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'inference_engine' / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/inference_engine/samples/cpp',
                 },
@@ -691,9 +689,7 @@ class TestSamplesLinuxRuntime:
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
             'volumes': {
-                '/var/tmp': {
-                    'bind': '/var/tmp',
-                },
+                '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'inference_engine' / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/inference_engine/samples/cpp',
                 },
@@ -858,9 +854,7 @@ class TestSamplesLinuxRuntime:
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
             'volumes': {
-                '/var/tmp': {
-                    'bind': '/var/tmp',
-                },
+                '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'inference_engine' / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/inference_engine/samples/cpp',
                 },
@@ -1045,9 +1039,7 @@ class TestSamplesLinuxRuntime:
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
             'volumes': {
-                '/var/tmp': {
-                    'bind': '/var/tmp',
-                },
+                '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'inference_engine' / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/inference_engine/samples/cpp',
                 },
