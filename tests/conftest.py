@@ -32,6 +32,12 @@ def pytest_configure(config):
     config.addinivalue_line(
         'markers', 'hddl: run tests on HDDL device',
     )
+    config.addinivalue_line(
+        'markers', 'vpu: run tests on VPU device',
+    )
+    config.addinivalue_line(
+        'markers', 'gpu: run tests on GPU device',
+    )
     dist = config.getoption('--distribution')
     if dist == 'runtime' and 'model_server' not in config.getoption('--image'):
         log.info('Setting up runtime image dependencies')
