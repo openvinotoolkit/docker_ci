@@ -59,6 +59,13 @@ class DockerArgumentParser(argparse.ArgumentParser):
             dest='test_expression',
             help='Run tests which match the given substring expression for pytest -k.',
         )
+        parser.add_argument(
+            '-m',
+            metavar='MARKEXPR',
+            default='',
+            dest='test_mark_expression',
+            help='Run tests which matching given mark expression for pytest -m',
+        )
 
         parser.add_argument(
             '--sdl_check',

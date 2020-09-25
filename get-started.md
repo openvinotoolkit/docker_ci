@@ -8,6 +8,7 @@ With this guide, you will learn how to:
 4. [Test image](#test-image)  
 5. [Build, test, deploy an image (All in one)](#all-in-one)  
 6. [Run built image](#run-built-image)  
+7. [Troubleshooting](#troubleshooting) 
 
 ## Generate Dockerfile
 You can use available dockerfiles from `<root_project>/dockerfiles/<image_os>` folder or generate Dockerfile with your settings. 
@@ -206,6 +207,12 @@ docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp -
 /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d Myriad -sample-options -no_show"
 /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d HDDL -sample-options -no_show"
 ```
+## Troubleshooting
+
+If you see a missing `apt` package that needs for OpenVINO product in Linux docker image, please install a missing component directly via `apt install` command and 
+create issue on [GitHub* Issues](https://github.com/openvinotoolkit/docker_ci/issues).
+We will check a missing package to meet Intel(R) security policy.
+Please see [SECURITY](./SECURITY.md) for details to follow security guideline.
 
 ---
 \* Other names and brands may be claimed as the property of others.

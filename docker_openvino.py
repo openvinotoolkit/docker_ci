@@ -225,16 +225,14 @@ class Launcher:
             if result_dive != pytest.ExitCode.OK:
                 result = result_dive
         test_report = self.logdir / 'tests.html'
-        test_expression = ''
-        if self.args.test_expression:
-            test_expression = self.args.test_expression
         # package_url is now mandatory for test-only runtime testing
         package_url = ''
         if self.args.distribution == 'runtime':
             package_url = self.args.package_url
         result_tests = pytest.main([
             f'{self.location / "tests" / "functional"}',
-            '-k', test_expression,
+            '-k', self.args.test_expression,
+            '-m', self.args.test_mark_expression,
             '--image', self.image_name,
             '--distribution', self.args.distribution,
             '--image_os', self.args.os,

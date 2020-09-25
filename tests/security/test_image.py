@@ -45,7 +45,8 @@ class TestSDLImage:
     @pytest.mark.skipif(not sys.platform.startswith('win32'), reason="Linux doesn't support windows executable files")
     @pytest.mark.skipif(SNYK_TOKEN == '',  # noqa: S105 # nosec
                         reason='Missing snyk token to do test. Specify it in setup.py file')
-    def test_snyk_windows(self, image, dockerfile):
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    def test_snyk_windows(self, is_image_os, image, dockerfile):
         location = pathlib.Path(__file__).parent
         snyk_file = location / 'snyk.exe'
         download_file(SNYK_URL['windows'], snyk_file)

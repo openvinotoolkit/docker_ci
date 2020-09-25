@@ -31,7 +31,7 @@ RUN SETX /M PATH "C:\Program Files\CMake\Bin;%PATH%"
 ARG PYTHON_VER=python3.7
 
 RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.8/python-3.7.8-amd64.exe -OutFile %TMP%\\python-3.7.exe ; `
+    Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe -OutFile %TMP%\\python-3.7.exe ; `
     Start-Process %TMP%\\python-3.7.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python37' -Wait ; `
     Remove-Item %TMP%\\python-3.7.exe -Force
 
@@ -69,7 +69,7 @@ RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
                     }`
                     if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\models\intel)`
                     {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\models\intel`
+                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\models\intel ;`
                         New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\models\intel`
                     }`
                     if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\downloader)`
