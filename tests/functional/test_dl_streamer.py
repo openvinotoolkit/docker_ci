@@ -69,3 +69,28 @@ class TestDlStreamerLinux:
              './draw_face_attributes -i face-demographics-walking.mp4 -n -d HDDL"'],
             self.test_draw_face_attributes_cpp_hddl.__name__, **kwargs,
         )
+
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_image', ['data_dev'], indirect=True)
+    def test_gst_launch_audio_detect(self, is_image_os, is_image, tester, image):
+        kwargs = {'mem_limit': '3g'}
+        tester.test_docker_image(
+            image,
+            ['apt update', 'apt install wget',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'cd /opt/intel/openvino/data_processing/dl_streamer/samples/gst_launch/audio_detect && '
+             './download_audio_models.sh && ./audio_event_detection.sh"'],
+            self.test_gst_launch_audio_detect.__name__, **kwargs,
+        )
+
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_image', ['data_dev'], indirect=True)
+    def test_gst_launch_metapublish(self, is_image_os, is_image, tester, image):
+        kwargs = {'mem_limit': '3g'}
+        tester.test_docker_image(
+            image,
+            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
+             './download_models.sh && cd gst_launch/metapublish && ./metapublish.sh"'],
+            self.test_gst_launch_metapublish.__name__, **kwargs,
+        )
