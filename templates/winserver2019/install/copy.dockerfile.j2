@@ -6,14 +6,13 @@ RUN powershell.exe -Command `
     Expand-Archive -Path "./*.zip" -DestinationPath "%INTEL_OPENVINO_DIR%" -Force ; `
     Remove-Item "./*.zip" -Force
 
-ARG year
 RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
                     {`
                         New-Item -Path C:\intel\openvino -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%`
                     }`
-                    if ( -not (Test-Path -Path C:\intel\openvino_%year%) ) `
+                    if ( -not (Test-Path -Path C:\intel\openvino_{{year}}) ) `
                     {`
-                        New-Item -Path C:\intel\openvino_%year% -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%`
+                        New-Item -Path C:\intel\openvino_{{year}} -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%`
                     }`
                     if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\inference_engine)`
                     {`
