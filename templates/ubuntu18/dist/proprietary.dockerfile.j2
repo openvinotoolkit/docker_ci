@@ -1,6 +1,8 @@
 # proprietary package
 WORKDIR /tmp
 
+RUN ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     find "${INTEL_OPENVINO_DIR}/" -type f -name "*requirements*.*" -path "*/${PYTHON_VER}/*" -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
     find "${INTEL_OPENVINO_DIR}/" -type f -name "*requirements*.*" -not -path "*/post_training_optimization_toolkit/*" -not -name "*windows.txt"  -not -name "*ubuntu16.txt" -not -path "*/python3*/*" -not -path "*/python2*/*" -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
