@@ -740,6 +740,7 @@ class TestDemosWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
+    @pytest.mark.xfail(reason='39822 issue')
     def test_squeezenet_cpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
