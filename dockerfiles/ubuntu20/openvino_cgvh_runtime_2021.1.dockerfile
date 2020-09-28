@@ -34,6 +34,12 @@ ARG DEPENDENCIES="autoconf \
                   libtool \
                   udev \
                   unzip \
+                  libgstreamer1.0-0 \
+                  gstreamer1.0-plugins-base \
+                  gstreamer1.0-plugins-good \
+                  gstreamer1.0-plugins-bad \
+                  gstreamer1.0-vaapi \
+                  ffmpeg \
                   dos2unix"
 
 # hadolint ignore=DL3008

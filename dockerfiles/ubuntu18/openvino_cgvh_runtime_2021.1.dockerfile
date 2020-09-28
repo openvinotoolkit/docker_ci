@@ -34,6 +34,12 @@ ARG DEPENDENCIES="autoconf \
                   libtool \
                   udev \
                   unzip \
+                  libgstreamer1.0-0 \
+                  gstreamer1.0-plugins-base \
+                  gstreamer1.0-plugins-good \
+                  gstreamer1.0-plugins-bad \
+                  gstreamer1.0-vaapi \
+                  ffmpeg \
                   dos2unix"
 
 # hadolint ignore=DL3008
@@ -53,7 +59,7 @@ ENV PYTHON_VER python3.6
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON_VER} && \
+    apt-get install -y python3-pip python3-dev lib${PYTHON_VER} && \
     rm -rf /var/lib/apt/lists/*
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip
@@ -80,8 +86,7 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
     rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
-    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
-    ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR"
 
 WORKDIR /tmp
 RUN rm -rf "${TEMP_DIR}"
@@ -146,6 +151,9 @@ RUN apt-get update && \
 
 # runtime package
 WORKDIR /tmp
+
+RUN ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+
 RUN find "${INTEL_OPENVINO_DIR}/" -type f -name "*requirements*.*" -path "*/${PYTHON_VER}/*" -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
     find "${INTEL_OPENVINO_DIR}/" -type f -name "*requirements*.*" -not -path "*/post_training_optimization_toolkit/*" -not -name "*windows.txt"  -not -name "*ubuntu16.txt" -not -path "*/python3*/*" -not -path "*/python2*/*" -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
 
