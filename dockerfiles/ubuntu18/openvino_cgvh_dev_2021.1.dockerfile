@@ -34,6 +34,12 @@ ARG DEPENDENCIES="autoconf \
                   libtool \
                   udev \
                   unzip \
+                  libgstreamer1.0-0 \
+                  gstreamer1.0-plugins-base \
+                  gstreamer1.0-plugins-good \
+                  gstreamer1.0-plugins-bad \
+                  gstreamer1.0-vaapi \
+                  ffmpeg \
                   dos2unix"
 
 # hadolint ignore=DL3008
@@ -80,8 +86,7 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
     rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
-    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
-    ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR"
 
 WORKDIR /tmp
 RUN rm -rf "${TEMP_DIR}"

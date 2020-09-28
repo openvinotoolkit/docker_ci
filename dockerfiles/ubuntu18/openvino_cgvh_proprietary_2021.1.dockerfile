@@ -34,6 +34,12 @@ ARG DEPENDENCIES="autoconf \
                   libtool \
                   udev \
                   unzip \
+                  libgstreamer1.0-0 \
+                  gstreamer1.0-plugins-base \
+                  gstreamer1.0-plugins-good \
+                  gstreamer1.0-plugins-bad \
+                  gstreamer1.0-vaapi \
+                  ffmpeg \
                   dos2unix"
 
 # hadolint ignore=DL3008
@@ -73,8 +79,7 @@ RUN tar -xzf ${TEMP_DIR}/*.tgz --strip 1
 RUN sed -i 's/decline/accept/g' silent.cfg && \
     ${TEMP_DIR}/install.sh -s silent.cfg && \
     OV_BUILD="$(find /opt/intel -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
-    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
-    ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino
 
 WORKDIR /tmp
 RUN rm -rf ${TEMP_DIR}
@@ -139,6 +144,8 @@ RUN apt-get update && \
 
 # proprietary package
 WORKDIR /tmp
+
+RUN ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
 
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     find "${INTEL_OPENVINO_DIR}/" -type f -name "*requirements*.*" -path "*/${PYTHON_VER}/*" -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
