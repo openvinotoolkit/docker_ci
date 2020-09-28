@@ -47,7 +47,7 @@ ENV PYTHON python3.6
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y python3-pip python3-dev lib${PYTHON}=3.6.9-1~18.04ubuntu1 && \
+    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON}=3.6.9-1~18.04ubuntu1 && \
     rm -rf /var/lib/apt/lists/*
 
 # get product from URL
