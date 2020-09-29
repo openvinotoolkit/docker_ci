@@ -1097,6 +1097,7 @@ class TestSamplesLinuxRuntime:
 class TestSamplesWindows:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
+    @pytest.mark.xfail(reason='39942 issue')
     def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
