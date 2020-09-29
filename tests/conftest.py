@@ -44,7 +44,9 @@ def pytest_configure(config):
         mount_root = pathlib.Path(config.getoption('--mount_root'))
         package_url = config.getoption('--package_url')
         image_os = config.getoption('--image_os')
-        if not (mount_root / 'openvino_dev').exists():
+        if (mount_root / 'openvino_dev').exists():
+            log.info('Directory for runtime testing dependency already exists, skipping dependency preparation')
+        else:
             mount_root.mkdir(parents=True, exist_ok=True)
             if package_url.startswith(('http://', 'https://', 'ftp://')):
                 log.info('Downloading dependent package...')
@@ -78,8 +80,6 @@ def pytest_configure(config):
                                     or a local file in the project location as dependent package: {package_url}"""
                     log.error(err_msg)
                     raise FailedTest(err_msg)
-        else:
-            log.info('Directory for runtime testing dependency already exists, skipping dependency preparation')
 
 
 def pytest_unconfigure(config):

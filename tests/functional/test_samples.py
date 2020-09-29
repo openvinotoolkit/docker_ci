@@ -1122,31 +1122,6 @@ class TestSamplesWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    def test_hello_reshape_cpp_cpu(self, is_distribution, is_image_os, tester, image):
-        kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
-            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'cd C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp && '
-             'C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
-             'cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
-             '--name vehicle-detection-adas-0002 --precisions FP16 '
-             '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
-             'cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\hello_reshape_ssd '
-             'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\intel\\\\'
-             'vehicle-detection-adas-0002\\\\FP16\\\\vehicle-detection-adas-0002.xml '
-             'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp CPU 1',
-             ], self.test_hello_reshape_cpp_cpu.__name__, **kwargs,
-        )
-
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
     def test_object_detection_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
