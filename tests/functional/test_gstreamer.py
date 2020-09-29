@@ -33,7 +33,7 @@ class TestGstreamerLinux:
              'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
              'python3 detect_and_classify.py -i face-demographics-walking.mp4 '
              '-d /tmp/intel/face-detection-adas-0001/FP16/face-detection-adas-0001.xml '
-             '-c /tmp/intel/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml"'
+             '-c /tmp/intel/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml"',
              ],
             self.test_gstreamer_python.__name__, **kwargs,
         )
@@ -64,7 +64,7 @@ class TestGstreamerLinux:
              'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
              './face_attributes -i face-demographics-walking.mp4 '
              '-m /tmp/intel/face-detection-adas-0001/FP32/face-detection-adas-0001.xml '
-             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml"'
+             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml"',
              ],
             self.test_gstreamer_cpp.__name__, **kwargs,
         )
