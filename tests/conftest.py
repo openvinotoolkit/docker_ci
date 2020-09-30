@@ -47,6 +47,9 @@ def pytest_configure(config):
         if (mount_root / 'openvino_dev').exists():
             log.info('Directory for runtime testing dependency already exists, skipping dependency preparation')
         else:
+            if not package_url:
+                return
+
             mount_root.mkdir(parents=True, exist_ok=True)
             if package_url.startswith(('http://', 'https://', 'ftp://')):
                 log.info('Downloading dependent package...')

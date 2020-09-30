@@ -179,6 +179,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
             '-u',
             '--package_url',
             metavar='URL',
+            default='',
             help='Package external or local url, use http://, https://, ftp:// access scheme or '
                  'relative <root_project> local path',
         )
@@ -317,12 +318,6 @@ def parse_args(name: str, description: str):
         if args.mode == 'test' and not (args.tags and args.distribution):
             parser.error('Options --tags and --distribution are mandatory. Image operation system is "ubuntu18"'
                          ' by default.')
-
-        if (args.mode == 'test' and args.distribution == 'runtime') and (
-                'model_server' not in args.tags[0] and not args.package_url):
-            parser.error("""Insufficient arguments. Provide --package_url key with path to dev distribution package in
-                              http/https/ftp access scheme or a local file in the project location
-                              as dependent package""")
 
         if args.mode in ('deploy', 'all') and not hasattr(args, 'registry'):
             parser.error('Option --registry is mandatory for this mode.')
