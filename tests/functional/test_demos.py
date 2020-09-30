@@ -730,7 +730,7 @@ class TestDemosLinux:
 class TestDemosLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     def test_detection_ssd_python_cpu(self, is_distribution, is_image_os, is_not_image, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
@@ -761,7 +761,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     @pytest.mark.gpu
     def test_detection_ssd_python_gpu(self, is_distribution, is_image_os, is_not_image, tester, image, mount_root):
@@ -794,7 +794,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     @pytest.mark.vpu
     def test_detection_ssd_python_vpu(self, is_distribution, is_image_os, is_not_image, tester, image, mount_root):
@@ -830,7 +830,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     @pytest.mark.hddl
     def test_detection_ssd_python_hddl(self, is_distribution, is_image_os, is_not_image, tester, image, mount_root):
@@ -864,7 +864,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     def test_segmentation_python_cpu(self, is_distribution, is_image_os, is_not_image, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
@@ -896,7 +896,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     @pytest.mark.gpu
     def test_segmentation_python_gpu(self, is_distribution, is_image_os, is_not_image, tester, image, mount_root):
@@ -930,7 +930,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     @pytest.mark.vpu
     def test_segmentation_python_vpu(self, is_distribution, is_image_os, is_not_image, tester, image, mount_root):
@@ -967,7 +967,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     @pytest.mark.hddl
     def test_segmentation_python_hddl(self, is_distribution, is_image_os, is_not_image, tester, image, mount_root):
