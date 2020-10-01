@@ -170,6 +170,14 @@ docker run -it --rm openvino/<image_name>:latest
 ```cmd
 docker run -it --rm openvino/<image_name>:latest
 ```
+
+**Linux runtime/data_dev/proprietary images:**
+
+You need to install 3d party dependencies via `<install_root>/install_dependencies/install_openvino_dependencies.sh` in your container to using data processing components:
+* DL Streamer*
+* GStreamer 
+* Speech Libraries and End-to-End Speech Demos
+
 If you want to try some demos then run image with the root privileges (some additional 3-rd party dependencies will be installed):
 
 **Linux image:** 
@@ -189,7 +197,7 @@ To run inference on the VPU, make sure you've built the image with support for V
 ```bash
 docker run -itu root:root --rm --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb openvino/<image_name>:latest
 ```
-To run inference on the HDDL, make sure you've built the image with support for HDDL and setup HDDL drivers on host machine, follow the [configuration guide for HDDL](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_linux_ivad_vpu.html):
+To run inference on the HDDL, make sure you've built the image with support for HDDL and setup HDDL driver on host machine, follow the [configuration guide for HDDL device](./install_guide_vpu_hddl.md):
 ```bash
 docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp openvino/<image_name>:latest
 ```
