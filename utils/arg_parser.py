@@ -265,6 +265,7 @@ def parse_args(name: str, description: str):
     parser.add_test_args(test_subparser)
 
     deploy_subparser = subparsers.add_parser('deploy', help='Deploy a docker image')
+    parser.add_template_args(deploy_subparser)
     parser.add_image_args(deploy_subparser)
     parser.add_deploy_args(deploy_subparser)
 
@@ -318,6 +319,12 @@ def parse_args(name: str, description: str):
         if args.mode == 'test' and not (args.tags and args.distribution):
             parser.error('Options --tags and --distribution are mandatory. Image operation system is "ubuntu18"'
                          ' by default.')
+
+        if (args.mode == 'test' and args.distribution == 'runtime') and (
+                'model_server' not in args.tags[0] and not args.package_url):
+            print('\nProvide --package_url key with path to dev distribution package in '
+                  'http/https/ftp access scheme or a local file in the project location as dependent package '
+                  'to run all available tests.\n')
 
         if args.mode in ('deploy', 'all') and not hasattr(args, 'registry'):
             parser.error('Option --registry is mandatory for this mode.')

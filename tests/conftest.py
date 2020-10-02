@@ -202,6 +202,12 @@ def is_not_image(request):
                     f'{request.config.getoption("--image")}')
 
 
+@pytest.fixture(scope='session')
+def is_package_url_specified(request):
+    if not request.config.getoption('--package_url'):
+        pytest.skip('Test requires a url for a dev package.')
+
+
 def pytest_runtest_setup(item):
     for mark in item.iter_markers():
         if 'hddl' in mark.name and sys.platform.startswith('linux'):
