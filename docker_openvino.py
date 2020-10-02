@@ -12,6 +12,7 @@ import pathlib
 import platform
 import shutil
 import sys
+import time
 import timeit
 import typing
 
@@ -30,7 +31,7 @@ from utils.docker_api import DockerAPI
 from utils.exceptions import FailedBuild, FailedDeploy, FailedStep, FailedTest
 from utils.loader import INTEL_OCL_RELEASE
 from utils.render import DockerFileRender
-from utils.utilities import (DEFAULT_DATA_CHUNK_SIZE, download_file,
+from utils.utilities import (DEFAULT_DATA_CHUNK_SIZE, MAX_DEPLOY_RETRIES, SLEEP_BETWEEN_RETRIES, download_file,
                              format_timedelta, get_system_proxy)
 
 __version__ = '0.1'
@@ -271,29 +272,42 @@ class Launcher:
         """Push built Docker image to repo specified in CLI"""
         log.info(logger.LINE_DOUBLE)
         log.info('Publishing built Docker image...')
-        try:
-            for tag in self.args.tags:
-                curr_time = timeit.default_timer()
-                if self.args.registry in tag:
-                    log_generator = self.docker_api.client.images.push(tag,
-                                                                       stream=True, decode=True)
-                else:
-                    log_generator = self.docker_api.client.images.push(self.args.registry + '/' + tag,
-                                                                       stream=True, decode=True)
-                log_name = f'deploy_{tag.replace("/", "_").replace(":", "_")}.log'
-                log_path_file = self.logdir / log_name
-                log.info(f'Image {tag} push log location: {log_path_file}')
-                logger.switch_to_custom(log_path_file)
-                for line in log_generator:
-                    for key, value in line.items():
-                        if 'error' in key or 'errorDetail' in key:
-                            raise FailedDeploy(f'{value}')
-                        log.info(f'{value}')
-                logger.switch_to_summary()
-                log.info(f'Push time: {format_timedelta(timeit.default_timer() - curr_time)}')
-                log.info('Image successfully published')
-        except (APIError, ReadTimeoutError) as err:
-            raise FailedDeploy(f'Push had failed: {err}')
+
+        for tag in self.args.tags:
+            log_name = f'deploy_{tag.replace("/", "_").replace(":", "_")}.log'
+            log_path_file = self.logdir / log_name
+            log.info(f'Image {tag} push log location: {log_path_file}')
+            logger.switch_to_custom(log_path_file)
+            curr_time = timeit.default_timer()
+
+            attempt_number = 1
+            while attempt_number <= MAX_DEPLOY_RETRIES:
+                log.info(f'Try deploy the image, attempt #{attempt_number}')
+                attempt_number += 1
+                try:
+                    if self.args.registry in tag:
+                        log_generator = self.docker_api.client.images.push(tag,
+                                                                           stream=True, decode=True)
+                    else:
+                        log_generator = self.docker_api.client.images.push(self.args.registry + '/' + tag,
+                                                                           stream=True, decode=True)
+                    for line in log_generator:
+                        for key, value in line.items():
+                            if 'error' in key or 'errorDetail' in key:
+                                raise FailedDeploy(f'{value}')
+                            log.info(f'{value}')
+                    break
+                except (APIError, ReadTimeoutError) as err:
+                    log.warning(
+                        f'Something went wrong during pushing the image, trying again after sleeping '
+                        f'{SLEEP_BETWEEN_RETRIES}s: \n\t {err}')
+                    time.sleep(SLEEP_BETWEEN_RETRIES)
+                    continue
+            else:
+                raise FailedDeploy(f'Push had failed after {MAX_DEPLOY_RETRIES} attempts')
+            logger.switch_to_summary()
+            log.info(f'Push time: {format_timedelta(timeit.default_timer() - curr_time)}')
+            log.info('Image successfully published')
 
     def save(self):
         """Save Docker image as a local binary file"""

@@ -20,7 +20,8 @@ class TestGstreamerLinux:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
              '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 -B /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -50,7 +51,8 @@ class TestGstreamerLinux:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
              '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 -B /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -83,7 +85,8 @@ class TestGstreamerLinux:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
              '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 -B /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -97,7 +100,7 @@ class TestGstreamerLinux:
              'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
              './face_attributes -i face-demographics-walking.mp4 '
              '-m /tmp/intel/face-detection-adas-0001/FP32/face-detection-adas-0001.xml '
-             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d GPU"'
+             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d GPU"',
              ],
             self.test_gstreamer_cpp_gpu.__name__, **kwargs,
         )
@@ -119,7 +122,8 @@ class TestGstreamerLinux:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
              '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 -B /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -133,7 +137,7 @@ class TestGstreamerLinux:
              'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
              './face_attributes -i face-demographics-walking.mp4 '
              '-m /tmp/intel/face-detection-adas-0001/FP32/face-detection-adas-0001.xml '
-             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d MYRIAD"'
+             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d MYRIAD"',
              ],
             self.test_gstreamer_cpp_vpu.__name__, **kwargs,
         )
@@ -153,7 +157,8 @@ class TestGstreamerLinux:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
              '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 -B /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -167,7 +172,7 @@ class TestGstreamerLinux:
              'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
              './face_attributes -i face-demographics-walking.mp4 '
              '-m /tmp/intel/face-detection-adas-0001/FP32/face-detection-adas-0001.xml '
-             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d HDDL"'
+             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d HDDL"',
              ],
             self.test_gstreamer_cpp_hddl.__name__, **kwargs,
         )
