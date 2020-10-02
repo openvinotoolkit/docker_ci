@@ -229,15 +229,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
     ),
     pytest.param(
         {
-            'mode': 'test',
-            'distribution': 'runtime',
-            'tags': ['qqq'],
-        },
-        'Provide --package_url key with path to dev distribution package',
-        id='Test runtime without package_url',
-    ),
-    pytest.param(
-        {
             'mode': 'deploy',
             'distribution': 'runtime',
         },
