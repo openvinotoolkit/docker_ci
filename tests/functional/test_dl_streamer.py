@@ -11,7 +11,8 @@ class TestDlStreamerLinux:
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
              './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
              'cd build && cmake ../ && make && '
@@ -27,7 +28,8 @@ class TestDlStreamerLinux:
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
              './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
              'cd build && cmake ../ && make && '
@@ -45,7 +47,8 @@ class TestDlStreamerLinux:
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
              './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
              'cd build && cmake ../ && make && '
@@ -62,7 +65,8 @@ class TestDlStreamerLinux:
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
              './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
              'cd build && cmake ../ && make && '
@@ -77,7 +81,8 @@ class TestDlStreamerLinux:
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            ['apt update', 'apt install wget',
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             'apt update', 'apt install wget',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples/gst_launch/audio_detect && '
              './download_audio_models.sh && ./audio_event_detection.sh"'],
@@ -90,7 +95,8 @@ class TestDlStreamerLinux:
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
              './download_models.sh && cd gst_launch/metapublish && ./metapublish.sh"'],
             self.test_gst_launch_metapublish.__name__, **kwargs,

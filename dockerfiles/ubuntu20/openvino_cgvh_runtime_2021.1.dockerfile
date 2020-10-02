@@ -59,7 +59,7 @@ ENV PYTHON_VER python3.8
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON_VER} && \
+    apt-get install -y --no-install-recommends python3-pip python3-dev python3-setuptools lib${PYTHON_VER} && \
     rm -rf /var/lib/apt/lists/*
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip
