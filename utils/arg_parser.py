@@ -322,7 +322,8 @@ def parse_args(name: str, description: str):
 
         if (args.mode == 'test' and args.distribution == 'runtime') and (
                 'model_server' not in args.tags[0] and not args.package_url):
-            print('\nProvide --package_url key with path to dev distribution package in '
+            print('\nYou can run samples/demos on runtime docker image. '
+                  'Please provide --package_url key with path to dev distribution package in '
                   'http/https/ftp access scheme or a local file in the project location as dependent package '
                   'to run all available tests.\n')
 
