@@ -16,6 +16,8 @@ from requests.packages.urllib3.util.retry import Retry
 from utils import exceptions
 
 DEFAULT_DATA_CHUNK_SIZE = 64 * 1024  # Chunk size for file downloader (64 KB)
+MAX_DEPLOY_RETRIES = 5
+SLEEP_BETWEEN_RETRIES = 60 * 10  # Delay between request retries in case of some failures, in seconds
 
 log = logging.getLogger('project')
 

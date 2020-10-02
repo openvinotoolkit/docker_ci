@@ -100,7 +100,7 @@ class TestGstreamerLinux:
              'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
              './face_attributes -i face-demographics-walking.mp4 '
              '-m /tmp/intel/face-detection-adas-0001/FP32/face-detection-adas-0001.xml '
-             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d GPU"'
+             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d GPU"',
              ],
             self.test_gstreamer_cpp_gpu.__name__, **kwargs,
         )
@@ -137,7 +137,7 @@ class TestGstreamerLinux:
              'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
              './face_attributes -i face-demographics-walking.mp4 '
              '-m /tmp/intel/face-detection-adas-0001/FP32/face-detection-adas-0001.xml '
-             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d MYRIAD"'
+             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d MYRIAD"',
              ],
             self.test_gstreamer_cpp_vpu.__name__, **kwargs,
         )
@@ -172,7 +172,7 @@ class TestGstreamerLinux:
              'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
              './face_attributes -i face-demographics-walking.mp4 '
              '-m /tmp/intel/face-detection-adas-0001/FP32/face-detection-adas-0001.xml '
-             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d HDDL"'
+             '-c /tmp/intel/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -d HDDL"',
              ],
             self.test_gstreamer_cpp_hddl.__name__, **kwargs,
         )
