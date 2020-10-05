@@ -18,14 +18,6 @@ def temp_file(tmp_path):
     return f
 
 
-@pytest.fixture()
-def temp_zip(tmp_path, temp_file):
-    zip_path = (tmp_path / 'temp.zip')
-    with zipfile.ZipFile(zip_path, 'w') as zf:
-        zf.write(temp_file, 'file.txt')
-    return zip_path
-
-
 @pytest.mark.parametrize('date, res', [
     pytest.param(
         169310,
@@ -132,25 +124,19 @@ class TestDownloadFile:
 
 @pytest.mark.parametrize('mock_data, res', [
     pytest.param(
-        {},
+        None,
         {},
         id='empty proxy list',
     ),
     pytest.param(
-        {'http_proxy': '1', 'https_proxy': '2', 'ftp_proxy': '3', 'no_proxy': '4'},
-        {'http_proxy': '1', 'https_proxy': '2', 'ftp_proxy': '3', 'no_proxy': '4',
-         'HTTP_PROXY': '1', 'HTTPS_PROXY': '2', 'FTP_PROXY': '3', 'NO_PROXY': '4'},
+        '1',
+        {'http_proxy': '1', 'https_proxy': '1', 'ftp_proxy': '1', 'no_proxy': '1',
+         'HTTP_PROXY': '1', 'HTTPS_PROXY': '1', 'FTP_PROXY': '1', 'NO_PROXY': '1'},
         id='lowercase proxy list',
-    ),
-    pytest.param(
-        {'HTTP_PROXY': '1', 'HTTPS_PROXY': '2', 'FTP_PROXY': '3', 'NO_PROXY': '4'},
-        {'http_proxy': '1', 'https_proxy': '2', 'ftp_proxy': '3', 'no_proxy': '4',
-         'HTTP_PROXY': '1', 'HTTPS_PROXY': '2', 'FTP_PROXY': '3', 'NO_PROXY': '4'},
-        id='uppercase proxy list',
     ),
 ])
 def test_get_system_proxy(mock_data, res):
-    with mock.patch('os.environ.copy') as mock_env:
+    with mock.patch('os.getenv') as mock_env:
         mock_env.return_value = mock_data
         assert utilities.get_system_proxy() == res  # noqa: S101  # nosec
 
