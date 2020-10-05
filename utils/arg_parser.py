@@ -35,6 +35,20 @@ class DockerArgumentParser(argparse.ArgumentParser):
         )
 
     @staticmethod
+    def add_linter_check_args(parser: argparse.ArgumentParser):
+        parser.add_argument(
+            '--linter_check',
+            metavar='NAME',
+            action='append',
+            default=[],
+            help='Enable linter check for image and dockerfile. '
+                 'It installs additional 3d-party docker images or executable files. '
+                 'Available tests: '
+                 'hadolint (https://github.com/hadolint/hadolint), '
+                 'dive (https://github.com/wagoodman/dive)',
+        )
+
+    @staticmethod
     def add_build_args(parser: argparse.ArgumentParser):
         """Adding args needed to build the Docker image"""
         parser.add_argument(
@@ -64,13 +78,6 @@ class DockerArgumentParser(argparse.ArgumentParser):
             help='Target inference hardware: cpu, gpu, vpu, hddl. Default is all. '
                  'Dockerfile name format has the first letter from device name, '
                  'e.g. for CPU, HDDL it will be openvino_ch_<distribution>_<product_version>.dockerfile',
-        )
-
-        parser.add_argument(
-            '-os',
-            choices=['ubuntu18', 'ubuntu20', 'winserver2019'],
-            default='ubuntu18',
-            help='Operation System for docker image. By default: ubuntu18',
         )
 
         parser.add_argument(
@@ -107,18 +114,6 @@ class DockerArgumentParser(argparse.ArgumentParser):
         parser.add_argument('-p',
                             '--product_version',
                             help='Product version in format: YYYY.U[.BBB], where BBB - build number is optional.')
-
-        parser.add_argument(
-            '--linter_check',
-            metavar='NAME',
-            action='append',
-            default=[],
-            help='Enable linter check for image and dockerfile. '
-                 'It installs additional 3d-party docker images or executable files. '
-                 'Available tests: '
-                 'hadolint (https://github.com/hadolint/hadolint), '
-                 'dive (https://github.com/wagoodman/dive)',
-        )
 
         parser.add_argument(
             '-l',
@@ -197,6 +192,13 @@ class DockerArgumentParser(argparse.ArgumentParser):
     def add_dist_args(parser: argparse.ArgumentParser):
         """Adding arg needed to customize the generated dockerfile"""
         parser.add_argument(
+            '-os',
+            choices=['ubuntu18', 'ubuntu20', 'winserver2019'],
+            default='ubuntu18',
+            help='Operation System for docker image. By default: ubuntu18',
+        )
+
+        parser.add_argument(
             '-dist',
             '--distribution',
             choices=['base', 'runtime', 'dev', 'data_dev', 'internal_dev', 'proprietary'],
@@ -240,19 +242,24 @@ def parse_args(name: str, description: str):
     gen_dockerfile_subparser = subparsers.add_parser('gen_dockerfile', help='Generate a dockerfile to '
                                                                             'dockerfiles/<image_os> folder')
     parser.add_build_args(gen_dockerfile_subparser)
+    parser.add_linter_check_args(gen_dockerfile_subparser)
+    parser.add_dist_args(gen_dockerfile_subparser)
 
     build_subparser = subparsers.add_parser('build', help='Build a docker image')
     parser.add_build_args(build_subparser)
+    parser.add_linter_check_args(build_subparser)
     parser.add_dist_args(build_subparser)
     parser.add_image_args(build_subparser)
 
     build_test_subparser = subparsers.add_parser('build_test', help='Build and test a docker image')
     parser.add_build_args(build_test_subparser)
+    parser.add_linter_check_args(build_test_subparser)
     parser.add_dist_args(build_test_subparser)
     parser.add_image_args(build_test_subparser)
     parser.add_test_args(build_test_subparser)
 
     test_subparser = subparsers.add_parser('test', help='Test a local docker image')
+    parser.add_linter_check_args(test_subparser)
     parser.add_dist_args(test_subparser)
     parser.add_image_args(test_subparser)
     parser.add_test_args(test_subparser)
@@ -263,6 +270,7 @@ def parse_args(name: str, description: str):
 
     all_subparser = subparsers.add_parser('all', help='Build, test and deploy a docker image. [Default option]')
     parser.add_build_args(all_subparser)
+    parser.add_linter_check_args(all_subparser)
     parser.add_dist_args(all_subparser)
     parser.add_image_args(all_subparser)
     parser.add_test_args(all_subparser)
