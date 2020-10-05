@@ -2,12 +2,10 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import pathlib
-import zipfile
 from unittest import mock
 
 import pytest
 import requests
-
 from utils import exceptions, utilities
 
 
