@@ -141,28 +141,6 @@ def test_get_system_proxy(mock_data, res):
         assert utilities.get_system_proxy() == res  # noqa: S101  # nosec
 
 
-class TestUnzipFile:
-    @pytest.mark.parametrize('zip_path, exception', [
-        pytest.param(
-            '',
-            FileNotFoundError,
-            id='FileNotFoundError',
-        ),
-        pytest.param(
-            'https://www.google.com/test.zip',
-            OSError,
-            id='OSError',
-        ),
-    ])
-    def test_zip_path_raises(self, zip_path, exception):
-        with pytest.raises(exception):
-            utilities.unzip_file(zip_path, '')
-
-    def test_not_zip_file(self, temp_file):
-        with pytest.raises(zipfile.BadZipfile):
-            utilities.unzip_file(temp_file, '')
-
-
 @pytest.mark.parametrize('mock_data, ignore, res', [
     pytest.param(
         (('root', ['dir1', '.git'], ['file1.txt']), ('dir1', ['.svn', 'CVS'], ['hello.doc'])),

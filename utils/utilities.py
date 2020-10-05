@@ -6,6 +6,7 @@ import logging
 import os
 import pathlib
 import re
+import tarfile
 import typing
 import zipfile
 
@@ -111,8 +112,12 @@ def download_file(url: str, filename: pathlib.Path,
 
 def unzip_file(file_path: str, target_dir: str):
     """Unpack ZIP-archive to specified directory"""
-    with zipfile.ZipFile(file_path, 'r') as zip_ref:
-        zip_ref.extractall(target_dir)
+    if file_path.endswith('tgz'):
+        with tarfile.open(file_path, 'r') as tar_file:
+            tar_file.extractall(target_dir)
+    elif file_path.endswith('zip'):
+        with zipfile.ZipFile(file_path, 'r') as zip_file:
+            zip_file.extractall(target_dir)
 
 
 def check_printable_utf8_chars(string: str) -> str:
