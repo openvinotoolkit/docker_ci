@@ -11,6 +11,8 @@ import typing
 LINE_SINGLE = '-' * 79
 LINE_DOUBLE = '=' * 79
 
+log = logging.getLogger('docker_ci')
+
 
 def init_logger(logdir: pathlib.Path = None) -> pathlib.Path:
     """Initializing the logger"""
@@ -50,7 +52,7 @@ def init_logger(logdir: pathlib.Path = None) -> pathlib.Path:
             },
         },
         'loggers': {
-            'project': {
+            'docker_ci': {
                 'handlers': ['summary', 'console'],
                 'level': 'DEBUG',
                 'propagate': True,
@@ -83,50 +85,41 @@ def decorate_logger(logger: typing.Type[logging.Logger], func: typing.Callable[.
     logger.increase_indent = increase_indent
     logger.decrease_indent = decrease_indent
     logger._log = my_decorator
-    logger_project = logging.getLogger('project')
-    logger._main_handlers = logger_project.handlers[:]
+    logger._main_handlers = log.handlers[:]
 
 
 def switch_to_custom(name: typing.Union[str, pathlib.Path], logdir: typing.Optional[str] = 'logs'):
     """Switching between additional loggers"""
-    logger = logging.getLogger('project')
-
     remove_summary()
     remove_customs()
 
     handler: UniqueFileHandler = UniqueFileHandler(name, logdir)
-    logger.addHandler(handler)
+    log.addHandler(handler)
 
 
 def add_summary():
     """Adding main logger"""
-    logger = logging.getLogger('project')
-
-    if hasattr(logger, '_main_handlers'):
-        main_handlers = getattr(logger, '_main_handlers')
+    if hasattr(log, '_main_handlers'):
+        main_handlers = getattr(log, '_main_handlers')
         for handler in main_handlers:
-            logger.addHandler(handler)
+            log.addHandler(handler)
 
 
 def remove_summary():
     """Removing main logger"""
-    logger = logging.getLogger('project')
-
-    handlers = logger.handlers[:]
+    handlers = log.handlers[:]
     for handler in handlers:
         name = getattr(handler, '_name')
         if name in ('summary', 'console'):
-            logger.removeHandler(handler)
+            log.removeHandler(handler)
 
 
 def remove_customs():
     """Removing custom logger"""
-    logger = logging.getLogger('project')
-
-    handlers = logger.handlers[:]
+    handlers = log.handlers[:]
     for handler in handlers:
         if isinstance(handler, UniqueFileHandler):
-            logger.removeHandler(handler)
+            log.removeHandler(handler)
 
 
 def switch_to_summary():

@@ -15,7 +15,7 @@ from utils.exceptions import FailedStep
 if sys.platform == 'win32':
     import pywintypes
 
-log = logging.getLogger('project')
+log = logging.getLogger('docker_ci')
 
 
 class DockerAPI:

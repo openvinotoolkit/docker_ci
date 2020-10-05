@@ -14,7 +14,7 @@ from utils.utilities import (check_internal_local_path,
                              check_printable_utf8_chars)
 
 
-class DockerArgumentParser(argparse.ArgumentParser):
+class DockerCIArgumentParser(argparse.ArgumentParser):
     """CLI argument parser for this framework"""
 
     def __init__(self, prog: typing.Optional[str] = None, description: typing.Optional[str] = None):
@@ -235,7 +235,7 @@ class DockerArgumentParser(argparse.ArgumentParser):
 
 def parse_args(name: str, description: str):
     """Parse all the args set up above"""
-    parser = DockerArgumentParser(name, description)
+    parser = DockerCIArgumentParser(name, description)
 
     subparsers = parser.add_subparsers(dest='mode')
 
@@ -278,174 +278,169 @@ def parse_args(name: str, description: str):
 
     parser.set_default_subparser('all')
 
-    try:
-        args = parser.parse_args()
+    args = parser.parse_args()
 
-        for key in vars(args):
-            arg_val = getattr(args, key)
-            if isinstance(arg_val, (list, tuple)):
-                for x in arg_val:
-                    check_printable_utf8_chars(x)
-            elif isinstance(arg_val, str):
-                check_printable_utf8_chars(arg_val)
+    for key in vars(args):
+        arg_val = getattr(args, key)
+        if isinstance(arg_val, (list, tuple)):
+            for x in arg_val:
+                check_printable_utf8_chars(x)
+        elif isinstance(arg_val, str):
+            check_printable_utf8_chars(arg_val)
 
-        for attr_name in ('package_url', 'file', 'image_json_path'):
-            if hasattr(args, attr_name) and getattr(args, attr_name):
-                check_internal_local_path(getattr(args, attr_name))
+    for attr_name in ('package_url', 'file', 'image_json_path'):
+        if hasattr(args, attr_name) and getattr(args, attr_name):
+            check_internal_local_path(getattr(args, attr_name))
 
-        if args.mode != 'deploy' and args.package_url and args.source == 'local' and not args.package_url.startswith((
-                'http://', 'https://', 'ftp://')):
-            args.package_url = str(pathlib.Path(args.package_url).as_posix())
+    if args.mode != 'deploy' and args.package_url and args.source == 'local' and not args.package_url.startswith((
+            'http://', 'https://', 'ftp://')):
+        args.package_url = str(pathlib.Path(args.package_url).as_posix())
 
-        if hasattr(args, 'sdl_check') and args.sdl_check and (
-                'snyk' not in args.sdl_check and 'bench_security' not in args.sdl_check):
-            parser.error('Incorrect arguments for --sdl_check. Available tests: snyk, bench_security')
+    if hasattr(args, 'sdl_check') and args.sdl_check and (
+            'snyk' not in args.sdl_check and 'bench_security' not in args.sdl_check):
+        parser.error('Incorrect arguments for --sdl_check. Available tests: snyk, bench_security')
 
-        if hasattr(args, 'linter_check') and args.linter_check and (
-                'hadolint' not in args.linter_check and 'dive' not in args.linter_check):
-            parser.error('Incorrect arguments for --linter_check. Available tests: hadolint, dive')
+    if hasattr(args, 'linter_check') and args.linter_check and (
+            'hadolint' not in args.linter_check and 'dive' not in args.linter_check):
+        parser.error('Incorrect arguments for --linter_check. Available tests: hadolint, dive')
 
-        if args.mode in ('build', 'build_test', 'all') and args.distribution == 'base' and not args.file:
-            parser.error('The following argument is required: -f/--file')
+    if args.mode in ('build', 'build_test', 'all') and args.distribution == 'base' and not args.file:
+        parser.error('The following argument is required: -f/--file')
 
-        if args.mode == 'deploy' and not args.tags:
-            parser.error('The following argument is required: -t/--tags')
+    if args.mode == 'deploy' and not args.tags:
+        parser.error('The following argument is required: -t/--tags')
 
-        if args.mode == 'gen_dockerfile' and args.distribution == 'base':
-            parser.error('Generating dockerfile for base distribution is not available. '
-                         'Use generated base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder')
+    if args.mode == 'gen_dockerfile' and args.distribution == 'base':
+        parser.error('Generating dockerfile for base distribution is not available. '
+                     'Use generated base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder')
 
-        if args.mode == 'test' and not (args.tags and args.distribution):
-            parser.error('Options --tags and --distribution are mandatory. Image operation system is "ubuntu18"'
-                         ' by default.')
+    if args.mode == 'test' and not (args.tags and args.distribution):
+        parser.error('Options --tags and --distribution are mandatory. Image operation system is "ubuntu18"'
+                     ' by default.')
 
-        if (args.mode == 'test' and args.distribution == 'runtime') and (
-                'model_server' not in args.tags[0] and not args.package_url):
-            print('\nYou can run samples/demos on runtime docker image. '
-                  'Please provide --package_url key with path to dev distribution package in '
-                  'http/https/ftp access scheme or a local file in the project location as dependent package '
-                  'to run all available tests.\n')
+    if (args.mode == 'test' and args.distribution == 'runtime') and (
+            'model_server' not in args.tags[0] and not args.package_url):
+        print('\nYou can run samples/demos on runtime docker image. '
+              'Please provide --package_url key with path to dev distribution package in '
+              'http/https/ftp access scheme or a local file in the project location as dependent package '
+              'to run all available tests.\n')
 
-        if args.mode in ('deploy', 'all') and not hasattr(args, 'registry'):
-            parser.error('Option --registry is mandatory for this mode.')
+    if args.mode in ('deploy', 'all') and not hasattr(args, 'registry'):
+        parser.error('Option --registry is mandatory for this mode.')
 
-        if hasattr(args, 'image_json_path') and args.image_json_path:
-            args.image_json_path = pathlib.Path(args.image_json_path).absolute()
-            if args.image_json_path.is_symlink():
-                parser.error('Do not use symlink and hard link for --image_json_path key. It is an insecure way.')
+    if hasattr(args, 'image_json_path') and args.image_json_path:
+        args.image_json_path = pathlib.Path(args.image_json_path).absolute()
+        if args.image_json_path.is_symlink():
+            parser.error('Do not use symlink and hard link for --image_json_path key. It is an insecure way.')
 
-        if hasattr(args, 'file') and args.file:
-            args.file = pathlib.Path(args.file).absolute()
-            if args.file.is_symlink():
-                parser.error('Do not use symlink and hard link for --file key. It is an insecure way. ')
-            if not args.file.exists():
-                parser.error(f'Cannot find specified Dockerfile: {str(args.file)}.')
+    if hasattr(args, 'file') and args.file:
+        args.file = pathlib.Path(args.file).absolute()
+        if args.file.is_symlink():
+            parser.error('Do not use symlink and hard link for --file key. It is an insecure way. ')
+        if not args.file.exists():
+            parser.error(f'Cannot find specified Dockerfile: {str(args.file)}.')
 
-        if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all'):
-            if args.ocl_release not in INTEL_OCL_RELEASE:
-                parser.error('Provided Intel(R) Graphics Compute Runtime for OpenCL(TM) release is not acceptable.')
+    if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all'):
+        if args.ocl_release not in INTEL_OCL_RELEASE:
+            parser.error('Provided Intel(R) Graphics Compute Runtime for OpenCL(TM) release is not acceptable.')
 
-            if args.package_url and not args.package_url.startswith(('http://', 'https://', 'ftp://')):
-                if args.source == 'local' and not pathlib.Path(args.package_url).exists():
-                    parser.error('Provided local path of the package should be relative to <root_project> folder '
-                                 f'or should be an http/https/ftp access scheme: {args.package_url}')
-                elif args.source == 'url' and args.distribution != 'base':
-                    parser.error('Provided URL is not supported, use http://, https:// or ftp:// access scheme')
-                elif args.source == 'local' and pathlib.Path(args.package_url).is_symlink():
-                    parser.error('Do not use symlink and hard link to specify local package url. '
-                                 'It is an insecure way.')
+        if args.package_url and not args.package_url.startswith(('http://', 'https://', 'ftp://')):
+            if args.source == 'local' and not pathlib.Path(args.package_url).exists():
+                parser.error('Provided local path of the package should be relative to <root_project> folder '
+                             f'or should be an http/https/ftp access scheme: {args.package_url}')
+            elif args.source == 'url' and args.distribution != 'base':
+                parser.error('Provided URL is not supported, use http://, https:// or ftp:// access scheme')
+            elif args.source == 'local' and pathlib.Path(args.package_url).is_symlink():
+                parser.error('Do not use symlink and hard link to specify local package url. '
+                             'It is an insecure way.')
 
-            if not args.python:
-                if 'ubuntu18' in args.os:
-                    args.python = 'python36'
-                elif 'ubuntu20' in args.os:
-                    args.python = 'python38'
-                else:
-                    args.python = 'python37'
-
-            if not args.distribution and args.package_url:
-                if '_internal_' in args.package_url:
-                    args.distribution = 'internal_dev'
-                elif '_runtime_' in args.package_url:
-                    args.distribution = 'runtime'
-                elif '_data_dev_' in args.package_url:
-                    args.distribution = 'data_dev'
-                elif '_dev_' in args.package_url:
-                    args.distribution = 'dev'
-                else:
-                    parser.error(f'Cannot get distribution type from the package URL provided. {args.package_url} '
-                                 'Please specify --distribution directly.')
-            #  set installation method for the package
-            if args.distribution == 'proprietary':
-                args.install_type = 'install'
+        if not args.python:
+            if 'ubuntu18' in args.os:
+                args.python = 'python36'
+            elif 'ubuntu20' in args.os:
+                args.python = 'python38'
             else:
-                args.install_type = 'copy'
+                args.python = 'python37'
 
-            # workaround for https://bugs.python.org/issue16399 issue
-            if not args.device and 'win' not in args.os:
-                if args.distribution == 'base':
-                    args.device = ['cpu']
-                else:
-                    args.device = ['cpu', 'gpu', 'vpu', 'hddl']
+        if not args.distribution and args.package_url:
+            if '_internal_' in args.package_url:
+                args.distribution = 'internal_dev'
+            elif '_runtime_' in args.package_url:
+                args.distribution = 'runtime'
+            elif '_data_dev_' in args.package_url:
+                args.distribution = 'data_dev'
+            elif '_dev_' in args.package_url:
+                args.distribution = 'dev'
             else:
+                parser.error(f'Cannot get distribution type from the package URL provided. {args.package_url} '
+                             'Please specify --distribution directly.')
+        #  set installation method for the package
+        if args.distribution == 'proprietary':
+            args.install_type = 'install'
+        else:
+            args.install_type = 'copy'
+
+        # workaround for https://bugs.python.org/issue16399 issue
+        if not args.device and 'win' not in args.os:
+            if args.distribution == 'base':
                 args.device = ['cpu']
+            else:
+                args.device = ['cpu', 'gpu', 'vpu', 'hddl']
+        else:
+            args.device = ['cpu']
 
-            args.build_id = args.product_version
-            if not args.package_url and args.distribution not in ('base', 'internal_dev'):
-                if not args.distribution or not args.product_version:
-                    parser.error('Insufficient arguments. Provide --package_url '
-                                 'or --distribution and --product_version arguments')
-                if args.mode != 'gen_dockerfile':
-                    args.build_id = args.product_version  # save product version YYY.U.[BBB]
-                    product_version = re.search(r'(\d{4}\.\d)', args.product_version)
-                    if product_version:
-                        args.product_version = product_version.group()  # save product version YYY.U
-                    else:
-                        parser.error(f'Cannot find package url for {args.product_version} version')
-                    with contextlib.suppress(KeyError):
-                        args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][args.distribution]
-                    if not args.package_url:
-                        parser.error(f'Cannot find package url for {args.product_version} version '
-                                     f'and {args.distribution} distribution. Please specify --package_url directly.')
-
-            if args.package_url and not args.build_id:
-                build_id = re.search(r'p_(\d{4}\.\d\.\d{3})', args.package_url)
-                if build_id:
-                    # save product version YYY.U.BBB
-                    args.build_id = build_id.group(1)
-                    # save product version YYY.U
-                    args.product_version = args.build_id[:6]
+        args.build_id = args.product_version
+        if not args.package_url and args.distribution not in ('base', 'internal_dev'):
+            if not args.distribution or not args.product_version:
+                parser.error('Insufficient arguments. Provide --package_url '
+                             'or --distribution and --product_version arguments')
+            if args.mode != 'gen_dockerfile':
+                args.build_id = args.product_version  # save product version YYY.U.[BBB]
+                product_version = re.search(r'(\d{4}\.\d)', args.product_version)
+                if product_version:
+                    args.product_version = product_version.group()  # save product version YYY.U
                 else:
-                    parser.error(f'Cannot get build number from the package URL provided: {args.package_url}. '
-                                 f'Please specify --product_version directly.')
+                    parser.error(f'Cannot find package url for {args.product_version} version')
+                with contextlib.suppress(KeyError):
+                    args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][args.distribution]
+                if not args.package_url:
+                    parser.error(f'Cannot find package url for {args.product_version} version '
+                                 f'and {args.distribution} distribution. Please specify --package_url directly.')
 
-            if not args.dockerfile_name:
-                devices = ''.join([d[0] for d in args.device])
-                layers = '_'.join(args.layers)
-                if layers:
-                    args.dockerfile_name = f'openvino_{layers}_{args.product_version}.dockerfile'
-                else:
-                    args.dockerfile_name = f'openvino_{devices}_{args.distribution}_{args.product_version}.dockerfile'
+        if args.package_url and not args.build_id:
+            build_id = re.search(r'p_(\d{4}\.\d\.\d{3})', args.package_url)
+            if build_id:
+                # save product version YYY.U.BBB
+                args.build_id = build_id.group(1)
+                # save product version YYY.U
+                args.product_version = args.build_id[:6]
+            else:
+                parser.error(f'Cannot get build number from the package URL provided: {args.package_url}. '
+                             f'Please specify --product_version directly.')
 
-        if not hasattr(args, 'tags') or not args.tags:
+        if not args.dockerfile_name:
+            devices = ''.join([d[0] for d in args.device])
             layers = '_'.join(args.layers)
             if layers:
-                args.tags = [f'{args.os}_{layers}:'
-                             f'{args.build_id if args.build_id else args.product_version}',
-                             f'{args.os}_{layers}:latest']
-            elif args.distribution == 'base':
-                args.tags = [f'{args.os}_{args.distribution}_cpu:'
-                             f'{args.product_version}',
-                             f'{args.os}_{args.distribution}_cpu:latest']
+                args.dockerfile_name = f'openvino_{layers}_{args.product_version}.dockerfile'
             else:
-                args.tags = [f'{args.os}_{args.distribution}:'
-                             f'{args.build_id if args.build_id else args.product_version}',
-                             f'{args.os}_{args.distribution}:latest']
-        if args.mode not in ('test', 'deploy'):
-            args.year = args.build_id[:4] if args.build_id else args.product_version[:4]
-    except SystemExit:
-        if not ('-h' in sys.argv[1:] or '--help' in sys.argv[1:]):
-            parser.print_help()
-        raise SystemExit
+                args.dockerfile_name = f'openvino_{devices}_{args.distribution}_{args.product_version}.dockerfile'
+
+    if not hasattr(args, 'tags') or not args.tags:
+        layers = '_'.join(args.layers)
+        if layers:
+            args.tags = [f'{args.os}_{layers}:'
+                         f'{args.build_id if args.build_id else args.product_version}',
+                         f'{args.os}_{layers}:latest']
+        elif args.distribution == 'base':
+            args.tags = [f'{args.os}_{args.distribution}_cpu:'
+                         f'{args.product_version}',
+                         f'{args.os}_{args.distribution}_cpu:latest']
+        else:
+            args.tags = [f'{args.os}_{args.distribution}:'
+                         f'{args.build_id if args.build_id else args.product_version}',
+                         f'{args.os}_{args.distribution}:latest']
+    if args.mode not in ('test', 'deploy'):
+        args.year = args.build_id[:4] if args.build_id else args.product_version[:4]
 
     return args

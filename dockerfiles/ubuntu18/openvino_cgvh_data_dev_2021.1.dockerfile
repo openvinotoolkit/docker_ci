@@ -116,7 +116,6 @@ RUN apt-get update && \
     rm -rf ${TEMP_DIR}
 
 # for VPU
-
 RUN cp ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/97-myriad-usbboot.rules /etc/udev/rules.d/ && \
     ldconfig
 

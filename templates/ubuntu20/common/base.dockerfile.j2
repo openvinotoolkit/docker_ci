@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:20.04 AS ov_base
 
-LABEL Description="This is the {{ distribution }} image for {{ name }} on Ubuntu 20.04 LTS"
+LABEL Description="This is the {{ distribution }} image for {{ product_name }} on Ubuntu 20.04 LTS"
 LABEL Vendor="Intel Corporation"
 
 USER root
@@ -34,12 +34,6 @@ ARG DEPENDENCIES="autoconf \
                   libtool \
                   udev \
                   unzip \
-                  libgstreamer1.0-0 \
-                  gstreamer1.0-plugins-base \
-                  gstreamer1.0-plugins-good \
-                  gstreamer1.0-plugins-bad \
-                  gstreamer1.0-vaapi \
-                  ffmpeg \
                   dos2unix"
 
 # hadolint ignore=DL3008

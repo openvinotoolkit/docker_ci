@@ -35,7 +35,7 @@ from utils.utilities import (DEFAULT_DATA_CHUNK_SIZE, MAX_DEPLOY_RETRIES, SLEEP_
                              format_timedelta, get_system_proxy)
 
 __version__ = '0.1'
-log = logging.getLogger('project')
+log = logging.getLogger('docker_ci')
 
 
 @enum.unique
@@ -54,10 +54,10 @@ class ExitCode(enum.Enum):
 class Launcher:
     """Main class implementing high-end framework logic"""
 
-    def __init__(self, product: str, arguments: argparse.Namespace, log_dir: pathlib.Path):
+    def __init__(self, product_name: str, arguments: argparse.Namespace, log_dir: pathlib.Path):
         self.render: typing.Optional[DockerFileRender] = None
         self.builder: typing.Optional[DockerImageBuilder] = None
-        self.product_name = product
+        self.product_name = product_name
         self.args = arguments
         self.image: typing.Optional[Image] = None
         self.image_name = arguments.tags[0]
@@ -74,7 +74,7 @@ class Launcher:
     def setup_build_args(self):
         """Setting up arguments passed to `docker build` command"""
         self.kwargs.update({
-            'name': self.product_name,
+            'product_name': self.product_name,
             'package_url': self.args.package_url,
             'build_id': self.args.build_id,
             'year': self.args.year,
@@ -96,11 +96,13 @@ class Launcher:
             log.info(logger.LINE_DOUBLE)
             log.info('Running linter checks on the generated dockerfile...')
             handolint_report = self.logdir / 'dockerfile_linter_hadolint.html'
+            curr_time = timeit.default_timer()
             result = pytest.main(args=[f'{self.location / "tests" / "linters"}', '-k', 'hadolint',
                                        '--dockerfile', str(self.args.file),
                                        f'--junitxml={self.logdir / "hadolint.xml"}',
                                        f'--html={handolint_report}',
-                                       '--self-contained-html', '--tb=no', '--color=yes'])
+                                       '--self-contained-html', '--tb=short', '--color=yes'])
+            log.info(f'Linter Dockerfile check time: {format_timedelta(timeit.default_timer() - curr_time)}')
             if result == pytest.ExitCode.OK:
                 log.info('Linter checks: PASSED')
             else:
@@ -172,8 +174,8 @@ class Launcher:
                                    self.image_name,
                                    f'--junitxml={self.logdir / "dive.xml"}',
                                    f'--html={dive_report}',
-                                   '--self-contained-html', '--tb=no', '--color=yes'])
-        log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
+                                   '--self-contained-html', '--tb=short', '--color=yes'])
+        log.info(f'Linter check time: {format_timedelta(timeit.default_timer() - curr_time)}')
         if result == pytest.ExitCode.OK:
             log.info('Dive checks: PASSED')
         else:
@@ -202,8 +204,8 @@ class Launcher:
                                    *dockerfile_args,
                                    f'--junitxml={self.logdir / "sdl.xml"}',
                                    f'--html={sdl_report}',
-                                   '--self-contained-html', '--tb=no', '--color=yes'])
-        log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
+                                   '--self-contained-html', '--tb=short', '--color=yes'])
+        log.info(f'Security checks time: {format_timedelta(timeit.default_timer() - curr_time)}')
         if result == pytest.ExitCode.OK:
             log.info('SDL checks: PASSED')
         else:
@@ -215,7 +217,6 @@ class Launcher:
         """Run pytest-based tests on the built Docker image"""
         log.info(logger.LINE_DOUBLE)
         log.info(f'Preparing to run tests on the Docker image {self.image_name}...')
-        curr_time = timeit.default_timer()
         result = pytest.ExitCode.OK
         if self.args.sdl_check:
             result_sdl = self.sdl_check()
@@ -226,6 +227,7 @@ class Launcher:
             if result_dive != pytest.ExitCode.OK:
                 result = result_dive
         test_report = self.logdir / 'tests.html'
+        curr_time = timeit.default_timer()
         result_tests = pytest.main([
             f'{self.location / "tests" / "functional"}',
             '-k', self.args.test_expression,
@@ -238,7 +240,7 @@ class Launcher:
             f"--junitxml={self.logdir / 'tests.xml'}",
             f'--html={test_report}',
             '--self-contained-html',
-            '--tb=no',
+            '--tb=short',
             '--color=yes',
         ])
         log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
@@ -433,8 +435,6 @@ if __name__ == '__main__':
         log.exception(f'{__file__} was interrupted')
         log.info(logger.LINE_SINGLE)
         exit_code = ExitCode.interrupted
-    except SystemExit:
-        sys.exit(ExitCode.wrong_args.value)
     except Exception:
         logger.switch_to_summary()
         log.info(logger.LINE_SINGLE)
