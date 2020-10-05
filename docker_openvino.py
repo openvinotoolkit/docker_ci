@@ -226,10 +226,6 @@ class Launcher:
             if result_dive != pytest.ExitCode.OK:
                 result = result_dive
         test_report = self.logdir / 'tests.html'
-        # package_url is now mandatory for test-only runtime testing
-        package_url = ''
-        if self.args.distribution == 'runtime':
-            package_url = self.args.package_url
         result_tests = pytest.main([
             f'{self.location / "tests" / "functional"}',
             '-k', self.args.test_expression,
@@ -238,7 +234,7 @@ class Launcher:
             '--distribution', self.args.distribution,
             '--image_os', self.args.os,
             '--mount_root', str(self.mount_root),
-            '--package_url', package_url,
+            '--package_url', self.args.package_url,
             f"--junitxml={self.logdir / 'tests.xml'}",
             f'--html={test_report}',
             '--self-contained-html',

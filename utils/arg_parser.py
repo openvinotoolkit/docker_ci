@@ -49,6 +49,96 @@ class DockerArgumentParser(argparse.ArgumentParser):
             help='Provide path to save image data in .json format file. '
                  'By default, it is stored in the logs folder.')
 
+        parser.add_argument(
+            '--dockerfile_name',
+            metavar='NAME',
+            help='Name of the Dockerfile, that will be generated from templates. '
+                 'Format is "openvino_<devices>_<distribution>_<product_version>.dockerfile"',
+        )
+
+        parser.add_argument(
+            '-d',
+            '--device',
+            metavar='NAME',
+            action='append',
+            help='Target inference hardware: cpu, gpu, vpu, hddl. Default is all. '
+                 'Dockerfile name format has the first letter from device name, '
+                 'e.g. for CPU, HDDL it will be openvino_ch_<distribution>_<product_version>.dockerfile',
+        )
+
+        parser.add_argument(
+            '-os',
+            choices=['ubuntu18', 'ubuntu20', 'winserver2019'],
+            default='ubuntu18',
+            help='Operation System for docker image. By default: ubuntu18',
+        )
+
+        parser.add_argument(
+            '-py',
+            '--python',
+            choices=['python36', 'python37', 'python38'],
+            help='Python interpreter for docker image, currently default for OS. ubuntu18: python36, '
+                 'ubuntu20: python38, winserver2019:python37 or python38',
+        )
+
+        parser.add_argument(
+            '--cmake',
+            choices=['cmake34', 'cmake314'],
+            default='cmake314',
+            help='CMake for Windows docker image, default CMake 3.14. For Linux images it is used default for OS.',
+        )
+
+        parser.add_argument(
+            '--msbuild',
+            choices=['msbuild2019', 'msbuild2019_online'],
+            help='MSBuild Tools for Windows docker image.'
+                 'MSBuild Tools are licensed as a supplement your existing Visual Studio license. '
+                 'Please don’t share the image with MSBuild 2019 on a public Docker hub.',
+        )
+
+        parser.add_argument(
+            '--ocl_release',
+            choices=['20.03.15346', '19.41.14441', '19.04.12237'],
+            default='19.41.14441',
+            help='Release of Intel(R) Graphics Compute Runtime for OpenCL(TM) needed for GPU inference. '
+                 'You may find needed OpenCL library on Github https://github.com/intel/compute-runtime/releases',
+        )
+
+        parser.add_argument('-p',
+                            '--product_version',
+                            help='Product version in format: YYYY.U[.BBB], where BBB - build number is optional.')
+
+        parser.add_argument(
+            '--linter_check',
+            metavar='NAME',
+            action='append',
+            default=[],
+            help='Enable linter check for image and dockerfile. '
+                 'It installs additional 3d-party docker images or executable files. '
+                 'Available tests: '
+                 'hadolint (https://github.com/hadolint/hadolint), '
+                 'dive (https://github.com/wagoodman/dive)',
+        )
+
+        parser.add_argument(
+            '-l',
+            '--layers',
+            metavar='NAME',
+            action='append',
+            default=[],
+            help='Setup your layer. Use name of <your_layer>.dockerfile.j2 file located in '
+                 '<project_root>/templates/<image_os>/layers folder. '
+                 'Layer will be added to the end of product dockerfile. Available layer: model_server.',
+        )
+
+        parser.add_argument(
+            '--build_arg',
+            metavar='VAR_NAME=VALUE',
+            action='append',
+            default=[],
+            help='Specify build or template arguments for your layer.',
+        )
+
     @staticmethod
     def add_test_args(parser: argparse.ArgumentParser):
         """Adding args needed to run tests on the built Docker image"""
@@ -104,28 +194,8 @@ class DockerArgumentParser(argparse.ArgumentParser):
         )
 
     @staticmethod
-    def add_dockerfile_args(parser: argparse.ArgumentParser):
-        """Adding arg needed to specify what dockerfile to use for building Docker image"""
-        parser.add_argument(
-            '--dockerfile_name',
-            metavar='NAME',
-            help='Name of the Dockerfile, that will be generated from templates. '
-                 'Format is "openvino_<devices>_<distribution>_<product_version>.dockerfile"',
-        )
-
-    @staticmethod
-    def add_template_args(parser: argparse.ArgumentParser):
+    def add_dist_args(parser: argparse.ArgumentParser):
         """Adding arg needed to customize the generated dockerfile"""
-        parser.add_argument(
-            '-d',
-            '--device',
-            metavar='NAME',
-            action='append',
-            help='Target inference hardware: cpu, gpu, vpu, hddl. Default is all. '
-                 'Dockerfile name format has the first letter from device name, '
-                 'e.g. for CPU, HDDL it will be openvino_ch_<distribution>_<product_version>.dockerfile',
-        )
-
         parser.add_argument(
             '-dist',
             '--distribution',
@@ -146,84 +216,12 @@ class DockerArgumentParser(argparse.ArgumentParser):
         )
 
         parser.add_argument(
-            '-os',
-            choices=['ubuntu18', 'ubuntu20', 'winserver2019'],
-            default='ubuntu18',
-            help='Operation System for docker image. By default: ubuntu18',
-        )
-
-        parser.add_argument(
-            '-py',
-            '--python',
-            choices=['python36', 'python37', 'python38'],
-            help='Python interpreter for docker image, currently default for OS. ubuntu18: python36, '
-                 'ubuntu20: python38, winserver2019:python37 or python38',
-        )
-
-        parser.add_argument(
-            '--cmake',
-            choices=['cmake34', 'cmake314'],
-            default='cmake314',
-            help='CMake for Windows docker image, default CMake 3.14. For Linux images it is used default for OS.',
-        )
-
-        parser.add_argument(
-            '--msbuild',
-            choices=['msbuild2019', 'msbuild2019_online'],
-            help='MSBuild Tools for Windows docker image.'
-                 'MSBuild Tools are licensed as a supplement your existing Visual Studio license. '
-                 'Please don’t share the image with MSBuild 2019 on a public Docker hub.',
-        )
-
-        parser.add_argument(
             '-u',
             '--package_url',
             metavar='URL',
+            default='',
             help='Package external or local url, use http://, https://, ftp:// access scheme or '
                  'relative <root_project> local path',
-        )
-
-        parser.add_argument(
-            '--ocl_release',
-            choices=['20.03.15346', '19.41.14441', '19.04.12237'],
-            default='19.41.14441',
-            help='Release of Intel(R) Graphics Compute Runtime for OpenCL(TM) needed for GPU inference. '
-                 'You may find needed OpenCL library on Github https://github.com/intel/compute-runtime/releases',
-        )
-
-        parser.add_argument('-p',
-                            '--product_version',
-                            help='Product version in format: YYYY.U[.BBB], where BBB - build number is optional.')
-
-        parser.add_argument(
-            '--linter_check',
-            metavar='NAME',
-            action='append',
-            default=[],
-            help='Enable linter check for image and dockerfile. '
-                 'It installs additional 3d-party docker images or executable files. '
-                 'Available tests: '
-                 'hadolint (https://github.com/hadolint/hadolint), '
-                 'dive (https://github.com/wagoodman/dive)',
-        )
-
-        parser.add_argument(
-            '-l',
-            '--layers',
-            metavar='NAME',
-            action='append',
-            default=[],
-            help='Setup your layer. Use name of <your_layer>.dockerfile.j2 file located in '
-                 '<project_root>/templates/<image_os>/layers folder. '
-                 'Layer will be added to the end of product dockerfile. Available layer: model_server.',
-        )
-
-        parser.add_argument(
-            '--build_arg',
-            metavar='VAR_NAME=VALUE',
-            action='append',
-            default=[],
-            help='Specify build or template arguments for your layer.',
         )
 
     @staticmethod
@@ -241,26 +239,22 @@ def parse_args(name: str, description: str):
 
     gen_dockerfile_subparser = subparsers.add_parser('gen_dockerfile', help='Generate a dockerfile to '
                                                                             'dockerfiles/<image_os> folder')
-    parser.add_dockerfile_args(gen_dockerfile_subparser)
-    parser.add_template_args(gen_dockerfile_subparser)
+    parser.add_build_args(gen_dockerfile_subparser)
 
     build_subparser = subparsers.add_parser('build', help='Build a docker image')
-    parser.add_dockerfile_args(build_subparser)
-    parser.add_template_args(build_subparser)
-    parser.add_image_args(build_subparser)
     parser.add_build_args(build_subparser)
+    parser.add_dist_args(build_subparser)
+    parser.add_image_args(build_subparser)
 
     build_test_subparser = subparsers.add_parser('build_test', help='Build and test a docker image')
-    parser.add_dockerfile_args(build_test_subparser)
-    parser.add_template_args(build_test_subparser)
-    parser.add_image_args(build_test_subparser)
     parser.add_build_args(build_test_subparser)
+    parser.add_dist_args(build_test_subparser)
+    parser.add_image_args(build_test_subparser)
     parser.add_test_args(build_test_subparser)
 
     test_subparser = subparsers.add_parser('test', help='Test a local docker image')
-    parser.add_template_args(test_subparser)
+    parser.add_dist_args(test_subparser)
     parser.add_image_args(test_subparser)
-    parser.add_build_args(test_subparser)
     parser.add_test_args(test_subparser)
 
     deploy_subparser = subparsers.add_parser('deploy', help='Deploy a docker image')
@@ -268,10 +262,9 @@ def parse_args(name: str, description: str):
     parser.add_deploy_args(deploy_subparser)
 
     all_subparser = subparsers.add_parser('all', help='Build, test and deploy a docker image. [Default option]')
-    parser.add_dockerfile_args(all_subparser)
-    parser.add_template_args(all_subparser)
-    parser.add_image_args(all_subparser)
     parser.add_build_args(all_subparser)
+    parser.add_dist_args(all_subparser)
+    parser.add_image_args(all_subparser)
     parser.add_test_args(all_subparser)
     parser.add_deploy_args(all_subparser)
 
@@ -320,9 +313,10 @@ def parse_args(name: str, description: str):
 
         if (args.mode == 'test' and args.distribution == 'runtime') and (
                 'model_server' not in args.tags[0] and not args.package_url):
-            parser.error("""Insufficient arguments. Provide --package_url key with path to dev distribution package in
-                              http/https/ftp access scheme or a local file in the project location
-                              as dependent package""")
+            print('\nYou can run samples/demos on runtime docker image. '
+                  'Please provide --package_url key with path to dev distribution package in '
+                  'http/https/ftp access scheme or a local file in the project location as dependent package '
+                  'to run all available tests.\n')
 
         if args.mode in ('deploy', 'all') and not hasattr(args, 'registry'):
             parser.error('Option --registry is mandatory for this mode.')

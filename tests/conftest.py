@@ -47,6 +47,9 @@ def pytest_configure(config):
         if (mount_root / 'openvino_dev').exists():
             log.info('Directory for runtime testing dependency already exists, skipping dependency preparation')
         else:
+            if not package_url:
+                return
+
             mount_root.mkdir(parents=True, exist_ok=True)
             if package_url.startswith(('http://', 'https://', 'ftp://')):
                 log.info('Downloading dependent package...')
@@ -197,6 +200,12 @@ def is_not_image(request):
     if any(map(lambda x: x in request.config.getoption('--image'), settings)):
         pytest.skip(f'Test requires the image should not be {request.param} but get '
                     f'{request.config.getoption("--image")}')
+
+
+@pytest.fixture(scope='session')
+def is_package_url_specified(request):
+    if not request.config.getoption('--package_url'):
+        pytest.skip('Test requires a url for a dev package.')
 
 
 def pytest_runtest_setup(item):
