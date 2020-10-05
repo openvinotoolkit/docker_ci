@@ -186,8 +186,8 @@ default_args = {
     ),
 
 ])
-@ mock.patch('utils.arg_parser.DockerArgumentParser.parse_args')
-@ mock.patch('pathlib.Path.exists')
+@mock.patch('utils.arg_parser.DockerCIArgumentParser.parse_args')
+@mock.patch('pathlib.Path.exists')
 def test_arg_parser_success(mock_exists, mock_parser, args, res):
     args = dict(list(default_args.items()) + list(args.items()))
     res = dict(list(args.items()) + list(res.items()))
@@ -338,7 +338,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         id='All without --registry',
     ),
 ])
-@ mock.patch('utils.arg_parser.DockerArgumentParser.parse_args')
+@mock.patch('utils.arg_parser.DockerCIArgumentParser.parse_args')
 def test_arg_parser_error(mock_parser, args, capsys, parser_out):
     args = dict(list(default_args.items()) + list(args.items()))
 
@@ -404,8 +404,8 @@ def test_arg_parser_error(mock_parser, args, capsys, parser_out):
         id='file is not exists',
     ),
 ])
-@ mock.patch('utils.arg_parser.DockerArgumentParser.parse_args')
-@ mock.patch('pathlib.Path.exists')
+@mock.patch('utils.arg_parser.DockerCIArgumentParser.parse_args')
+@mock.patch('pathlib.Path.exists')
 @ mock.patch('pathlib.Path.is_symlink')
 def test_local_path(mock_is_symlink, mock_exists, mock_parser, args, exists, is_symlink, parser_out, capsys):
     args = dict(list(default_args.items()) + list(args.items()))
@@ -449,8 +449,8 @@ def test_local_path(mock_is_symlink, mock_exists, mock_parser, args, exists, is_
         id='image_json_path is not symlink but package_url local',
     ),
 ])
-@ mock.patch('utils.arg_parser.DockerArgumentParser.parse_args')
-@ mock.patch('pathlib.Path.is_symlink')
+@mock.patch('utils.arg_parser.DockerCIArgumentParser.parse_args')
+@mock.patch('pathlib.Path.is_symlink')
 def test_symlink(mock_is_symlink, mock_parser, args, is_symlink, parser_out, capsys):
     args = dict(list(default_args.items()) + list(args.items()))
     mock_parser.return_value = argparse.Namespace(**args)

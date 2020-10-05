@@ -16,7 +16,7 @@ from utils.exceptions import FailedTest
 from utils.tester import DockerImageTester
 from utils.utilities import download_file
 
-log = logging.getLogger('project')
+log = logging.getLogger('docker_ci')
 
 
 def pytest_addoption(parser):

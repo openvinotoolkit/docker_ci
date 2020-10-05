@@ -12,7 +12,7 @@ from docker.models.images import Image
 from utils import logger
 from utils.docker_api import DockerAPI
 
-log = logging.getLogger('project')
+log = logging.getLogger('docker_ci')
 
 
 class DockerImageBuilder(DockerAPI):
@@ -38,6 +38,9 @@ class DockerImageBuilder(DockerAPI):
         logfile.parent.mkdir(exist_ok=True, parents=True)
 
         try:
+            logger.switch_to_custom(logfile, str(logfile.parent))
+            log.info(f'build command: docker build {directory} -f {dockerfile} '
+                     f'{"".join([f"--build-arg {k}={v} " for k, v in build_args.items()])}')
             log_generator = self.client.api.build(path=directory,
                                                   tag=tag,
                                                   dockerfile=dockerfile,
@@ -47,9 +50,6 @@ class DockerImageBuilder(DockerAPI):
                                                   pull=True,
                                                   buildargs=build_args,
                                                   decode=True)
-            logger.switch_to_custom(logfile, str(logfile.parent))
-            log.info(f'build command: docker build {directory} -f {dockerfile} '
-                     f'{"".join([f"--build-arg {k}={v} " for k, v in build_args.items()])}')
 
             for line in log_generator:
                 for key, value in line.items():
