@@ -52,13 +52,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
     def add_build_args(parser: argparse.ArgumentParser):
         """Adding args needed to build the Docker image"""
         parser.add_argument(
-            '-f',
-            '--file',
-            metavar='NAME',
-            help='Name of the Dockerfile, that uses to build an image.',
-        )
-
-        parser.add_argument(
             '--image_json_path',
             help='Provide path to save image data in .json format file. '
                  'By default, it is stored in the logs folder.')
@@ -224,6 +217,13 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             default='',
             help='Package external or local url, use http://, https://, ftp:// access scheme or '
                  'relative <root_project> local path',
+        )
+
+        parser.add_argument(
+            '-f',
+            '--file',
+            metavar='NAME',
+            help='Name of the Dockerfile, that uses to build an image.',
         )
 
     @staticmethod
