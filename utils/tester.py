@@ -15,7 +15,7 @@ from utils.docker_api import DockerAPI
 from utils.exceptions import FailedTest
 from utils.utilities import get_system_proxy
 
-log = logging.getLogger('project')
+log = logging.getLogger('docker_ci')
 
 
 class DockerImageTester(DockerAPI):

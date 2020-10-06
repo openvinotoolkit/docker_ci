@@ -13,7 +13,7 @@ import jinja2
 from utils.exceptions import LayerNotFound
 from utils.utilities import get_folder_structure_recursively
 
-log = logging.getLogger('project')
+log = logging.getLogger('docker_ci')
 
 
 class DockerFileRender:
