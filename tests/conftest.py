@@ -6,15 +6,12 @@ import pathlib
 import shutil
 import subprocess  # nosec
 import sys
-import tarfile
-import zipfile
 
 import pytest
-
 from utils.docker_api import DockerAPI
 from utils.exceptions import FailedTest
 from utils.tester import DockerImageTester
-from utils.utilities import download_file
+from utils.utilities import download_file, unzip_file
 
 log = logging.getLogger('docker_ci')
 
@@ -46,43 +43,38 @@ def pytest_configure(config):
         image_os = config.getoption('--image_os')
         if (mount_root / 'openvino_dev').exists():
             log.info('Directory for runtime testing dependency already exists, skipping dependency preparation')
-        else:
-            if not package_url:
-                return
+            return
 
-            mount_root.mkdir(parents=True, exist_ok=True)
-            if package_url.startswith(('http://', 'https://', 'ftp://')):
-                log.info('Downloading dependent package...')
-                if 'ubuntu' in image_os:
-                    download_file(package_url.replace('_runtime_', '_dev_'),
-                                  filename=mount_root / 'dldt.tgz',
-                                  parents_=True, exist_ok_=True)
-                    log.info('Extracting dependent package...')
-                    with tarfile.open(str(mount_root / 'dldt.tgz'), 'r') as tar_file:
-                        tar_file.extractall(str(mount_root / 'openvino_dev'))
-                elif 'win' in image_os:
-                    download_file(package_url.replace('_runtime_', '_dev_'),
-                                  filename=mount_root / 'dldt.zip',
-                                  parents_=True, exist_ok_=True)
-                    log.info('Extracting dependent package...')
-                    with zipfile.ZipFile(str(mount_root / 'dldt.zip'), 'r') as zip_file:
-                        zip_file.extractall(str(mount_root / 'openvino_dev'))
-                log.info('Dependent package downloaded and extracted')
+        if not package_url:
+            return
+
+        mount_root.mkdir(parents=True, exist_ok=True)
+        dev_package_url = package_url.replace('_runtime_', '_dev_')
+        if package_url.startswith(('http://', 'https://', 'ftp://')):
+            if 'ubuntu' in image_os:
+                dldt_package = 'dldt.tgz'
+            elif 'win' in image_os:
+                dldt_package = 'dldt.zip'
+            log.info('Downloading dependent package...')
+            download_file(
+                dev_package_url,
+                filename=mount_root / dldt_package,
+                parents_=True,
+                exist_ok_=True,
+            )
+            log.info('Extracting dependent package...')
+            unzip_file(str(mount_root / dldt_package), str(mount_root / 'openvino_dev'))
+            log.info('Dependent package downloaded and extracted')
+        else:
+            dev_package_archive = pathlib.Path(dev_package_url)
+            if dev_package_archive.exists():
+                unzip_file(str(dev_package_archive), str(mount_root / 'openvino_dev'))
+                log.info('Dependent package extracted')
             else:
-                runtime_archive = pathlib.Path(package_url.replace('_runtime_', '_dev_'))
-                if runtime_archive.exists():
-                    if 'ubuntu' in image_os:
-                        with tarfile.open(str(runtime_archive), 'r') as tar_file:
-                            tar_file.extractall(str(mount_root / 'openvino_dev'))
-                    elif 'win' in image_os:
-                        with zipfile.ZipFile(str(runtime_archive), 'r') as zip_file:
-                            zip_file.extractall(str(mount_root / 'openvino_dev'))
-                    log.info('Dependent package extracted')
-                else:
-                    err_msg = f"""Provided path of the dependent package should be an http/https/ftp access scheme
-                                    or a local file in the project location as dependent package: {package_url}"""
-                    log.error(err_msg)
-                    raise FailedTest(err_msg)
+                err_msg = f"""Provided path of the dependent package should be an http/https/ftp access scheme
+                                or a local file in the project location as dependent package: {package_url}"""
+                log.error(err_msg)
+                raise FailedTest(err_msg)
 
 
 def pytest_unconfigure(config):
@@ -218,6 +210,7 @@ def pytest_runtest_setup(item):
                 pytest.skip('Test requires running HDDL driver on the host machine')
 
         if 'vpu' in mark.name and sys.platform.startswith('linux'):
+            # 03e7:2485 is a NCS2 device ID
             process = subprocess.run(['/bin/bash', '-c', 'lsusb | grep 03e7:2485'],
                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                      shell=False)  # nosec

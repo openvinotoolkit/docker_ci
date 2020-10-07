@@ -6,6 +6,7 @@ import logging
 import os
 import pathlib
 import re
+import tarfile
 import typing
 import zipfile
 
@@ -65,16 +66,12 @@ def get_folder_structure_recursively(src: str, ignore: typing.Tuple[str, ...] = 
 def get_system_proxy() -> typing.Dict[str, str]:
     """Getting system proxy"""
     system_proxy: typing.Dict[str, str] = {}
-    env = os.environ.copy()
-    for name in ('http_proxy', 'https_proxy', 'ftp_proxy', 'no_proxy'):
-        if name in env:
-            temp_proxy = check_printable_utf8_chars(env[name])
-            system_proxy[name] = temp_proxy
-            system_proxy[name.upper()] = temp_proxy
-        elif name.upper() in env:
-            temp_proxy = check_printable_utf8_chars(env[name.upper()])
-            system_proxy[name] = temp_proxy
-            system_proxy[name.upper()] = temp_proxy
+    for proxy_name in ('http_proxy', 'https_proxy', 'ftp_proxy', 'no_proxy'):
+        proxy = os.getenv(proxy_name) if os.getenv(proxy_name) else os.getenv(proxy_name.upper())
+        if proxy:
+            temp_proxy = check_printable_utf8_chars(proxy)
+            system_proxy[proxy_name] = temp_proxy
+            system_proxy[proxy_name.upper()] = temp_proxy
     return system_proxy
 
 
@@ -115,8 +112,12 @@ def download_file(url: str, filename: pathlib.Path,
 
 def unzip_file(file_path: str, target_dir: str):
     """Unpack ZIP-archive to specified directory"""
-    with zipfile.ZipFile(file_path, 'r') as zip_ref:
-        zip_ref.extractall(target_dir)
+    if file_path.endswith('tgz'):
+        with tarfile.open(file_path, 'r') as tar_file:
+            tar_file.extractall(target_dir)
+    elif file_path.endswith('zip'):
+        with zipfile.ZipFile(file_path, 'r') as zip_file:
+            zip_file.extractall(target_dir)
 
 
 def check_printable_utf8_chars(string: str) -> str:
