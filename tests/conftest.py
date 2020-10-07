@@ -49,7 +49,7 @@ def pytest_configure(config):
             return
 
         mount_root.mkdir(parents=True, exist_ok=True)
-        dev_package = package_url.replace('_runtime_', '_dev_')
+        dev_package_url = package_url.replace('_runtime_', '_dev_')
         if package_url.startswith(('http://', 'https://', 'ftp://')):
             if 'ubuntu' in image_os:
                 dldt_package = 'dldt.tgz'
@@ -57,7 +57,7 @@ def pytest_configure(config):
                 dldt_package = 'dldt.zip'
             log.info('Downloading dependent package...')
             download_file(
-                dev_package,
+                dev_package_url,
                 filename=mount_root / dldt_package,
                 parents_=True,
                 exist_ok_=True,
@@ -66,9 +66,9 @@ def pytest_configure(config):
             unzip_file(str(mount_root / dldt_package), str(mount_root / 'openvino_dev'))
             log.info('Dependent package downloaded and extracted')
         else:
-            runtime_archive = pathlib.Path(dev_package)
-            if runtime_archive.exists():
-                unzip_file(str(runtime_archive), str(mount_root / 'openvino_dev'))
+            dev_package_archive = pathlib.Path(dev_package_url)
+            if dev_package_archive.exists():
+                unzip_file(str(dev_package_archive), str(mount_root / 'openvino_dev'))
                 log.info('Dependent package extracted')
             else:
                 err_msg = f"""Provided path of the dependent package should be an http/https/ftp access scheme
