@@ -52,7 +52,7 @@ See [CONTRIBUTING](./CONTRIBUTING.md) for details. Thank you!
 Please report questions, issues and suggestions using:
 
 * [GitHub* Issues](https://github.com/openvinotoolkit/docker_ci/issues) 
-* The `openvino` [tag on StackOverflow]\*
+* The [`openvino`](https://stackoverflow.com/questions/tagged/openvino) tag on StackOverflow\*
 * [Forum](https://software.intel.com/en-us/forums/computer-vision)
 
 ---
