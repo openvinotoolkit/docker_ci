@@ -248,6 +248,7 @@ class TestDemosLinuxRuntime:
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
     @pytest.mark.hddl
+    @pytest.mark.xfail(reason='38557 issue')
     def test_segmentation_python_hddl(self, is_distribution, is_image_os, is_not_image, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
