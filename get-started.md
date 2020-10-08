@@ -77,7 +77,7 @@ You can add your layer and customize image:
 ```cmd
   -l, --layers NAME  Setup your layer. 
                      Use name of <your_layer>.dockerfile.j2 file located in <project_root>/templates/<image_os>/layers folder. 
-                     Layer will be added to the end of product dockerfile. Available layer: model_server (https://github.com/openvinotoolkit/model_server).
+                     Layer will be added to the end of product dockerfile.
 ```
 You can add your build arguments as well:
 ```cmd

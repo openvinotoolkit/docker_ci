@@ -116,7 +116,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             default=[],
             help='Setup your layer. Use name of <your_layer>.dockerfile.j2 file located in '
                  '<project_root>/templates/<image_os>/layers folder. '
-                 'Layer will be added to the end of product dockerfile. Available layer: model_server.',
+                 'Layer will be added to the end of product dockerfile.',
         )
 
         parser.add_argument(
