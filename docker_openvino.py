@@ -34,7 +34,7 @@ from utils.render import DockerFileRender
 from utils.utilities import (DEFAULT_DATA_CHUNK_SIZE, MAX_DEPLOY_RETRIES, SLEEP_BETWEEN_RETRIES, download_file,
                              format_timedelta, get_system_proxy)
 
-__version__ = '0.1'
+__version__ = '2021.1'
 log = logging.getLogger('docker_ci')
 
 
