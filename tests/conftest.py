@@ -50,6 +50,9 @@ def pytest_configure(config):
 
         mount_root.mkdir(parents=True, exist_ok=True)
         dev_package_url = package_url.replace('_runtime_', '_dev_')
+        # Temporarily, until there is no ubuntu20 dev package
+        if image_os == 'ubuntu20':
+            dev_package_url = dev_package_url.replace('ubuntu20', 'ubuntu18')
         if package_url.startswith(('http://', 'https://', 'ftp://')):
             if 'ubuntu' in image_os:
                 dldt_package = 'dldt.tgz'
