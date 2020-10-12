@@ -54,10 +54,10 @@ def pytest_configure(config):
         if image_os == 'ubuntu20':
             dev_package_url = dev_package_url.replace('ubuntu20', 'ubuntu18')
         if package_url.startswith(('http://', 'https://', 'ftp://')):
-            if 'ubuntu' in image_os:
-                dldt_package = 'dldt.tgz'
-            elif 'win' in image_os:
+            if 'win' in image_os:
                 dldt_package = 'dldt.zip'
+            else:
+                dldt_package = 'dldt.tgz'
             log.info('Downloading dependent package...')
             download_file(
                 dev_package_url,

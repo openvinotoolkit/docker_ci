@@ -1,0 +1,56 @@
+# Copyright (C) 2019-2020 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+FROM centos:7
+
+LABEL Description="This is the {{ distribution }} image for {{ product_name }} on Centos 7"
+LABEL Vendor="Intel Corporation"
+
+USER root
+WORKDIR /
+
+SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
+
+ARG DEPENDENCIES="autoconf \
+                  automake \
+                  gcc-c++ \
+                  make \
+                  gtk2 \
+                  gobject-introspection \
+                  glib2 \
+                  gdk-pixbuf2 \
+                  cmake \
+                  cpio \
+                  libtool \
+                  udev \
+                  unzip \
+                  dos2unix"
+
+# hadolint ignore=DL3008
+RUN yum update && yum install -y ${DEPENDENCIES} && \
+    yum clean all && rm -rf /var/cache/yum
+
+{% for command in commands %}
+{{ command|safe }}
+{% endfor %}
+
+# Post-installation cleanup and setting up OpenVINO environment variables
+RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
+        printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
+        printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
+        printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc; \
+    fi;
+RUN if [ -d "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk ]; then \
+        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
+        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
+    fi;
+RUN find "${INTEL_OPENVINO_DIR}/" -name "*.*sh" -type f -exec dos2unix {} \;
+
+USER openvino
+WORKDIR ${INTEL_OPENVINO_DIR}
+
+CMD ["/bin/bash"]
+
+# Setup custom layers below
+{% for layer in layers %}
+{{ layer|safe }}
+{% endfor %}
