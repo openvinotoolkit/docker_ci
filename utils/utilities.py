@@ -108,6 +108,7 @@ def download_file(url: str, filename: pathlib.Path,
             for chunk in r.iter_content(chunk_size):
                 if chunk:
                     f.write(chunk)
+    http.close()
 
 
 def unzip_file(file_path: str, target_dir: str):
