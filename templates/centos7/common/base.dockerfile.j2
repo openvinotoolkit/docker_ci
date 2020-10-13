@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM centos:7
 
-LABEL Description="This is the {{ distribution }} image for {{ product_name }} on Centos 7"
+LABEL Description="This is the {{ distribution }} image for {{ product_name }} on CentOS 7"
 LABEL Vendor="Intel Corporation"
 
 USER root
@@ -15,18 +15,14 @@ ARG DEPENDENCIES="autoconf \
                   gcc-c++ \
                   make \
                   gtk2 \
-                  gobject-introspection \
-                  glib2 \
-                  gdk-pixbuf2 \
                   cmake \
                   cpio \
                   libtool \
                   udev \
-                  unzip \
-                  dos2unix"
+                  unzip"
 
 # hadolint ignore=DL3008
-RUN yum update && yum install -y ${DEPENDENCIES} && \
+RUN yum -y update && yum install -y ${DEPENDENCIES} && \
     yum clean all && rm -rf /var/cache/yum
 
 {% for command in commands %}
