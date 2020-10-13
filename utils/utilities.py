@@ -2,6 +2,7 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 """Module handling auxiliary functions for the framework"""
+import contextlib
 import logging
 import os
 import pathlib
@@ -84,31 +85,29 @@ def download_file(url: str, filename: pathlib.Path,
     if proxy:
         for key in proxy:
             check_printable_utf8_chars(proxy[key])
+        log.info(f'Set proxy settings: {proxy}')
     else:
         for key in ('HTTP_PROXY', 'HTTPS_PROXY'):
             check_printable_utf8_chars(str(os.getenv(key)))
 
     filename.parent.mkdir(parents=parents_, exist_ok=exist_ok_)
 
-    retries = Retry(
-        total=3,
-        backoff_factor=1,
-        status_forcelist=[413, 429, 500, 502, 503, 504, 10054],
-    )
-    adapter = HTTPAdapter(max_retries=retries)
-    http = requests.Session()
-    http.mount('https://', adapter)
-    http.mount('http://', adapter)
-    if proxy:
-        log.info(f'Set proxy settings: {proxy}')
+    with contextlib.closing(requests.Session()) as http:
+        retries = Retry(
+            total=3,
+            backoff_factor=1,
+            status_forcelist=[413, 429, 500, 502, 503, 504, 10054],
+        )
+        adapter = HTTPAdapter(max_retries=retries)
+        http.mount('https://', adapter)
+        http.mount('http://', adapter)
 
-    with http.get(url, allow_redirects=True, proxies=proxy, stream=True) as r:
-        r.raise_for_status()
-        with filename.open(mode='wb') as f:
-            for chunk in r.iter_content(chunk_size):
-                if chunk:
-                    f.write(chunk)
-    http.close()
+        with http.get(url, allow_redirects=True, proxies=proxy, stream=True) as r:
+            r.raise_for_status()
+            with filename.open(mode='wb') as f:
+                for chunk in r.iter_content(chunk_size):
+                    if chunk:
+                        f.write(chunk)
 
 
 def unzip_file(file_path: str, target_dir: str):
