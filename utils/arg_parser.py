@@ -355,12 +355,10 @@ def parse_args(name: str, description: str):
                              'It is an insecure way.')
 
         if not args.python:
-            if 'ubuntu18' in args.os:
+            if args.os in ('ubuntu18', 'centos7'):
                 args.python = 'python36'
             elif 'ubuntu20' in args.os:
                 args.python = 'python38'
-            elif 'centos7' in args.os:
-                args.python = 'python36'
             else:
                 args.python = 'python37'
 
