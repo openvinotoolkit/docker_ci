@@ -10,11 +10,16 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+# Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
+RUN useradd -ms /bin/bash -G video,users openvino && \
+    chown openvino -R /home/openvino
+
 ARG DEPENDENCIES="autoconf \
                   automake \
                   gcc-c++ \
                   make \
                   gtk2 \
+                  curl \
                   cmake \
                   cpio \
                   libtool \
