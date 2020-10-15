@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:18.04 AS base
+FROM ubuntu:18.04 AS ov_base
 
 USER root
 WORKDIR /
@@ -40,7 +40,7 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && rm -rf "${TEMP_DIR}"
 
 # -----------------
-FROM ubuntu:18.04 AS ov_base
+FROM ubuntu:18.04
 
 LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
 LABEL Vendor="Intel Corporation"
@@ -63,14 +63,13 @@ RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localt
 
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-COPY --from=base ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}
+COPY --from=ov_base ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}
 
 ARG LGPL_DEPS="autoconf \
                automake \
                build-essential \
                libgtk-3-0 \
                libtool \
-               libgfortran5 \
                udev"
 ARG DEPENDENCIES="unzip"
 
