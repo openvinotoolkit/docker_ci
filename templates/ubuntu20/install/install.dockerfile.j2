@@ -1,6 +1,17 @@
 # install product by installation script
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cpio && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /thirdparty
+RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get source cpio && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN tar -xzf ${TEMP_DIR}/*.tgz --strip 1
 RUN sed -i 's/decline/accept/g' silent.cfg && \
     ${TEMP_DIR}/install.sh -s silent.cfg && \
