@@ -1,0 +1,23 @@
+# for GPU
+
+ARG GMMLIB
+ARG IGC_CORE
+ARG IGC_OPENCL
+ARG INTEL_OPENCL
+ARG TEMP_DIR=/tmp/opencl
+
+RUN yum install -y epel-release
+RUN yum install -y ocl-icd ocl-icd-devel numactl
+
+RUN groupmod -g 44 video
+
+WORKDIR ${TEMP_DIR}
+RUN curl -L https://sourceforge.net/projects/intel-compute-runtime/files/${INTEL_OPENCL}/centos-7/intel-gmmlib-${GMMLIB}-1.el7.x86_64.rpm/download -o intel-gmmlib-${GMMLIB}-1.el7.x86_64.rpm && \
+    curl -L https://sourceforge.net/projects/intel-compute-runtime/files/${INTEL_OPENCL}/centos-7/intel-gmmlib-devel-${GMMLIB}-1.el7.x86_64.rpm/download -o intel-gmmlib-devel-${GMMLIB}-1.el7.x86_64.rpm && \
+    curl -L https://sourceforge.net/projects/intel-compute-runtime/files/${INTEL_OPENCL}/centos-7/intel-igc-core-${IGC_CORE}-1.el7.x86_64.rpm/download -o intel-igc-core-${IGC_CORE}-1.el7.x86_64.rpm && \
+    curl -L https://sourceforge.net/projects/intel-compute-runtime/files/${INTEL_OPENCL}/centos-7/intel-igc-opencl-${IGC_OPENCL}-1.el7.x86_64.rpm/download -o intel-igc-opencl-${IGC_OPENCL}-1.el7.x86_64.rpm && \
+    curl -L https://sourceforge.net/projects/intel-compute-runtime/files/${INTEL_OPENCL}/centos-7/intel-igc-opencl-devel-${IGC_OPENCL}-1.el7.x86_64.rpm/download -o  intel-igc-opencl-devel-${IGC_OPENCL}-1.el7.x86_64.rpm && \
+    curl -L https://sourceforge.net/projects/intel-compute-runtime/files/${INTEL_OPENCL}/centos-7/intel-opencl-${INTEL_OPENCL}-1.el7.x86_64.rpm/download -o intel-opencl-${INTEL_OPENCL}-1.el7.x86_64.rpm && \
+    rpm -ivh *.rpm && \
+    ldconfig && \
+    rm -rf ${TEMP_DIR}
