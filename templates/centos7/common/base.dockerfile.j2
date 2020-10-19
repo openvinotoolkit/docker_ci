@@ -14,24 +14,22 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
-ARG DEPENDENCIES="autoconf \
-                  automake \
-                  gcc-c++ \
-                  make \
-                  gtk2 \
-                  curl \
-                  cmake \
-                  cpio \
-                  libtool \
-                  udev \
-                  unzip"
+ARG LGPL_DEPS="gcc-c++ \
+               make \
+               gtk2 \
+               cpio \
+               libtool \
+               udev"
+
+ARG DEPENDENCIES="curl \
+                  cmake"
 
 # hadolint ignore=DL3008
-RUN yum -y update && yum install -y ${DEPENDENCIES} && \
+RUN yum -y update && yum install -y ${DEPENDENCIES} ${LGPL_DEPS} && \
     yum clean all && rm -rf /var/cache/yum
 
 WORKDIR /thirdparty
-RUN yumdownloader --source -y ${DEPENDENCIES} && \
+RUN yumdownloader --source -y ${LGPL_DEPS} && \
     yum clean all && rm -rf /var/cache/yum
 
 {% for command in commands %}
