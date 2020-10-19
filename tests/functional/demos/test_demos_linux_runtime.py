@@ -25,7 +25,8 @@ class TestDemosLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['install_dependencies/install_openvino_dependencies.sh -y',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir -r '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -58,7 +59,8 @@ class TestDemosLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['install_dependencies/install_openvino_dependencies.sh -y',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir -r '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -94,7 +96,8 @@ class TestDemosLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['install_dependencies/install_openvino_dependencies.sh -y',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir -r '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -128,7 +131,8 @@ class TestDemosLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+            ['install_dependencies/install_openvino_dependencies.sh -y',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir -r '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
