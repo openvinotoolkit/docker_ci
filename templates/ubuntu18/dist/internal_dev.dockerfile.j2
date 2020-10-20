@@ -1,17 +1,27 @@
 # internal package
 WORKDIR /tmp
 
+ARG LGPL_DEPS="libgfortran5"
+
+# hadolint ignore=DL3008
+RUN apt-get update && apt upgrade -y --no-install-recommends && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get source ${LGPL_DEPS} && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV VENV_TF2 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/venv_tf2
+
 RUN ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
 
-RUN rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && \
-    ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
+RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
-    ${PYTHON_VER} -m pip install --no-cache-dir virtualenv==20.0.30 && \
-    ${PYTHON_VER} -m virtualenv -p `which ${PYTHON_VER}` ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/venv_tf2 && \
-    source ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/venv_tf2/bin/activate && \
-    pip install -U pip==19.3.1 && \
-    python3 -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/requirements_tf2.txt && \
+    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o  -name "*requirements*.in" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
+    ${PYTHON_VER} -m venv ${VENV_TF2} && \
+    source ${VENV_TF2}/bin/activate && \
+    pip install --no-cache-dir -U pip==19.3.1 && \
+    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/requirements_tf2.txt && \
     deactivate
 
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker

@@ -4,16 +4,12 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends cpio && \
-    rm -rf /var/lib/apt/lists/*
-
-WORKDIR /thirdparty
-RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get source cpio && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN tar -xzf ${TEMP_DIR}/*.tgz --strip 1
-RUN sed -i 's/decline/accept/g' silent.cfg && \
+    rm -rf /var/lib/apt/lists/* && \
+    tar -xzf ${TEMP_DIR}/*.tgz --strip 1 && \
+    sed -i 's/decline/accept/g' silent.cfg && \
     ${TEMP_DIR}/install.sh -s silent.cfg && \
     OV_BUILD="$(find /opt/intel -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
-    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && rm -rf ${TEMP_DIR}
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && rm -rf ${TEMP_DIR} && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && \
+    apt-get update && \
+    apt-get remove -y cpio
