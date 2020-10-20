@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:18.04 AS ov_base
+FROM ubuntu:18.04 AS base
 
 USER root
 WORKDIR /
@@ -9,16 +9,14 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # hadolint ignore=DL3008
 RUN apt-get update && apt upgrade -y --no-install-recommends && \
-    apt-get install -y --no-install-recommends curl && \
+    apt-get install -y --no-install-recommends curl ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
-
-{% for command in commands %}
-{{ command|safe }}
+{% for pre_command in pre_commands %}
+{{ pre_command|safe }}
 {% endfor %}
 # -----------------
-FROM ubuntu:18.04
+FROM ubuntu:18.04 AS ov_base
 
 LABEL Description="This is the {{ distribution }} image for {{ product_name }} on Ubuntu 18.04 LTS"
 LABEL Vendor="Intel Corporation"
@@ -32,38 +30,25 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
-# hadolint ignore=DL3008
-RUN apt-get update && apt upgrade -y --no-install-recommends && \
-    apt-get install -y --no-install-recommends curl && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime && mkdir /opt/intel
+RUN mkdir /opt/intel
 
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-COPY --from=ov_base ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}
+COPY --from=base /opt/intel /opt/intel
 
-ARG LGPL_DEPS="autoconf \
-               automake \
-               build-essential \
-               libgtk-3-0 \
-               libtool \
-               udev"
-ARG DEPENDENCIES="unzip"
+ARG LGPL_DEPS="build-essential \
+               libgtk-3-0"
 
 # hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ${DEPENDENCIES} ${LGPL_DEPS} && \
-    rm -rf /var/lib/apt/lists/*
-
-WORKDIR /thirdparty
-RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+RUN apt-get update && apt upgrade -y --no-install-recommends && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
     apt-get source ${LGPL_DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
-{% for hw_command in hw_commands %}
-{{ hw_command|safe }}
+{% for command in commands %}
+{{ command|safe }}
 {% endfor %}
 
 # Post-installation cleanup and setting up OpenVINO environment variables
@@ -71,8 +56,8 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc; \
-    fi;
-RUN if [ -d "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk ]; then \
+    fi; \
+    if [ -d "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
