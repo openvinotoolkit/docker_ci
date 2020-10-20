@@ -19,3 +19,10 @@ WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\requirements.txt" && `
     python "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\setup.py" install
 {% endif %}
+
+{% if '2020' in build_id %}
+RUN python -m pip uninstall -y opencv-python && `
+    python -m pip install --no-cache-dir opencv-python-headless
+WORKDIR ${INTEL_OPENVINO_DIR}/bin
+RUN powershell -Command "(Get-Content setupvars.bat) -replace '^set PYTHONPATH=.*python.*PYTHONPATH.*$', 'set PYTHONPATH=%INTEL_OPENVINO_DIR%\python\python%Major%.%Minor%;%PYTHONPATH%' | Out-File -encoding default setupvars.bat"
+{% endif %}
