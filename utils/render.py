@@ -50,6 +50,7 @@ class DockerFileRender:
             if '2021' in args.year:
                 settings.append('vs')
             else:
+                settings.append('vs')
                 settings.append('icl')
         settings.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
 
