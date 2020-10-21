@@ -1,4 +1,4 @@
-name: Image publishing on Linux
+name: Image publishing on Linux/Windows
 
 on:
   workflow_dispatch:
@@ -8,21 +8,28 @@ on:
         required: true
         default: ''
       distribution:
-        description: 'Distribution for OpenVINO package: dev, runtime, data_dev'
+        description: 'Distribution of OpenVINO package: dev, runtime, data_dev'
         required: true
         default: 'dev'
       os:
-        description: 'Operation System for docker image: ubuntu18, ubuntu20'
+        description: 'Operation System for Docker Image: ubuntu18, ubuntu20, winserver2019'
         required: true
-        default: 'ubuntu18'
+        default: ''
+      host_os:
+        description: 'Operation System for Host machine: ubuntu-18.04, windows-2019'
+        required: true
+        default: ''
       args:
-        description: 'Additional arguments'
+        description: 'Additional arguments, ex. -t image_name:YYY.U -t image_name:latest'
         required: false
         default: ''
 
 jobs:
-  publish_lin:
-    runs-on: ubuntu-18.04
+  publish:
+    strategy:
+      matrix:
+        os: [ ubuntu-18.04, windows-2019 ]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Code checkout
         uses: actions/checkout@v2
@@ -31,13 +38,16 @@ jobs:
         with:
           python-version: '3.7'
       - name: Setting up Python dependencies
+        if: ${{ matrix.os == github.event.inputs.host_os }}
         run: python -m pip install -r requirements.txt
       - name: Docker login to registry
-        run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+        if: ${{ matrix.os == github.event.inputs.host_os }}
+        run: echo $Env:DOCKER_PASSWORD | docker login --username $Env:DOCKER_USERNAME --password-stdin
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and publish image
+        if: ${{ matrix.os == github.event.inputs.host_os }}
         run: python docker_openvino.py all --dist ${{ github.event.inputs.distribution }} -os ${{ github.event.inputs.os }} --package_url ${{ github.event.inputs.package_url }} --nightly -r openvino ${{ github.event.inputs.args }}
       - name: Collecting artifacts
         if: ${{ always() }}
