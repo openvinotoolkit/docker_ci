@@ -1,6 +1,16 @@
 # data dev package
 WORKDIR /tmp
 
+ARG LGPL_DEPS="libgfortran5"
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get source ${LGPL_DEPS} && \
+    rm -rf /var/lib/apt/lists/*
+
 ENV VENV_TF2 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/venv_tf2
 
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \

@@ -1,18 +1,18 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:20.04 AS ov_base
+FROM ubuntu:20.04 AS base
 
+# hadolint ignore=DL3002
 USER root
 WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # hadolint ignore=DL3008
-RUN apt-get update && apt upgrade -y --no-install-recommends && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
+    rm -rf /var/lib/apt/lists/* && \
+    ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
 
 
 # get product from URL
@@ -27,8 +27,6 @@ ADD ${package_url} ${TEMP_DIR}
 ARG TEMP_DIR=/tmp/openvino_installer
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-RUN export OV_BUILD OV_FOLDER
-
 RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
     OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
@@ -37,10 +35,49 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
     rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
-    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && rm -rf "${TEMP_DIR}"
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && \
+    rm -rf ${TEMP_DIR}
+
+# for GPU
+ARG GMMLIB
+ARG IGC_CORE
+ARG IGC_OPENCL
+ARG INTEL_OPENCL
+ARG INTEL_OCLOC
+ARG TEMP_DIR=/tmp/opencl
+
+
+WORKDIR ${TEMP_DIR}
+RUN curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-gmmlib_${GMMLIB}_amd64.deb" --output "intel-gmmlib_${GMMLIB}_amd64.deb" && \
+    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-core_${IGC_CORE}_amd64.deb" --output "intel-igc-core_${IGC_CORE}_amd64.deb" && \
+    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-opencl_${IGC_OPENCL}_amd64.deb" --output "intel-igc-opencl_${IGC_OPENCL}_amd64.deb" && \
+    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-opencl_${INTEL_OPENCL}_amd64.deb" --output "intel-opencl_${INTEL_OPENCL}_amd64.deb" && \
+    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-ocloc_${INTEL_OCLOC}_amd64.deb" --output "intel-ocloc_${INTEL_OCLOC}_amd64.deb"
+
+# for VPU
+ARG BUILD_DEPENDENCIES="autoconf \
+                        automake \
+                        build-essential \
+                        libtool \
+                        unzip"
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ${BUILD_DEPENDENCIES} && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt
+RUN curl -L https://github.com/libusb/libusb/archive/v1.0.22.zip --output v1.0.22.zip && \
+    unzip v1.0.22.zip && rm -rf v1.0.22.zip
+
+WORKDIR /opt/libusb-1.0.22
+RUN ./bootstrap.sh && \
+    ./configure --disable-udev --enable-shared && \
+    make -j4
 
 # -----------------
-FROM ubuntu:20.04
+FROM ubuntu:20.04 AS ov_base
 
 LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
 LABEL Vendor="Intel Corporation"
@@ -55,31 +92,22 @@ RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
 # hadolint ignore=DL3008
-RUN apt-get update && apt upgrade -y --no-install-recommends && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime  && mkdir /opt/intel
+    rm -rf /var/lib/apt/lists/* && \
+    ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime  && mkdir /opt/intel
 
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-COPY --from=ov_base ${INTEL_OPENVINO_DIR} ${INTEL_OPENVINO_DIR}
+COPY --from=base /opt/intel /opt/intel
 
-ARG LGPL_DEPS="autoconf \
-               automake \
-               build-essential \
-               libgtk-3-0 \
-               libtool \
-               udev"
-ARG DEPENDENCIES="unzip"
+ARG LGPL_DEPS="build-essential \
+               libgtk-3-0"
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ${DEPENDENCIES} ${LGPL_DEPS} && \
-    rm -rf /var/lib/apt/lists/*
-
-WORKDIR /thirdparty
-RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
     apt-get source ${LGPL_DEPS} && \
     rm -rf /var/lib/apt/lists/*
@@ -106,39 +134,29 @@ RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/
 # for CPU
 
 # for GPU
-ARG GMMLIB
-ARG IGC_CORE
-ARG IGC_OPENCL
-ARG INTEL_OPENCL
-ARG INTEL_OCLOC
 ARG TEMP_DIR=/tmp/opencl
 
+COPY --from=base ${TEMP_DIR} ${TEMP_DIR}
 
 WORKDIR ${TEMP_DIR}
+# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
     rm -rf /var/lib/apt/lists/* && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-gmmlib_${GMMLIB}_amd64.deb" --output "intel-gmmlib_${GMMLIB}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-core_${IGC_CORE}_amd64.deb" --output "intel-igc-core_${IGC_CORE}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-opencl_${IGC_OPENCL}_amd64.deb" --output "intel-igc-opencl_${IGC_OPENCL}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-opencl_${INTEL_OPENCL}_amd64.deb" --output "intel-opencl_${INTEL_OPENCL}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-ocloc_${INTEL_OCLOC}_amd64.deb" --output "intel-ocloc_${INTEL_OCLOC}_amd64.deb" && \
     dpkg -i ${TEMP_DIR}/*.deb && \
     ldconfig && \
     rm -rf ${TEMP_DIR}
 
 # for VPU
-RUN cp ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/97-myriad-usbboot.rules /etc/udev/rules.d/ && \
-    ldconfig
+ARG DEPENDENCIES="udev"
 
-WORKDIR /opt
-RUN curl -L https://github.com/libusb/libusb/archive/v1.0.22.zip --output v1.0.22.zip && \
-    unzip v1.0.22.zip
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
+    apt-get source ${DEPENDENCIES} && \
+    rm -rf /var/lib/apt/lists/*
 
-WORKDIR /opt/libusb-1.0.22
-RUN ./bootstrap.sh && \
-    ./configure --disable-udev --enable-shared && \
-    make -j4
+COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
 WORKDIR /opt/libusb-1.0.22/libusb
 RUN /bin/mkdir -p '/usr/local/lib' && \
@@ -149,17 +167,19 @@ RUN /bin/mkdir -p '/usr/local/lib' && \
 
 WORKDIR /opt/libusb-1.0.22/
 RUN /usr/bin/install -c -m 644 libusb-1.0.pc '/usr/local/lib/pkgconfig' && \
+    cp ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/97-myriad-usbboot.rules /etc/udev/rules.d/ && \
     ldconfig
 
 # for HDDL
 WORKDIR /tmp
+# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libboost-filesystem-dev \
         libboost-thread-dev \
         libjson-c4 \
         libxxf86vm-dev && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
 
 # Post-installation cleanup and setting up OpenVINO environment variables
@@ -167,8 +187,8 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc; \
-    fi;
-RUN if [ -d "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk ]; then \
+    fi; \
+    if [ -d "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;

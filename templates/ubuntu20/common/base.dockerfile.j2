@@ -2,13 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:20.04 AS base
 
+# hadolint ignore=DL3002
 USER root
 WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # hadolint ignore=DL3008
-RUN apt-get update && apt upgrade -y --no-install-recommends && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \
     rm -rf /var/lib/apt/lists/* && \
     ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
@@ -32,7 +33,7 @@ RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
 # hadolint ignore=DL3008
-RUN apt-get update && apt upgrade -y --no-install-recommends && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \
     rm -rf /var/lib/apt/lists/* && \
     ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime  && mkdir /opt/intel
@@ -42,8 +43,7 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 COPY --from=base /opt/intel /opt/intel
 
 ARG LGPL_DEPS="build-essential \
-               libgtk-3-0 \
-               libgfortran5"
+               libgtk-3-0"
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
