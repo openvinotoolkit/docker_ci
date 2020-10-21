@@ -80,17 +80,14 @@ def pytest_configure(config):
                 raise FailedTest(err_msg)
 
 
-def pytest_unconfigure(config):
+def pytest_sessionfinish(session, exitstatus):
+    log.info(f'Tests failed={session.testsfailed} collected={session.testscollected}')
     temp_folder = pathlib.Path(__file__).parent / 'tmp'
     if not temp_folder.exists():
         return
     log.info('Removing mount dependencies')
     shutil.rmtree(temp_folder, ignore_errors=True)
     log.info('Cleanup completed')
-
-
-def pytest_sessionfinish(session, exitstatus):
-    log.info(f'Tests failed={session.testsfailed} collected={session.testscollected}')
 
 
 @pytest.fixture(scope='session')
