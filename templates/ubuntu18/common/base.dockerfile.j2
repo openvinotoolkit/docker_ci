@@ -2,13 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:18.04 AS base
 
+# hadolint ignore=DL3002
 USER root
 WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # hadolint ignore=DL3008
-RUN apt-get update && apt upgrade -y --no-install-recommends && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends curl ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
@@ -40,7 +41,7 @@ ARG LGPL_DEPS="build-essential \
                libgtk-3-0"
 
 # hadolint ignore=DL3008
-RUN apt-get update && apt upgrade -y --no-install-recommends && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
     sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \

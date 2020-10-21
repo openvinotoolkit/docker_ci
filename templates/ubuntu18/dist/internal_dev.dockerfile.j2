@@ -4,7 +4,7 @@ WORKDIR /tmp
 ARG LGPL_DEPS="libgfortran5"
 
 # hadolint ignore=DL3008
-RUN apt-get update && apt upgrade -y --no-install-recommends && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
     sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
