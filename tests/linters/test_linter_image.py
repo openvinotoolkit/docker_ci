@@ -25,7 +25,7 @@ class TestLinterImage:
     @pytest.mark.skipif(not (sys.platform.startswith('linux') or sys.platform.startswith('darwin')),
                         reason='Windows has separate windows/linux docker images engine')
     def test_dive_linux(self, image, dive_pull):
-        cmd_line = ['docker', 'run', '--rm', '-it', '-v', '/var/run/docker.sock:/var/run/docker.sock',
+        cmd_line = ['docker', 'run', '--rm', '-v', '/var/run/docker.sock:/var/run/docker.sock',
                     '-e', 'CI=true', 'wagoodman/dive:latest', image]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec
         if process.returncode != 0:
