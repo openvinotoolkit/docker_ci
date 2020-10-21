@@ -20,7 +20,7 @@ on:
         required: true
         default: ''
       args:
-        description: 'Additional arguments, ex. -t image_name:YYY.U -t image_name:latest'
+        description: 'Additional arguments, ex. -t image_name:YYY.U -t image_name:latest --build_arg no_samples=True'
         required: false
         default: ''
 
