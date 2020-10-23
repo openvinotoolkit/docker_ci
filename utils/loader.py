@@ -167,6 +167,11 @@ INTEL_OPENVINO_VERSION = {
                 'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2021.1/'
                            'l_openvino_toolkit_runtime_ubuntu20_p_2021.1.110.tgz',
             },
+        'centos7':
+            {
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2021.1/'
+                           'l_openvino_toolkit_runtime_centos7_p_2021.1.110.tgz',
+            },
     },
 }
 DIVE_URL = {
