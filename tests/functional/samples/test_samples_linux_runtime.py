@@ -33,8 +33,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir -r '
@@ -78,8 +79,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir -r '
@@ -126,8 +128,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir -r '
@@ -172,8 +175,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir -r '
@@ -215,8 +219,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
@@ -260,8 +265,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
@@ -308,8 +314,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
@@ -354,8 +361,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
@@ -394,8 +402,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
@@ -436,8 +445,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
@@ -481,8 +491,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
@@ -524,8 +535,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
@@ -567,8 +579,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
@@ -618,8 +631,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
@@ -670,8 +684,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir -r '
@@ -720,8 +735,9 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install -y build-essential && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
