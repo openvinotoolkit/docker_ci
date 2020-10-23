@@ -139,6 +139,35 @@ INTEL_OPENVINO_VERSION = {
                             'l_openvino_toolkit_data_dev_ubuntu18_p_2020.4.287.tgz',
             },
     },
+    '2021.1': {
+        'winserver2019':
+            {
+                'dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2021.1/'
+                       'w_openvino_toolkit_dev_p_2021.1.110.zip',
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2021.1/'
+                           'w_openvino_toolkit_runtime_p_2021.1.110.zip',
+                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/17063/'
+                               'w_openvino_toolkit_p_2021.1.110.exe',
+                'data_dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2021.1/'
+                            'w_openvino_toolkit_data_dev_p_2021.1.110.zip',
+            },
+        'ubuntu18':
+            {
+                'dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2021.1/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2021.1.110.tgz',
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2021.1/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2021.1.110.tgz',
+                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/17062/'
+                               'l_openvino_toolkit_p_2021.1.110.tgz',
+                'data_dev': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2021.1/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2021.1.110.tgz',
+            },
+        'ubuntu20':
+            {
+                'runtime': 'https://d30ikxcvcet9xo.cloudfront.net/repositories/openvino/packages/2021.1/'
+                           'l_openvino_toolkit_runtime_ubuntu20_p_2021.1.110.tgz',
+            },
+    },
 }
 DIVE_URL = {
     'windows': 'https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_windows_amd64.zip',
