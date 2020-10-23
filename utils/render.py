@@ -37,7 +37,7 @@ class DockerFileRender:
             return self.env.get_template(f'{name}.dockerfile.j2', globals=kwargs)
         except jinja2.exceptions.TemplateNotFound:
             raise LayerNotFound(f'Layer {name}.dockerfile.j2 was not found. '
-                                f'Please add your layer dockerfile.j2 to '
+                                f'Please add your layer.dockerfile.j2 to '
                                 f'<project_root>/templates/<image_os>/layers folder')
 
     def generate_dockerfile(self, args: argparse.Namespace, kwargs: typing.Dict[str, str]) -> pathlib.Path:
@@ -52,15 +52,25 @@ class DockerFileRender:
             else:
                 settings.append('vs')
                 settings.append('icl')
-        settings.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
+            settings.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
+        else:
+            pre_device_settings = []
+            pre_devices = ['gpu', 'vpu']
+            for device in pre_devices:
+                if device in args.device:
+                    pre_device_settings.append(f'pre_{device}')
+            settings.extend([args.source, args.install_type, *pre_device_settings])
 
-        commands = [self.get_template(arg, kwargs).render() for arg in settings]
+        pre_commands = [self.get_template(arg, kwargs).render() for arg in settings]
+        commands = [self.get_template(arg, kwargs).render() for arg in [args.python,
+                                                                        args.distribution, *args.device]]
         layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
         save_to_dir = pathlib.Path(self.location) / 'dockerfiles' / args.os
         if not save_to_dir.exists():
             save_to_dir.mkdir()
         save_to = save_to_dir / args.dockerfile_name
-        self.get_base_template().stream(commands=commands, layers=layers, **kwargs).dump(str(save_to))
+        self.get_base_template().stream(pre_commands=pre_commands, commands=commands,
+                                        layers=layers, **kwargs).dump(str(save_to))
         log.info('Dockerfile was generated successfully')
         log.info(f'Generated dockerfile location {str(save_to)}')
         return save_to

@@ -124,7 +124,8 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             metavar='VAR_NAME=VALUE',
             action='append',
             default=[],
-            help='Specify build or template arguments for your layer.',
+            help='Specify build or template arguments for your layer. '
+                 'You can use "no_samples=True" to remove OMZ, IE samples and demos from final docker image.',
         )
 
     @staticmethod

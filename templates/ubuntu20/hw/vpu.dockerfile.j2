@@ -1,16 +1,13 @@
 # for VPU
+ARG DEPENDENCIES="udev"
 
-RUN cp ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/97-myriad-usbboot.rules /etc/udev/rules.d/ && \
-    ldconfig
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
+    apt-get source ${DEPENDENCIES} && \
+    rm -rf /var/lib/apt/lists/*
 
-WORKDIR /opt
-RUN curl -L https://github.com/libusb/libusb/archive/v1.0.22.zip --output v1.0.22.zip && \
-    unzip v1.0.22.zip
-
-WORKDIR /opt/libusb-1.0.22
-RUN ./bootstrap.sh && \
-    ./configure --disable-udev --enable-shared && \
-    make -j4
+COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
 WORKDIR /opt/libusb-1.0.22/libusb
 RUN /bin/mkdir -p '/usr/local/lib' && \
@@ -21,4 +18,5 @@ RUN /bin/mkdir -p '/usr/local/lib' && \
 
 WORKDIR /opt/libusb-1.0.22/
 RUN /usr/bin/install -c -m 644 libusb-1.0.pc '/usr/local/lib/pkgconfig' && \
+    cp ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/97-myriad-usbboot.rules /etc/udev/rules.d/ && \
     ldconfig
