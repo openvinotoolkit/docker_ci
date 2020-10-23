@@ -11,15 +11,22 @@ SHELL ["cmd", "/S", "/C"]
 
 USER ContainerAdministrator
 
-# Setup Redistributable Libraries for Intel(R) C++ Compiler for Windows*
-RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://software.intel.com/sites/default/files/managed/59/aa/ww_icl_redist_msi_2018.3.210.zip -OutFile "%TMP%\ww_icl_redist_msi_2018.3.210.zip" ; `
-    Expand-Archive -Path "%TMP%\ww_icl_redist_msi_2018.3.210.zip" -DestinationPath "%TMP%\ww_icl_redist_msi_2018.3.210" -Force ; `
-    Remove-Item "%TMP%\ww_icl_redist_msi_2018.3.210.zip" -Force
 
-RUN %TMP%\ww_icl_redist_msi_2018.3.210\ww_icl_redist_intel64_2018.3.210.msi /quiet /passive /log "%TMP%\redist.log"
+# setup MSBuild 2019
+RUN powershell.exe -Command Invoke-WebRequest -URI https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile %TMP%\\vs_buildtools.exe
+
+RUN %TMP%\\vs_buildtools.exe --quiet --norestart --wait --nocache `
+	 --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools" `
+     --add Microsoft.VisualStudio.Workload.MSBuildTools `
+     --add Microsoft.VisualStudio.Workload.UniversalBuildTools `
+     --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended `
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 `
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 `
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 `
+     --remove Microsoft.VisualStudio.Component.Windows81SDK || IF "%ERRORLEVEL%"=="3010" EXIT 0 && powershell set-executionpolicy remotesigned
 
 # setup CMake
+
 RUN powershell.exe -Command `
     Invoke-WebRequest -URI https://cmake.org/files/v3.14/cmake-3.14.7-win64-x64.msi -OutFile %TMP%\\cmake-3.14.7-win64-x64.msi ; `
     Start-Process %TMP%\\cmake-3.14.7-win64-x64.msi -ArgumentList '/quiet /norestart' -Wait ; `
@@ -27,16 +34,33 @@ RUN powershell.exe -Command `
 
 RUN SETX /M PATH "C:\Program Files\CMake\Bin;%PATH%"
 
+# Setup Microsoft Visual C++ 2015-2019 Redistributable (x64) - 14.27.29016
+
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -OutFile "%TMP%\vc_redist.x64.exe" ; `
+    Start-Process %TMP%\\vc_redist.x64.exe -ArgumentList '/quiet /norestart' -Wait ; `
+    Remove-Item "%TMP%\vc_redist.x64.exe" -Force
+
+
+# Setup Redistributable Libraries for Intel(R) C++ Compiler for Windows*
+
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://software.intel.com/sites/default/files/managed/59/aa/ww_icl_redist_msi_2018.3.210.zip -OutFile "%TMP%\ww_icl_redist_msi_2018.3.210.zip" ; `
+    Expand-Archive -Path "%TMP%\ww_icl_redist_msi_2018.3.210.zip" -DestinationPath "%TMP%\ww_icl_redist_msi_2018.3.210" -Force ; `
+    Remove-Item "%TMP%\ww_icl_redist_msi_2018.3.210.zip" -Force
+
+RUN %TMP%\ww_icl_redist_msi_2018.3.210\ww_icl_redist_intel64_2018.3.210.msi /quiet /passive /log "%TMP%\redist.log"
+
 # setup Python
 ARG PYTHON_VER=python3.7
 
+
 RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe -OutFile %TMP%\\python-3.7.exe ; `
-    Start-Process %TMP%\\python-3.7.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python37' -Wait ; `
-    Remove-Item %TMP%\\python-3.7.exe -Force
+  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe -OutFile %TMP%\\python-3.7.exe ; `
+  Start-Process %TMP%\\python-3.7.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python37' -Wait ; `
+  Remove-Item %TMP%\\python-3.7.exe -Force
 
 RUN python -m pip install --upgrade pip
-RUN python -m pip install cmake wheel
 
 # download package from external URL
 ARG package_url
@@ -67,8 +91,7 @@ RUN rmdir /S /Q "%USERPROFILE%\Downloads\Intel"
 
 # proprietary package
 WORKDIR ${INTEL_OPENVINO_DIR}
-RUN python -m pip install --no-cache-dir setuptools && `
-    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt" && `
+RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt" && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\openvino\tools\benchmark\requirements.txt" && `
     python -m pip install --no-cache-dir torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
@@ -76,6 +99,7 @@ RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter
        if (($_.Fullname -like '*post_training_optimization_toolkit*') -or ($_.Fullname -like '*accuracy_checker*') -or ($_.Fullname -like '*python3*') -or ($_.Fullname -like '*python2*') -or ($_.Fullname -like '*requirements_ubuntu*')) `
        {echo 'skipping dependency'} else {echo 'installing dependency'; python -m pip install --no-cache-dir -r $_.FullName} `
    }"
+
 
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\open_model_zoo\tools\accuracy_checker
 RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
@@ -85,6 +109,15 @@ RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_toolkit
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\requirements.txt" && `
     python "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\setup.py" install
+
+
+
+RUN python -m pip uninstall -y opencv-python && `
+    python -m pip install --no-cache-dir opencv-python-headless
+WORKDIR ${INTEL_OPENVINO_DIR}/bin
+RUN powershell -Command "(Get-Content setupvars.bat) -replace '^set PYTHONPATH=.*python.*PYTHONPATH.*$', 'set PYTHONPATH=%INTEL_OPENVINO_DIR%\python\python%Major%.%Minor%;%PYTHONPATH%' | Out-File -encoding default setupvars.bat"
+
+
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 
@@ -97,4 +130,4 @@ USER ContainerUser
 
 CMD ["cmd.exe"]
 
-# Setup custom layers
+# Setup custom layers below
