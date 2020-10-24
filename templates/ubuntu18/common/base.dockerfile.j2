@@ -37,8 +37,8 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 COPY --from=base /opt/intel /opt/intel
 
-{% if 'runtime' in build_id %}
-ARG LGPL_DEPS="libgtk-3-0"
+{% if 'runtime' in distribution %}
+ARG LGPL_DEPS=libgtk-3-0
 {% else %}
 ARG LGPL_DEPS="g++ \
                gcc \
