@@ -35,8 +35,8 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && \
-    rm -rf ${TEMP_DIR}
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
+
 
 # for GPU
 ARG GMMLIB
@@ -95,12 +95,13 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 COPY --from=base /opt/intel /opt/intel
 
-ARG LGPL_DEPS="build-essential \
-               libgtk-3-0"
+
+ARG LGPL_DEPS=libgtk-3-0
+
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    apt-get install -y --no-install-recommends dpkg-dev curl ${LGPL_DEPS} && \
     sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
     apt-get source ${LGPL_DEPS} && \
@@ -142,7 +143,7 @@ RUN apt-get update && \
     rm -rf ${TEMP_DIR}
 
 # for VPU
-ARG DEPENDENCIES="udev"
+ARG DEPENDENCIES=udev
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
@@ -185,6 +186,11 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
+
+RUN apt-get update && \
+    apt-get autoremove -y dpkg-dev && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    rm -rf /var/lib/apt/lists/*
 
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}
