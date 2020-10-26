@@ -120,6 +120,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac "source /opt/intel/openvino/bin/setupvars.sh && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
              '/bin/bash -ac "source /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -142,6 +143,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -165,6 +167,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -188,6 +191,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -210,14 +214,15 @@ class TestDemosLinux:
 
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/root/omz_demos_build/intel64/Release/text_detection_demo '
-             '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
+            [f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'apt update && apt install make && '
+             f'/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
+             f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+             f'--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
+             f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'/root/omz_demos_build/intel64/Release/text_detection_demo '
+             f'-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
              f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp {options} -d_td CPU -no_show"',
              ],
             self.test_text_cpp_cpu.__name__, **kwargs,
@@ -231,14 +236,15 @@ class TestDemosLinux:
         options = '-dt image' if '2021' not in image else ''
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/root/omz_demos_build/intel64/Release/text_detection_demo '
-             '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
+            [f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'apt update && apt install make && '
+             f'/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
+             f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+             f'--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
+             f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'/root/omz_demos_build/intel64/Release/text_detection_demo '
+             f'-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
              f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp {options} -d_td GPU -no_show"',
              ],
             self.test_text_cpp_gpu.__name__, **kwargs,
@@ -250,17 +256,19 @@ class TestDemosLinux:
     def test_text_cpp_vpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
+        options = '-dt image' if '2021' not in image else ''
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/root/omz_demos_build/intel64/Release/text_detection_demo '
-             '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td MYRIAD -no_show"',
+            [f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'apt update && apt install make && '
+             f'/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
+             f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+             f'--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
+             f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'/root/omz_demos_build/intel64/Release/text_detection_demo '
+             f'-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
+             f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp {options} -d_td MYRIAD -no_show"',
              ],
             self.test_text_cpp_vpu.__name__, **kwargs,
         )
@@ -275,14 +283,15 @@ class TestDemosLinux:
         options = '-dt image' if '2021' not in image else ''
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/root/omz_demos_build/intel64/Release/text_detection_demo '
-             '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
+            [f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'apt update && apt install make && '
+             f'/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
+             f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+             f'--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
+             f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             f'/root/omz_demos_build/intel64/Release/text_detection_demo '
+             f'-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
              f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp {options} -d_td HDDL -no_show"',
              ],
             self.test_text_cpp_hddl.__name__, **kwargs,
@@ -371,6 +380,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -392,6 +402,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -414,6 +425,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -437,6 +449,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '

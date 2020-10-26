@@ -35,8 +35,8 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && \
-    rm -rf ${TEMP_DIR}
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
+
 
 # for GPU
 ARG GMMLIB
@@ -95,12 +95,17 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 COPY --from=base /opt/intel /opt/intel
 
-ARG LGPL_DEPS="build-essential \
+
+ARG LGPL_DEPS="g++ \
+               gcc \
+               libc6-dev \
+               libgfortran5 \
                libgtk-3-0"
+
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    apt-get install -y --no-install-recommends dpkg-dev curl ${LGPL_DEPS} && \
     sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
     apt-get source ${LGPL_DEPS} && \
@@ -122,26 +127,18 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 # dev package
 WORKDIR /tmp
 
-ARG LGPL_DEPS="libgfortran5"
-
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
-    sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get source ${LGPL_DEPS} && \
-    rm -rf /var/lib/apt/lists/*
+RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
+    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
+    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o  -name "*requirements*.in" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
 
 ENV VENV_TF2 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/venv_tf2
 
-RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o  -name "*requirements*.in" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
-    ${PYTHON_VER} -m venv ${VENV_TF2} && \
+RUN ${PYTHON_VER} -m venv ${VENV_TF2} && \
     source ${VENV_TF2}/bin/activate && \
     pip install --no-cache-dir -U pip==19.3.1 && \
     pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/requirements_tf2.txt && \
     deactivate
+
 
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker
 RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
@@ -171,7 +168,7 @@ RUN apt-get update && \
     rm -rf ${TEMP_DIR}
 
 # for VPU
-ARG DEPENDENCIES="udev"
+ARG DEPENDENCIES=udev
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
@@ -214,6 +211,11 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
+
+RUN apt-get update && \
+    apt-get autoremove -y dpkg-dev && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    rm -rf /var/lib/apt/lists/*
 
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}

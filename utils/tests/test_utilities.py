@@ -153,8 +153,8 @@ def test_get_system_proxy(mock_data, res):
         id='without ignore',
     ),
 ])
-@ mock.patch('os.walk')
-@ mock.patch('os.path.exists')
+@mock.patch('os.walk')
+@mock.patch('os.path.exists')
 def test_get_folder_structure_recursively(mock_exists, mock_walk, mock_data, ignore, res):
     mock_exists.return_value = True
     mock_walk.return_value = mock_data

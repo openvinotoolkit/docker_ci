@@ -12,6 +12,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -34,6 +35,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -57,6 +59,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -80,6 +83,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -100,6 +104,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -122,6 +127,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -145,6 +151,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -168,6 +175,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -188,6 +196,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -210,6 +219,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -233,6 +243,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -256,6 +267,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -276,6 +288,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -301,6 +314,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -327,6 +341,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -353,6 +368,7 @@ class TestSamplesLinux:
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
