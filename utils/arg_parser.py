@@ -319,8 +319,7 @@ def parse_args(name: str, description: str):
         parser.error('Options --tags and --distribution are mandatory. Image operation system is "ubuntu18"'
                      ' by default.')
 
-    if (args.mode == 'test' and args.distribution == 'runtime') and (
-            'model_server' not in args.tags[0] and not args.package_url):
+    if args.mode == 'test' and args.distribution == 'runtime' and not args.package_url:
         print('\nYou can run samples/demos on runtime docker image. '
               'Please provide --package_url key with path to dev distribution package in '
               'http/https/ftp access scheme or a local file in the project location as dependent package '
