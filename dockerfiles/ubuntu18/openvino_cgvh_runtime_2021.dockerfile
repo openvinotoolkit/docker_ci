@@ -100,10 +100,9 @@ ARG LGPL_DEPS=libgtk-3-0
 
 
 # hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends dpkg-dev curl ${LGPL_DEPS} && \
-    sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
+    apt-get install -y --no-install-recommends dpkg-dev curl ${LGPL_DEPS} && \
     apt-get source ${LGPL_DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
@@ -114,7 +113,7 @@ ENV PYTHON_VER python3.6
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip lib${PYTHON_VER} && \
+    apt-get install -y --no-install-recommends python3-pip python3-setuptools lib${PYTHON_VER} && \
     rm -rf /var/lib/apt/lists/*
 
 
