@@ -55,10 +55,9 @@ ARG LGPL_DEPS="g++ \
 {% endif %}
 
 # hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends dpkg-dev ${LGPL_DEPS}&& \
-    sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
+    apt-get install -y --no-install-recommends dpkg-dev ${LGPL_DEPS}&& \
     apt-get source ${LGPL_DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
