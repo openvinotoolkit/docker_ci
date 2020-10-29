@@ -37,10 +37,11 @@ class TestSDLImage:
                     'snyk/snyk-cli:docker', 'test', '--docker', image, *dockerfile_args]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec
         process_out = process.stdout.decode().replace(SNYK_TOKEN, '*' * 6)
+        cmd_line[6] = 'SNYK_TOKEN=******'
         if process.returncode != 0:
-            pytest.fail(f'SDL snyk issues: {process_out}')
+            pytest.fail(f'SDL snyk issues: {cmd_line}\n{process_out}')
         else:
-            print(f'SDL snyk output: {process_out}')
+            print(f'SDL snyk output: {cmd_line}\n{process_out}')
 
     @pytest.mark.skipif(not sys.platform.startswith('win32'), reason="Linux doesn't support windows executable files")
     @pytest.mark.skipif(SNYK_TOKEN == '',  # noqa: S105 # nosec
@@ -63,7 +64,8 @@ class TestSDLImage:
                     '--docker', image, *dockerfile_args]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec
         process_out = process.stdout.decode().replace(SNYK_TOKEN, '*' * 6)
+        cmd_line[3] = '******'
         if process.returncode != 0:
-            pytest.fail(f'SDL snyk issues: {process_out}')
+            pytest.fail(f'SDL snyk issues: {cmd_line}\n{process_out}')
         else:
-            print(f'SDL snyk output: {process_out}')
+            print(f'SDL snyk output: {cmd_line}\n{process_out}')
