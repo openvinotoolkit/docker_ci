@@ -13,6 +13,10 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends curl ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
+# download source for pypi-kenlm LGPL package
+WORKDIR /tmp
+RUN curl -L https://github.com/sih4sing5hong5/kenlm/archive/pypi.zip --output pypi-kenlm.zip
+
 {% for pre_command in pre_commands %}
 {{ pre_command|safe }}
 {% endfor %}

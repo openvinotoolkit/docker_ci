@@ -13,6 +13,10 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends curl ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
+# download source for pypi-kenlm LGPL package
+WORKDIR /tmp
+RUN curl -L https://github.com/sih4sing5hong5/kenlm/archive/pypi.zip --output pypi-kenlm.zip
+
 
 # get product from URL
 ARG package_url
@@ -103,10 +107,9 @@ ARG LGPL_DEPS="g++ \
 
 
 # hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends dpkg-dev curl ${LGPL_DEPS} && \
-    sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
+    apt-get install -y --no-install-recommends dpkg-dev curl ${LGPL_DEPS} && \
     apt-get source ${LGPL_DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
@@ -144,6 +147,8 @@ RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
     ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements.in && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
+
+COPY --from=base /tmp/pypi-kenlm.zip ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/pypi-kenlm.zip
 
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \

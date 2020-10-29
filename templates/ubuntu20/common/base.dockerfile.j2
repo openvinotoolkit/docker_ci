@@ -14,6 +14,10 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
 
+# download source for pypi-kenlm LGPL package
+WORKDIR /tmp
+RUN curl -L https://github.com/sih4sing5hong5/kenlm/archive/pypi.zip --output pypi-kenlm.zip
+
 {% for pre_command in pre_commands %}
 {{ pre_command|safe }}
 {% endfor %}
