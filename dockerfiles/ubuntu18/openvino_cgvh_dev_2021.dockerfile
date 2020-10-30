@@ -11,7 +11,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
 
 # download source for pypi-kenlm LGPL package
 WORKDIR /tmp
@@ -112,7 +112,7 @@ RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends dpkg-dev curl ${LGPL_DEPS} && \
     apt-get source ${LGPL_DEPS} && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
 
 
 # setup Python

@@ -6,7 +6,7 @@ import pytest
 
 class TestDlStreamerLinux:
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev'], indirect=True)
+    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     def test_draw_face_attributes_cpp_cpu(self, is_image_os, is_distribution, tester, image):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -22,7 +22,7 @@ class TestDlStreamerLinux:
         )
 
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev'], indirect=True)
+    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     @pytest.mark.gpu
     def test_draw_face_attributes_cpp_gpu(self, is_image_os, is_distribution, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
@@ -39,7 +39,7 @@ class TestDlStreamerLinux:
         )
 
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev'], indirect=True)
+    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     @pytest.mark.vpu
     @pytest.mark.xfail(reason='Failed to construct OpenVINOImageInference. Can not init Myriad device: NC_ERROR.')
     def test_draw_face_attributes_cpp_vpu(self, is_image_os, is_distribution, tester, image):
@@ -58,7 +58,7 @@ class TestDlStreamerLinux:
         )
 
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev'], indirect=True)
+    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     @pytest.mark.hddl
     def test_draw_face_attributes_cpp_hddl(self, is_image_os, is_distribution, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
@@ -76,7 +76,7 @@ class TestDlStreamerLinux:
         )
 
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev'], indirect=True)
+    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     def test_gst_launch_audio_detect(self, is_image_os, is_distribution, tester, image):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -90,7 +90,7 @@ class TestDlStreamerLinux:
         )
 
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev'], indirect=True)
+    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     def test_gst_launch_metapublish(self, is_image_os, is_distribution, tester, image):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(

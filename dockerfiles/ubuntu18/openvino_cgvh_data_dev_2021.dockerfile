@@ -11,7 +11,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
 
 # download source for pypi-kenlm LGPL package
 WORKDIR /tmp
@@ -104,7 +104,13 @@ ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
                libgfortran5 \
-               libgtk-3-0"
+               libgtk-3-0 \
+               libgstreamer1.0-0 \
+               gstreamer1.0-plugins-base \
+               gstreamer1.0-plugins-good \
+               gstreamer1.0-plugins-bad \
+               gstreamer1.0-vaapi \
+               ffmpeg"
 
 
 # hadolint ignore=DL3008
@@ -112,7 +118,7 @@ RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends dpkg-dev curl ${LGPL_DEPS} && \
     apt-get source ${LGPL_DEPS} && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
 
 
 # setup Python
