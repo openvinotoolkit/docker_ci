@@ -1,4 +1,15 @@
 # Get Started with DockerHub CI for Intel® Distribution of OpenVINO™ toolkit
+
+DockerHub CI framework based on [Docker SDK for Python](https://github.com/docker/docker-py) - Python library for the Docker Engine API.
+
+## System requirements
+
+*  Python* >=3.6
+*  Windows*/Linux* host
+*  Up Docker* engine/service on the host
+
+**Note:** Run DockerHub CI framework on the host machine, nor in a docker container.
+
 This guide provides you with the information that will help you to start using the DockerHub CI framework for OpenVINO™ Toolkit. 
 With this guide, you will learn how to:
 
@@ -20,10 +31,11 @@ You can find generated dockerfile in `<root_project>/dockerfiles/<image_os>` fol
 
 Select a product distribution:
 ```cmd
-  -dist, --distribution TYPE  Available types: dev, data_dev, runtime, internal_dev, proprietary or 
-                           base (with CPU only and without installing dependencies). 
-                           Using key --file <path_to_dockerfile> is mandatory to build base distribution image.
-                           base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder.
+  -dist, --distribution TYPE  Available types: dev, data_dev, runtime, internal_dev, 
+                              proprietary (product pkg with an installer) or 
+                              base (with CPU only and without installing dependencies). 
+                              Using key --file <path_to_dockerfile> is mandatory to build base distribution image.
+                              base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder.
 ```
 
 Select a product version. It will use public released product in docker image:

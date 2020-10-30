@@ -197,7 +197,8 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             '--distribution',
             choices=['base', 'runtime', 'dev', 'data_dev', 'internal_dev', 'proprietary'],
             required=' test' in parser.prog,
-            help='Distribution type: dev, data_dev, runtime, internal_dev, proprietary or '
+            help='Distribution type: dev, data_dev, runtime, internal_dev, '
+                 'proprietary (product pkg with an installer) or '
                  'base (with CPU only and without installing dependencies). '
                  'Using key --file <path_to_dockerfile> is mandatory to build base distribution image.'
                  'base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder.',
