@@ -16,7 +16,7 @@ class TestDlStreamerLinux:
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
              './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
              'cd build && cmake ../ && make && '
-             'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
+             'curl -O https://storage.openvinotoolkit.org/data/test_data/videos/face-demographics-walking.mp4 && '
              './draw_face_attributes -i face-demographics-walking.mp4 -n"'],
             self.test_draw_face_attributes_cpp_cpu.__name__, **kwargs,
         )
@@ -33,7 +33,7 @@ class TestDlStreamerLinux:
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
              './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
              'cd build && cmake ../ && make && '
-             'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
+             'curl -O https://storage.openvinotoolkit.org/data/test_data/videos/face-demographics-walking.mp4 && '
              './draw_face_attributes -i face-demographics-walking.mp4 -n -d GPU"'],
             self.test_draw_face_attributes_cpp_gpu.__name__, **kwargs,
         )
@@ -52,7 +52,7 @@ class TestDlStreamerLinux:
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
              './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
              'cd build && cmake ../ && make && '
-             'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
+             'curl -O https://storage.openvinotoolkit.org/data/test_data/videos/face-demographics-walking.mp4 && '
              './draw_face_attributes -i face-demographics-walking.mp4 -n -d MYRIAD -p FP16"'],
             self.test_draw_face_attributes_cpp_vpu.__name__, **kwargs,
         )
@@ -70,7 +70,7 @@ class TestDlStreamerLinux:
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
              './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
              'cd build && cmake ../ && make && '
-             'curl -O https://d30ikxcvcet9xo.cloudfront.net/data/test_data/videos/face-demographics-walking.mp4 && '
+             'curl -O https://storage.openvinotoolkit.org/data/test_data/videos/face-demographics-walking.mp4 && '
              './draw_face_attributes -i face-demographics-walking.mp4 -n -d HDDL"'],
             self.test_draw_face_attributes_cpp_hddl.__name__, **kwargs,
         )

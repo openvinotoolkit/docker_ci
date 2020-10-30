@@ -17,10 +17,10 @@ See more on the [product page](https://software.intel.com/content/www/us/en/deve
 Or you can download a small archive of HDDL driver package from Amazon Web Services*.
 Available releases for Ubuntu* 18.04:
 
-*  [2020.2](https://d30ikxcvcet9xo.cloudfront.net/drivers/vpu/hddl/2020.2/hddl_ubuntu18_1076.tgz)
-*  [2020.3](https://d30ikxcvcet9xo.cloudfront.net/drivers/vpu/hddl/2020.3/hddl_ubuntu18_1167.tgz)
-*  [2020.4](https://d30ikxcvcet9xo.cloudfront.net/drivers/vpu/hddl/2020.4/hddl_ubuntu18_1229.tgz)
-*  [2021.1](https://d30ikxcvcet9xo.cloudfront.net/drivers/vpu/hddl/2021.1/hddl_ubuntu18_1380.tgz)
+*  [2020.2](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2020.2/hddl_ubuntu18_1076.tgz)
+*  [2020.3](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2020.3/hddl_ubuntu18_1167.tgz)
+*  [2020.4](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2020.4/hddl_ubuntu18_1229.tgz)
+*  [2021.1](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.1/hddl_ubuntu18_1380.tgz)
 
 
 # Troubleshooting: 
