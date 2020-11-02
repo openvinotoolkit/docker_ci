@@ -4,7 +4,7 @@
 
 # DockerHub CI for [Intel® Distribution of OpenVINO™ toolkit](https://github.com/openvinotoolkit/openvino)
 The Framework can generate a Dockerfile, build, test, and deploy an image with the Intel® Distribution of OpenVINO™ toolkit.
-You can add your layer and customize the image of OpenVINO™ for your needs. You can reuse available Dockerfiles.
+You can reuse available Dockerfiles, add your layer and customize the image of OpenVINO™ for your needs.
 
 ## Documentation
 * [Get Started with DockerHub CI for OpenVINO™ toolkit](get-started.md)
