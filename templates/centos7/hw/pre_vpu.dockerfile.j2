@@ -4,7 +4,7 @@ ARG BUILD_DEPENDENCIES="autoconf \
                         libtool \
                         unzip"
 
-# hadolint ignore=DL3008
+# hadolint ignore=DL3031, DL3033
 RUN yum update -y && yum install -y ${BUILD_DEPENDENCIES} && \
     yum group install -y "Development Tools" && \
     yum clean all && rm -rf /var/cache/yum

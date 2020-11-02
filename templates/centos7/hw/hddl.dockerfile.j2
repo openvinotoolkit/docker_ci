@@ -1,7 +1,9 @@
 # for HDDL
 
 WORKDIR /tmp
-RUN yum -y update && yum install -y \
+
+# hadolint ignore=DL3031, DL3033
+RUN yum update -y && yum install -y \
         boost-filesystem \
         boost-thread \
         boost-program-options \

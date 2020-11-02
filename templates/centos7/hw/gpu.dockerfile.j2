@@ -4,10 +4,15 @@ ARG TEMP_DIR=/tmp/opencl
 COPY --from=base ${TEMP_DIR} ${TEMP_DIR}
 
 WORKDIR ${TEMP_DIR}
-# hadolint ignore=DL3008
+
 RUN groupmod -g 44 video
-RUN yum update -y && yum install -y epel-release
-RUN yum install -y ocl-icd ocl-icd-devel numactl && \
+
+# hadolint ignore=DL3031
+RUN yum update -y && yum install -y epel-release && \ 
+    yum clean all && rm -rf /var/cache/yum
+
+# hadolint ignore=DL3031, DL3033
+RUN yum update -y && yum install -y ocl-icd ocl-icd-devel numactl && \ 
     yum clean all && rm -rf /var/cache/yum && \
     rpm -ivh ${TEMP_DIR}/*.rpm && \
     ldconfig && \
