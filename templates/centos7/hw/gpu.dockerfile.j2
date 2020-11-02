@@ -7,13 +7,11 @@ WORKDIR ${TEMP_DIR}
 
 RUN groupmod -g 44 video
 
-# hadolint ignore=DL3031
-RUN yum update -y && yum install -y epel-release && \ 
-    yum clean all && rm -rf /var/cache/yum
-
 # hadolint ignore=DL3031, DL3033
-RUN yum update -y && yum install -y ocl-icd ocl-icd-devel numactl && \ 
+RUN yum update -y && yum install -y epel-release && \
+    yum update -y && yum install -y ocl-icd ocl-icd-devel && \ 
     yum clean all && rm -rf /var/cache/yum && \
     rpm -ivh ${TEMP_DIR}/*.rpm && \
     ldconfig && \
-    rm -rf ${TEMP_DIR}
+    rm -rf ${TEMP_DIR} && \
+    yum remove -y epel-release
