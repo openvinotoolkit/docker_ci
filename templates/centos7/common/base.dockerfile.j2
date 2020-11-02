@@ -37,7 +37,6 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 COPY --from=base /opt/intel /opt/intel
 
 ARG LGPL_DEPS="gcc-c++ \
-               make \
                gtk2"
 
 # hadolint ignore=DL3031, DL3033
