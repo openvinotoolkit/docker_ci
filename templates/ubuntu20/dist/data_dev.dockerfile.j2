@@ -22,7 +22,16 @@ RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
 
 COPY --from=base /tmp/pypi-kenlm.zip ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/pypi-kenlm.zip
 
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libblas-dev liblapack-dev gfortran && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/setup.py install && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/build
+
+RUN apt-get update && \
+    apt-get autoremove -y gfortran && \
+    rm -rf /var/lib/apt/lists/*
