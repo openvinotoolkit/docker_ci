@@ -4,7 +4,7 @@
 import pytest
 
 
-class TestDlStreamerLinux:
+class TestDLStreamerLinux:
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     def test_draw_face_attributes_cpp_cpu(self, is_image_os, is_distribution, tester, image):
