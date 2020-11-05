@@ -52,6 +52,7 @@ RUN yumdownloader --source -y ${LGPL_DEPS} && \
 {% endfor %}
 
 # Post-installation cleanup and setting up OpenVINO environment variables
+RUN rm -rf /tmp && mkdir /tmp
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
