@@ -584,8 +584,7 @@ class TestSamplesLinuxRuntime:
              '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
-             '-r /opt/intel/openvino/deployment_tools/model_optimizer/requirements.txt '
-             '-r /opt/intel/openvino/deployment_tools/model_optimizer/requirements_caffe.txt && '
+             '-r /opt/intel/openvino/deployment_tools/model_optimizer/requirements.txt && '
              'cd /opt/intel/openvino/deployment_tools/model_optimizer && '
              'python3 -B mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
              '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
