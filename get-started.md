@@ -10,6 +10,20 @@ DockerHub CI framework based on [Docker SDK for Python](https://github.com/docke
 
 **Note:** Run DockerHub CI framework on the host machine, nor in a docker container.
 
+## Setup Python environment
+
+1. Create virtual environment `python3 -m venv venv`
+2. Activate virtual environment and install requirements: 
+
+    `venv\bin\activate` - on Linux
+    
+    `venv\Scripts\activate.bat` - on Windows
+    
+    `pip install -r requirements.txt`
+3. Now you can use `docker_openvino.py` to build/test/deploy an image. See detailed instruction below.
+
+# How to
+
 This guide provides you with the information that will help you to start using the DockerHub CI framework for OpenVINO™ Toolkit. 
 With this guide, you will learn how to:
 
