@@ -397,11 +397,15 @@ def parse_args(name: str, description: str):
                              'or --distribution and --product_version arguments')
             if args.mode != 'gen_dockerfile':
                 args.build_id = args.product_version  # save product version YYY.U.[BBB]
-                product_version = re.search(r'(\d{4}\.\d)', args.product_version)
-                if product_version:
-                    args.product_version = product_version.group()  # save product version YYY.U
+                lts_version = re.search(r'^\d{4}\.\d.\d$', args.product_version)
+                if lts_version:
+                    args.product_version = lts_version.group()  # save product version YYY.U.V
                 else:
-                    parser.error(f'Cannot find package url for {args.product_version} version')
+                    product_version = re.search(r'(\d{4}\.\d)', args.product_version)
+                    if product_version:
+                        args.product_version = product_version.group()  # save product version YYY.U
+                    else:
+                        parser.error(f'Cannot find package url for {args.product_version} version')
                 with contextlib.suppress(KeyError):
                     args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][args.distribution]
                 if not args.package_url:
