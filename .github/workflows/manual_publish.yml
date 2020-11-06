@@ -40,9 +40,15 @@ jobs:
       - name: Setting up Python dependencies
         if: ${{ matrix.os == github.event.inputs.host_os }}
         run: python -m pip install -r requirements.txt
-      - name: Docker login to registry
-        if: ${{ matrix.os == github.event.inputs.host_os }}
+      - name: Docker login to registry (Linux)
+        if: ${{ matrix.os == 'ubuntu-18.04' }}
         run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker login to registry (Windows)
+        if: ${{ matrix.os == 'windows-2019' }}
+        run: echo $Env:DOCKER_PASSWORD | docker login --username $Env:DOCKER_USERNAME --password-stdin
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

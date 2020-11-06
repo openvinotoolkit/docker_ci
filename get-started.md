@@ -15,7 +15,7 @@ DockerHub CI framework based on [Docker SDK for Python](https://github.com/docke
 1. Create virtual environment `python3 -m venv venv`
 2. Activate virtual environment and install requirements: 
 
-    `venv\bin\activate` - on Linux
+    `source venv/bin/activate` - on Linux
     
     `venv\Scripts\activate.bat` - on Windows
     
