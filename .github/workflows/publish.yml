@@ -12,11 +12,11 @@ on:
         required: true
         default: 'dev'
       os:
-        description: 'Operation System for Docker Image: ubuntu18, ubuntu20, winserver2019'
+        description: 'OS for Docker image: ubuntu18, ubuntu20, winserver2019'
         required: true
         default: ''
       host_os:
-        description: 'Operation System for Host machine: ubuntu-18.04, windows-2019'
+        description: 'OS for Host machine: ubuntu-18.04, windows-2019'
         required: true
         default: ''
       args:
