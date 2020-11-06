@@ -42,7 +42,7 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Docker login to registry
         if: ${{ matrix.os == github.event.inputs.host_os }}
-        run: echo $Env:DOCKER_PASSWORD | docker login --username $Env:DOCKER_USERNAME --password-stdin
+        run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -50,7 +50,7 @@ jobs:
         if: ${{ matrix.os == github.event.inputs.host_os }}
         run: python docker_openvino.py all --dist ${{ github.event.inputs.distribution }} -os ${{ github.event.inputs.os }} --package_url ${{ github.event.inputs.package_url }} --nightly -r openvino ${{ github.event.inputs.args }}
       - name: Collecting artifacts
-        if: ${{ always() }}
+        if: ${{ matrix.os == github.event.inputs.host_os }}
         uses: actions/upload-artifact@v2
         with:
           name: logs
