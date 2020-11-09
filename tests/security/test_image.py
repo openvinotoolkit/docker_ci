@@ -17,7 +17,7 @@ class TestSDLImage:
     @pytest.mark.skipif(not sys.platform.startswith('linux'), reason="Windows doesn't support linux images")
     @pytest.fixture(scope='module')
     def snyk_pull(self, docker_api):
-        image_name = 'snyk/snyk-cli:docker'
+        image_name = 'snyk/snyk-cli:1.374.0-docker'
         docker_api.client.images.pull(image_name)
         yield
         docker_api.client.images.remove(image_name)
@@ -34,13 +34,14 @@ class TestSDLImage:
                     '-e', f'SNYK_TOKEN={SNYK_TOKEN}', '-e', 'MONITOR=true',
                     '-v', f'{str(pathlib.Path(__file__).parent.parent.parent)}:/project',
                     '-v', '/var/run/docker.sock:/var/run/docker.sock',
-                    'snyk/snyk-cli:docker', 'test', '--docker', image, *dockerfile_args]
+                    'snyk/snyk-cli:1.374.0-docker', 'test', '--docker', image, *dockerfile_args]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec
         process_out = process.stdout.decode().replace(SNYK_TOKEN, '*' * 6)
+        cmd_line[6] = 'SNYK_TOKEN=******'
         if process.returncode != 0:
-            pytest.fail(f'SDL snyk issues: {process_out}')
+            pytest.fail(f'SDL snyk issues: {cmd_line}\n{process_out}')
         else:
-            print(f'SDL snyk output: {process_out}')
+            print(f'SDL snyk output: {cmd_line}\n{process_out}')
 
     @pytest.mark.skipif(not sys.platform.startswith('win32'), reason="Linux doesn't support windows executable files")
     @pytest.mark.skipif(SNYK_TOKEN == '',  # noqa: S105 # nosec
@@ -63,7 +64,8 @@ class TestSDLImage:
                     '--docker', image, *dockerfile_args]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec
         process_out = process.stdout.decode().replace(SNYK_TOKEN, '*' * 6)
+        cmd_line[3] = '******'
         if process.returncode != 0:
-            pytest.fail(f'SDL snyk issues: {process_out}')
+            pytest.fail(f'SDL snyk issues: {cmd_line}\n{process_out}')
         else:
-            print(f'SDL snyk output: {process_out}')
+            print(f'SDL snyk output: {cmd_line}\n{process_out}')

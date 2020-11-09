@@ -2,8 +2,17 @@
 WORKDIR /tmp
 
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
-    find "${INTEL_OPENVINO_DIR}/" -type f -name "*requirements*.*" -path "*/${PYTHON_VER}/*" -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
-    find "${INTEL_OPENVINO_DIR}/" -type f -name "*requirements*.*" -not -path "*/post_training_optimization_toolkit/*" -not -name "*windows.txt"  -not -name "*ubuntu16.txt" -not -path "*/python3*/*" -not -path "*/python2*/*" -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
+    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
+    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu20.*" -o  -name "*requirements*.in" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
+{% if '2021' in build_id %}
+ENV VENV_TF2 ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/venv_tf2
+
+RUN ${PYTHON_VER} -m venv ${VENV_TF2} && \
+    source ${VENV_TF2}/bin/activate && \
+    pip install --no-cache-dir -U pip==19.3.1 && \
+    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/requirements_tf2.txt && \
+    deactivate
+{% endif %}
 
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker
 RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
@@ -11,7 +20,18 @@ RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
 
+COPY --from=base /tmp/pypi-kenlm.tar.gz ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/pypi-kenlm.tar.gz
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libblas-dev liblapack-dev gfortran && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/setup.py install && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/build
+
+RUN apt-get update && \
+    apt-get autoremove -y gfortran && \
+    rm -rf /var/lib/apt/lists/*

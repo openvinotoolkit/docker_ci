@@ -1,8 +1,9 @@
 # for HDDL
 WORKDIR /tmp
+# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libboost-filesystem1.65-dev \
         libboost-thread1.65-dev \
         libjson-c3 libxxf86vm-dev && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*

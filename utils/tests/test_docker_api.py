@@ -38,7 +38,7 @@ def test_docker_api_init_raises(mock_docker, test_exception, res_exception):
         id='keys are not specified',
     ),
 ])
-@ mock.patch('docker.from_env')
+@mock.patch('docker.from_env')
 def test_docker_api_version(mock_docker, caplog, vers, res):
     mock_docker.return_value = mock.MagicMock(**{'version.return_value': vers})
     caplog.set_level(logging.INFO)

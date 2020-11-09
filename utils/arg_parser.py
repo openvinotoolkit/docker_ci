@@ -124,7 +124,8 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             metavar='VAR_NAME=VALUE',
             action='append',
             default=[],
-            help='Specify build or template arguments for your layer.',
+            help='Specify build or template arguments for your layer. '
+                 'You can use "no_samples=True" to remove OMZ, IE samples and demos from final docker image.',
         )
 
     @staticmethod
@@ -186,7 +187,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         """Adding arg needed to customize the generated dockerfile"""
         parser.add_argument(
             '-os',
-            choices=['ubuntu18', 'ubuntu20', 'winserver2019'],
+            choices=['ubuntu18', 'ubuntu20', 'centos7', 'winserver2019'],
             default='ubuntu18',
             help='Operation System for docker image. By default: ubuntu18',
         )
@@ -196,7 +197,8 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             '--distribution',
             choices=['base', 'runtime', 'dev', 'data_dev', 'internal_dev', 'proprietary'],
             required=' test' in parser.prog,
-            help='Distribution type: dev, data_dev, runtime, internal_dev, proprietary or '
+            help='Distribution type: dev, data_dev, runtime, internal_dev, '
+                 'proprietary (product pkg with an installer) or '
                  'base (with CPU only and without installing dependencies). '
                  'Using key --file <path_to_dockerfile> is mandatory to build base distribution image.'
                  'base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder.',
@@ -318,8 +320,7 @@ def parse_args(name: str, description: str):
         parser.error('Options --tags and --distribution are mandatory. Image operation system is "ubuntu18"'
                      ' by default.')
 
-    if (args.mode == 'test' and args.distribution == 'runtime') and (
-            'model_server' not in args.tags[0] and not args.package_url):
+    if args.mode == 'test' and args.distribution == 'runtime' and not args.package_url:
         print('\nYou can run samples/demos on runtime docker image. '
               'Please provide --package_url key with path to dev distribution package in '
               'http/https/ftp access scheme or a local file in the project location as dependent package '
@@ -355,7 +356,7 @@ def parse_args(name: str, description: str):
                              'It is an insecure way.')
 
         if not args.python:
-            if 'ubuntu18' in args.os:
+            if args.os in ('ubuntu18', 'centos7'):
                 args.python = 'python36'
             elif 'ubuntu20' in args.os:
                 args.python = 'python38'
@@ -396,11 +397,15 @@ def parse_args(name: str, description: str):
                              'or --distribution and --product_version arguments')
             if args.mode != 'gen_dockerfile':
                 args.build_id = args.product_version  # save product version YYY.U.[BBB]
-                product_version = re.search(r'(\d{4}\.\d)', args.product_version)
-                if product_version:
-                    args.product_version = product_version.group()  # save product version YYY.U
+                lts_version = re.search(r'^\d{4}\.\d.\d$', args.product_version)
+                if lts_version:
+                    args.product_version = lts_version.group()  # save product version YYY.U.V
                 else:
-                    parser.error(f'Cannot find package url for {args.product_version} version')
+                    product_version = re.search(r'(\d{4}\.\d)', args.product_version)
+                    if product_version:
+                        args.product_version = product_version.group()  # save product version YYY.U
+                    else:
+                        parser.error(f'Cannot find package url for {args.product_version} version')
                 with contextlib.suppress(KeyError):
                     args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][args.distribution]
                 if not args.package_url:

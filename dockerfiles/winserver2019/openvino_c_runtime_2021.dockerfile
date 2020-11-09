@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS ov_base
 
-LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
+LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
 LABEL Vendor="Intel Corporation"
 
 # Restore the default Windows shell for correct batch processing.
@@ -12,6 +12,7 @@ SHELL ["cmd", "/S", "/C"]
 USER ContainerAdministrator
 
 # Setup Microsoft Visual C++ 2015-2019 Redistributable (x64) - 14.27.29016
+
 RUN powershell.exe -Command `
     Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -OutFile "%TMP%\vc_redist.x64.exe" ; `
     Start-Process %TMP%\\vc_redist.x64.exe -ArgumentList '/quiet /norestart' -Wait ; `
@@ -77,27 +78,14 @@ RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
 
 # for CPU
 
-# dev package
+# runtime package
 WORKDIR ${INTEL_OPENVINO_DIR}
-RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt" && `
-    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\openvino\tools\benchmark\requirements.txt" && `
-    python -m pip install --no-cache-dir torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt"
 
 RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter *requirements*.* | ForEach-Object { `
        if (($_.Fullname -like '*post_training_optimization_toolkit*') -or ($_.Fullname -like '*accuracy_checker*') -or ($_.Fullname -like '*python3*') -or ($_.Fullname -like '*python2*') -or ($_.Fullname -like '*requirements_ubuntu*')) `
        {echo 'skipping dependency'} else {echo 'installing dependency'; python -m pip install --no-cache-dir -r $_.FullName} `
    }"
-
-
-WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\open_model_zoo\tools\accuracy_checker
-RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
-    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\accuracy_checker\requirements.in" && `
-    python "%INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\accuracy_checker\setup.py" install
-
-WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_toolkit
-RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\requirements.txt" && `
-    python "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\setup.py" install
-
 
 
 WORKDIR ${INTEL_OPENVINO_DIR}

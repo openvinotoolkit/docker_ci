@@ -1,11 +1,19 @@
 # install product by installation script
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-RUN tar -xzf ${TEMP_DIR}/*.tgz --strip 1
-RUN sed -i 's/decline/accept/g' silent.cfg && \
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cpio && \
+    rm -rf /var/lib/apt/lists/* && \
+    tar -xzf ${TEMP_DIR}/*.tgz --strip 1 &&
+    sed -i 's/decline/accept/g' silent.cfg && \
     ${TEMP_DIR}/install.sh -s silent.cfg && \
     OV_BUILD="$(find /opt/intel -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
-    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino
-
-WORKDIR /tmp
-RUN rm -rf ${TEMP_DIR}
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && rm -rf ${TEMP_DIR} && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench
+{% if no_samples is defined %}
+RUN rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/demos && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/demo && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/samples && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/demos
+{% endif %}

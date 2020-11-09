@@ -6,11 +6,17 @@ import pathlib
 import pytest
 
 
+def install_build_essential(image_os):
+    if 'ubuntu' in image_os:
+        return 'apt update', 'apt install -y build-essential'
+    elif 'centos' in image_os:
+        return'yum update -y', 'yum install -y make', 'yum group install -y "Development Tools"'
+
+
 class TestSamplesLinuxRuntime:
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
-    def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os, is_not_image, tester,
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os, tester, image_os,
                                           image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -32,8 +38,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -51,10 +58,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.gpu
-    def test_hello_classification_cpp_gpu(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_hello_classification_cpp_gpu(self, is_distribution, is_image_os, tester, image_os,
                                           image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -77,8 +83,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -96,10 +103,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.vpu
-    def test_hello_classification_cpp_vpu(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_hello_classification_cpp_vpu(self, is_distribution, is_image_os, tester, image_os,
                                           image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -125,8 +131,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -144,10 +151,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.hddl
-    def test_hello_classification_cpp_hddl(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_hello_classification_cpp_hddl(self, is_distribution, is_image_os, tester, image_os,
                                            image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -171,8 +177,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -190,9 +197,8 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
-    def test_hello_reshape_cpp_cpu(self, is_distribution, is_image_os, is_not_image, tester,
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    def test_hello_reshape_cpp_cpu(self, is_distribution, is_image_os, tester, image_os,
                                    image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -214,8 +220,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -233,10 +240,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.gpu
-    def test_hello_reshape_cpp_gpu(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_hello_reshape_cpp_gpu(self, is_distribution, is_image_os, tester, image_os,
                                    image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -259,8 +265,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -278,10 +285,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.vpu
-    def test_hello_reshape_cpp_vpu(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_hello_reshape_cpp_vpu(self, is_distribution, is_image_os, tester, image_os,
                                    image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -307,8 +313,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -326,10 +333,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.hddl
-    def test_hello_reshape_cpp_hddl(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_hello_reshape_cpp_hddl(self, is_distribution, is_image_os, tester, image_os,
                                     image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -353,8 +359,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -372,9 +379,8 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
-    def test_object_detection_cpp_cpu(self, is_distribution, is_image_os, is_not_image, tester,
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    def test_object_detection_cpp_cpu(self, is_distribution, is_image_os, tester, image_os,
                                       image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -393,8 +399,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -412,10 +419,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.gpu
-    def test_object_detection_cpp_gpu(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_object_detection_cpp_gpu(self, is_distribution, is_image_os, tester, image_os,
                                       image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -435,8 +441,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -454,10 +461,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.vpu
-    def test_object_detection_cpp_vpu(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_object_detection_cpp_vpu(self, is_distribution, is_image_os, tester, image_os,
                                       image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -480,8 +486,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -499,10 +506,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.hddl
-    def test_object_detection_cpp_hddl(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_object_detection_cpp_hddl(self, is_distribution, is_image_os, tester, image_os,
                                        image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -523,8 +529,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -542,9 +549,8 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
-    def test_classification_async_cpp_cpu(self, is_distribution, is_image_os, is_not_image, tester,
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    def test_classification_async_cpp_cpu(self, is_distribution, is_image_os, tester, image_os,
                                           image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -566,8 +572,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -577,8 +584,7 @@ class TestSamplesLinuxRuntime:
              '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install --no-cache-dir '
-             '-r /opt/intel/openvino/deployment_tools/model_optimizer/requirements.txt '
-             '-r /opt/intel/openvino/deployment_tools/model_optimizer/requirements_caffe.txt && '
+             '-r /opt/intel/openvino/deployment_tools/model_optimizer/requirements.txt && '
              'cd /opt/intel/openvino/deployment_tools/model_optimizer && '
              'python3 -B mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
              '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
@@ -591,10 +597,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.gpu
-    def test_classification_async_cpp_gpu(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_classification_async_cpp_gpu(self, is_distribution, is_image_os, tester, image_os,
                                           image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -617,8 +622,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -640,10 +646,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.vpu
-    def test_classification_async_cpp_vpu(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_classification_async_cpp_vpu(self, is_distribution, is_image_os, tester, image_os,
                                           image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -669,8 +674,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -692,10 +698,9 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18'], indirect=True)
-    @pytest.mark.parametrize('is_not_image', ['model_server'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.hddl
-    def test_classification_async_cpp_hddl(self, is_distribution, is_image_os, is_not_image, tester,
+    def test_classification_async_cpp_hddl(self, is_distribution, is_image_os, tester, image_os,
                                            image, mount_root, is_package_url_specified):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -719,8 +724,9 @@ class TestSamplesLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake && '
+            [*install_build_essential(image_os),
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 -m pip install --no-cache-dir cmake setuptools && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
