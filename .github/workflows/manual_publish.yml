@@ -1,4 +1,4 @@
-name: Image publishing on Linux/Windows
+name: Image publishing
 
 on:
   workflow_dispatch:
@@ -12,11 +12,11 @@ on:
         required: true
         default: 'dev'
       os:
-        description: 'Operation System for Docker Image: ubuntu18, ubuntu20, winserver2019'
+        description: 'OS for Docker image: ubuntu18, ubuntu20, winserver2019'
         required: true
         default: ''
       host_os:
-        description: 'Operation System for Host machine: ubuntu-18.04, windows-2019'
+        description: 'OS for Host machine: ubuntu-18.04, windows-2019'
         required: true
         default: ''
       args:
@@ -25,7 +25,7 @@ on:
         default: ''
 
 jobs:
-  publish:
+  manual_publish:
     strategy:
       matrix:
         os: [ ubuntu-18.04, windows-2019 ]
@@ -40,8 +40,14 @@ jobs:
       - name: Setting up Python dependencies
         if: ${{ matrix.os == github.event.inputs.host_os }}
         run: python -m pip install -r requirements.txt
-      - name: Docker login to registry
-        if: ${{ matrix.os == github.event.inputs.host_os }}
+      - name: Docker login to registry (Linux)
+        if: ${{ matrix.os == 'ubuntu-18.04' }}
+        run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker login to registry (Windows)
+        if: ${{ matrix.os == 'windows-2019' }}
         run: echo $Env:DOCKER_PASSWORD | docker login --username $Env:DOCKER_USERNAME --password-stdin
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -50,7 +56,7 @@ jobs:
         if: ${{ matrix.os == github.event.inputs.host_os }}
         run: python docker_openvino.py all --dist ${{ github.event.inputs.distribution }} -os ${{ github.event.inputs.os }} --package_url ${{ github.event.inputs.package_url }} --nightly -r openvino ${{ github.event.inputs.args }}
       - name: Collecting artifacts
-        if: ${{ always() }}
+        if: ${{ matrix.os == github.event.inputs.host_os }}
         uses: actions/upload-artifact@v2
         with:
           name: logs

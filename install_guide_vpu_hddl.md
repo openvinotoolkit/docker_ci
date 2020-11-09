@@ -19,6 +19,7 @@ Available releases for Ubuntu* 18.04:
 
 *  [2020.2](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2020.2/hddl_ubuntu18_1076.tgz)
 *  [2020.3](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2020.3/hddl_ubuntu18_1167.tgz)
+*  [2020.3.1](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2020.3.1/hddl_ubuntu18_1409.tgz)
 *  [2020.4](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2020.4/hddl_ubuntu18_1229.tgz)
 *  [2021.1](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.1/hddl_ubuntu18_1380.tgz)
 

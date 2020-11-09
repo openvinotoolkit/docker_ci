@@ -8,11 +8,11 @@ on:
         required: true
         default: ''
       distribution:
-        description: 'Distribution for OpenVINO package: dev, runtime, data_dev, proprietary'
+        description: 'Distribution of OpenVINO package: dev, runtime, data_dev, proprietary'
         required: true
         default: 'dev'
       os:
-        description: 'Operation System for docker image: winserver2019'
+        description: 'OS for Docker image: winserver2019'
         required: true
         default: 'winserver2019'
       args:
