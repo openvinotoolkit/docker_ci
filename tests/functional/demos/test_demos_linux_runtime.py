@@ -8,7 +8,7 @@ import pytest
 
 class TestDemosLinuxRuntime:
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     def test_detection_ssd_python_cpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -25,7 +25,6 @@ class TestDemosLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install setuptools && '
              'python3 -m pip install --no-cache-dir -r '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -39,7 +38,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.gpu
     def test_detection_ssd_python_gpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
@@ -58,7 +57,6 @@ class TestDemosLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install setuptools && '
              'python3 -m pip install --no-cache-dir -r '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -72,7 +70,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.vpu
     def test_detection_ssd_python_vpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
@@ -94,7 +92,6 @@ class TestDemosLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install setuptools && '
              'python3 -m pip install --no-cache-dir -r '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -108,7 +105,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.hddl
     def test_detection_ssd_python_hddl(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
@@ -116,7 +113,7 @@ class TestDemosLinuxRuntime:
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
             'volumes': {
-                '/var/tmp': {'bind': '/var/tmp'},
+                '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'demo': {
                     'bind': '/opt/intel/openvino/deployment_tools/demo',
                 },
@@ -128,7 +125,6 @@ class TestDemosLinuxRuntime:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install setuptools && '
              'python3 -m pip install --no-cache-dir -r '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
@@ -142,7 +138,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     def test_segmentation_python_cpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -174,7 +170,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.gpu
     def test_segmentation_python_gpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
@@ -208,7 +204,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.vpu
     def test_segmentation_python_vpu(self, is_distribution, is_image_os, tester, image, mount_root):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
@@ -245,7 +241,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
     @pytest.mark.hddl
     @pytest.mark.xfail(reason='38557 issue')
     def test_segmentation_python_hddl(self, is_distribution, is_image_os, tester, image, mount_root):
@@ -254,7 +250,7 @@ class TestDemosLinuxRuntime:
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
             'volumes': {
-                '/var/tmp': {'bind': '/var/tmp'},
+                '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'demo': {
                     'bind': '/opt/intel/openvino/deployment_tools/demo',
                 },

@@ -18,6 +18,7 @@ As well you can use available dockerfiles from `<root_project>/dockerfiles/<imag
 ## Supported Operating Systems for Docker image:
  - Ubuntu 18.04 LTS
  - Ubuntu 20.04 LTS
+ - CentOS 7.6
  - Windows Server Core base OS LTSC 2019
 
 ## Prebuilt images
@@ -38,6 +39,7 @@ We will have no indemnity or warranty coverage from suppliers.
 
 Components:
 - Ubuntu: https://hub.docker.com/_/ubuntu
+- CentOS: https://hub.docker.com/_/centos
 - Windows Server Core base OS: https://hub.docker.com/_/microsoft-windows-servercore
 - Intel® Distribution of OpenVINO™ toolkit: https://software.intel.com/en-us/license/eula-for-intel-software-development-products
 
