@@ -15,7 +15,7 @@ RUN apt-get update && \
 
 # download source for pypi-kenlm LGPL package
 WORKDIR /tmp
-RUN curl -L https://github.com/sih4sing5hong5/kenlm/archive/pypi.zip --output pypi-kenlm.zip
+RUN curl -L https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz --output pypi-kenlm.tar.gz
 
 
 # get product from URL
@@ -103,7 +103,6 @@ COPY --from=base /opt/intel /opt/intel
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
-               libgfortran5 \
                libgtk-3-0 \
                libgstreamer1.0-0 \
                gstreamer1.0-plugins-base \
@@ -155,7 +154,7 @@ RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
 
-COPY --from=base /tmp/pypi-kenlm.zip ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/pypi-kenlm.zip
+COPY --from=base /tmp/pypi-kenlm.tar.gz ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/pypi-kenlm.tar.gz
 
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \

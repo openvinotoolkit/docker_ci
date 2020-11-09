@@ -197,5 +197,5 @@ DIVE_URL = {
     'windows': 'https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_windows_amd64.zip',
 }
 SNYK_URL = {
-    'windows': 'https://github.com/snyk/snyk/releases/download/v1.398.1/snyk-win.exe',
+    'windows': 'https://github.com/snyk/snyk/releases/download/v1.374.0/snyk-win.exe',
 }
