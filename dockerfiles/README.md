@@ -25,7 +25,9 @@ This repository folder contains Dockerfiles to build an docker image with the In
  - **proprietary**: data_dev + installer
  
  You can generate Dockerfile with your settings, please follow the [DockerHub CI documentation](../get-started.md).
- 
+ * _runtime, dev, data_dev_ distributions based on archive package of OpenVINO product. You can just remove unnecessary parts.
+ * _base_ distribution is created by [OpenVINO™ Deployment Manager](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_deployment_manager_tool.html).
+ * _proprietary_ distribution based on installer package of OpenVINO product. You can configure installation `COMPONENTS`, follow [Command-Line Silent Instructions](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_linux.html)
 ## How to build
 
 Base image with CPU only:
@@ -37,7 +39,6 @@ Or via Docker Engine directly, but you need specify `build_id` argument:
 docker build --build-arg build_id=2020.3.341 -t ubuntu18_base_cpu:2020.3.341 - < dockerfiles/ubuntu18/openvino_c_base_2020.3.dockerfile
 ```
 
-Base image is created by [OpenVINO™ Deployment Manager](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_deployment_manager_tool.html).
 
 Dev image:
 ```bash

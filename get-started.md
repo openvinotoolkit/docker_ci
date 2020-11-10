@@ -36,7 +36,7 @@ With this guide, you will learn how to:
 7. [Troubleshooting](#troubleshooting) 
 
 ## Generate Dockerfile
-You can use [available dockerfiles](../dockerfiles/README.md) from `<root_project>/dockerfiles/<image_os>` folder or generate Dockerfile with your settings. 
+You can use [available Dockerfiles](../dockerfiles/README.md) from `<root_project>/dockerfiles/<image_os>` folder or generate Dockerfile with your settings. 
 Run the following command in the repository's root:  
 ```bash
 python3 docker_openvino.py gen_dockerfile --distribution dev --product_version 2020.4
@@ -248,6 +248,9 @@ If you see a missing `apt` package that needs for OpenVINO product in Linux dock
 create issue on [GitHub* Issues](https://github.com/openvinotoolkit/docker_ci/issues).
 We will check a missing package to meet Intel(R) security policy.
 Please see [SECURITY](./SECURITY.md) for details to follow security guideline.
+
+If you got a proxy issues, please setup proxy settings for Docker Engine. See the Proxy section in [Install the DL Workbench from Docker Hub* ](https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Install_from_Docker_Hub.html) topic.
+DockerHub CI uses a system proxy to generate Dockerfile and build a docker image by default. 
 
 ---
 \* Other names and brands may be claimed as the property of others.
