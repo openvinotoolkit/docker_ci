@@ -64,5 +64,6 @@ Prebuilt images are available on [Docker Hub](https://hub.docker.com/u/openvino)
 
 * [Install Intel® Distribution of OpenVINO™ toolkit for Linux* from a Docker* Image](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_linux.html)
 * [Install Intel® Distribution of OpenVINO™ toolkit for Windows* from Docker* Image](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html)
+* [Official Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
 ---
 \* Other names and brands may be claimed as the property of others.
