@@ -16,12 +16,15 @@ class TestSamplesLinux:
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name vehicle-detection-adas-0002 --precisions FP32 '
-             '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'cd /opt/intel/openvino/deployment_tools/model_optimizer && '
+             'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+             'alexnet.caffemodel"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
-             '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP32/'
-             'vehicle-detection-adas-0002.xml '
+             '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
              '/opt/intel/openvino/deployment_tools/demo/car.png CPU"',
              ], self.test_hello_classification_cpp_cpu.__name__,
         )
@@ -39,12 +42,15 @@ class TestSamplesLinux:
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name vehicle-detection-adas-0002 --precisions FP32 '
-             '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'cd /opt/intel/openvino/deployment_tools/model_optimizer && '
+             'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+             'alexnet.caffemodel"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
-             '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP32/'
-             'vehicle-detection-adas-0002.xml '
+             '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
              '/opt/intel/openvino/deployment_tools/demo/car.png GPU"',
              ], self.test_hello_classification_cpp_gpu.__name__, **kwargs,
         )
@@ -63,12 +69,15 @@ class TestSamplesLinux:
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name vehicle-detection-adas-0002 --precisions FP32 '
-             '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'cd /opt/intel/openvino/deployment_tools/model_optimizer && '
+             'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+             'alexnet.caffemodel"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
-             '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP32/'
-             'vehicle-detection-adas-0002.xml '
+             '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
              '/opt/intel/openvino/deployment_tools/demo/car.png MYRIAD"',
              ], self.test_hello_classification_cpp_vpu.__name__, **kwargs,
         )
@@ -87,12 +96,15 @@ class TestSamplesLinux:
              '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name vehicle-detection-adas-0002 --precisions FP32 '
-             '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'cd /opt/intel/openvino/deployment_tools/model_optimizer && '
+             'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+             'alexnet.caffemodel"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
-             '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP32/'
-             'vehicle-detection-adas-0002.xml '
+             '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
              '/opt/intel/openvino/deployment_tools/demo/car.png HDDL"',
              ], self.test_hello_classification_cpp_hddl.__name__, **kwargs,
         )
