@@ -7,7 +7,6 @@ import pytest
 class TestSamplesWindows:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    @pytest.mark.xfail(reason='39942 issue')
     def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
@@ -18,16 +17,20 @@ class TestSamplesWindows:
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
              'downloader\\\\downloader.py '
-             '--name vehicle-attributes-recognition-barrier-0039 --precisions FP16 '
-             '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
+             '--name alexnet --precisions FP16 -o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\'
+             'Intel\\\\OpenVINO\\\\inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
+             'cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\model_optimizer && '
+             'python mo.py --output_dir C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\'
+             'OpenVINO\\\\inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public '
+             '--input_model C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet\\\\alexnet.caffemodel',
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\intel\\\\'
-             'vehicle-attributes-recognition-barrier-0039\\\\FP16\\\\vehicle-attributes-recognition-barrier-0039.xml '
-             'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp CPU',
+             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet.xml '
+             'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car.png CPU',
              ], self.test_hello_classification_cpp_cpu.__name__, **kwargs,
         )
 
