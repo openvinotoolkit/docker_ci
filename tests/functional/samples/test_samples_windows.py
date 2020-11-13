@@ -36,6 +36,33 @@ class TestSamplesWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
+    @pytest.mark.parametrize('is_not_product_version', ['2020.3'], indirect=True)
+    @pytest.mark.xfail(reason='invalid model')
+    def test_hello_classification_cpp_fail(self, is_distribution, is_image_os, tester, image, is_not_product_version):
+        kwargs = {'user': 'ContainerAdministrator'}
+        tester.test_docker_image(
+            image,
+            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'cd C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp && '
+             'C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
+             'cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
+             'downloader\\\\downloader.py '
+             '--name vehicle-attributes-recognition-barrier-0039 --precisions FP16 '
+             '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
+             'cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
+             'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\intel\\\\'
+             'vehicle-attributes-recognition-barrier-0039\\\\FP16\\\\vehicle-attributes-recognition-barrier-0039.xml '
+             'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car.png CPU',
+             ], self.test_hello_classification_cpp_fail.__name__, **kwargs,
+        )
+
+    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
     def test_object_detection_cpp_cpu(self, is_distribution, is_image_os, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
