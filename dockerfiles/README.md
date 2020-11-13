@@ -30,7 +30,7 @@ This repository folder contains Dockerfiles to build an docker image with the In
  * _proprietary_ distribution based on installer package of OpenVINO product. You can configure installation `COMPONENTS`, follow [Command-Line Silent Instructions](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_linux.html)
 ## How to build
 
-Base image with CPU only:
+* Base image with CPU only:
 ```bash
 python3 docker_openvino.py build --file "dockerfiles/ubuntu18/openvino_c_base_2020.3.dockerfile" -os ubuntu18 -dist base -p 2020.3.341
 ```
@@ -40,10 +40,12 @@ docker build --build-arg build_id=2020.3.341 -t ubuntu18_base_cpu:2020.3.341 - <
 ```
 
 
-Dev image:
+* Dev/data_dev/runtime/proprietary image:
 ```bash
 python3 docker_openvino.py build --file "dockerfiles/ubuntu18/openvino_cgvh_dev_2021.dockerfile" -os ubuntu18 -dist dev -p 2021.1
 ```
+For data_dev/runtime/proprietary distributions, please set appropriate `-dist` and `--file` options.
+
 Or via Docker Engine directly, but you need specify `package_url` argument and OpenCL* version to support GPU:
 `GMMLIB`, `IGC_CORE`, `IGC_OPENCL`, `INTEL_OPENCL`, `INTEL_OCLOC`
 ```bash
@@ -56,9 +58,14 @@ docker build --build-arg package_url=https://storage.openvinotoolkit.org/reposit
             -t ubuntu18_dev:2021.1 -f dockerfiles/ubuntu18/openvino_cgvh_dev_2021.dockerfile .
 ```
 
+
 ## Prebuilt images
 
 Prebuilt images are available on [Docker Hub](https://hub.docker.com/u/openvino)
+
+## How to run a container
+
+Please follow [Run built image](../get-started.md#run-built-image) section in DockerHub CI getting started guide.
 
 ## Documentation
 
