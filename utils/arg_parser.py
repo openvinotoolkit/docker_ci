@@ -417,9 +417,9 @@ def parse_args(name: str, description: str):
         if args.package_url and not args.build_id:
             build_id = re.search(r'p_(\d{4}\.\d\.\d{3})', args.package_url)
             if build_id:
-                # save product version YYY.U.BBB
+                # save product version YYYY.U.BBB
                 args.build_id = build_id.group(1)
-                # save product version YYY.U
+                # save product version YYYY.U
                 args.product_version = args.build_id[:6]
             else:
                 parser.error(f'Cannot get build number from the package URL provided: {args.package_url}. '
@@ -452,13 +452,13 @@ def parse_args(name: str, description: str):
         args.year = args.build_id[:4] if args.build_id else args.product_version[:4]
 
     if args.mode == 'test' and not args.product_version:
-        match = re.search(r':(\d{4}\.\d\.\d{3})', str(args.tags))
+        match = re.search(r':(\d{4}\.\d)', str(args.tags))
         if not match and args.package_url:
-            match = re.search(r'p_(\d{4}\.\d\.\d{3})', args.package_url)
+            match = re.search(r'p_(\d{4}\.\d)', args.package_url)
 
         if match:
-            # save product version YYY.U
-            args.product_version = match.group(1)[:6]
+            # save product version YYYY.U
+            args.product_version = match.group(1)
         else:
             parser.error('Cannot get product_version from the package URL and docker image. '
                          'Please specify --product_version directly.')
