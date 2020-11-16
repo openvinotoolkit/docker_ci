@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 import pytest
 
+from utils.exceptions import FailedTest
+
 
 class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
@@ -112,29 +114,31 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_not_product_version', ['2020.3'], indirect=True)
-    @pytest.mark.xfail(reason='invalid model')
-    def test_hello_classification_cpp_fail(self, is_distribution, is_image_os, tester, image_os,
-                                           image, mount_root, is_not_product_version):
-        tester.test_docker_image(
-            image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir cmake setuptools && '
-             'cd /opt/intel/openvino/inference_engine/samples/cpp && '
-             '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install --no-cache-dir -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name vehicle-attributes-recognition-barrier-0039 --precisions FP32 '
-             '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
-             '/root/inference_engine_cpp_samples_build/intel64/Release/intel/'
-             'vehicle-attributes-recognition-barrier-0039/FP32/'
-             'vehicle-attributes-recognition-barrier-0039.xml '
-             '/opt/intel/openvino/deployment_tools/demo/car.png CPU"',
-             ], self.test_hello_classification_cpp_fail.__name__,
-        )
+    def test_hello_classification_cpp_fail(self, is_distribution, is_image_os, tester, image, caplog,
+                                           is_not_product_version):
+        with pytest.raises(FailedTest):
+            tester.test_docker_image(
+                image,
+                ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+                 'python3 -m pip install --no-cache-dir cmake setuptools && '
+                 'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+                 '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
+                 '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+                 'python3 -m pip install --no-cache-dir -r '
+                 '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
+                 'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                 '--name vehicle-attributes-recognition-barrier-0039 --precisions FP32 '
+                 '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+                 '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+                 '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
+                 '/root/inference_engine_cpp_samples_build/intel64/Release/intel/'
+                 'vehicle-attributes-recognition-barrier-0039/FP32/'
+                 'vehicle-attributes-recognition-barrier-0039.xml '
+                 '/opt/intel/openvino/deployment_tools/demo/car.png CPU"',
+                 ], self.test_hello_classification_cpp_fail.__name__,
+            )
+        if 'Sample supports topologies with 1 output only' not in caplog.text:
+            pytest.fail('Sample supports topologies with 1 output only')
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
