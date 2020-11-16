@@ -38,9 +38,9 @@ class TestSamplesWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    @pytest.mark.parametrize('is_not_product_version', ['2020.3'], indirect=True)
+    @pytest.mark.parametrize('min_product_version', ['2021.2'], indirect=True)
     def test_hello_classification_cpp_fail(self, is_distribution, is_image_os, tester, image, caplog,
-                                           is_not_product_version):
+                                           min_product_version):
         kwargs = {'user': 'ContainerAdministrator'}
         with pytest.raises(FailedTest):
             tester.test_docker_image(

@@ -216,9 +216,9 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
-    @pytest.mark.parametrize('is_not_product_version', ['2020.3'], indirect=True)
+    @pytest.mark.parametrize('min_product_version', ['2021.2'], indirect=True)
     def test_hello_classification_cpp_fail(self, is_distribution, is_image_os, tester, image_os, caplog,
-                                           image, mount_root, is_package_url_specified, is_not_product_version):
+                                           image, mount_root, is_package_url_specified, min_product_version):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
             'mem_limit': '3g',

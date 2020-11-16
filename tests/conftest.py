@@ -202,6 +202,13 @@ def is_package_url_specified(request):
 
 
 @pytest.fixture(scope='session')
+def min_product_version(request):
+    if request.param > request.config.getoption('--product_version'):
+        pytest.skip(f'Test requires the product_version should be {request.param} or newer '
+                    f'but get {request.config.getoption("--product_version")}')
+
+
+@pytest.fixture(scope='session')
 def is_not_product_version(request):
     settings = []
     if isinstance(request.param, str):
