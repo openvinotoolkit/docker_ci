@@ -185,17 +185,18 @@ You can see all of them and their descriptions by running:
 python3 docker_openvino.py <mode> --help
 ```
 Available modes: gen_dockerfile, build, build_test, test, deploy, **all**(by default)
+
 ## Run built image
 
 To start the interactive session, run the following command allows inference on the CPU:
 
 **Linux image:** 
 ```bash
-docker run -it --rm openvino/<image_name>:latest
+docker run -it --rm <image_name>:latest
 ```
 **Windows image:** (currently support only CPU target):
 ```cmd
-docker run -it --rm openvino/<image_name>:latest
+docker run -it --rm <image_name>:latest
 ```
 
 **Linux runtime/data_dev/proprietary images:**
@@ -209,34 +210,34 @@ If you want to try some demos then run image with the root privileges (some addi
 
 **Linux image:** 
 ```bash
-docker run -itu root:root --rm openvino/<image_name>:latest /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d CPU -sample-options -no_show"
+docker run -itu root:root --rm <image_name>:latest /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d CPU -sample-options -no_show"
 ```
 **Windows image:** (currently support only CPU target):
 ```cmd
-docker run -itu ContainerAdministrator --rm openvino/<image_name>:latest cmd /S /C "cd deployment_tools\demo && demo_security_barrier_camera.bat -d CPU -sample-options -no_show"
+docker run -itu ContainerAdministrator --rm <image_name>:latest cmd /S /C "cd deployment_tools\demo && demo_security_barrier_camera.bat -d CPU -sample-options -no_show"
 ```
 
 To enable GPU access, make sure you've built the image with support for GPU and run:
 ```bash
-docker run -itu root:root --rm --device /dev/dri:/dev/dri openvino/<image_name>:latest
+docker run -itu root:root --rm --device /dev/dri:/dev/dri <image_name>:latest
 ```
 To run inference on the VPU, make sure you've built the image with support for VPU and run:
 ```bash
-docker run -itu root:root --rm --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb openvino/<image_name>:latest
+docker run -itu root:root --rm --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb <image_name>:latest
 ```
 To run inference on the HDDL, make sure you've built the image with support for HDDL and setup HDDL driver on host machine, follow the [configuration guide for HDDL device](./install_guide_vpu_hddl.md):
 ```bash
-docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp openvino/<image_name>:latest
+docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp <image_name>:latest
 ```
 
 And to run inference on all hardware targets supported, make sure you've built the image correctly and run:
 ```bash
-docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp --device /dev/dri:/dev/dri --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb openvino/<image_name>:latest
+docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp --device /dev/dri:/dev/dri --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb <image_name>:latest
 ```
 
 If you want to try some demos then run image with the root privileges (some additional 3-rd party dependencies will be installed):
 ```bash
-docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp --device /dev/dri:/dev/dri --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb openvino/<image_name>:latest
+docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp --device /dev/dri:/dev/dri --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb <image_name>:latest
 /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d CPU -sample-options -no_show"
 /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d GPU -sample-options -no_show"
 /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d Myriad -sample-options -no_show"

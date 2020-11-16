@@ -32,8 +32,8 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-# Creating user openvino and adding it to groups "video", "render" and "users" to use GPU and VPU
-RUN useradd -ms /bin/bash -G video,render,users openvino && \
+# Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
+RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
 # hadolint ignore=DL3008
