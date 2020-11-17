@@ -125,16 +125,17 @@ default_args = {
             'package_url': 'openvino_dev_p_2020.1.320.zip',
             'source': 'local',
             'tags': ['my_tag:latest'],
+            'device': ['cpu', 'hddl'],
         },
         {
-            'device': ['cpu', 'gpu', 'vpu', 'hddl'],
+            'device': ['cpu', 'hddl'],
             'python': 'python36',
-            'dockerfile_name': 'openvino_cgvh_dev_2020.1.dockerfile',
+            'dockerfile_name': 'openvino_ch_dev_2020.1.dockerfile',
             'tags': ['my_tag:latest'],
             'distribution': 'dev',
             'product_version': '2020.1',
         },
-        id='set tags manually',
+        id='set tags and device manually',
     ),
     pytest.param(
         {

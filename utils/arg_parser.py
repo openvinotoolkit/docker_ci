@@ -388,7 +388,7 @@ def parse_args(name: str, description: str):
                 args.device = ['cpu']
             else:
                 args.device = ['cpu', 'gpu', 'vpu', 'hddl']
-        else:
+        elif not args.device:
             args.device = ['cpu']
 
         args.build_id = args.product_version
