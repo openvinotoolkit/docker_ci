@@ -104,10 +104,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
                  'You may find needed OpenCL library on Github https://github.com/intel/compute-runtime/releases',
         )
 
-        parser.add_argument('-p',
-                            '--product_version',
-                            help='Product version in format: YYYY.U[.BBB], where BBB - build number is optional.')
-
         parser.add_argument(
             '-l',
             '--layers',
@@ -204,6 +200,11 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
                  '-p <version> are mandatory to build base distribution image.'
                  'base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder.',
         )
+
+        parser.add_argument('-p',
+                            '--product_version',
+                            default='',
+                            help='Product version in format: YYYY.U[.BBB], where BBB - build number is optional.')
 
         parser.add_argument(
             '-s',
@@ -416,9 +417,9 @@ def parse_args(name: str, description: str):
         if args.package_url and not args.build_id:
             build_id = re.search(r'p_(\d{4}\.\d\.\d{3})', args.package_url)
             if build_id:
-                # save product version YYY.U.BBB
+                # save product version YYYY.U.BBB
                 args.build_id = build_id.group(1)
-                # save product version YYY.U
+                # save product version YYYY.U
                 args.product_version = args.build_id[:6]
             else:
                 parser.error(f'Cannot get build number from the package URL provided: {args.package_url}. '
@@ -446,7 +447,20 @@ def parse_args(name: str, description: str):
             args.tags = [f'{args.os}_{args.distribution}:'
                          f'{args.build_id if args.build_id else args.product_version}',
                          f'{args.os}_{args.distribution}:latest']
+
     if args.mode not in ('test', 'deploy'):
         args.year = args.build_id[:4] if args.build_id else args.product_version[:4]
+
+    if args.mode == 'test' and not args.product_version:
+        match = re.search(r':(\d{4}\.\d)', str(args.tags))
+        if not match and args.package_url:
+            match = re.search(r'p_(\d{4}\.\d)', args.package_url)
+
+        if match:
+            # save product version YYYY.U
+            args.product_version = match.group(1)
+        else:
+            parser.error('Cannot get product_version from the package URL and docker image. '
+                         'Please specify --product_version directly.')
 
     return args

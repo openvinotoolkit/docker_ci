@@ -143,10 +143,36 @@ default_args = {
             'distribution': 'dev',
             'tags': ['my_tag:latest'],
             'test_expression': 'cpu',
+            'product_version': '2020.3',
         },
         {
         },
-        id='Successful test',
+        id='(Test) Set product_version manually',
+    ),
+    pytest.param(
+        {
+            'mode': 'test',
+            'distribution': 'dev',
+            'tags': ['my_tag:latest'],
+            'test_expression': 'cpu',
+            'package_url': 'p_2020.3.117',
+        },
+        {
+            'product_version': '2020.3',
+        },
+        id='(Test) Parse product_version from package_url',
+    ),
+    pytest.param(
+        {
+            'mode': 'test',
+            'distribution': 'dev',
+            'tags': ['my_tag:2020.3.117'],
+            'test_expression': 'cpu',
+        },
+        {
+            'product_version': '2020.3',
+        },
+        id='(Test) Parse product_version from tags',
     ),
     pytest.param(
         {
@@ -164,16 +190,6 @@ default_args = {
             'product_version': '2020.1',
         },
         id='Successful all',
-    ),
-    pytest.param(
-        {
-            'mode': 'test',
-            'distribution': 'runtime',
-            'tags': ['model_server'],
-        },
-        {
-        },
-        id='Test model server without package_url',
     ),
     pytest.param(
         {
