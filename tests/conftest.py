@@ -208,19 +208,6 @@ def min_product_version(request):
                     f'but get {request.config.getoption("--product_version")}')
 
 
-@pytest.fixture(scope='session')
-def is_not_product_version(request):
-    settings = []
-    if isinstance(request.param, str):
-        settings.append(request.param)
-    else:
-        settings = request.param
-
-    if any(map(lambda x: x in request.config.getoption('--product_version'), settings)):
-        pytest.skip(f'Test requires the product_version should not be {request.param} but get '
-                    f'{request.config.getoption("--product_version")}')
-
-
 def pytest_runtest_setup(item):
     for mark in item.iter_markers():
         if 'hddl' in mark.name and sys.platform.startswith('linux'):
