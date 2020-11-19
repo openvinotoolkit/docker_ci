@@ -236,6 +236,7 @@ class Launcher:
             '--image', self.image_name,
             '--distribution', self.args.distribution,
             '--image_os', self.args.os,
+            '--product_version', self.args.product_version,
             '--mount_root', str(self.mount_root),
             '--package_url', self.args.package_url,
             f"--junitxml={self.logdir / 'tests.xml'}",

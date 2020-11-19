@@ -23,6 +23,7 @@ def pytest_addoption(parser):
     parser.addoption('--image_os', action='store', help='Setup an image os for check')
     parser.addoption('--mount_root', action='store', help='Root folder for directories to mount to container')
     parser.addoption('--package_url', action='store', help='Path to product package')
+    parser.addoption('--product_version', action='store', help='Setup a product_version for check')
 
 
 def pytest_configure(config):
@@ -198,6 +199,13 @@ def is_not_image(request):
 def is_package_url_specified(request):
     if not request.config.getoption('--package_url'):
         pytest.skip('Test requires a url for a dev package.')
+
+
+@pytest.fixture(scope='session')
+def min_product_version(request):
+    if request.param > request.config.getoption('--product_version'):
+        pytest.skip(f'Test requires the product_version should be {request.param} or newer '
+                    f'but get {request.config.getoption("--product_version")}')
 
 
 def pytest_runtest_setup(item):
