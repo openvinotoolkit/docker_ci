@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env bash
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
 apt update
-apt install -y nano build-essential cmake curl
+apt install -y build-essential cmake curl
 
 export TBB_DIR=${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake
 
