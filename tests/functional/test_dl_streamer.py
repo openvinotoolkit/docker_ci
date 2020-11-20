@@ -77,7 +77,8 @@ class TestDLStreamerLinux:
 
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
-    def test_gst_launch_audio_detect(self, is_image_os, is_distribution, tester, image):
+    @pytest.mark.parametrize('min_product_version', ['2021.1'], indirect=True)
+    def test_gst_launch_audio_detect(self, is_image_os, is_distribution, tester, image, min_product_version):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -91,7 +92,8 @@ class TestDLStreamerLinux:
 
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
-    def test_gst_launch_metapublish(self, is_image_os, is_distribution, tester, image):
+    @pytest.mark.parametrize('min_product_version', ['2021.1'], indirect=True)
+    def test_gst_launch_metapublish(self, is_image_os, is_distribution, tester, image, min_product_version):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
