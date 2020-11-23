@@ -98,7 +98,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
 
         parser.add_argument(
             '--ocl_release',
-            choices=['20.03.15346', '19.41.14441', '19.04.12237'],
+            choices=['20.35.17767', '20.03.15346', '19.41.14441', '19.04.12237'],
             default='19.41.14441',
             help='Release of Intel(R) Graphics Compute Runtime for OpenCL(TM) needed for GPU inference. '
                  'You may find needed OpenCL library on Github https://github.com/intel/compute-runtime/releases',
