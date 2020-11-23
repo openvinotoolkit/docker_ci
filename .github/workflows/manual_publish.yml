@@ -19,8 +19,12 @@ on:
         description: 'OS for Host machine: ubuntu-18.04, windows-2019'
         required: true
         default: ''
+      tags:
+        description: 'Tags, ex. -t image_name:YYY.U -t image_name:latest'
+        required: true
+        default: ''
       args:
-        description: 'Additional arguments, ex. -t image_name:YYY.U -t image_name:latest --build_arg no_samples=True'
+        description: 'Additional arguments, ex. --build_arg no_samples=True'
         required: false
         default: ''
 
@@ -52,9 +56,28 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and publish image
+      - name: Build and publish image on DockerHub
         if: ${{ matrix.os == github.event.inputs.host_os }}
-        run: python docker_openvino.py all --dist ${{ github.event.inputs.distribution }} -os ${{ github.event.inputs.os }} --package_url ${{ github.event.inputs.package_url }} --nightly -r openvino ${{ github.event.inputs.args }}
+        run: python docker_openvino.py all --dist ${{ github.event.inputs.distribution }} -os ${{ github.event.inputs.os }} --package_url ${{ github.event.inputs.package_url }} --nightly -r openvino ${{ github.event.inputs.tags }} ${{ github.event.inputs.args }}
+      - name: Docker logout
+        run: docker logout
+      - name: Docker login to Azure registry (Linux)
+        if: ${{ matrix.os == 'ubuntu-18.04' }}
+        run: echo $AZURE_PASSWORD | docker login --username $AZURE_USERNAME --password-stdin openvino.azurecr.io
+        env:
+          AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+      - name: Docker login to Azure registry (Windows)
+        if: ${{ matrix.os == 'windows-2019' }}
+        run: echo $Env:AZURE_PASSWORD | docker login --username $Env:AZURE_USERNAME --password-stdin openvino.azurecr.io
+        env:
+          AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+      - name: Publish image on Azure
+        if: ${{ matrix.os == github.event.inputs.host_os }}
+        run: python docker_openvino.py deploy -r openvino ${{ github.event.inputs.tags }}
+      - name: Docker logout Azure
+        run: docker logout openvino.azurecr.io
       - name: Collecting artifacts
         if: ${{ matrix.os == github.event.inputs.host_os }}
         uses: actions/upload-artifact@v2
