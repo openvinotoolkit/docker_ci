@@ -57,6 +57,7 @@ RUN curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_
     curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-opencl_${INTEL_OPENCL}_amd64.deb" --output "intel-opencl_${INTEL_OPENCL}_amd64.deb" && \
     curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-ocloc_${INTEL_OCLOC}_amd64.deb" --output "intel-ocloc_${INTEL_OCLOC}_amd64.deb"
 
+
 # for VPU
 ARG BUILD_DEPENDENCIES="autoconf \
                         automake \
@@ -99,19 +100,27 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 COPY --from=base /opt/intel /opt/intel
 
+WORKDIR /thirdparty
 
+ARG DEPS=dpkg-dev
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
                libgtk-3-0"
+RUN apt-get update && \
+    apt-get install -y git && \
+    rm -rf /var/lib/apt/lists/* && \
+    git clone https://git.launchpad.net/~ubuntu-desktop/ubuntu/+source/gtk+3.0 -b ubuntu/bionic && \
+    git clone https://git.launchpad.net/~ubuntu-core-dev/ubuntu/+source/glibc
 
 
 # hadolint ignore=DL3008
 RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
-    apt-get install -y --no-install-recommends dpkg-dev curl ${LGPL_DEPS} && \
-    apt-get source ${LGPL_DEPS} && \
-    rm -rf /var/lib/apt/lists/* && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
+    apt-get install -y curl && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime && \
+    apt-get install -y --no-install-recommends ${DEPS} ${LGPL_DEPS} && \
+    apt-get source --download-only ${LGPL_DEPS} || true && \
+    rm -rf /var/lib/apt/lists/*
 
 
 # setup Python
@@ -174,10 +183,11 @@ RUN apt-get update && \
 # for VPU
 ARG DEPENDENCIES=udev
 
+WORKDIR /thirdparty
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
-    apt-get source ${DEPENDENCIES} && \
+    apt-get source --download-only ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
@@ -217,7 +227,7 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
     fi;
 
 RUN apt-get update && \
-    apt-get autoremove -y dpkg-dev && \
+    apt-get autoremove -y dpkg-dev git && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
     rm -rf /var/lib/apt/lists/*
 

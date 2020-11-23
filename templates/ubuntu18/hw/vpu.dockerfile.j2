@@ -1,10 +1,11 @@
 # for VPU
 ARG DEPENDENCIES=udev
 
+WORKDIR /thirdparty
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
-    apt-get source ${DEPENDENCIES} && \
+    apt-get source --download-only ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
