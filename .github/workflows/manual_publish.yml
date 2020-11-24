@@ -75,7 +75,7 @@ jobs:
           AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
       - name: Publish image on Azure
         if: ${{ matrix.os == github.event.inputs.host_os }}
-        run: python docker_openvino.py deploy -r openvino ${{ github.event.inputs.tags }}
+        run: python docker_openvino.py deploy -r openvino.azurecr.io ${{ github.event.inputs.tags }}
       - name: Docker logout Azure
         run: docker logout openvino.azurecr.io
       - name: Collecting artifacts
