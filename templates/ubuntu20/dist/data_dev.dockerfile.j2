@@ -20,7 +20,8 @@ RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
 
-COPY --from=base /tmp/pypi-kenlm.tar.gz ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/pypi-kenlm.tar.gz
+# download source for pypi-kenlm LGPL package
+COPY --from=base /tmp/pypi-kenlm.tar.gz /thirdparty/pypi-kenlm.tar.gz
 
 # hadolint ignore=DL3008
 RUN apt-get update && \

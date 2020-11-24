@@ -104,7 +104,7 @@ RUN ./bootstrap.sh && \
 # -----------------
 FROM ubuntu:18.04 AS ov_base
 
-LABEL Description="This is the data_dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL Description="This is the data_runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
 LABEL Vendor="Intel Corporation"
 
 USER root
@@ -165,40 +165,19 @@ ENV PYTHON_VER python3.6
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-dev python3-venv python3-setuptools lib${PYTHON_VER} && \
+    apt-get install -y --no-install-recommends python3-pip python3-setuptools lib${PYTHON_VER} && \
     rm -rf /var/lib/apt/lists/*
 
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip
 
-# data dev package
+# runtime package
 WORKDIR /tmp
 
-RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o  -name "*requirements*.in" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
-
-ENV VENV_TF2 /opt/intel/venv_mo_tf2
-
-RUN ${PYTHON_VER} -m venv ${VENV_TF2} && \
-    source ${VENV_TF2}/bin/activate && \
-    pip install --no-cache-dir -U pip==19.3.1 && \
-    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/requirements_tf2.txt && \
-    deactivate
-
-
-WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker
-RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements.in && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
-
-COPY --from=base /tmp/pypi-kenlm.tar.gz /thirdparty/pypi-kenlm.tar.gz
-
-WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/build
+RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
+    if [ -f ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt ]; then \
+        ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt; \
+    fi
 
 # for CPU
 

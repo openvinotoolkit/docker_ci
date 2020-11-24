@@ -45,7 +45,7 @@ You can find generated dockerfile in `<root_project>/dockerfiles/<image_os>` fol
 
 Select a product distribution:
 ```cmd
-  -dist, --distribution TYPE  Available types: dev, data_dev, runtime, internal_dev, 
+  -dist, --distribution TYPE  Available types: dev, data_dev, runtime, data_runtime, internal_dev, 
                               proprietary (product pkg with an installer) or 
                               base (with CPU only and without installing dependencies). 
                               Using key --file <path_to_dockerfile> and -p <version> are  mandatory to build base distribution image.
@@ -64,7 +64,7 @@ Or if you have a product package link, you can specify directly:
 ```
 
 **Note:** This is required that OpenVINO package is named in the right way, which is, 
-distribution type (runtime, dev) and build number (e.g., 2019.4.420) have to be part of the URI, 
+distribution type (e.g., dev) and build number (e.g., 2019.4.420) have to be part of the URI, 
 for example, `openvino_dev_2019.3.376.tgz` fits the requirements, while `ov_R3.tgz` is not. 
 Otherwise, you should specify `--distribution` and `--product_version` directly.
 
@@ -198,13 +198,6 @@ docker run -it --rm <image_name>:latest
 ```cmd
 docker run -it --rm <image_name>:latest
 ```
-
-**Linux runtime/data_dev/proprietary images:**
-
-You need to install 3d party dependencies via `<install_root>/install_dependencies/install_openvino_dependencies.sh` in your container to using data processing components:
-* DL Streamer*
-* GStreamer 
-* Speech Libraries and End-to-End Speech Demos
 
 If you want to try some demos then run image with the root privileges (some additional 3-rd party dependencies will be installed):
 

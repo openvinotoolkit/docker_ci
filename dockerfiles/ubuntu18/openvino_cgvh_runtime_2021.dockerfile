@@ -17,6 +17,16 @@ RUN apt-get update && \
 WORKDIR /tmp
 RUN curl -L https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz --output pypi-kenlm.tar.gz
 
+# download source for LGPL packages
+WORKDIR /thirdparty
+
+RUN curl -L https://github.com/GNOME/gtk/archive/gtk-3-0.zip --output gtk-3-0.zip
+
+
+WORKDIR /tmp
+# download source for udev LGPL package
+RUN curl -L https://github.com/systemd/systemd/archive/master.zip --output systemd.zip
+
 
 # get product from URL
 ARG package_url
@@ -40,6 +50,9 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
+
+
+RUN rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/data_processing
 
 
 # for GPU
@@ -101,35 +114,11 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 COPY --from=base /opt/intel /opt/intel
 
 WORKDIR /thirdparty
+COPY --from=base /thirdparty /thirdparty
+
 
 ARG DEPS=dpkg-dev
-ARG LGPL_DEPS="libgtk-3-0 \
-               libgstreamer1.0-0 \
-               gstreamer1.0-plugins-base \
-               gstreamer1.0-plugins-good \
-               gstreamer1.0-plugins-bad \
-               gstreamer1.0-vaapi \
-               ffmpeg \
-               libgl-dev \
-               libtag-extras1 \
-               libfaac0 \
-               python3-gi \
-               libfluidsynth1 \
-               libnettle6 \
-               gstreamer1.0-plugins-ugly \
-               gstreamer1.0-alsa \
-               libglib2.0"
-RUN apt-get update && \
-    apt-get install -y git && \
-    rm -rf /var/lib/apt/lists/* && \
-    git clone https://git.launchpad.net/~ubuntu-desktop/ubuntu/+source/gtk+3.0 -b ubuntu/bionic && \
-    git clone https://git.launchpad.net/~ubuntu-core-dev/ubuntu/+source/glibc && \
-    git clone https://salsa.debian.org/gstreamer-team/gstreamer1.0.git && \
-    git clone https://github.com/GStreamer/gst-plugins-base.git -b 1.0 && \
-    git clone https://github.com/GStreamer/gst-plugins-good.git -b 1.0 && \
-    git clone https://github.com/GStreamer/gst-plugins-bad.git -b 1.0 && \
-    git clone https://salsa.debian.org/gstreamer-team/gstreamer-vaapi.git && \
-    git clone https://salsa.debian.org/multimedia-team/ffmpeg.git
+ARG LGPL_DEPS=libgtk-3-0
 
 
 # hadolint ignore=DL3008
@@ -156,10 +145,7 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 # runtime package
 WORKDIR /tmp
 
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    if [ -f ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt ]; then \
-        ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt; \
-    fi
+RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt
 
 # for CPU
 
@@ -184,10 +170,12 @@ WORKDIR /thirdparty
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
-    apt-get source --download-only ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
+
+# download source for udev LGPL package
+COPY --from=base /tmp/systemd.zip /thirdparty/systemd.zip
 
 WORKDIR /opt/libusb-1.0.22/libusb
 RUN /bin/mkdir -p '/usr/local/lib' && \
@@ -224,7 +212,7 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
     fi;
 
 RUN apt-get update && \
-    apt-get autoremove -y dpkg-dev git && \
+    apt-get autoremove -y dpkg-dev && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
