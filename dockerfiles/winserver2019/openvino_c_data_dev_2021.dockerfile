@@ -111,6 +111,12 @@ RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter
        {echo 'skipping dependency'} else {echo 'installing dependency'; python -m pip install --no-cache-dir -r $_.FullName} `
    }"
 
+# download source for pypi-kenlm LGPL package
+
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\model_optimizer\\pypi-kenlm.tar.gz
+
+
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\open_model_zoo\tools\accuracy_checker
 RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\accuracy_checker\requirements.in" && `
