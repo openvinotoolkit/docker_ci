@@ -16,9 +16,9 @@ print('CPUs:', cv2.getNumberOfCPUs())
     tester.test_docker_image(
         image,
         ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-         'mkdir -p /opt/intel/openvino/python_bindings && '
-         f'printf \"{py}\" >> /opt/intel/openvino/python_bindings/opencv_bindings.py && '
-         'python3 /opt/intel/openvino/python_bindings/opencv_bindings.py"',
+         'mkdir -p /tmp/python_bindings && '
+         f'printf \"{py}\" >> /tmp/python_bindings/opencv_bindings.py && '
+         'python3 /tmp/python_bindings/opencv_bindings.py"',
          ],
         test_opencv_bindings.__name__,
     )
@@ -35,9 +35,9 @@ print('Available devices: ', ie.IECore().available_devices)
     tester.test_docker_image(
         image,
         ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-         'mkdir -p /opt/intel/openvino/python_bindings && '
-         f'printf \"{py}\" >> /opt/intel/openvino/python_bindings/openvino_bindings.py && '
-         'python3 /opt/intel/openvino/python_bindings/openvino_bindings.py"',
+         'mkdir -p /tmp/python_bindings && '
+         f'printf \"{py}\" >> /tmp/python_bindings/openvino_bindings.py && '
+         'python3 /tmp/python_bindings/openvino_bindings.py"',
          ],
         test_openvino_bindings.__name__,
     )
@@ -52,9 +52,9 @@ import ngraph
     tester.test_docker_image(
         image,
         ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-         'mkdir -p /opt/intel/openvino/python_bindings && '
-         f'printf \"{py}\" >> /opt/intel/openvino/python_bindings/ngraph_bindings.py && '
-         'python3 /opt/intel/openvino/python_bindings/ngraph_bindings.py"',
+         'mkdir -p /tmp/python_bindings && '
+         f'printf \"{py}\" >> /tmp/python_bindings/ngraph_bindings.py && '
+         'python3 /tmp/python_bindings/ngraph_bindings.py"',
          ],
         test_ngraph_bindings.__name__,
     )
