@@ -46,16 +46,22 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 COPY --from=base /opt/intel /opt/intel
 
+WORKDIR /thirdparty
 {% if 'runtime' in distribution %}
+ARG DEPS=dpkg-dev
 ARG LGPL_DEPS="g++ \
                gcc \
                libgtk-3-0"
 {% elif 'dev' == distribution %}
+ARG DEPS=dpkg-dev
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
                libgtk-3-0"
 {% else %}
+ARG DEPS="dpkg-dev \
+          libopenexr24 \
+          flex"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
@@ -65,13 +71,27 @@ ARG LGPL_DEPS="g++ \
                gstreamer1.0-plugins-good \
                gstreamer1.0-plugins-bad \
                gstreamer1.0-vaapi \
-               ffmpeg"
+               ffmpeg \
+               libgl-dev \
+               libtag-extras1 \
+               libfaac0 \
+               python3-gi \
+               gstreamer1.0-plugins-ugly \
+               gstreamer1.0-libav \
+               libgstreamer-plugins-base1.0-dev \
+               gstreamer1.0-alsa \
+               libgstrtspserver-1.0-dev \
+               python3-gst-1.0 \
+               libfluidsynth2 \
+               libnettle7 \
+               libglib2.0-0"
 {% endif %}
 
 # hadolint ignore=DL3008
 RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
-    apt-get install -y --no-install-recommends dpkg-dev ${LGPL_DEPS}&& \
+    apt-get install -y curl && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime && \
+    apt-get install -y --no-install-recommends ${DEPS} ${LGPL_DEPS} && \
     apt-get source ${LGPL_DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
@@ -91,7 +111,7 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
     fi;
 
 RUN apt-get update && \
-    apt-get autoremove -y dpkg-dev && \
+    apt-get autoremove -y dpkg-dev git && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
