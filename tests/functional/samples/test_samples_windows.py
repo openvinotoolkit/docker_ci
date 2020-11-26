@@ -9,10 +9,10 @@ from utils.exceptions import FailedTest
 class TestSamplesWindows:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'cd C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp && '
              'C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
@@ -39,12 +39,12 @@ class TestSamplesWindows:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
     @pytest.mark.parametrize('min_product_version', ['2021.2'], indirect=True)
-    def test_hello_classification_cpp_fail(self, is_distribution, is_image_os, tester, image, caplog,
+    def test_hello_classification_cpp_fail(self, is_distribution, is_image_os, caplog,
                                            min_product_version):
         kwargs = {'user': 'ContainerAdministrator'}
         with pytest.raises(FailedTest):
-            tester.test_docker_image(
-                image,
+            self.tester.test_docker_image(
+                self.image,
                 ['cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
                  'cd C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp && '
                  'C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
@@ -69,10 +69,10 @@ class TestSamplesWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    def test_object_detection_cpp_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_object_detection_cpp_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'cd C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp && '
              'C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
@@ -94,10 +94,10 @@ class TestSamplesWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    def test_classification_async_cpp_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_classification_async_cpp_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'cd C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp && '
              'C:\\\\intel\\\\openvino\\\\inference_engine\\\\samples\\\\cpp\\\\build_samples_msvc.bat',

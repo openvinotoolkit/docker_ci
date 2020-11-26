@@ -7,10 +7,10 @@ import pytest
 class TestDemosWindows:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    def test_security_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_security_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\ && '
              'demo_security_barrier_camera.bat -d CPU -sample-options -no_show'],
             self.test_security_cpu.__name__, **kwargs,
@@ -19,10 +19,10 @@ class TestDemosWindows:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
     @pytest.mark.xfail(reason='39822 issue')
-    def test_squeezenet_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_squeezenet_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\ && '
              'demo_squeezenet_download_convert_run.bat -d CPU'],
             self.test_squeezenet_cpu.__name__, **kwargs,
@@ -30,10 +30,10 @@ class TestDemosWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    def test_crossroad_cpp_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_crossroad_cpp_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator', 'mem_limit': '3g'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
@@ -55,10 +55,10 @@ class TestDemosWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    def test_text_cpp_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_text_cpp_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator', 'mem_limit': '3g'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
@@ -80,10 +80,10 @@ class TestDemosWindows:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
     @pytest.mark.xfail(reason='38545 issue')
-    def test_detection_ssd_python_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_detection_ssd_python_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
              'downloader\\\\downloader.py '
@@ -100,10 +100,10 @@ class TestDemosWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    def test_segmentation_cpp_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_segmentation_cpp_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator', 'mem_limit': '3g'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
@@ -125,10 +125,10 @@ class TestDemosWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    def test_segmentation_python_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_segmentation_python_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
              'downloader\\\\downloader.py '
@@ -145,10 +145,10 @@ class TestDemosWindows:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-    def test_object_detection_centernet_python_cpu(self, is_distribution, is_image_os, tester, image):
+    def test_object_detection_centernet_python_cpu(self, is_distribution, is_image_os):
         kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
              'downloader\\\\downloader.py '
