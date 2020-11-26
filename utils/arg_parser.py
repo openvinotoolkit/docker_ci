@@ -98,7 +98,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
 
         parser.add_argument(
             '--ocl_release',
-            choices=['20.03.15346', '19.41.14441', '19.04.12237'],
+            choices=['20.35.17767', '20.03.15346', '19.41.14441', '19.04.12237'],
             default='19.41.14441',
             help='Release of Intel(R) Graphics Compute Runtime for OpenCL(TM) needed for GPU inference. '
                  'You may find needed OpenCL library on Github https://github.com/intel/compute-runtime/releases',
@@ -191,9 +191,9 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-dist',
             '--distribution',
-            choices=['base', 'runtime', 'dev', 'data_dev', 'internal_dev', 'proprietary'],
+            choices=['base', 'runtime', 'data_runtime', 'dev', 'data_dev', 'internal_dev', 'proprietary'],
             required=' test' in parser.prog,
-            help='Distribution type: dev, data_dev, runtime, internal_dev, '
+            help='Distribution type: dev, data_dev, runtime, data_runtime, internal_dev, '
                  'proprietary (product pkg with an installer) or '
                  'base (with CPU only and without installing dependencies). '
                  'Using key --file <path_to_dockerfile> and '
@@ -322,7 +322,7 @@ def parse_args(name: str, description: str):
         parser.error('Options --tags and --distribution are mandatory. Image operation system is "ubuntu18"'
                      ' by default.')
 
-    if args.mode == 'test' and args.distribution == 'runtime' and not args.package_url:
+    if args.mode == 'test' and 'runtime' in args.distribution and not args.package_url:
         print('\nYou can run samples/demos on runtime docker image. '
               'Please provide --package_url key with path to dev distribution package in '
               'http/https/ftp access scheme or a local file in the project location as dependent package '

@@ -14,6 +14,24 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
 
+# download source for pypi-kenlm LGPL package
+WORKDIR /tmp
+RUN curl -L https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz --output pypi-kenlm.tar.gz
+
+# download source for LGPL packages
+WORKDIR /thirdparty
+
+RUN apt-get update && \
+    apt-get install -y git && \
+    rm -rf /var/lib/apt/lists/* && \
+    git clone https://salsa.debian.org/toolchain-team/gcc-defaults.git && \
+    curl -L https://github.com/GNOME/gtk/archive/gtk-3-0.zip --output gtk-3-0.zip
+
+
+WORKDIR /tmp
+# download source for udev LGPL package
+RUN curl -L https://github.com/systemd/systemd/archive/master.zip --output systemd.zip
+
 
 # get product from URL
 ARG package_url
@@ -39,6 +57,9 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
 
 
+RUN rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/data_processing
+
+
 # for GPU
 ARG GMMLIB
 ARG IGC_CORE
@@ -47,13 +68,13 @@ ARG INTEL_OPENCL
 ARG INTEL_OCLOC
 ARG TEMP_DIR=/tmp/opencl
 
-
 WORKDIR ${TEMP_DIR}
 RUN curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-gmmlib_${GMMLIB}_amd64.deb" --output "intel-gmmlib_${GMMLIB}_amd64.deb" && \
     curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-core_${IGC_CORE}_amd64.deb" --output "intel-igc-core_${IGC_CORE}_amd64.deb" && \
     curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-opencl_${IGC_OPENCL}_amd64.deb" --output "intel-igc-opencl_${IGC_OPENCL}_amd64.deb" && \
     curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-opencl_${INTEL_OPENCL}_amd64.deb" --output "intel-opencl_${INTEL_OPENCL}_amd64.deb" && \
     curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-ocloc_${INTEL_OCLOC}_amd64.deb" --output "intel-ocloc_${INTEL_OCLOC}_amd64.deb"
+
 
 # for VPU
 ARG BUILD_DEPENDENCIES="autoconf \
@@ -101,18 +122,22 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 COPY --from=base /opt/intel /opt/intel
 
+WORKDIR /thirdparty
+COPY --from=base /thirdparty /thirdparty
 
+
+ARG DEPS=dpkg-dev
 ARG LGPL_DEPS="g++ \
                gcc \
                libgtk-3-0"
 
 
 # hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends dpkg-dev ${LGPL_DEPS}&& \
-    sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
-    apt-get source ${LGPL_DEPS} && \
+    apt-get install -y curl && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime && \
+    apt-get install -y --no-install-recommends ${DEPS} ${LGPL_DEPS} && \
+    apt-get source ${LGPL_DEPS} || true && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -131,8 +156,7 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 # runtime package
 WORKDIR /tmp
 
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt
+RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt
 
 # for CPU
 
@@ -153,13 +177,17 @@ RUN apt-get update && \
 # for VPU
 ARG DEPENDENCIES=udev
 
+WORKDIR /thirdparty
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
-    apt-get source ${DEPENDENCIES} && \
+    apt-get source --download-only ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
+
+# download source for udev LGPL package
+COPY --from=base /tmp/systemd.zip /thirdparty/systemd.zip
 
 WORKDIR /opt/libusb-1.0.22/libusb
 RUN /bin/mkdir -p '/usr/local/lib' && \

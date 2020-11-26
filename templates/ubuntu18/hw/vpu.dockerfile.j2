@@ -1,13 +1,16 @@
 # for VPU
 ARG DEPENDENCIES=udev
 
+WORKDIR /thirdparty
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
-    apt-get source ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
+
+# download source for udev LGPL package
+COPY --from=base /tmp/systemd.zip /thirdparty/systemd.zip
 
 WORKDIR /opt/libusb-1.0.22/libusb
 RUN /bin/mkdir -p '/usr/local/lib' && \

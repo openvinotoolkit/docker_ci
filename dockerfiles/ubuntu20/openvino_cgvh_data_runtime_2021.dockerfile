@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:18.04 AS base
+FROM ubuntu:20.04 AS base
 
 # hadolint ignore=DL3002
 USER root
@@ -11,7 +11,8 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl ca-certificates && \
-    rm -rf /var/lib/apt/lists/* && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
+    rm -rf /var/lib/apt/lists/* && \
+    ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
 
 # download source for pypi-kenlm LGPL package
 WORKDIR /tmp
@@ -102,9 +103,9 @@ RUN ./bootstrap.sh && \
     make -j4
 
 # -----------------
-FROM ubuntu:18.04 AS ov_base
+FROM ubuntu:20.04 AS ov_base
 
-LABEL Description="This is the data_dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL Description="This is the data_runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
 LABEL Vendor="Intel Corporation"
 
 USER root
@@ -116,7 +117,11 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
-RUN mkdir /opt/intel
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime  && mkdir /opt/intel
 
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
@@ -127,7 +132,7 @@ COPY --from=base /thirdparty /thirdparty
 
 
 ARG DEPS="dpkg-dev \
-          libopenexr22 \
+          libopenexr24 \
           flex"
 ARG LGPL_DEPS="g++ \
                gcc \
@@ -143,11 +148,15 @@ ARG LGPL_DEPS="g++ \
                libtag-extras1 \
                libfaac0 \
                python3-gi \
-               libfluidsynth1 \
-               libnettle6 \
                gstreamer1.0-plugins-ugly \
+               gstreamer1.0-libav \
+               libgstreamer-plugins-base1.0-dev \
                gstreamer1.0-alsa \
-               libglib2.0"
+               libgstrtspserver-1.0-dev \
+               python3-gst-1.0 \
+               libfluidsynth2 \
+               libnettle7 \
+               libglib2.0-0"
 
 
 # hadolint ignore=DL3008
@@ -155,50 +164,29 @@ RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y curl && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime && \
     apt-get install -y --no-install-recommends ${DEPS} ${LGPL_DEPS} && \
-    apt-get source --download-only ${LGPL_DEPS} || true && \
+    apt-get source ${LGPL_DEPS} || true && \
     rm -rf /var/lib/apt/lists/*
 
 
 # setup Python
-ENV PYTHON_VER python3.6
+ENV PYTHON_VER python3.8
 
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-dev python3-venv python3-setuptools lib${PYTHON_VER} && \
+    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON_VER} && \
     rm -rf /var/lib/apt/lists/*
 
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip
 
-# data dev package
+# runtime package
 WORKDIR /tmp
 
-RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o  -name "*requirements*.in" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
-
-ENV VENV_TF2 /opt/intel/venv_mo_tf2
-
-RUN ${PYTHON_VER} -m venv ${VENV_TF2} && \
-    source ${VENV_TF2}/bin/activate && \
-    pip install --no-cache-dir -U pip==19.3.1 && \
-    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/requirements_tf2.txt && \
-    deactivate
-
-
-WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker
-RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements.in && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
-
-COPY --from=base /tmp/pypi-kenlm.tar.gz /thirdparty/pypi-kenlm.tar.gz
-
-WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/build
+RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
+    if [ -f ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt ]; then \
+        ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt; \
+    fi
 
 # for CPU
 
@@ -223,6 +211,7 @@ WORKDIR /thirdparty
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
+    apt-get source --download-only ${DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
@@ -247,9 +236,10 @@ WORKDIR /tmp
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        libboost-filesystem1.65-dev \
-        libboost-thread1.65-dev \
-        libjson-c3 libxxf86vm-dev && \
+        libboost-filesystem-dev \
+        libboost-thread-dev \
+        libjson-c4 \
+        libxxf86vm-dev && \
     rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
 
