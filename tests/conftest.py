@@ -91,9 +91,9 @@ def pytest_sessionfinish(session, exitstatus):
     log.info('Cleanup completed')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='class')
 def dockerfile(request):
-    return request.config.getoption('--dockerfile')
+    request.cls.dockerfile = request.config.getoption('--dockerfile')
 
 
 @pytest.fixture(scope='class', autouse=True)
@@ -101,14 +101,14 @@ def image(request):
     request.cls.image = request.config.getoption('--image')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='class')
 def distribution(request):
-    return request.config.getoption('--distribution')
+    request.cls.distribution = request.config.getoption('--distribution')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='class')
 def image_os(request):
-    return request.config.getoption('--image_os')
+    request.cls.image_os = request.config.getoption('--image_os')
 
 
 @pytest.fixture(scope='class')
@@ -116,14 +116,14 @@ def mount_root(request):
     request.cls.mount_root = request.config.getoption('--mount_root')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='class')
 def package_url(request):
-    return request.config.getoption('--package_url')
+    request.cls.package_url = request.config.getoption('--package_url')
 
 
-@pytest.fixture(scope='session')
-def docker_api():
-    return DockerAPI()
+@pytest.fixture(scope='class')
+def docker_api(request):
+    request.cls.docker_api = DockerAPI()
 
 
 @pytest.fixture(scope='class', autouse=True)
