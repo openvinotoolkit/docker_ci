@@ -9,9 +9,9 @@ from utils.exceptions import FailedTest
 class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os, tester, image):
-        tester.test_docker_image(
-            image,
+    def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os):
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -34,10 +34,10 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_hello_classification_cpp_gpu(self, is_distribution, is_image_os, tester, image):
+    def test_hello_classification_cpp_gpu(self, is_distribution, is_image_os):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -60,11 +60,11 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_hello_classification_cpp_vpu(self, is_distribution, is_image_os, tester, image):
+    def test_hello_classification_cpp_vpu(self, is_distribution, is_image_os):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -87,11 +87,11 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
-    def test_hello_classification_cpp_hddl(self, is_distribution, is_image_os, tester, image):
+    def test_hello_classification_cpp_hddl(self, is_distribution, is_image_os):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -114,11 +114,10 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.parametrize('min_product_version', ['2021.2'], indirect=True)
-    def test_hello_classification_cpp_fail(self, is_distribution, is_image_os, tester, image, caplog,
-                                           min_product_version):
+    def test_hello_classification_cpp_fail(self, is_distribution, is_image_os, caplog, min_product_version):
         with pytest.raises(FailedTest):
-            tester.test_docker_image(
-                image,
+            self.tester.test_docker_image(
+                self.image,
                 ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                  'cd /opt/intel/openvino/inference_engine/samples/cpp && '
@@ -142,9 +141,9 @@ class TestSamplesLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_hello_reshape_cpp_cpu(self, is_distribution, is_image_os, tester, image):
-        tester.test_docker_image(
-            image,
+    def test_hello_reshape_cpp_cpu(self, is_distribution, is_image_os):
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -164,10 +163,10 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_hello_reshape_cpp_gpu(self, is_distribution, is_image_os, tester, image):
+    def test_hello_reshape_cpp_gpu(self, is_distribution, is_image_os):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -187,11 +186,11 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_hello_reshape_cpp_vpu(self, is_distribution, is_image_os, tester, image):
+    def test_hello_reshape_cpp_vpu(self, is_distribution, is_image_os):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -211,11 +210,11 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
-    def test_hello_reshape_cpp_hddl(self, is_distribution, is_image_os, tester, image):
+    def test_hello_reshape_cpp_hddl(self, is_distribution, is_image_os):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -234,9 +233,9 @@ class TestSamplesLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_object_detection_cpp_cpu(self, is_distribution, is_image_os, tester, image):
-        tester.test_docker_image(
-            image,
+    def test_object_detection_cpp_cpu(self, is_distribution, is_image_os):
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -256,10 +255,10 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_object_detection_cpp_gpu(self, is_distribution, is_image_os, tester, image):
+    def test_object_detection_cpp_gpu(self, is_distribution, is_image_os):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -279,11 +278,11 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_object_detection_cpp_vpu(self, is_distribution, is_image_os, tester, image):
+    def test_object_detection_cpp_vpu(self, is_distribution, is_image_os):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -303,11 +302,11 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
-    def test_object_detection_cpp_hddl(self, is_distribution, is_image_os, tester, image):
+    def test_object_detection_cpp_hddl(self, is_distribution, is_image_os):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -326,9 +325,9 @@ class TestSamplesLinux:
 
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_classification_async_cpp_cpu(self, is_distribution, is_image_os, tester, image):
-        tester.test_docker_image(
-            image,
+    def test_classification_async_cpp_cpu(self, is_distribution, is_image_os):
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -351,10 +350,10 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_classification_async_cpp_gpu(self, is_distribution, is_image_os, tester, image):
+    def test_classification_async_cpp_gpu(self, is_distribution, is_image_os):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -377,11 +376,11 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_classification_async_cpp_vpu(self, is_distribution, is_image_os, tester, image):
+    def test_classification_async_cpp_vpu(self, is_distribution, is_image_os):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
@@ -404,11 +403,11 @@ class TestSamplesLinux:
     @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
-    def test_classification_async_cpp_hddl(self, is_distribution, is_image_os, tester, image):
+    def test_classification_async_cpp_hddl(self, is_distribution, is_image_os):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        tester.test_docker_image(
-            image,
+        self.tester.test_docker_image(
+            self.image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/inference_engine/samples/cpp && '
              'apt update && apt install make && '
