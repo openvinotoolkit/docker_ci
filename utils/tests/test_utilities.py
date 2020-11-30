@@ -11,12 +11,12 @@ from utils import exceptions, utilities
 
 @pytest.fixture()
 def temp_file(tmp_path):
-    f = (tmp_path / 'file.txt')
-    f.write_text('hello')
-    return f
+    file_path = (tmp_path / 'file.txt')
+    file_path.write_text('hello')
+    return file_path
 
 
-@pytest.mark.parametrize('date, res', [
+@pytest.mark.parametrize(('date', 'res'), [
     pytest.param(
         169310,
         '1 day 23 hours 1 minute 50 seconds',
@@ -53,7 +53,7 @@ class TestDownloadFile:
         else:
             temp_file.unlink()
 
-    @pytest.mark.parametrize('url, exception', [
+    @pytest.mark.parametrize(('url', 'exception'), [
         pytest.param(
             'https://www.google.com/test',
             requests.HTTPError,
@@ -99,7 +99,7 @@ class TestDownloadFile:
         except Exception as e:
             assert str(e) == 'Proxy check'  # noqa: S101  # nosec
 
-    @pytest.mark.parametrize('proxy, exception', [
+    @pytest.mark.parametrize(('proxy', 'exception'), [
         pytest.param(
             {'http': '\00\0n'},
             exceptions.InputNotValid,
@@ -120,7 +120,7 @@ class TestDownloadFile:
             )
 
 
-@pytest.mark.parametrize('mock_data, res', [
+@pytest.mark.parametrize(('mock_data', 'res'), [
     pytest.param(
         None,
         {},
@@ -139,7 +139,7 @@ def test_get_system_proxy(mock_data, res):
         assert utilities.get_system_proxy() == res  # noqa: S101  # nosec
 
 
-@pytest.mark.parametrize('mock_data, ignore, res', [
+@pytest.mark.parametrize(('mock_data', 'ignore', 'res'), [
     pytest.param(
         (('root', ['dir1', '.git'], ['file1.txt']), ('dir1', ['.svn', 'CVS'], ['hello.doc'])),
         ('.*.txt',),
@@ -260,7 +260,7 @@ class TestCheckInternalLocalPath:
         with pytest.raises(exceptions.InputNotValid):
             utilities.check_internal_local_path(path)
 
-    @pytest.mark.parametrize('root, path', [
+    @pytest.mark.parametrize(('root', 'path'), [
         pytest.param(
             'c:/dockerhub',
             'c:/dockerhub/readme.txt',
@@ -279,7 +279,7 @@ class TestCheckInternalLocalPath:
         mock_path.return_value = temp_mock
         assert utilities.check_internal_local_path(path) == path  # noqa: S101  # nosec
 
-    @pytest.mark.parametrize('root, path', [
+    @pytest.mark.parametrize(('root', 'path'), [
         pytest.param(
             'c:/dockerhub',
             'c:/dockerhub/../secret.txt',
