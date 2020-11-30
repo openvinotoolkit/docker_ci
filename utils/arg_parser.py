@@ -237,7 +237,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             sys.argv.insert(1, name)
 
 
-def parse_args(name: str, description: str):
+def parse_args(name: str, description: str):  # noqa
     """Parse all the args set up above"""
     parser = DockerCIArgumentParser(name, description)
 
@@ -287,8 +287,8 @@ def parse_args(name: str, description: str):
     for key in vars(args):
         arg_val = getattr(args, key)
         if isinstance(arg_val, (list, tuple)):
-            for x in arg_val:
-                check_printable_utf8_chars(x)
+            for elem in arg_val:
+                check_printable_utf8_chars(elem)
         elif isinstance(arg_val, str):
             check_printable_utf8_chars(arg_val)
 
