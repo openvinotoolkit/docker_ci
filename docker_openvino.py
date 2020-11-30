@@ -256,7 +256,7 @@ class Launcher:
                 result = result_dive
         test_report = self.logdir / 'tests.html'
         curr_time = timeit.default_timer()
-        result_tests = pytest.main([
+        result_tests = pytest.main([  # noqa
             f'{self.location / "tests" / "functional"}',
             '-k', self.args.test_expression,
             '-m', self.args.test_mark_expression,

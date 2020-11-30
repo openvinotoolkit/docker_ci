@@ -22,7 +22,7 @@ class TestSDLImage:
         dockerfile_args = []
         if dockerfile:
             dockerfile_args.extend(['--file=', dockerfile])
-        cmd_line = ['docker', 'run', '--rm', '-e', f'SNYK_API={SNYK_API}',
+        cmd_line = ['docker', 'run', '--rm', '-e', f'SNYK_API={SNYK_API}',  # noqa
                     '-e', f'SNYK_TOKEN={SNYK_TOKEN}', '-e', 'MONITOR=true',
                     '-v', f'{str(pathlib.Path(__file__).parent.parent.parent)}:/project',
                     '-v', '/var/run/docker.sock:/var/run/docker.sock',
