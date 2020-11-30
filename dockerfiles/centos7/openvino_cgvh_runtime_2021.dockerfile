@@ -155,9 +155,8 @@ RUN /bin/mkdir -p '/usr/local/lib' && \
     /bin/bash ../libtool   --mode=install /usr/bin/install -c   libusb-1.0.la '/usr/local/lib' && \
     /bin/mkdir -p '/usr/local/include/libusb-1.0' && \
     /usr/bin/install -c -m 644 libusb.h '/usr/local/include/libusb-1.0' && \
-    /bin/mkdir -p '/usr/local/lib/pkgconfig'
-
-RUN printf "\nexport LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/usr/local/lib\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh
+    /bin/mkdir -p '/usr/local/lib/pkgconfig' && \
+    printf "\nexport LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/usr/local/lib\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh
 
 WORKDIR /opt/libusb-1.0.22/
 RUN /usr/bin/install -c -m 644 libusb-1.0.pc '/usr/local/lib/pkgconfig' && \
@@ -182,7 +181,9 @@ RUN yum update -y && yum install -y \
         libXxf86vm-devel && \
     yum clean all && rm -rf /var/cache/yum
 
+
 # Post-installation cleanup and setting up OpenVINO environment variables
+RUN rm -rf /tmp && mkdir /tmp
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
