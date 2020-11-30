@@ -18,7 +18,7 @@ def install_build_essential(image_os):
 @pytest.mark.usefixtures('is_package_url_specified', 'mount_root', 'image_os')
 class TestSamplesLinuxRuntime:
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7', 'centos8'], indirect=True)
     def test_hello_classification_cpp_cpu(self, is_distribution, is_image_os):
         dev_root = (pathlib.Path(self.mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -259,7 +259,7 @@ class TestSamplesLinuxRuntime:
             pytest.fail('Sample supports topologies with 1 output only')
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7', 'centos8'], indirect=True)
     def test_hello_reshape_cpp_cpu(self, is_distribution, is_image_os):
         dev_root = (pathlib.Path(self.mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -437,7 +437,7 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7', 'centos8'], indirect=True)
     def test_object_detection_cpp_cpu(self, is_distribution, is_image_os):
         dev_root = (pathlib.Path(self.mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -603,7 +603,7 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7', 'centos8'], indirect=True)
     def test_classification_async_cpp_cpu(self, is_distribution, is_image_os):
         dev_root = (pathlib.Path(self.mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {

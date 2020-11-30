@@ -9,7 +9,7 @@ import pytest
 @pytest.mark.usefixtures('is_package_url_specified', 'mount_root')
 class TestDemosLinuxRuntime:
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7', 'centos8'], indirect=True)
     def test_detection_ssd_python_cpu(self, is_distribution, is_image_os):
         dev_root = (pathlib.Path(self.mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
@@ -139,7 +139,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7', 'centos8'], indirect=True)
     def test_segmentation_python_cpu(self, is_distribution, is_image_os):
         dev_root = (pathlib.Path(self.mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {

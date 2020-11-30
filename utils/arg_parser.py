@@ -183,7 +183,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         """Adding arg needed to customize the generated dockerfile"""
         parser.add_argument(
             '-os',
-            choices=['ubuntu18', 'ubuntu20', 'centos7', 'winserver2019'],
+            choices=['ubuntu18', 'ubuntu20', 'centos7', 'centos8', 'winserver2019'],
             default='ubuntu18',
             help='Operation System for docker image. By default: ubuntu18',
         )
@@ -358,7 +358,7 @@ def parse_args(name: str, description: str):
                              'It is an insecure way.')
 
         if not args.python:
-            if args.os in ('ubuntu18', 'centos7'):
+            if args.os in ('ubuntu18', 'centos7', 'centos8'):
                 args.python = 'python36'
             elif 'ubuntu20' in args.os:
                 args.python = 'python38'
@@ -385,7 +385,7 @@ def parse_args(name: str, description: str):
 
         # workaround for https://bugs.python.org/issue16399 issue
         if not args.device and 'win' not in args.os:
-            if args.distribution == 'base':
+            if args.distribution == 'base' or args.os == 'centos8':
                 args.device = ['cpu']
             else:
                 args.device = ['cpu', 'gpu', 'vpu', 'hddl']
