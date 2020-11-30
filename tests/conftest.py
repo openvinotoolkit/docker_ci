@@ -92,42 +92,42 @@ def pytest_sessionfinish(session, exitstatus):
 
 
 @pytest.fixture(scope='class')
-def dockerfile(request):
+def _dockerfile(request):
     request.cls.dockerfile = request.config.getoption('--dockerfile')
 
 
 @pytest.fixture(scope='class', autouse=True)
-def image(request):
+def _image(request):
     request.cls.image = request.config.getoption('--image')
 
 
 @pytest.fixture(scope='class')
-def distribution(request):
+def _distribution(request):
     request.cls.distribution = request.config.getoption('--distribution')
 
 
 @pytest.fixture(scope='class')
-def image_os(request):
+def _image_os(request):
     request.cls.image_os = request.config.getoption('--image_os')
 
 
 @pytest.fixture(scope='class')
-def mount_root(request):
+def _mount_root(request):
     request.cls.mount_root = request.config.getoption('--mount_root')
 
 
 @pytest.fixture(scope='class')
-def package_url(request):
+def _package_url(request):
     request.cls.package_url = request.config.getoption('--package_url')
 
 
 @pytest.fixture(scope='class')
-def docker_api(request):
+def _docker_api(request):
     request.cls.docker_api = DockerAPI()
 
 
 @pytest.fixture(scope='class', autouse=True)
-def tester(request):
+def _tester(request):
     request.cls.tester = DockerImageTester()
 
 
@@ -147,7 +147,7 @@ def switch_container_engine(engine):
         pytest.fail(f'Can not switch docker to: {engine}, error: {process.stdout.decode()}')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def is_distribution(request):
     settings = []
     if isinstance(request.param, str):
@@ -159,7 +159,7 @@ def is_distribution(request):
                     f'{request.config.getoption("--distribution")}')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def is_image_os(request):
     settings = []
     if isinstance(request.param, str):
@@ -171,7 +171,7 @@ def is_image_os(request):
                     f'{request.config.getoption("--image_os")}')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def is_image(request):
     settings = []
     if isinstance(request.param, str):
@@ -183,7 +183,7 @@ def is_image(request):
                     f'{request.config.getoption("--image")}')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def is_not_image(request):
     settings = []
     if isinstance(request.param, str):
@@ -195,13 +195,13 @@ def is_not_image(request):
                     f'{request.config.getoption("--image")}')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def is_package_url_specified(request):
     if not request.config.getoption('--package_url'):
         pytest.skip('Test requires a url for a dev package.')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def min_product_version(request):
     if request.param > request.config.getoption('--product_version'):
         pytest.skip(f'Test requires the product_version should be {request.param} or newer '
