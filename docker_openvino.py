@@ -16,11 +16,9 @@ import time
 import timeit
 import typing
 
+import pytest
 from docker.errors import APIError, ImageNotFound
 from docker.models.images import Image
-
-import pytest
-
 from requests.exceptions import ReadTimeout
 from requests.packages.urllib3.exceptions import ReadTimeoutError
 
@@ -31,7 +29,8 @@ from utils.docker_api import DockerAPI
 from utils.exceptions import FailedBuild, FailedDeploy, FailedStep, FailedTest
 from utils.loader import INTEL_OCL_RELEASE
 from utils.render import DockerFileRender
-from utils.utilities import (DEFAULT_DATA_CHUNK_SIZE, MAX_DEPLOY_RETRIES, SLEEP_BETWEEN_RETRIES, download_file,
+from utils.utilities import (DEFAULT_DATA_CHUNK_SIZE, MAX_DEPLOY_RETRIES,
+                             SLEEP_BETWEEN_RETRIES, download_file,
                              format_timedelta, get_system_proxy)
 
 __version__ = '0.1'
@@ -66,6 +65,34 @@ class Launcher:
         self.mount_root: pathlib.Path = self.location / 'tests' / 'tmp' / 'mount'
         self.docker_api: typing.Optional[DockerAPI] = None
         self.logdir = log_dir
+
+    def save(self):
+        """Save Docker image as a local binary file"""
+        log.info(logger.LINE_DOUBLE)
+        log.info('Saving built Docker image...')
+        curr_time = timeit.default_timer()
+        share_root = pathlib.Path(self.args.nightly_save_path)
+        archive_name = ''
+        for tag in self.args.tags:
+            if not tag.endswith('latest'):
+                tag = tag.split('/')[-1]  # remove registry from tag
+                archive_name = f'{tag.replace(":", "_")}.bin'
+                break
+        try:
+            if not self.image:
+                self.image = self.docker_api.client.images.get(self.args.tags[0])
+            with open(str(pathlib.PurePosixPath(share_root / archive_name)), 'wb') as file:
+                for chunk in self.image.save(chunk_size=DEFAULT_DATA_CHUNK_SIZE):
+                    if chunk:
+                        file.write(chunk)
+            log.info(f'Save time: {format_timedelta(timeit.default_timer() - curr_time)}')
+        except (PermissionError, FileExistsError, FileNotFoundError, ReadTimeoutError, ReadTimeout) as file_err:
+            log.exception(f'Saving the image was failed due to file-related error: {file_err}')
+            return ExitCode.failed_save
+        except APIError as err:
+            log.exception(f'Saving the image was failed: {err}')
+            return ExitCode.failed_save
+        return ExitCode.success
 
     def set_docker_api(self):
         """Setting up Docker Python API client"""
@@ -312,34 +339,6 @@ class Launcher:
             logger.switch_to_summary()
             log.info(f'Push time: {format_timedelta(timeit.default_timer() - curr_time)}')
             log.info('Image successfully published')
-
-    def save(self):
-        """Save Docker image as a local binary file"""
-        log.info(logger.LINE_DOUBLE)
-        log.info('Saving built Docker image...')
-        curr_time = timeit.default_timer()
-        share_root = pathlib.Path(self.args.nightly_save_path)
-        archive_name = ''
-        for tag in self.args.tags:
-            if not tag.endswith('latest'):
-                tag = tag.split('/')[-1]  # remove registry from tag
-                archive_name = f'{tag.replace(":", "_")}.bin'
-                break
-        try:
-            if not self.image:
-                self.image = self.docker_api.client.images.get(self.args.tags[0])
-            with open(str(pathlib.PurePosixPath(share_root / archive_name)), 'wb') as file:
-                for chunk in self.image.save(chunk_size=DEFAULT_DATA_CHUNK_SIZE):
-                    if chunk:
-                        file.write(chunk)
-            log.info(f'Save time: {format_timedelta(timeit.default_timer() - curr_time)}')
-        except (PermissionError, FileExistsError, FileNotFoundError, ReadTimeoutError, ReadTimeout) as file_err:
-            log.exception(f'Saving the image was failed due to file-related error: {file_err}')
-            return ExitCode.failed_save
-        except APIError as err:
-            log.exception(f'Saving the image was failed: {err}')
-            return ExitCode.failed_save
-        return ExitCode.success
 
     def rmi(self):
         """Remove Docker image from the host machine"""
