@@ -46,7 +46,8 @@ class TestPythonBindings:
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
     @pytest.mark.parametrize('min_product_version', ['2021.1'], indirect=True)
-    def test_ngraph_bindings(self, is_distribution, min_product_version):
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    def test_ngraph_bindings(self, is_distribution, min_product_version, is_image_os):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         kwargs = {
             'mem_limit': '3g',
