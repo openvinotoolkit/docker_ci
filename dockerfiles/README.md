@@ -22,7 +22,7 @@ This repository folder contains Dockerfiles to build an docker image with the In
  - **runtime**: IE core, nGraph, OpenCV, plugins, DL Streamer runtimes
  - **data_runtime**: runtime + DL Streamer runtimes
  - **dev**: IE core, nGraph, OpenCV, plugins, samples, demo, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Model downloader 
- - **data_dev**: runtime + dev + Media SDK, Speech Libraries and End-to-End Speech Demos
+ - **data_dev**: data_runtime + dev + Media SDK, Speech Libraries and End-to-End Speech Demos
  - **base** (only for CPU): IE core, nGraph
  - **proprietary**: data_dev + installer
  
