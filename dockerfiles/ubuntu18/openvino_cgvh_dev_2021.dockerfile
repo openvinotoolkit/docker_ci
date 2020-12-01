@@ -162,6 +162,7 @@ RUN ${PYTHON_VER} -m venv ${VENV_TF2} && \
     pip install --no-cache-dir -U pip==19.3.1 && \
     pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/requirements_tf2.txt && \
     pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/downloader/requirements-tensorflow.in && \
+    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/downloader/requirements.in && \
     deactivate
 
 
