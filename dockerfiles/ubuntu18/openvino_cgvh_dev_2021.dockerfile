@@ -153,14 +153,15 @@ WORKDIR /tmp
 
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o  -name "*requirements*.in" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
+    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o \( -name "*requirements*.in" -and -not -name "*requirements-tensorflow.in" \) \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
 
-ENV VENV_TF2 /opt/intel/venv_mo_tf2
+ENV VENV_TF2 /opt/intel/venv_tf2
 
 RUN ${PYTHON_VER} -m venv ${VENV_TF2} && \
     source ${VENV_TF2}/bin/activate && \
     pip install --no-cache-dir -U pip==19.3.1 && \
     pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/requirements_tf2.txt && \
+    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/downloader/requirements-tensorflow.in && \
     deactivate
 
 
