@@ -1,3 +1,4 @@
+setuptools
 docker
 jinja2
 pytest
