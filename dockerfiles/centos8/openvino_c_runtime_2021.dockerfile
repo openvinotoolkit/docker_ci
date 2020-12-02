@@ -80,10 +80,6 @@ RUN yum update -y && yum install -y python3 && \
 RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # runtime package
-WORKDIR /tmp
-
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt
-
 # for CPU
 
 

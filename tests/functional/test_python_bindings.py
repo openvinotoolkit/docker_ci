@@ -9,7 +9,8 @@ import pytest
 
 class TestPythonBindings:
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    def test_opencv_bindings(self, is_distribution):
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    def test_opencv_bindings(self, is_distribution, is_image_os):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         kwargs = {
             'mem_limit': '3g',
@@ -27,7 +28,8 @@ class TestPythonBindings:
         )
 
     @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
-    def test_openvino_bindings(self, is_distribution):
+    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+    def test_openvino_bindings(self, is_distribution, is_image_os):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         kwargs = {
             'mem_limit': '3g',
