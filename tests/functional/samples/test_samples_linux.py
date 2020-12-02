@@ -121,6 +121,7 @@ class TestSamplesLinux:
                 ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                  'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+                 'apt update && apt install make && '
                  '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
                  '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
                  'python3 -m pip install --no-cache-dir -r '
