@@ -19,7 +19,7 @@ This repository folder contains Dockerfiles to build an docker image with the In
  - HDDL (_Prerequisite_: run HDDL daemon on the host machine, follow the [configuration guide for HDDL device](../install_guide_vpu_hddl.md))
  
  **Distributions:**
- - **runtime**: IE core, nGraph, OpenCV, plugins, DL Streamer runtimes
+ - **runtime**: IE core, nGraph, OpenCV, plugins
  - **data_runtime**: runtime + DL Streamer runtimes
  - **dev**: IE core, nGraph, OpenCV, plugins, samples, demo, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Model downloader 
  - **data_dev**: data_runtime + dev + Media SDK, Speech Libraries and End-to-End Speech Demos
