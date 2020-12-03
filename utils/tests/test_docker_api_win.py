@@ -11,7 +11,7 @@ from utils.exceptions import FailedStep
 pywintypes = pytest.importorskip('pywintypes')
 
 
-@pytest.mark.parametrize('test_exception, res_exception', [
+@pytest.mark.parametrize(('test_exception', 'res_exception'), [
     pytest.param(
         pywintypes.error,
         pywintypes.error,

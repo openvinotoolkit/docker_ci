@@ -34,12 +34,12 @@ class DockerAPI:
                 raise FailedStep('Docker Engine is not running. Please start the docker daemon.')
             raise ex
 
-    def __del__(self):
-        """Custom __del__ needed to manually close connection to client"""
-        self.client.close()
-
     def version(self):
         """Logging-friendly Docker version getter"""
         vers = self.client.version()
         for name in ('Version', 'ApiVersion', 'MinAPIVersion', 'Os', 'Arch', 'KernelVersion'):
             log.info(f'{name}: {vers.get(name, "Unknown")}')
+
+    def __del__(self):
+        """Custom __del__ needed to manually close connection to client"""
+        self.client.close()

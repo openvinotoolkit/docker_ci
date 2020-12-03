@@ -11,7 +11,7 @@ from utils.docker_api import DockerAPI
 from utils.exceptions import FailedStep
 
 
-@pytest.mark.parametrize('test_exception, res_exception', [
+@pytest.mark.parametrize(('test_exception', 'res_exception'), [
     pytest.param(
         requests.exceptions.ConnectionError,
         FailedStep,
@@ -25,7 +25,7 @@ def test_docker_api_init_raises(mock_docker, test_exception, res_exception):
         DockerAPI()
 
 
-@pytest.mark.parametrize('vers, res', [
+@pytest.mark.parametrize(('vers', 'res'), [
     pytest.param(
         {'Version': 1, 'ApiVersion': 2, 'MinAPIVersion': 3, 'Os': 4, 'Arch': 5, 'KernelVersion': 6},
         ('Version: 1', 'ApiVersion: 2', 'MinAPIVersion: 3', 'Os: 4', 'Arch: 5', 'KernelVersion: 6'),

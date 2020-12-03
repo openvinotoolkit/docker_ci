@@ -8,19 +8,10 @@ import pytest
 
 
 class TestSDLHost:
-
+    @pytest.mark.usefixtures('_bench_security_pull')
     @pytest.mark.skipif(not sys.platform.startswith('linux'),
                         reason="Docker bench for security script doesn't support Windows host")
-    @pytest.fixture(scope='module')
-    def bench_security_pull(self, docker_api):
-        image_name = 'docker/docker-bench-security:latest'
-        docker_api.client.images.pull(image_name)
-        yield
-        docker_api.client.images.remove(image_name)
-
-    @pytest.mark.skipif(not sys.platform.startswith('linux'),
-                        reason="Docker bench for security script doesn't support Windows host")
-    def test_bench_security_linux(self, bench_security_pull):
+    def test_bench_security_linux(self):
         cmd_line = ['docker', 'run', '-it', '--net', 'host', '--pid', 'host', '--userns', 'host', '--cap-add',
                     'audit_control', '-e', 'DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST',
                     '-v', '/etc:/etc:ro', '-v', '/usr/bin/docker-containerd:/usr/bin/docker-containerd:ro',
@@ -32,3 +23,12 @@ class TestSDLHost:
             pytest.fail(f'SDL Bench for security issues: {process.stdout.decode()}')
         else:
             print(f'SDL Bench for security output: {process.stdout.decode()}')
+
+    @pytest.mark.skipif(not sys.platform.startswith('linux'),
+                        reason="Docker bench for security script doesn't support Windows host")
+    @pytest.fixture(scope='module')
+    def _bench_security_pull(self, docker_api):
+        image_name = 'docker/docker-bench-security:latest'
+        docker_api.client.images.pull(image_name)
+        yield
+        docker_api.client.images.remove(image_name)

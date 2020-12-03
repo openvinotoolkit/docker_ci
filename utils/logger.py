@@ -144,10 +144,10 @@ class UniqueFileHandler(logging.FileHandler):
         self._handler.setFormatter(CustomFormatter(set_time=False))
         self._handler.setLevel(logging.DEBUG)
 
-    def __getattr__(self, n):
+    def __getattr__(self, attr):
         """Custom attribute handler for correct attribute access redirecting"""
-        if hasattr(self._handler, n):
-            return getattr(self._handler, n)
+        if hasattr(self._handler, attr):
+            return getattr(self._handler, attr)
         raise AttributeError
 
 
@@ -163,7 +163,7 @@ class CustomFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:  # noqa ignore=A003
         record.indent = ''
         record.message = record.getMessage().split('\n')
-        s = ''
+        output = ''
         for i in record.message:
             if len(i.strip()) > 0:
                 msg = ' ' * 10 + '| ' + i if len(record.message) > 1 else i
@@ -173,8 +173,8 @@ class CustomFormatter(logging.Formatter):
                 else:
                     format_time = ''
                     level = ''
-                s += f'{format_time} {level} {record.indent} {msg}\n'
-        s = s[:-1]
+                output += f'{format_time} {level} {record.indent} {msg}\n'
+        output = output[:-1]
         if record.exc_info:
             # Cache the traceback text to avoid converting it multiple times
             # (it's constant anyway)
@@ -182,21 +182,20 @@ class CustomFormatter(logging.Formatter):
                 exc_text = self.formatException(record.exc_info)
                 record.exc_text = self.format_exception_better(exc_text)
         if record.exc_text:
-            if s[-1:] != '\n':
-                s += '\n'
-            s = s + record.exc_text
+            if output[-1:] != '\n':
+                output += '\n'
+            output += record.exc_text
         if record.stack_info:
-            if s[-1:] != '\n':
-                s += '\n'
-            s = s + self.formatStack(record.stack_info)
+            if output[-1:] != '\n':
+                output += '\n'
+            output += self.formatStack(record.stack_info)
 
-        return s
+        return output
 
     @staticmethod
     def format_exception_better(text: str) -> str:
         """Custom exception output formatter"""
-        t = text.split('\n')
-        s = ''
-        for i in t:
-            s += ' ' * 10 + f'| {i}\n'
-        return s[:-1]
+        output = ''
+        for i in text.split('\n'):
+            output += ' ' * 10 + f'| {i}\n'
+        return output[:-1]

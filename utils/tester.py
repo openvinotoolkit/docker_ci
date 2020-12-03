@@ -25,12 +25,6 @@ class DockerImageTester(DockerAPI):
         super().__init__()
         self.container: typing.Optional[Container] = None
 
-    def __del__(self):
-        """Custom __del__ to manually stop (but not remove) testing container"""
-        if self.container:
-            self.container.stop()
-        super().__del__()
-
     def test_docker_image(self,
                           image: typing.Tuple[Image, str],
                           commands: typing.List[str], test_name: str,
@@ -94,3 +88,9 @@ class DockerImageTester(DockerAPI):
 
         except APIError as err:
             raise FailedTest(f'Docker daemon API error while executing test {test_name}: {err}')
+
+    def __del__(self):
+        """Custom __del__ to manually stop (but not remove) testing container"""
+        if self.container:
+            self.container.stop()
+        super().__del__()
