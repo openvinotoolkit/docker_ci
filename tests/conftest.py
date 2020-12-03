@@ -208,6 +208,20 @@ def min_product_version(request):
                     f'but get {request.config.getoption("--product_version")}')
 
 
+def pytest_generate_tests(metafunc):
+    is_older = True if metafunc.config.getoption('--product_version') <= '2021.1' else False
+    is_ssd = True if 'ssd' in metafunc.definition.name else False
+    is_centernet = True if 'centernet' in metafunc.definition.name else False
+    if 'sample_name' in metafunc.fixturenames and is_older and is_ssd:
+        metafunc.parametrize('sample_name', ['object_detection_demo_ssd_async/object_detection_demo_ssd_async.py'])
+    elif 'sample_name' in metafunc.fixturenames and is_ssd and not is_older:
+        metafunc.parametrize('sample_name', ['object_detection_demo/object_detection_demo.py -at ssd'])
+    elif 'sample_name' in metafunc.fixturenames and is_centernet and is_older:
+        metafunc.parametrize('sample_name', ['object_detection_demo_centernet/object_detection_demo_centernet.py'])
+    elif 'sample_name' in metafunc.fixturenames and is_centernet and not is_older:
+        metafunc.parametrize('sample_name', ['object_detection_demo/object_detection_demo.py -at centernet'])
+
+
 def pytest_runtest_setup(item):
     for mark in item.iter_markers():
         if 'hddl' in mark.name and sys.platform.startswith('linux'):

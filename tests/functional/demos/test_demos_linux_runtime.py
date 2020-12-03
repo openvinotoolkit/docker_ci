@@ -10,7 +10,7 @@ import pytest
 @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
 @pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
 class TestDemosLinuxRuntime:
-    def test_detection_ssd_python_cpu(self, tester, image, mount_root):
+    def test_detection_ssd_python_cpu(self, tester, image, mount_root, sample_name):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
             'mem_limit': '3g',
@@ -32,14 +32,14 @@ class TestDemosLinuxRuntime:
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
              ], self.test_detection_ssd_python_cpu.__name__, **kwargs,
         )
 
     @pytest.mark.gpu
-    def test_detection_ssd_python_gpu(self, tester, image, mount_root):
+    def test_detection_ssd_python_gpu(self, tester, image, mount_root, sample_name):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
@@ -62,14 +62,14 @@ class TestDemosLinuxRuntime:
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
              ], self.test_detection_ssd_python_gpu.__name__, **kwargs,
         )
 
     @pytest.mark.vpu
-    def test_detection_ssd_python_vpu(self, tester, image, mount_root):
+    def test_detection_ssd_python_vpu(self, tester, image, mount_root, sample_name):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
@@ -95,14 +95,14 @@ class TestDemosLinuxRuntime:
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
              ], self.test_detection_ssd_python_vpu.__name__, **kwargs,
         )
 
     @pytest.mark.hddl
-    def test_detection_ssd_python_hddl(self, tester, image, mount_root):
+    def test_detection_ssd_python_hddl(self, tester, image, mount_root, sample_name):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
@@ -126,7 +126,7 @@ class TestDemosLinuxRuntime:
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show"',
              ], self.test_detection_ssd_python_hddl.__name__, **kwargs,

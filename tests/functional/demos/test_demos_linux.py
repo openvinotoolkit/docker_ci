@@ -267,7 +267,7 @@ class TestDemosLinux:
             self.test_text_cpp_hddl.__name__, **kwargs,
         )
 
-    def test_detection_ssd_python_cpu(self, tester, image):
+    def test_detection_ssd_python_cpu(self, tester, image, sample_name):
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -275,7 +275,7 @@ class TestDemosLinux:
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
              ],
@@ -283,7 +283,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
-    def test_detection_ssd_python_gpu(self, tester, image):
+    def test_detection_ssd_python_gpu(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -292,7 +292,7 @@ class TestDemosLinux:
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
              ],
@@ -300,7 +300,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.vpu
-    def test_detection_ssd_python_vpu(self, tester, image):
+    def test_detection_ssd_python_vpu(self, tester, image, sample_name):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
@@ -310,7 +310,7 @@ class TestDemosLinux:
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
              ],
@@ -318,7 +318,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.hddl
-    def test_detection_ssd_python_hddl(self, tester, image):
+    def test_detection_ssd_python_hddl(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
@@ -328,7 +328,7 @@ class TestDemosLinux:
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show"',
              ],
@@ -487,7 +487,7 @@ class TestDemosLinux:
             self.test_segmentation_python_hddl.__name__, **kwargs,
         )
 
-    def test_object_detection_centernet_python_cpu(self, tester, image):
+    def test_object_detection_centernet_python_cpu(self, tester, image, sample_name):
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -498,7 +498,7 @@ class TestDemosLinux:
              '--name ctdet_coco_dlav0_384 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_centernet/object_detection_demo_centernet.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
              ],
@@ -506,7 +506,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
-    def test_object_detection_centernet_python_gpu(self, tester, image):
+    def test_object_detection_centernet_python_gpu(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -518,7 +518,7 @@ class TestDemosLinux:
              '--name ctdet_coco_dlav0_384 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_centernet/object_detection_demo_centernet.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
              ],
@@ -526,7 +526,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.vpu
-    def test_object_detection_centernet_python_vpu(self, tester, image):
+    def test_object_detection_centernet_python_vpu(self, tester, image, sample_name):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
@@ -539,7 +539,7 @@ class TestDemosLinux:
              '--name ctdet_coco_dlav0_384 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_centernet/object_detection_demo_centernet.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
              ],
@@ -547,7 +547,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.hddl
-    def test_object_detection_centernet_python_hddl(self, tester, image):
+    def test_object_detection_centernet_python_hddl(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
@@ -560,7 +560,7 @@ class TestDemosLinux:
              '--name ctdet_coco_dlav0_384 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_centernet/object_detection_demo_centernet.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show"',
              ],
