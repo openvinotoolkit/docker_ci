@@ -205,8 +205,9 @@ class TestSamplesLinuxRuntime:
              ], self.test_hello_classification_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_min_product_version', ['2021.2'], indirect=True)  # noqa
-    def test_hello_classification_cpp_fail(self, tester, image, mount_root, image_os, _min_product_version, caplog):
+    @pytest.mark.usefixtures('_min_product_version')
+    @pytest.mark.parametrize('_min_product_version', ['2021.2'], indirect=True)
+    def test_hello_classification_cpp_fail(self, tester, image, mount_root, image_os, caplog):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
             'mem_limit': '3g',
