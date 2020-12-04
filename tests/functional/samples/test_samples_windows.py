@@ -6,9 +6,9 @@ import pytest
 from utils.exceptions import FailedTest
 
 
-@pytest.mark.usefixtures('is_image_os', 'is_distribution')
-@pytest.mark.parametrize('is_image_os', ['winserver2019'], indirect=True)
-@pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
+@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
+@pytest.mark.parametrize('_is_image_os', ['winserver2019'], indirect=True)
+@pytest.mark.parametrize('_is_distribution', ['dev', 'proprietary'], indirect=True)
 class TestSamplesWindows:
     def test_hello_classification_cpp_cpu(self, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
@@ -37,8 +37,9 @@ class TestSamplesWindows:
              ], self.test_hello_classification_cpp_cpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('min_product_version', ['2021.2'], indirect=True)
-    def test_hello_classification_cpp_fail(self, tester, image, min_product_version, caplog):
+    @pytest.mark.usefixtures('_min_product_version')
+    @pytest.mark.parametrize('_min_product_version', ['2021.2'], indirect=True)
+    def test_hello_classification_cpp_fail(self, tester, image, caplog):
         kwargs = {'user': 'ContainerAdministrator'}
         with pytest.raises(FailedTest):
             tester.test_docker_image(

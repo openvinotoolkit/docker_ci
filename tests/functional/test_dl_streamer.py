@@ -4,9 +4,9 @@
 import pytest
 
 
-@pytest.mark.usefixtures('is_image_os', 'is_distribution')
-@pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-@pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
+@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
+@pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+@pytest.mark.parametrize('_is_distribution', ['data_dev', 'proprietary'], indirect=True)
 class TestDLStreamerLinux:
     def test_draw_face_attributes_cpp_cpu(self, tester, image):
         kwargs = {'mem_limit': '3g'}
@@ -70,8 +70,9 @@ class TestDLStreamerLinux:
             self.test_draw_face_attributes_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('min_product_version', ['2021.1'], indirect=True)
-    def test_gst_launch_audio_detect(self, tester, image, min_product_version):
+    @pytest.mark.usefixtures('_min_product_version')
+    @pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
+    def test_gst_launch_audio_detect(self, tester, image):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -83,8 +84,9 @@ class TestDLStreamerLinux:
             self.test_gst_launch_audio_detect.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('min_product_version', ['2021.1'], indirect=True)
-    def test_gst_launch_metapublish(self, tester, image, min_product_version):
+    @pytest.mark.usefixtures('_min_product_version')
+    @pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
+    def test_gst_launch_metapublish(self, tester, image):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,

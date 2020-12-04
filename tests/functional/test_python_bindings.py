@@ -7,9 +7,9 @@ import pathlib
 import pytest
 
 
-@pytest.mark.usefixtures('is_image_os', 'is_distribution')
-@pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
-@pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
+@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
+@pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+@pytest.mark.parametrize('_is_distribution', ['runtime'], indirect=True)
 class TestPythonBindings:
     def test_opencv_bindings(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
@@ -45,8 +45,9 @@ class TestPythonBindings:
             self.test_openvino_bindings.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('min_product_version', ['2021.1'], indirect=True)
-    def test_ngraph_bindings(self, tester, image, min_product_version):
+    @pytest.mark.usefixtures('_min_product_version')
+    @pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
+    def test_ngraph_bindings(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         kwargs = {
             'mem_limit': '3g',

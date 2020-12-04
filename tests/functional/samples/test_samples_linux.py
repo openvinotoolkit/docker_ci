@@ -6,9 +6,9 @@ import pytest
 from utils.exceptions import FailedTest
 
 
-@pytest.mark.usefixtures('is_image_os', 'is_distribution')
-@pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-@pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
+@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
+@pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+@pytest.mark.parametrize('_is_distribution', ['dev', 'proprietary'], indirect=True)
 class TestSamplesLinux:
     def test_hello_classification_cpp_cpu(self, tester, image):
         tester.test_docker_image(
@@ -106,8 +106,9 @@ class TestSamplesLinux:
              ], self.test_hello_classification_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('min_product_version', ['2021.2'], indirect=True)
-    def test_hello_classification_cpp_fail(self, tester, image, min_product_version, caplog):
+    @pytest.mark.usefixtures('_min_product_version')
+    @pytest.mark.parametrize('_min_product_version', ['2021.2'], indirect=True)
+    def test_hello_classification_cpp_fail(self, tester, image, caplog):
         with pytest.raises(FailedTest):
             tester.test_docker_image(
                 image,

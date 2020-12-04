@@ -147,8 +147,8 @@ def switch_container_engine(engine):
         pytest.fail(f'Can not switch docker to: {engine}, error: {process.stdout.decode()}')
 
 
-@pytest.fixture(scope='session')  # noqa
-def is_distribution(request):
+@pytest.fixture(scope='session')
+def _is_distribution(request):
     settings = []
     if isinstance(request.param, str):
         settings.append(request.param)
@@ -160,8 +160,8 @@ def is_distribution(request):
                     f'{image_dist}')
 
 
-@pytest.fixture(scope='session')  # noqa
-def is_image_os(request):
+@pytest.fixture(scope='session')
+def _is_image_os(request):
     settings = []
     if isinstance(request.param, str):
         settings.append(request.param)
@@ -173,8 +173,8 @@ def is_image_os(request):
                     f'{image_os}')
 
 
-@pytest.fixture(scope='session')  # noqa
-def is_image(request):
+@pytest.fixture(scope='session')
+def _is_image(request):
     settings = []
     if isinstance(request.param, str):
         settings.append(request.param)
@@ -186,8 +186,8 @@ def is_image(request):
                     f'{image_name}')
 
 
-@pytest.fixture(scope='session')  # noqa
-def is_not_image(request):
+@pytest.fixture(scope='session')
+def _is_not_image(request):
     settings = []
     if isinstance(request.param, str):
         settings.append(request.param)
@@ -199,14 +199,14 @@ def is_not_image(request):
                     f'{image_name}')
 
 
-@pytest.fixture(scope='session')  # noqa
-def is_package_url_specified(request):
+@pytest.fixture(scope='session')
+def _is_package_url_specified(request):
     if not request.config.getoption('--package_url'):
         pytest.skip('Test requires a url for a dev package.')
 
 
-@pytest.fixture(scope='session')  # noqa
-def min_product_version(request):
+@pytest.fixture(scope='session')
+def _min_product_version(request):
     image_version = request.config.getoption('--product_version')
     if image_version is not None and request.param > image_version:
         pytest.skip(f'Test requires the product_version should be {request.param} or newer '

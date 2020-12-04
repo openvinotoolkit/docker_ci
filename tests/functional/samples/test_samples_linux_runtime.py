@@ -15,9 +15,9 @@ def install_build_essential(image_os):
         return'yum update -y', 'yum install -y make', 'yum group install -y "Development Tools"'
 
 
-@pytest.mark.usefixtures('is_image_os', 'is_distribution', 'is_package_url_specified')
-@pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
-@pytest.mark.parametrize('is_distribution', ['runtime'], indirect=True)
+@pytest.mark.usefixtures('_is_image_os', '_is_distribution', '_is_package_url_specified')
+@pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+@pytest.mark.parametrize('_is_distribution', ['runtime'], indirect=True)
 class TestSamplesLinuxRuntime:
     def test_hello_classification_cpp_cpu(self, tester, image, mount_root, image_os):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
@@ -205,8 +205,8 @@ class TestSamplesLinuxRuntime:
              ], self.test_hello_classification_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('min_product_version', ['2021.2'], indirect=True)  # noqa
-    def test_hello_classification_cpp_fail(self, tester, image, mount_root, image_os, min_product_version, caplog):
+    @pytest.mark.parametrize('_min_product_version', ['2021.2'], indirect=True)  # noqa
+    def test_hello_classification_cpp_fail(self, tester, image, mount_root, image_os, _min_product_version, caplog):
         dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
         kwargs = {
             'mem_limit': '3g',

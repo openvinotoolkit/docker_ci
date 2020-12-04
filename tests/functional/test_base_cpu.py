@@ -7,9 +7,9 @@ import pathlib
 import pytest
 
 
-@pytest.mark.usefixtures('is_image_os', 'is_distribution')
-@pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-@pytest.mark.parametrize('is_distribution', ['base'], indirect=True)
+@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
+@pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+@pytest.mark.parametrize('_is_distribution', ['base'], indirect=True)
 def test_base_cpp(tester, image):
     root = pathlib.Path(os.path.realpath(__name__)).parent
     kwargs = {
