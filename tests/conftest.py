@@ -154,9 +154,10 @@ def is_distribution(request):
         settings.append(request.param)
     else:
         settings = request.param
-    if not any(map(lambda x: x in request.config.getoption('--distribution'), settings)):
+    image_dist = request.config.getoption('--distribution')
+    if not any(map(lambda x: x in image_dist, settings)):
         pytest.skip(f'Test requires the product distribution should be {request.param} but get '
-                    f'{request.config.getoption("--distribution")}')
+                    f'{image_dist}')
 
 
 @pytest.fixture(scope='session')  # noqa
@@ -166,9 +167,10 @@ def is_image_os(request):
         settings.append(request.param)
     else:
         settings = request.param
-    if not any(map(lambda x: x in request.config.getoption('--image_os'), settings)):
+    image_os = request.config.getoption('--image_os')
+    if not any(map(lambda x: x in image_os, settings)):
         pytest.skip(f'Test requires the image os should be {request.param} but get '
-                    f'{request.config.getoption("--image_os")}')
+                    f'{image_os}')
 
 
 @pytest.fixture(scope='session')  # noqa
@@ -178,9 +180,10 @@ def is_image(request):
         settings.append(request.param)
     else:
         settings = request.param
-    if not any(map(lambda x: x in request.config.getoption('--image'), settings)):
+    image_name = request.config.getoption('--image')
+    if not any(map(lambda x: x in image_name, settings)):
         pytest.skip(f'Test requires the image should be {request.param} but get '
-                    f'{request.config.getoption("--image")}')
+                    f'{image_name}')
 
 
 @pytest.fixture(scope='session')  # noqa
@@ -190,9 +193,10 @@ def is_not_image(request):
         settings.append(request.param)
     else:
         settings = request.param
-    if any(map(lambda x: x in request.config.getoption('--image'), settings)):
+    image_name = request.config.getoption('--image')
+    if any(map(lambda x: x in image_name, settings)):
         pytest.skip(f'Test requires the image should not be {request.param} but get '
-                    f'{request.config.getoption("--image")}')
+                    f'{image_name}')
 
 
 @pytest.fixture(scope='session')  # noqa
@@ -203,13 +207,17 @@ def is_package_url_specified(request):
 
 @pytest.fixture(scope='session')  # noqa
 def min_product_version(request):
-    if request.param > request.config.getoption('--product_version'):
+    image_version = request.config.getoption('--product_version')
+    if image_version is not None and request.param > image_version:
         pytest.skip(f'Test requires the product_version should be {request.param} or newer '
-                    f'but get {request.config.getoption("--product_version")}')
+                    f'but get {image_version}')
 
 
 def pytest_generate_tests(metafunc):
-    is_older = True if metafunc.config.getoption('--product_version') <= '2021.1' else False
+    image_version = metafunc.config.getoption('--product_version')
+    if image_version is None:
+        return
+    is_older = True if image_version <= '2021.1' else False
     is_ssd = True if 'ssd' in metafunc.definition.name else False
     is_centernet = True if 'centernet' in metafunc.definition.name else False
     if 'sample_name' in metafunc.fixturenames and is_older and is_ssd:

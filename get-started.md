@@ -194,6 +194,8 @@ To start the interactive session, run the following command allows inference on 
 ```bash
 docker run -it --rm <image_name>:latest
 ```
+If your host machine is MacOS* then inference run inside the docker Linux image is available for CPU only.
+
 **Windows image:** (currently support only CPU target):
 ```cmd
 docker run -it --rm <image_name>:latest
