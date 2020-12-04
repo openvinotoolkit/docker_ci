@@ -52,7 +52,7 @@ def pytest_configure(config):
         mount_root.mkdir(parents=True, exist_ok=True)
         dev_package_url = package_url.replace('_runtime_', '_dev_')
         # Temporarily, until there is no dev package for these distros
-        if image_os in ('ubuntu20', 'centos7'):
+        if image_os in ('ubuntu20', 'centos7', 'centos8'):
             dev_package_url = dev_package_url.replace(image_os, 'ubuntu18')
         if package_url.startswith(('http://', 'https://', 'ftp://')):
             if 'win' in image_os:
@@ -91,44 +91,44 @@ def pytest_sessionfinish(session, exitstatus):
     log.info('Cleanup completed')
 
 
-@pytest.fixture(scope='class')
-def dockerfile(request):
-    request.cls.dockerfile = request.config.getoption('--dockerfile')
+@pytest.fixture(scope='session')
+def tester():
+    return DockerImageTester()
 
 
-@pytest.fixture(scope='class', autouse=True)
+@pytest.fixture(scope='session')
 def image(request):
-    request.cls.image = request.config.getoption('--image')
+    return request.config.getoption('--image')
 
 
-@pytest.fixture(scope='class')
-def distribution(request):
-    request.cls.distribution = request.config.getoption('--distribution')
-
-
-@pytest.fixture(scope='class')
-def image_os(request):
-    request.cls.image_os = request.config.getoption('--image_os')
-
-
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='session')
 def mount_root(request):
-    request.cls.mount_root = request.config.getoption('--mount_root')
+    return request.config.getoption('--mount_root')
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='session')
+def image_os(request):
+    return request.config.getoption('--image_os')
+
+
+@pytest.fixture(scope='session')
+def dockerfile(request):
+    return request.config.getoption('--dockerfile')
+
+
+@pytest.fixture(scope='session')
+def distribution(request):
+    return request.config.getoption('--distribution')
+
+
+@pytest.fixture(scope='session')
 def package_url(request):
-    request.cls.package_url = request.config.getoption('--package_url')
+    return request.config.getoption('--package_url')
 
 
-@pytest.fixture(scope='class')
-def docker_api(request):
-    request.cls.docker_api = DockerAPI()
-
-
-@pytest.fixture(scope='class', autouse=True)
-def tester(request):
-    request.cls.tester = DockerImageTester()
+@pytest.fixture(scope='session')
+def docker_api():
+    return DockerAPI()
 
 
 def switch_container_engine(engine):
@@ -147,7 +147,7 @@ def switch_container_engine(engine):
         pytest.fail(f'Can not switch docker to: {engine}, error: {process.stdout.decode()}')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def is_distribution(request):
     settings = []
     if isinstance(request.param, str):
@@ -159,7 +159,7 @@ def is_distribution(request):
                     f'{request.config.getoption("--distribution")}')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def is_image_os(request):
     settings = []
     if isinstance(request.param, str):
@@ -171,7 +171,7 @@ def is_image_os(request):
                     f'{request.config.getoption("--image_os")}')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def is_image(request):
     settings = []
     if isinstance(request.param, str):
@@ -183,7 +183,7 @@ def is_image(request):
                     f'{request.config.getoption("--image")}')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def is_not_image(request):
     settings = []
     if isinstance(request.param, str):
@@ -195,17 +195,31 @@ def is_not_image(request):
                     f'{request.config.getoption("--image")}')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def is_package_url_specified(request):
     if not request.config.getoption('--package_url'):
         pytest.skip('Test requires a url for a dev package.')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session')  # noqa
 def min_product_version(request):
     if request.param > request.config.getoption('--product_version'):
         pytest.skip(f'Test requires the product_version should be {request.param} or newer '
                     f'but get {request.config.getoption("--product_version")}')
+
+
+def pytest_generate_tests(metafunc):
+    is_older = True if metafunc.config.getoption('--product_version') <= '2021.1' else False
+    is_ssd = True if 'ssd' in metafunc.definition.name else False
+    is_centernet = True if 'centernet' in metafunc.definition.name else False
+    if 'sample_name' in metafunc.fixturenames and is_older and is_ssd:
+        metafunc.parametrize('sample_name', ['object_detection_demo_ssd_async/object_detection_demo_ssd_async.py'])
+    elif 'sample_name' in metafunc.fixturenames and is_ssd and not is_older:
+        metafunc.parametrize('sample_name', ['object_detection_demo/object_detection_demo.py -at ssd'])
+    elif 'sample_name' in metafunc.fixturenames and is_centernet and is_older:
+        metafunc.parametrize('sample_name', ['object_detection_demo_centernet/object_detection_demo_centernet.py'])
+    elif 'sample_name' in metafunc.fixturenames and is_centernet and not is_older:
+        metafunc.parametrize('sample_name', ['object_detection_demo/object_detection_demo.py -at centernet'])
 
 
 def pytest_runtest_setup(item):

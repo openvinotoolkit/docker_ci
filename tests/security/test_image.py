@@ -13,24 +13,16 @@ from utils.utilities import download_file
 
 
 class TestSDLImage:
-
-    @pytest.mark.skipif(not sys.platform.startswith('linux'), reason="Windows doesn't support linux images")
-    @pytest.fixture(scope='module')
-    def snyk_pull(self, docker_api):
-        image_name = 'snyk/snyk-cli:1.374.0-docker'
-        docker_api.client.images.pull(image_name)
-        yield
-        docker_api.client.images.remove(image_name)
-
+    @pytest.mark.usefixtures('_snyk_pull')
     @pytest.mark.skipif(not sys.platform.startswith('linux'), reason='Snyk Linux docker image '
                                                                      'can not scan windows images')
     @pytest.mark.skipif(SNYK_TOKEN == '',  # noqa: S105 # nosec
                         reason='Missing snyk token to do test. Specify it in setup.py file')
-    def test_snyk_linux(self, image, snyk_pull, dockerfile):
+    def test_snyk_linux(self, image, dockerfile):
         dockerfile_args = []
         if dockerfile:
             dockerfile_args.extend(['--file=', dockerfile])
-        cmd_line = ['docker', 'run', '--rm', '-e', f'SNYK_API={SNYK_API}',
+        cmd_line = ['docker', 'run', '--rm', '-e', f'SNYK_API={SNYK_API}',  # noqa
                     '-e', f'SNYK_TOKEN={SNYK_TOKEN}', '-e', 'MONITOR=true',
                     '-v', f'{str(pathlib.Path(__file__).parent.parent.parent)}:/project',
                     '-v', '/var/run/docker.sock:/var/run/docker.sock',
@@ -69,3 +61,11 @@ class TestSDLImage:
             pytest.fail(f'SDL snyk issues: {cmd_line}\n{process_out}')
         else:
             print(f'SDL snyk output: {cmd_line}\n{process_out}')
+
+    @pytest.mark.skipif(not sys.platform.startswith('linux'), reason="Windows doesn't support linux images")
+    @pytest.fixture(scope='module')
+    def _snyk_pull(self, docker_api):
+        image_name = 'snyk/snyk-cli:1.374.0-docker'
+        docker_api.client.images.pull(image_name)
+        yield
+        docker_api.client.images.remove(image_name)

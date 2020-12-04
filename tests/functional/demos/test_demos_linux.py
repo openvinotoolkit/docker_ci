@@ -4,12 +4,13 @@
 import pytest
 
 
+@pytest.mark.usefixtures('is_image_os', 'is_distribution')
+@pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+@pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
 class TestDemosLinux:
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_security_cpu(self, is_distribution, is_image_os):
-        self.tester.test_docker_image(
-            self.image,
+    def test_security_cpu(self, tester, image):
+        tester.test_docker_image(
+            image,
             ['apt update',
              'apt install -y sudo',
              '/opt/intel/openvino/deployment_tools/demo/demo_security_barrier_camera.sh -d CPU '
@@ -17,13 +18,11 @@ class TestDemosLinux:
              ], self.test_security_cpu.__name__,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_security_gpu(self, is_distribution, is_image_os):
+    def test_security_gpu(self, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['apt update',
              'apt install -y sudo',
              '/opt/intel/openvino/deployment_tools/demo/demo_security_barrier_camera.sh -d GPU '
@@ -31,14 +30,12 @@ class TestDemosLinux:
              ], self.test_security_gpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_security_vpu(self, is_distribution, is_image_os):
+    def test_security_vpu(self, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['apt update',
              'apt install -y sudo',
              '/opt/intel/openvino/deployment_tools/demo/demo_security_barrier_camera.sh -d MYRIAD '
@@ -46,14 +43,12 @@ class TestDemosLinux:
              ], self.test_security_vpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
-    def test_security_hddl(self, is_distribution, is_image_os):
+    def test_security_hddl(self, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['apt update',
              'apt install -y sudo',
              '/opt/intel/openvino/deployment_tools/demo/demo_security_barrier_camera.sh -d HDDL '
@@ -61,64 +56,54 @@ class TestDemosLinux:
              ], self.test_security_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_squeezenet_cpu(self, is_distribution, is_image_os):
-        self.tester.test_docker_image(
-            self.image,
+    def test_squeezenet_cpu(self, tester, image):
+        tester.test_docker_image(
+            image,
             ['apt update',
              'apt install -y sudo',
              '/opt/intel/openvino/deployment_tools/demo/demo_squeezenet_download_convert_run.sh -d CPU',
              ], self.test_squeezenet_cpu.__name__,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_squeezenet_gpu(self, is_distribution, is_image_os):
+    def test_squeezenet_gpu(self, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['apt update',
              'apt install -y sudo',
              '/opt/intel/openvino/deployment_tools/demo/demo_squeezenet_download_convert_run.sh -d GPU',
              ], self.test_squeezenet_gpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_squeezenet_vpu(self, is_distribution, is_image_os):
+    def test_squeezenet_vpu(self, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['apt update',
              'apt install -y sudo',
              '/opt/intel/openvino/deployment_tools/demo/demo_squeezenet_download_convert_run.sh -d MYRIAD',
              ], self.test_squeezenet_vpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
-    def test_squeezenet_hddl(self, is_distribution, is_image_os):
+    def test_squeezenet_hddl(self, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['apt update',
              'apt install -y sudo',
              '/opt/intel/openvino/deployment_tools/demo/demo_squeezenet_download_convert_run.sh -d HDDL',
              ], self.test_squeezenet_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_crossroad_cpp_cpu(self, is_distribution, is_image_os):
+    def test_crossroad_cpp_cpu(self, tester, image):
         kwargs = {'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac "source /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -135,13 +120,11 @@ class TestDemosLinux:
             self.test_crossroad_cpp_cpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_crossroad_cpp_gpu(self, is_distribution, is_image_os):
+    def test_crossroad_cpp_gpu(self, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -158,14 +141,12 @@ class TestDemosLinux:
             self.test_crossroad_cpp_gpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_crossroad_cpp_vpu(self, is_distribution, is_image_os):
+    def test_crossroad_cpp_vpu(self, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -182,14 +163,12 @@ class TestDemosLinux:
             self.test_crossroad_cpp_vpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
-    def test_crossroad_cpp_hddl(self, is_distribution, is_image_os):
+    def test_crossroad_cpp_hddl(self, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -206,14 +185,11 @@ class TestDemosLinux:
             self.test_crossroad_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_text_cpp_cpu(self, is_distribution, is_image_os):
+    def test_text_cpp_cpu(self, tester, image):
         kwargs = {'mem_limit': '3g'}
-        options = '-dt image' if '2021' not in self.image else ''  # legacy option, removed in 2021R
-
-        self.tester.test_docker_image(
-            self.image,
+        options = '-dt image' if '2021' not in image else ''  # legacy option, removed in 2021R
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -228,14 +204,12 @@ class TestDemosLinux:
             self.test_text_cpp_cpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_text_cpp_gpu(self, is_distribution, is_image_os):
+    def test_text_cpp_gpu(self, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        options = '-dt image' if '2021' not in self.image else ''
-        self.tester.test_docker_image(
-            self.image,
+        options = '-dt image' if '2021' not in image else ''
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -250,15 +224,13 @@ class TestDemosLinux:
             self.test_text_cpp_gpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_text_cpp_vpu(self, is_distribution, is_image_os):
+    def test_text_cpp_vpu(self, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        options = '-dt image' if '2021' not in self.image else ''
-        self.tester.test_docker_image(
-            self.image,
+        options = '-dt image' if '2021' not in image else ''
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -273,16 +245,14 @@ class TestDemosLinux:
             self.test_text_cpp_vpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
     @pytest.mark.xfail(reason='38557 issue')
-    def test_text_cpp_hddl(self, is_distribution, is_image_os):
+    def test_text_cpp_hddl(self, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        options = '-dt image' if '2021' not in self.image else ''
-        self.tester.test_docker_image(
-            self.image,
+        options = '-dt image' if '2021' not in image else ''
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -297,88 +267,78 @@ class TestDemosLinux:
             self.test_text_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_detection_ssd_python_cpu(self, is_distribution, is_image_os):
-        self.tester.test_docker_image(
-            self.image,
+    def test_detection_ssd_python_cpu(self, tester, image, sample_name):
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
              ],
             self.test_detection_ssd_python_cpu.__name__,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_detection_ssd_python_gpu(self, is_distribution, is_image_os):
+    def test_detection_ssd_python_gpu(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
              ],
             self.test_detection_ssd_python_gpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_detection_ssd_python_vpu(self, is_distribution, is_image_os):
+    def test_detection_ssd_python_vpu(self, tester, image, sample_name):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
              ],
             self.test_detection_ssd_python_vpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
-    def test_detection_ssd_python_hddl(self, is_distribution, is_image_os):
+    def test_detection_ssd_python_hddl(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_ssd_async/object_detection_demo_ssd_async.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show"',
              ],
             self.test_detection_ssd_python_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_segmentation_cpp_cpu(self, is_distribution, is_image_os):
+    def test_segmentation_cpp_cpu(self, tester, image):
         kwargs = {'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -394,13 +354,11 @@ class TestDemosLinux:
             self.test_segmentation_cpp_cpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_segmentation_cpp_gpu(self, is_distribution, is_image_os):
+    def test_segmentation_cpp_gpu(self, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -416,14 +374,12 @@ class TestDemosLinux:
             self.test_segmentation_cpp_gpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_segmentation_cpp_vpu(self, is_distribution, is_image_os):
+    def test_segmentation_cpp_vpu(self, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -439,15 +395,13 @@ class TestDemosLinux:
             self.test_segmentation_cpp_vpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
     @pytest.mark.xfail(reason='38557 issue')
-    def test_segmentation_cpp_hddl(self, is_distribution, is_image_os):
+    def test_segmentation_cpp_hddl(self, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'apt update && apt install make && '
              '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
@@ -463,12 +417,10 @@ class TestDemosLinux:
             self.test_segmentation_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.xfail(reason='38545 issue')
-    def test_segmentation_python_cpu(self, is_distribution, is_image_os):
-        self.tester.test_docker_image(
-            self.image,
+    def test_segmentation_python_cpu(self, tester, image):
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
@@ -481,13 +433,11 @@ class TestDemosLinux:
             self.test_segmentation_python_cpu.__name__,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_segmentation_python_gpu(self, is_distribution, is_image_os):
+    def test_segmentation_python_gpu(self, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
@@ -500,14 +450,12 @@ class TestDemosLinux:
             self.test_segmentation_python_gpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_segmentation_python_vpu(self, is_distribution, is_image_os):
+    def test_segmentation_python_vpu(self, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
@@ -520,15 +468,13 @@ class TestDemosLinux:
             self.test_segmentation_python_vpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
     @pytest.mark.xfail(reason='38557 issue')
-    def test_segmentation_python_hddl(self, is_distribution, is_image_os):
+    def test_segmentation_python_hddl(self, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
@@ -541,11 +487,9 @@ class TestDemosLinux:
             self.test_segmentation_python_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    def test_object_detection_centernet_python_cpu(self, is_distribution, is_image_os):
-        self.tester.test_docker_image(
-            self.image,
+    def test_object_detection_centernet_python_cpu(self, tester, image, sample_name):
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name ctdet_coco_dlav0_384 --precision FP16"',
@@ -554,20 +498,18 @@ class TestDemosLinux:
              '--name ctdet_coco_dlav0_384 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_centernet/object_detection_demo_centernet.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
              ],
             self.test_object_detection_centernet_python_cpu.__name__,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.gpu
-    def test_object_detection_centernet_python_gpu(self, is_distribution, is_image_os):
+    def test_object_detection_centernet_python_gpu(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name ctdet_coco_dlav0_384 --precision FP16"',
@@ -576,21 +518,19 @@ class TestDemosLinux:
              '--name ctdet_coco_dlav0_384 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_centernet/object_detection_demo_centernet.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
              ],
             self.test_object_detection_centernet_python_gpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
-    def test_object_detection_centernet_python_vpu(self, is_distribution, is_image_os):
+    def test_object_detection_centernet_python_vpu(self, tester, image, sample_name):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name ctdet_coco_dlav0_384 --precision FP16"',
@@ -599,21 +539,19 @@ class TestDemosLinux:
              '--name ctdet_coco_dlav0_384 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_centernet/object_detection_demo_centernet.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
              ],
             self.test_object_detection_centernet_python_vpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
-    def test_object_detection_centernet_python_hddl(self, is_distribution, is_image_os):
+    def test_object_detection_centernet_python_hddl(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name ctdet_coco_dlav0_384 --precision FP16"',
@@ -622,19 +560,17 @@ class TestDemosLinux:
              '--name ctdet_coco_dlav0_384 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'object_detection_demo_centernet/object_detection_demo_centernet.py '
+             f'{sample_name} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show"',
              ],
             self.test_object_detection_centernet_python_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.xfail(reason='39131 issue')
-    def test_action_recognition_python_cpu(self, is_distribution, is_image_os):
-        self.tester.test_docker_image(
-            self.image,
+    def test_action_recognition_python_cpu(self, tester, image):
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
              '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
              'https://github.com/intel-iot-devkit/sample-videos/blob/master/'
@@ -654,13 +590,11 @@ class TestDemosLinux:
             self.test_action_recognition_python_cpu.__name__,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.xfail(reason='39131 issue')
     @pytest.mark.gpu
-    def test_action_recognition_python_gpu(self, is_distribution, is_image_os):
-        self.tester.test_docker_image(
-            self.image,
+    def test_action_recognition_python_gpu(self, tester, image):
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
              '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
              'https://github.com/intel-iot-devkit/sample-videos/blob/master/'
@@ -680,15 +614,13 @@ class TestDemosLinux:
             self.test_action_recognition_python_gpu.__name__,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.vpu
     @pytest.mark.xfail(reason='39131 issue')
-    def test_action_recognition_python_vpu(self, is_distribution, is_image_os):
+    def test_action_recognition_python_vpu(self, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
              '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
              'https://github.com/intel-iot-devkit/sample-videos/blob/master/'
@@ -708,15 +640,13 @@ class TestDemosLinux:
             self.test_action_recognition_python_vpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_distribution', ['dev', 'proprietary'], indirect=True)
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
     @pytest.mark.hddl
     @pytest.mark.xfail(reason='39131 issue')
-    def test_action_recognition_python_hddl(self, is_distribution, is_image_os):
+    def test_action_recognition_python_hddl(self, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
              '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
              'https://github.com/intel-iot-devkit/sample-videos/blob/master/'

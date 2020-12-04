@@ -4,13 +4,14 @@
 import pytest
 
 
+@pytest.mark.usefixtures('is_image_os', 'is_distribution')
+@pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+@pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
 class TestDLStreamerLinux:
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
-    def test_draw_face_attributes_cpp_cpu(self, is_image_os, is_distribution):
+    def test_draw_face_attributes_cpp_cpu(self, tester, image):
         kwargs = {'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
@@ -21,13 +22,11 @@ class TestDLStreamerLinux:
             self.test_draw_face_attributes_cpp_cpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     @pytest.mark.gpu
-    def test_draw_face_attributes_cpp_gpu(self, is_image_os, is_distribution):
+    def test_draw_face_attributes_cpp_gpu(self, tester, image):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
@@ -38,15 +37,13 @@ class TestDLStreamerLinux:
             self.test_draw_face_attributes_cpp_gpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     @pytest.mark.vpu
     @pytest.mark.xfail(reason='Failed to construct OpenVINOImageInference. Can not init Myriad device: NC_ERROR.')
-    def test_draw_face_attributes_cpp_vpu(self, is_image_os, is_distribution):
+    def test_draw_face_attributes_cpp_vpu(self, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
@@ -57,14 +54,12 @@ class TestDLStreamerLinux:
             self.test_draw_face_attributes_cpp_vpu.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     @pytest.mark.hddl
-    def test_draw_face_attributes_cpp_hddl(self, is_image_os, is_distribution):
+    def test_draw_face_attributes_cpp_hddl(self, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
@@ -75,13 +70,11 @@ class TestDLStreamerLinux:
             self.test_draw_face_attributes_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('min_product_version', ['2021.1'], indirect=True)
-    def test_gst_launch_audio_detect(self, is_image_os, is_distribution, min_product_version):
+    def test_gst_launch_audio_detect(self, tester, image, min_product_version):
         kwargs = {'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
              'apt update', 'apt install wget',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -90,13 +83,11 @@ class TestDLStreamerLinux:
             self.test_gst_launch_audio_detect.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-    @pytest.mark.parametrize('is_distribution', ['data_dev', 'proprietary'], indirect=True)
     @pytest.mark.parametrize('min_product_version', ['2021.1'], indirect=True)
-    def test_gst_launch_metapublish(self, is_image_os, is_distribution, min_product_version):
+    def test_gst_launch_metapublish(self, tester, image, min_product_version):
         kwargs = {'mem_limit': '3g'}
-        self.tester.test_docker_image(
-            self.image,
+        tester.test_docker_image(
+            image,
             ['/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples && '

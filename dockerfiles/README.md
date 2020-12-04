@@ -5,6 +5,7 @@ This repository folder contains Dockerfiles to build an docker image with the In
  - `ubuntu18` folder (Ubuntu* 18.04 LTS)
  - `ubuntu20` folder (Ubuntu* 20.04 LTS)
  - `centos7` folder (CentOS* 7.6)
+ - `centos8` folder (CentOS* 8.2) 
  - `winserver2019` folder (Windows* Server Core base OS LTSC 2019)
 
 ## Supported devices and distributions
@@ -18,10 +19,10 @@ This repository folder contains Dockerfiles to build an docker image with the In
  - HDDL (_Prerequisite_: run HDDL daemon on the host machine, follow the [configuration guide for HDDL device](../install_guide_vpu_hddl.md))
  
  **Distributions:**
- - **runtime**: IE core, nGraph, OpenCV, plugins, DL Streamer runtimes
+ - **runtime**: IE core, nGraph, OpenCV, plugins
  - **data_runtime**: runtime + DL Streamer runtimes
  - **dev**: IE core, nGraph, OpenCV, plugins, samples, demo, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Model downloader 
- - **data_dev**: runtime + dev + Media SDK, Speech Libraries and End-to-End Speech Demos
+ - **data_dev**: data_runtime + dev + Media SDK, Speech Libraries and End-to-End Speech Demos
  - **base** (only for CPU): IE core, nGraph
  - **proprietary**: data_dev + installer
  

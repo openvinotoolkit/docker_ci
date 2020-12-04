@@ -20,11 +20,7 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Setting up Python codestyle checks/test dependencies
         if: ${{ always() }}
-        run: >
-          python -m pip install flake8 flake8-annotations-complexity flake8-bandit flake8-broken-line bandit
-          flake8-bugbear flake8-comprehensions flake8-debugger flake8-eradicate flake8-executable flake8-print mypy
-          flake8-string-format flake8_builtins flake8_coding flake8_commas flake8_pep3101 flake8_quotes import-order
-          naming radon flake8-rst-docstrings more-itertools packaging pluggy py pytest pytest-html pytest-metadata
+        run: python -m pip install -r requirements_dev.txt
 
       - name: Running Bandit
         if: ${{ matrix.os == 'ubuntu-18.04' }}

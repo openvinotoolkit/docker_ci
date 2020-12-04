@@ -30,7 +30,7 @@ default_args = {
 }
 
 
-@pytest.mark.parametrize('args, res', [
+@pytest.mark.parametrize(('args', 'res'), [
     pytest.param(
         {
             'mode': 'build',
@@ -218,7 +218,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
             pytest.fail(f'{key}: {out[key]} != {res[key]}')
 
 
-@ pytest.mark.parametrize('args, parser_out', [
+@pytest.mark.parametrize(('args', 'parser_out'), [
     pytest.param(
         {
             'mode': 'gen_dockerfile',
@@ -369,7 +369,7 @@ def test_arg_parser_error(mock_parser, args, capsys, parser_out):
         pytest.fail(err)
 
 
-@ pytest.mark.parametrize('args, exists, is_symlink, parser_out', [
+@pytest.mark.parametrize(('args', 'exists', 'is_symlink', 'parser_out'), [  # noqa CFQ002
     pytest.param(
         {
             'mode': 'all',
@@ -439,7 +439,7 @@ def test_local_path(mock_is_symlink, mock_exists, mock_parser, args, exists, is_
         pytest.fail(err)
 
 
-@ pytest.mark.parametrize('args, is_symlink, parser_out', [
+@pytest.mark.parametrize(('args', 'is_symlink', 'parser_out'), [
     pytest.param(
         {
             'mode': 'all',

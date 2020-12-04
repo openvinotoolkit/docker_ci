@@ -12,7 +12,7 @@ on:
         required: true
         default: 'dev'
       os:
-        description: 'OS for Docker image: ubuntu18, ubuntu20'
+        description: 'OS for Docker image: ubuntu18, ubuntu20, centos7, centos8'
         required: true
         default: 'ubuntu18'
       args:

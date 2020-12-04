@@ -12,19 +12,10 @@ from utils.utilities import download_file, unzip_file
 
 
 class TestLinterImage:
-
+    @pytest.mark.usefixtures('_dive_pull')
     @pytest.mark.skipif(not (sys.platform.startswith('linux') or sys.platform.startswith('darwin')),
                         reason='Windows has separate windows/linux docker images engine')
-    @pytest.fixture(scope='module')
-    def dive_pull(self, docker_api):
-        image_name = 'wagoodman/dive:latest'
-        docker_api.client.images.pull(image_name)
-        yield
-        docker_api.client.images.remove(image_name)
-
-    @pytest.mark.skipif(not (sys.platform.startswith('linux') or sys.platform.startswith('darwin')),
-                        reason='Windows has separate windows/linux docker images engine')
-    def test_dive_linux(self, image, dive_pull):
+    def test_dive_linux(self, image):
         cmd_line = ['docker', 'run', '--rm', '-v', '/var/run/docker.sock:/var/run/docker.sock',
                     '-e', 'CI=true', 'wagoodman/dive:latest', image]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec
@@ -46,3 +37,12 @@ class TestLinterImage:
             pytest.fail(f'Linter dive issues: {process.stdout.decode()}')
         else:
             print(f'Linter dive output: {process.stdout.decode()}')
+
+    @pytest.mark.skipif(not (sys.platform.startswith('linux') or sys.platform.startswith('darwin')),
+                        reason='Windows has separate windows/linux docker images engine')
+    @pytest.fixture(scope='module')
+    def _dive_pull(self, docker_api):
+        image_name = 'wagoodman/dive:latest'
+        docker_api.client.images.pull(image_name)
+        yield
+        docker_api.client.images.remove(image_name)
