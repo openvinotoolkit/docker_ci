@@ -163,10 +163,20 @@ The framework installs 3d party docker images or executable files to run securit
 ```
 To only test your local image:
 ```bash
-python3 docker_openvino.py test --tags <image_name:tag> -os <image_os> --distribution <type>
+python3 docker_openvino.py test --tags <image_name:product_version> -os <image_os> --distribution <type>
 ``` 
 
-**Mandatory:** Options tag and distribution are mandatory. Image operation system is 'ubuntu18' by default.
+**Mandatory:** Options tag and distribution are mandatory. Image operating system is 'ubuntu18' by default.
+
+Tests can also be run directly using pytest (options image, distribution, image_os are mandatory):
+```bash
+pytest tests\functional --image <image_name:product_version> --distribution <type> --image_os <image_os> --product_version <product_version>
+```
+You can filter tests by `-k` (example: `-k "cpu or gpu or vpu"`) or `-m` options (run `pytest --markers` to show available markers).
+Warning: pytest doesn't perform validation of the command line arguments what can give less clear error messages than docker_ci
+
+**Note:** You can run tests in parallel by adding `-n auto` option (see [xdist](https://pypi.org/project/pytest-xdist/) documentation for more info).  
+Need install pytest-xdist package before: `pip install pytest-xdist`
 
 ## All in one
 **Prerequisite:** previously login to your registry: `docker login <registry_url>`
