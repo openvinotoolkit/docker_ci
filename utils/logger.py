@@ -135,7 +135,7 @@ class UniqueFileHandler(logging.FileHandler):
         if not dir_:
             dir_ = pathlib.Path(__file__).parent / 'logs'
         if not pathlib.Path(dir_).exists():
-            pathlib.Path(dir_).mkdir()
+            pathlib.Path(dir_).mkdir(parents=True)
         super().__init__(str(pathlib.Path(dir_) / filename))
         kwargs['filename'] = pathlib.Path(dir_) / filename
         kwargs['mode'] = 'w+'
