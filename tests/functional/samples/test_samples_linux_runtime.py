@@ -12,11 +12,11 @@ def install_build_essential(image_os):
     if 'ubuntu' in image_os:
         return 'apt update', 'apt install -y build-essential'
     elif 'centos' in image_os:
-        return'yum update -y', 'yum install -y make', 'yum group install -y "Development Tools"'
+        return 'yum update -y', 'yum install -y make', 'yum group install -y "Development Tools"'
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution', '_is_package_url_specified')
-@pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
+@pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20', 'centos7', 'centos8'], indirect=True)
 @pytest.mark.parametrize('_is_distribution', ['runtime'], indirect=True)
 class TestSamplesLinuxRuntime:
     def test_hello_classification_cpp_cpu(self, tester, image, mount_root, image_os):

@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM centos:8.2.2004 AS base
+FROM registry.access.redhat.com/ubi8/ubi:8.2 AS base
 
 # hadolint ignore=DL3002
 USER root
@@ -38,9 +38,9 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
 
 
 # -----------------
-FROM centos:8.2.2004 AS ov_base
+FROM registry.access.redhat.com/ubi8/ubi:8.2 AS ov_base
 
-LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on CentOS 8.2"
+LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL 8.2"
 LABEL Vendor="Intel Corporation"
 
 USER root
@@ -49,7 +49,7 @@ WORKDIR /
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # Creating user openvino and adding it to group "users"
-RUN useradd -ms /bin/bash -G video,users openvino && \
+RUN useradd -ms /bin/bash -G users openvino && \
     chown openvino -R /home/openvino
 
 RUN mkdir /opt/intel
@@ -71,7 +71,6 @@ RUN curl -L https://github.com/GNOME/gtk/archive/gtk-3-0.zip --output gtk-3-0.zi
 
 # runtime package
 # for CPU
-
 
 # Post-installation cleanup and setting up OpenVINO environment variables
 RUN rm -rf /tmp && mkdir /tmp

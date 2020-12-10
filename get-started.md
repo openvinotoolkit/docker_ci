@@ -198,7 +198,7 @@ Available modes: gen_dockerfile, build, build_test, test, deploy, **all**(by def
 
 ## Run built image
 
-To start the interactive session, run the following command allows inference on the CPU:
+To start the interactive session, run the following command allows inference on the **CPU**:
 
 **Linux image:** 
 ```bash
@@ -206,7 +206,7 @@ docker run -it --rm <image_name>:latest
 ```
 If your host machine is MacOS* then inference run inside the docker Linux image is available for CPU only.
 
-**Windows image:** (currently support only CPU target):
+**Windows image:**:
 ```cmd
 docker run -it --rm <image_name>:latest
 ```
@@ -217,20 +217,23 @@ If you want to try some demos then run image with the root privileges (some addi
 ```bash
 docker run -itu root:root --rm <image_name>:latest /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d CPU -sample-options -no_show"
 ```
-**Windows image:** (currently support only CPU target):
+**Windows image:**:
 ```cmd
 docker run -itu ContainerAdministrator --rm <image_name>:latest cmd /S /C "cd deployment_tools\demo && demo_security_barrier_camera.bat -d CPU -sample-options -no_show"
 ```
+Please follow [Build and Run the Docker* Image for GPU](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html) instruction to get **GPU** access from Windows container. 
 
-To enable GPU access, make sure you've built the image with support for GPU and run:
+**Linux image:** 
+
+To enable **GPU** access, make sure you've built the image with support for GPU and run:
 ```bash
 docker run -itu root:root --rm --device /dev/dri:/dev/dri <image_name>:latest
 ```
-To run inference on the VPU, make sure you've built the image with support for VPU and run:
+To run inference on the **VPU**, make sure you've built the image with support for VPU and run:
 ```bash
 docker run -itu root:root --rm --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb <image_name>:latest
 ```
-To run inference on the HDDL, make sure you've built the image with support for HDDL and setup HDDL driver on host machine, follow the [configuration guide for HDDL device](./install_guide_vpu_hddl.md):
+To run inference on the **HDDL**, make sure you've built the image with support for HDDL and setup HDDL driver on host machine, follow the [configuration guide for HDDL device](./install_guide_vpu_hddl.md):
 ```bash
 docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp <image_name>:latest
 ```
