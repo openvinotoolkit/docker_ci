@@ -37,24 +37,6 @@ INTEL_OCL_RELEASE = {
     },
 }
 INTEL_OPENVINO_VERSION = {
-    '2019.3': {
-        'winserver2019':
-            {
-                'dev': '',
-                'runtime': '',
-                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16039/'
-                               'w_openvino_toolkit_p_2019.3.379.exe',
-            },
-        'ubuntu18':
-            {
-                'dev': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16057/'
-                       'l_openvino_toolkit_dev_ubuntu18_p_2019.3.376.tgz',
-                'runtime': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16057/'
-                           'l_openvino_toolkit_runtime_ubuntu18_p_2019.3.376.tgz',
-                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/16057/'
-                               'l_openvino_toolkit_p_2019.3.376.tgz',
-            },
-    },
     '2020.1': {
         'winserver2019':
             {

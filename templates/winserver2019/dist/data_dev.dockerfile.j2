@@ -23,9 +23,11 @@ RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\accuracy_checker\requirements.in" && `
     python "%INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\accuracy_checker\setup.py" install
 
+{% if '2021.2' not in build_id %}
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_toolkit
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\requirements.txt" && `
     python "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\setup.py" install
+{% endif %}
 
 {% if '2020' in build_id %}
 RUN python -m pip uninstall -y opencv-python && `
