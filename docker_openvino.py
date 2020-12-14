@@ -177,6 +177,7 @@ class Launcher:
                 self.args.image_json_path.parent.mkdir()
             with self.args.image_json_path.open(mode='w', encoding='utf-8') as f:
                 json.dump({'image_name': self.image_name,
+                           'product_version': self.args.product_version,
                            'distribution': self.args.distribution,
                            'os': self.args.os}, f, ensure_ascii=False, indent=4)
         except Exception:
