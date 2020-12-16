@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS ov_base
 
-LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
+LABEL Description="This is the proprietary image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
 LABEL Vendor="Intel Corporation"
 
 # Restore the default Windows shell for correct batch processing.
@@ -60,47 +60,26 @@ WORKDIR ${TEMP_DIR}
 # hadolint ignore=DL3020
 ADD ${package_url} ${TEMP_DIR}
 
-# install product by copying archive content
+# install product by installation script
 ARG build_id
-ENV INTEL_OPENVINO_DIR C:\intel\openvino_${build_id}
+ENV INTEL_OPENVINO_DIR C:\intel
 
 RUN powershell.exe -Command `
-    Expand-Archive -Path "./*.zip" -DestinationPath "%INTEL_OPENVINO_DIR%" -Force ; `
-    Remove-Item "./*.zip" -Force
+    Start-Process "./*.exe" -ArgumentList '--s --a install --eula=accept --installdir=%INTEL_OPENVINO_DIR% --output=%TMP%\openvino_install_out.log --components=OPENVINO_COMMON,INFERENCE_ENGINE,INFERENCE_ENGINE_SDK,INFERENCE_ENGINE_SAMPLES,OMZ_TOOLS,POT,INFERENCE_ENGINE_CPU,INFERENCE_ENGINE_GPU,MODEL_OPTIMIZER,OMZ_DEV,OPENCV_PYTHON,OPENCV_RUNTIME,OPENCV,DOCS,SETUPVARS,VC_REDIST_2017_X64,icl_redist' -Wait
+
+ENV INTEL_OPENVINO_DIR C:\intel\openvino_${build_id}
 
 RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
                     {`
                         New-Item -Path C:\intel\openvino -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%`
-                    }`
-                    if ( -not (Test-Path -Path C:\intel\openvino_2021) ) `
-                    {`
-                        New-Item -Path C:\intel\openvino_2021 -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%`
-                    }`
-                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\inference_engine)`
-                    {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\inference_engine -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\inference_engine`
-                    }`
-                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\models\intel)`
-                    {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\models\intel ;`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\models\intel`
-                    }`
-                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\downloader)`
-                    {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\tools\model_downloader -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\downloader`
-                    }`
-                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\demos)`
-                    {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\inference_engine\demos -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\demos`
-                    }`
-                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo)`
-                    {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\libs\open_model_zoo -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo`
                     }
+
+# Post-installation cleanup
+RUN rmdir /S /Q "%USERPROFILE%\Downloads\Intel"
 
 # for CPU
 
-# dev package
+# proprietary package
 WORKDIR ${INTEL_OPENVINO_DIR}
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt" && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\openvino\tools\benchmark\requirements.txt" && `
@@ -126,6 +105,8 @@ RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_toolkit
 RUN python -m pip install --no-cache-dir scipy==1.2.1 jstyleson==0.0.2 pandas==0.24.2 hyperopt==0.1.2 addict==2.2.1 chainer==7.7.0 && `
     python -m pip install . --no-deps
+
+
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 

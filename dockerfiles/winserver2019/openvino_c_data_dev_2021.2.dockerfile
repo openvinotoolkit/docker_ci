@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS ov_base
 
-LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
+LABEL Description="This is the data_dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
 LABEL Vendor="Intel Corporation"
 
 # Restore the default Windows shell for correct batch processing.
@@ -100,7 +100,7 @@ RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
 
 # for CPU
 
-# dev package
+# data dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt" && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\openvino\tools\benchmark\requirements.txt" && `
@@ -117,7 +117,6 @@ RUN powershell.exe -Command `
     Invoke-WebRequest -URI https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\model_optimizer\\pypi-kenlm.tar.gz
 
 
-
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\open_model_zoo\tools\accuracy_checker
 RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\accuracy_checker\requirements.in" && `
@@ -126,6 +125,7 @@ RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_toolkit
 RUN python -m pip install --no-cache-dir scipy==1.2.1 jstyleson==0.0.2 pandas==0.24.2 hyperopt==0.1.2 addict==2.2.1 chainer==7.7.0 && `
     python -m pip install . --no-deps
+
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 
