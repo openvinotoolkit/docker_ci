@@ -22,7 +22,7 @@ This repository folder contains Dockerfiles to build an docker image with the In
  **Distributions:**
  - **runtime**: IE core, nGraph, OpenCV, plugins
  - **data_runtime**: runtime + DL Streamer runtimes
- - **dev**: IE core, nGraph, OpenCV, plugins, samples, demo, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Model downloader 
+ - **dev**: IE core, nGraph, OpenCV, plugins, samples, demo, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Open Model Zoo tools (downloader, converter) 
  - **data_dev**: data_runtime + dev + Media SDK, Speech Libraries and End-to-End Speech Demos
  - **base** (only for CPU): IE core, nGraph
  - **proprietary**: data_dev + installer
@@ -31,8 +31,8 @@ This repository folder contains Dockerfiles to build an docker image with the In
  * _runtime, data_runtime, dev, data_dev_ distributions based on archive package of OpenVINO product. You can just remove unnecessary parts.
  * _base_ distribution is created by [OpenVINO™ Deployment Manager](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_deployment_manager_tool.html).
  * _proprietary_ distribution based on installer package of OpenVINO product. You can configure installation `COMPONENTS`, follow [Command-Line Silent Instructions](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_linux.html)
- * _proprietary, dev, data_dev_ distributions images contains Python virtual environment in `/opt/intel/venv_tf2` folder for Model Optimizer and Model downloader, 
- because tensorflow 1 and tensorflow 2 are not compatible. Please follow this [guide](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments) to activate and use it.
+ * _proprietary, dev, data_dev_ distributions images contain Python TensorFlow* 2. virtual environment in `/opt/intel/venv_tf2` folder for Model Optimizer and Model Downloader/Converter, 
+ because TensorFlow* 1. (default in the image) and TensorFlow* 2. are not compatible. Please follow this [guide](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments) to activate and use it.
 
 ## How to build
 
