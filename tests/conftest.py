@@ -6,6 +6,7 @@ import pathlib
 import shutil
 import subprocess  # nosec
 import sys
+import os
 
 import pytest
 from utils.docker_api import DockerAPI
@@ -84,7 +85,7 @@ def pytest_configure(config):
 def pytest_sessionfinish(session, exitstatus):
     log.info(f'Tests failed={session.testsfailed} collected={session.testscollected}')
     temp_folder = pathlib.Path(__file__).parent / 'tmp'
-    if not temp_folder.exists():
+    if not temp_folder.exists() or os.getenv('PYTEST_XDIST_WORKER', 'master') != 'master':
         return
     log.info('Removing mount dependencies')
     shutil.rmtree(temp_folder, ignore_errors=True)
