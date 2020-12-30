@@ -185,9 +185,9 @@ class TestDemosLinux:
             self.test_crossroad_cpp_hddl.__name__, **kwargs,
         )
 
-    def test_text_cpp_cpu(self, tester, image):
+    def test_text_cpp_cpu(self, tester, image, product_version):
         kwargs = {'mem_limit': '3g'}
-        options = '-dt image' if '2021' not in image else ''  # legacy option, removed in 2021R
+        options = '-dt image' if '2021' not in product_version else ''  # legacy option, removed in 2021R
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -205,9 +205,9 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
-    def test_text_cpp_gpu(self, tester, image):
+    def test_text_cpp_gpu(self, tester, image, product_version):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
-        options = '-dt image' if '2021' not in image else ''
+        options = '-dt image' if '2021' not in product_version else ''
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -225,7 +225,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.vpu
-    def test_text_cpp_vpu(self, tester, image):
+    def test_text_cpp_vpu(self, tester, image, product_version):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         options = '-dt image' if '2021' not in image else ''
@@ -247,10 +247,10 @@ class TestDemosLinux:
 
     @pytest.mark.hddl
     @pytest.mark.xfail(reason='38557 issue')
-    def test_text_cpp_hddl(self, tester, image):
+    def test_text_cpp_hddl(self, tester, image, product_version):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        options = '-dt image' if '2021' not in image else ''
+        options = '-dt image' if '2021' not in product_version else ''
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
