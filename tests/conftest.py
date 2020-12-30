@@ -102,6 +102,11 @@ def image(request):
 
 
 @pytest.fixture(scope='session')
+def product_version(request):
+    return request.config.getoption('--product_version')
+
+
+@pytest.fixture(scope='session')
 def mount_root(request):
     return request.config.getoption('--mount_root')
 
