@@ -24,6 +24,7 @@ class DockerImageTester(DockerAPI):
     def __init__(self):
         super().__init__()
         self.container: typing.Optional[Container] = None
+        log.setLevel(logging.DEBUG)
 
     def test_docker_image(self,
                           image: typing.Tuple[Image, str],
