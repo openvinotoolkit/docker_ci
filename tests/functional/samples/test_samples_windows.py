@@ -33,7 +33,7 @@ class TestSamplesWindows:
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet.xml '
-             'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car.png CPU',
+             'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp CPU',
              ], self.test_hello_classification_cpp_cpu.__name__, **kwargs,
         )
 
