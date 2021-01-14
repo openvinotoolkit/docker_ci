@@ -160,11 +160,8 @@ ENV VENV_TF2 /opt/intel/venv_tf2
 RUN ${PYTHON_VER} -m venv ${VENV_TF2} && \
     source ${VENV_TF2}/bin/activate && \
     pip install --no-cache-dir -U pip==19.3.1 && \
-    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/requirements_tf2.txt && \
-    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/downloader/requirements-tensorflow.in && \
-    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/downloader/requirements.in && \
-    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/downloader/requirements-caffe2.in && \
-    pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/downloader/requirements-pytorch.in && \
+    find "${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/" -type f \( -name "*requirements*.txt" -and -not -name "*requirements_tf.txt" \) -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
+    find "${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/downloader/" -type f -name "*requirements*.in" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \; && \
     deactivate
 
 
