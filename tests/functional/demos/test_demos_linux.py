@@ -417,7 +417,6 @@ class TestDemosLinux:
             self.test_segmentation_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.xfail(reason='38545 issue')
     def test_segmentation_python_cpu(self, tester, image):
         tester.test_docker_image(
             image,

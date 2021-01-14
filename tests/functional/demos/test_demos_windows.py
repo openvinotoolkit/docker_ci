@@ -72,7 +72,6 @@ class TestDemosWindows:
             self.test_text_cpp_cpu.__name__, **kwargs,
         )
 
-    @pytest.mark.xfail(reason='38545 issue')
     def test_detection_ssd_python_cpu(self, tester, image, sample_name):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
