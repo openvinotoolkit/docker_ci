@@ -73,7 +73,7 @@ class TestDemosWindows:
         )
 
     @pytest.mark.xfail(reason='38545 issue')
-    def test_detection_ssd_python_cpu(self, tester, image):
+    def test_detection_ssd_python_cpu(self, tester, image, sample_name):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
@@ -83,7 +83,8 @@ class TestDemosWindows:
              '--name vehicle-detection-adas-0002 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\'
-             'python_demos\\\\object_detection_demo_ssd_async\\\\object_detection_demo_ssd_async.py '
+             'python_demos\\\\'
+             f'{sample_name} '
              '-m C:\\\\intel\\\\openvino\\\\intel\\\\vehicle-detection-adas-0002\\\\FP16\\\\'
              'vehicle-detection-adas-0002.xml '
              '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU --no_show',
@@ -132,7 +133,7 @@ class TestDemosWindows:
             self.test_segmentation_python_cpu.__name__, **kwargs,
         )
 
-    def test_object_detection_centernet_python_cpu(self, tester, image):
+    def test_object_detection_centernet_python_cpu(self, tester, image, sample_name):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
@@ -146,7 +147,8 @@ class TestDemosWindows:
              '--name ctdet_coco_dlav0_384 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\'
-             'python_demos\\\\object_detection_demo_centernet\\\\object_detection_demo_centernet.py '
+             'python_demos\\\\'
+             f'{sample_name} '
              '-m C:\\\\intel\\\\openvino\\\\public\\\\ctdet_coco_dlav0_384\\\\FP16\\\\ctdet_coco_dlav0_384.xml '
              '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU --no_show',
              ],
