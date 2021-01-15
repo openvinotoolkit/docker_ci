@@ -228,7 +228,7 @@ class TestDemosLinux:
     def test_text_cpp_vpu(self, tester, image, product_version):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        options = '-dt image' if '2021' not in image else ''
+        options = '-dt image' if '2021' not in product_version else ''
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
