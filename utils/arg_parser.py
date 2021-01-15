@@ -408,8 +408,9 @@ def parse_args(name: str, description: str):  # noqa
                         args.product_version = product_version.group()  # save product version YYY.U
                     else:
                         parser.error(f'Cannot find package url for {args.product_version} version')
+                distribution = 'runtime' if args.distribution == 'data_runtime' else args.distribution
                 with contextlib.suppress(KeyError):
-                    args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][args.distribution]
+                    args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][distribution]
                 if not args.package_url:
                     parser.error(f'Cannot find package url for {args.product_version} version '
                                  f'and {args.distribution} distribution. Please specify --package_url directly.')

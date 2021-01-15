@@ -10,9 +10,6 @@ RUN apt-get update && \
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
-# download source for udev LGPL package
-COPY --from=base /tmp/systemd.zip /thirdparty/systemd.zip
-
 WORKDIR /opt/libusb-1.0.22/libusb
 RUN /bin/mkdir -p '/usr/local/lib' && \
     /bin/bash ../libtool   --mode=install /usr/bin/install -c   libusb-1.0.la '/usr/local/lib' && \

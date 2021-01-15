@@ -18,21 +18,6 @@ RUN apt-get update && \
 WORKDIR /tmp
 RUN curl -L https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz --output pypi-kenlm.tar.gz
 
-# download source for LGPL packages
-WORKDIR /thirdparty
-
-RUN apt-get update && \
-    apt-get install -y git && \
-    rm -rf /var/lib/apt/lists/* && \
-    git clone https://salsa.debian.org/toolchain-team/gcc-defaults.git && \
-    curl -L https://github.com/GNOME/gtk/archive/gtk-3-0.zip --output gtk-3-0.zip
-
-
-WORKDIR /tmp
-# download source for udev LGPL package
-RUN curl -L https://github.com/systemd/systemd/archive/master.zip --output systemd.zip
-
-
 # get product from URL
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
@@ -123,8 +108,6 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 COPY --from=base /opt/intel /opt/intel
 
 WORKDIR /thirdparty
-COPY --from=base /thirdparty /thirdparty
-
 
 ARG DEPS=dpkg-dev
 ARG LGPL_DEPS="g++ \
@@ -137,7 +120,7 @@ RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y curl && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime && \
     apt-get install -y --no-install-recommends ${DEPS} ${LGPL_DEPS} && \
-    apt-get source ${LGPL_DEPS} || true && \
+    apt-get source --download-only ${LGPL_DEPS} || true && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -185,9 +168,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
-
-# download source for udev LGPL package
-COPY --from=base /tmp/systemd.zip /thirdparty/systemd.zip
 
 WORKDIR /opt/libusb-1.0.22/libusb
 RUN /bin/mkdir -p '/usr/local/lib' && \
