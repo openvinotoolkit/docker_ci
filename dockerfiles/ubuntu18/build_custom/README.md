@@ -1,5 +1,10 @@
 # Build custom Intel® Distribution of OpenVINO™ toolkit Docker image
-This repository folder contains Dockerfiles to build an docker image with the Intel® Distribution of OpenVINO™ toolkit.  
+This repository folder contains Dockerfile to build a docker image with the Intel® Distribution of OpenVINO™ toolkit.  
+
+## Components
+* [OpenVINO™ Toolkit - Deep Learning Deployment Toolkit repository](https://github.com/openvinotoolkit/openvino)
+* [OpenCV: Open Source Computer Vision Library](https://github.com/opencv/opencv)
+* [OpenVINO™ Toolkit - Open Model Zoo repository](https://github.com/openvinotoolkit/open_model_zoo)
 
 ## How to build
 Go to the folder with the Dockerfile and run:
@@ -12,7 +17,17 @@ If you want to rebuild the entire image, use docker `--no-cache` option:
 docker build --no-cache -t image:tag .
 ```
 
-You can manually specify cmake parameters to build a custom package from source code using these files:  
+To specify a branches with source code use docker `--build-arg` option to override the following variables:  
+`openvino_branch`, `opencv_branch`, `omz_branch`  
+By default, they are equal to "master".
+
+**For example**:  
+This command builds an image with OpenVINO™ 2021.2 release.
+```
+docker build -t openvino:2021.2 --build-arg openvino_branch="releases/2021/2" .
+```
+
+You can manually setup cmake parameters to build a custom package from source code using these files:  
 * [openvino_cmake.txt](openvino_cmake.txt)
 * [opencv_cmake.txt](opencv_cmake.txt)
 
@@ -23,13 +38,14 @@ Do not override PATH/PREFIX options. This can break a build of package.
 ### Build stages
 The docker image is built using a multi-step build:
 1. **setup_openvino**  
-    Clone [OpenVINO git repository](https://github.com/openvinotoolkit/openvino) with submodules and install build dependencies.
+    Clone OpenVINO™ git repository with submodules and install build dependencies.
 2. **build_openvino**  
-    Build OpenVINO (CPU, iGPU, VPU support) with the parameters specified in openvino_cmake.txt.  
+    Build OpenVINO™ (CPU, iGPU, VPU support) with the parameters specified in openvino_cmake.txt.  
+    It doesn't include OpenCV and Open Model Zoo.
 3. **copy_openvino**  
-    Copy OpenVINO build to clear Ubuntu:18.04 image.
+    Copy OpenVINO™ build to clear Ubuntu:18.04 image.
 4. **openvino**  
-    Install OpenVINO dependencies. Now you can use it.
+    Install OpenVINO™ dependencies. Now you can use it.
 5. **opencv**  
     Build and setup OpenCV with the parameters specified in opencv_cmake.txt.
 6. **open_model_zoo**  
@@ -62,6 +78,10 @@ Please follow [Run built image](../get-started.md#run-built-image) section in Do
 
 ## Prebuilt images
 Prebuilt images are available on [Docker Hub](https://hub.docker.com/u/openvino)
+
+## License
+This Dockerfile contains third-party components with different licenses.  
+If you are distributing the container as a whole, then you are responsible for license compliance for all of the software it contains.
 
 ## Documentation
 * [Install Intel® Distribution of OpenVINO™ toolkit for Linux* from a Docker* Image](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_linux.html)
