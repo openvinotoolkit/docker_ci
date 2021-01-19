@@ -17,8 +17,10 @@ RUN apt-get update; \
 # Set location
 RUN ln -snf "/usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k)" /etc/localtime;
 
+ARG openvino_branch="master"
+
 WORKDIR /tmp
-RUN git clone --recurse-submodules https://github.com/openvinotoolkit/openvino.git;
+RUN git clone --recurse-submodules https://github.com/openvinotoolkit/openvino.git -b ${openvino_branch};
 
 WORKDIR /tmp/openvino
 RUN chmod +x install_build_dependencies.sh; \
@@ -128,8 +130,10 @@ RUN apt-get update; \
         libswscale-dev; \
     rm -rf /var/lib/apt/lists/*;
 
+ARG opencv_branch="master"
+
 WORKDIR /tmp
-RUN git clone https://github.com/opencv/opencv.git;
+RUN git clone https://github.com/opencv/opencv.git -b ${opencv_branch};
 
 COPY opencv_cmake.txt /tmp
 
@@ -153,8 +157,10 @@ CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM opencv AS open_model_zoo
 
+ARG omz_branch="master"
+
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools
-RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git; \
+RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git -b ${omz_branch}; \
     pip3 install --no-cache-dir -r open_model_zoo/tools/downloader/requirements.in; \
     rm -r open_model_zoo/.git; \
     ln -s ../open_model_zoo/demos inference_engine/demos;
