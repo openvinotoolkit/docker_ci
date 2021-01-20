@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2020 Intel Corporation
+# Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:20.04 AS base
 
@@ -17,6 +17,7 @@ RUN apt-get update && \
 # download source for pypi-kenlm LGPL package
 WORKDIR /tmp
 RUN curl -L https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz --output pypi-kenlm.tar.gz
+
 
 # get product from URL
 ARG package_url
@@ -109,6 +110,7 @@ COPY --from=base /opt/intel /opt/intel
 
 WORKDIR /thirdparty
 
+
 ARG DEPS=dpkg-dev
 ARG LGPL_DEPS="g++ \
                gcc \
@@ -116,12 +118,32 @@ ARG LGPL_DEPS="g++ \
 
 
 # hadolint ignore=DL3008
-RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y curl && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime && \
-    apt-get install -y --no-install-recommends ${DEPS} ${LGPL_DEPS} && \
-    apt-get source --download-only ${LGPL_DEPS} || true && \
+    apt-get install -y --no-install-recommends ${DEPS} && \
+    dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     rm -rf /var/lib/apt/lists/*
+
+ARG INSTALL_SOURCES="yes"
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    if [ "$INSTALL_SOURCES" = "yes" ]; then \
+      sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+      apt-get update && \
+	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > all_packages.txt && \
+	  grep -v -f base_packages.txt all_packages.txt | while read line; do \
+	  package=`echo $line`; \
+	  name=(${package//:/ }); \
+      grep -l GPL /usr/share/doc/${name[0]}/copyright; \
+      exit_status=$?; \
+	  if [ $exit_status -eq 0 ]; then \
+	    apt-get source -q --download-only $package;  \
+	  fi \
+      done && \
+      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
 
 
 # setup Python
@@ -158,14 +180,29 @@ RUN apt-get update && \
     rm -rf ${TEMP_DIR}
 
 # for VPU
-ARG DEPENDENCIES=udev
+ARG LGPL_DEPS=udev
 
 WORKDIR /thirdparty
+
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
-    apt-get source --download-only ${DEPENDENCIES} && \
-    rm -rf /var/lib/apt/lists/*
+    dpkg --get-selections | grep -v deinstall | awk '{print $1}' > no_vpu_packages.txt && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    if [ "$INSTALL_SOURCES" = "yes" ]; then \
+      sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+      apt-get update && \
+	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > vpu_packages.txt && \
+	  grep -v -f no_vpu_packages.txt vpu_packages.txt | while read line; do \
+	  package=`echo $line`; \
+	  name=(${package//:/ }); \
+      grep -l GPL /usr/share/doc/${name[0]}/copyright; \
+      exit_status=$?; \
+	  if [ $exit_status -eq 0 ]; then \
+	    apt-get source -q --download-only $package;  \
+	  fi \
+      done && \
+      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
