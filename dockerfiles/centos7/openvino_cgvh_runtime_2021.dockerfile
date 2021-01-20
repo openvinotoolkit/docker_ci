@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2020 Intel Corporation
+# Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 FROM centos:7.6.1810 AS base
 
@@ -11,6 +11,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 # hadolint ignore=DL3031, DL3033
 RUN yum update -y && yum install -y curl ca-certificates && \
     yum clean all && rm -rf /var/cache/yum
+
 
 # get product from URL
 ARG package_url
@@ -35,6 +36,7 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
 
+
 # for GPU
 ARG GMMLIB
 ARG IGC_CORE
@@ -49,6 +51,7 @@ RUN curl -L https://sourceforge.net/projects/intel-compute-runtime/files/${INTEL
     curl -L https://sourceforge.net/projects/intel-compute-runtime/files/${INTEL_OPENCL}/centos-7/intel-igc-opencl-${IGC_OPENCL}-1.el7.x86_64.rpm/download -o intel-igc-opencl-${IGC_OPENCL}-1.el7.x86_64.rpm && \
     curl -L https://sourceforge.net/projects/intel-compute-runtime/files/${INTEL_OPENCL}/centos-7/intel-igc-opencl-devel-${IGC_OPENCL}-1.el7.x86_64.rpm/download -o  intel-igc-opencl-devel-${IGC_OPENCL}-1.el7.x86_64.rpm && \
     curl -L https://sourceforge.net/projects/intel-compute-runtime/files/${INTEL_OPENCL}/centos-7/intel-opencl-${INTEL_OPENCL}-1.el7.x86_64.rpm/download -o intel-opencl-${INTEL_OPENCL}-1.el7.x86_64.rpm
+
 
 # for VPU
 ARG BUILD_DEPENDENCIES="autoconf \
@@ -94,13 +97,25 @@ COPY --from=base /opt/intel /opt/intel
 ARG LGPL_DEPS="gcc-c++ \
                gtk2"
 
-# hadolint ignore=DL3031, DL3033
-RUN yum -y update && yum install -y ${LGPL_DEPS} && \
-    yum clean all && rm -rf /var/cache/yum
+ARG INSTALL_SOURCES="yes"
 
 WORKDIR /thirdparty
-RUN yumdownloader --source -y ${LGPL_DEPS} && \
-    yum clean all && rm -rf /var/cache/yum
+# hadolint ignore=DL3031, DL3033
+RUN yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
+	yum install -y ${LGPL_DEPS} && \
+	if [ "$INSTALL_SOURCES" = "yes" ]; then \
+		rpm -qa --qf "%{name}\n" > all_packages.txt && \
+		grep -v -f base_packages.txt all_packages.txt | while read line; do \
+		package=`echo $line`; \
+		rpm -qa $package --qf "%{name}: %{license}\n" | grep GPL; \
+		exit_status=$?; \
+		if [ $exit_status -eq 0 ]; then \
+		    yumdownloader --source -y $package;  \
+		fi \
+      done && \
+      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+	yum clean all && rm -rf /var/cache/yum && rm -rf *.txt
+
 
 # setup Python
 ENV PYTHON_VER python3.6
@@ -142,10 +157,6 @@ ARG DEPENDENCIES=udev
 
 # hadolint ignore=DL3031, DL3033
 RUN yum update -y && yum install -y ${DEPENDENCIES} && \
-    yum clean all && rm -rf /var/cache/yum
-
-WORKDIR /thirdparty
-RUN yumdownloader --source -y ${DEPENDENCIES} && \
     yum clean all && rm -rf /var/cache/yum
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
