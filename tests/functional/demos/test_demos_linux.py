@@ -566,11 +566,10 @@ class TestDemosLinux:
             self.test_object_detection_centernet_python_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.xfail(reason='39131 issue')
     def test_action_recognition_python_cpu(self, tester, image):
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
+            ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl ffmpeg"',
              '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
              'https://github.com/intel-iot-devkit/sample-videos/blob/master/'
              'head-pose-face-detection-female.mp4?raw=true"',
@@ -614,13 +613,12 @@ class TestDemosLinux:
         )
 
     @pytest.mark.vpu
-    @pytest.mark.xfail(reason='39131 issue')
     def test_action_recognition_python_vpu(self, tester, image):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
+            ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl ffmpeg"',
              '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
              'https://github.com/intel-iot-devkit/sample-videos/blob/master/'
              'head-pose-face-detection-female.mp4?raw=true"',
@@ -640,13 +638,12 @@ class TestDemosLinux:
         )
 
     @pytest.mark.hddl
-    @pytest.mark.xfail(reason='39131 issue')
     def test_action_recognition_python_hddl(self, tester, image):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
+            ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl ffmpeg"',
              '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
              'https://github.com/intel-iot-devkit/sample-videos/blob/master/'
              'head-pose-face-detection-female.mp4?raw=true"',
