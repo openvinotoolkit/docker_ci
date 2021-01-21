@@ -588,12 +588,12 @@ class TestDemosLinux:
             self.test_action_recognition_python_cpu.__name__,
         )
 
-    @pytest.mark.xfail(reason='39131 issue')
     @pytest.mark.gpu
     def test_action_recognition_python_gpu(self, tester, image):
+        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl"',
+            ['/bin/bash -ac "apt update && apt install -y --no-install-recommends curl ffmpeg"',
              '/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
              'https://github.com/intel-iot-devkit/sample-videos/blob/master/'
              'head-pose-face-detection-female.mp4?raw=true"',
@@ -609,7 +609,7 @@ class TestDemosLinux:
              'action-recognition-0001-decoder.xml '
              '-i /root/action_recognition.mp4 -d GPU --no_show"',
              ],
-            self.test_action_recognition_python_gpu.__name__,
+            self.test_action_recognition_python_gpu.__name__, **kwargs,
         )
 
     @pytest.mark.vpu
