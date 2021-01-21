@@ -6,6 +6,7 @@ FROM ubuntu:18.04 AS setup_openvino
 RUN apt-get update; \
     apt-get install -y --no-install-recommends \
         git \
+        git-lfs \
         sudo \
         curl \
         python3-dev \
@@ -20,7 +21,8 @@ RUN ln -snf "/usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k)" /etc/loca
 ARG openvino_branch="master"
 
 WORKDIR /tmp
-RUN git clone --recurse-submodules --shallow-submodules https://github.com/openvinotoolkit/openvino.git --depth 1 -b ${openvino_branch}
+RUN git-lfs install; \
+    git clone --recurse-submodules --shallow-submodules https://github.com/openvinotoolkit/openvino.git --depth 1 -b ${openvino_branch}
 
 WORKDIR /tmp/openvino
 RUN chmod +x install_build_dependencies.sh; \
