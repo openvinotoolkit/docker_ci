@@ -10,8 +10,8 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl ca-certificates && \
-    rm -rf /var/lib/apt/lists/* && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 # download source for pypi-kenlm LGPL package
 WORKDIR /tmp
@@ -132,7 +132,7 @@ ARG INSTALL_SOURCES="yes"
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y curl && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl tzdata && \
     apt-get install -y --no-install-recommends ${DEPS} && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     rm -rf /var/lib/apt/lists/*
@@ -256,7 +256,6 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
 
 RUN apt-get update && \
     apt-get autoremove -y dpkg-dev && \
-    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
 USER openvino
