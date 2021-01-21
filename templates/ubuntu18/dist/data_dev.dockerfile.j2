@@ -30,6 +30,7 @@ RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
 
+# download source for pypi-kenlm LGPL package
 COPY --from=base /tmp/pypi-kenlm.tar.gz /thirdparty/pypi-kenlm.tar.gz
 
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
