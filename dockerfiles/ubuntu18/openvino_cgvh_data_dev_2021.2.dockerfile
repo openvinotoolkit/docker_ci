@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2020 Intel Corporation
+# Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:18.04 AS base
 
@@ -16,27 +16,6 @@ RUN apt-get update && \
 # download source for pypi-kenlm LGPL package
 WORKDIR /tmp
 RUN curl -L https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz --output pypi-kenlm.tar.gz
-
-# download source for LGPL packages
-WORKDIR /thirdparty
-
-RUN apt-get update && \
-    apt-get install -y git && \
-    rm -rf /var/lib/apt/lists/* && \
-    git clone https://salsa.debian.org/toolchain-team/gcc-defaults.git && \
-    curl -L https://github.com/GNOME/gtk/archive/gtk-3-0.zip --output gtk-3-0.zip && \
-    git clone https://git.launchpad.net/~ubuntu-core-dev/ubuntu/+source/glibc && \
-    curl -L https://github.com/GStreamer/gstreamer/archive/1.0.zip --output gstreamer1.0.zip && \
-    curl -L https://github.com/GStreamer/gst-plugins-base/archive/1.0.zip --output gst-plugins-base1.0.zip && \
-    curl -L https://github.com/GStreamer/gst-plugins-good/archive/1.0.zip --output gst-plugins-good1.0.zip && \
-    curl -L https://github.com/GStreamer/gst-plugins-bad/archive/1.0.zip --output gst-plugins-bad1.0.zip && \
-    curl -L https://github.com/GStreamer/gstreamer-vaapi/archive/master.zip --output gstreamer-vaapi.zip && \
-    curl -L https://github.com/FFmpeg/FFmpeg/archive/master.zip --output ffmpeg.zip
-
-
-WORKDIR /tmp
-# download source for udev LGPL package
-RUN curl -L https://github.com/systemd/systemd/archive/master.zip --output systemd.zip
 
 
 # get product from URL
@@ -123,7 +102,6 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 COPY --from=base /opt/intel /opt/intel
 
 WORKDIR /thirdparty
-COPY --from=base /thirdparty /thirdparty
 
 
 ARG DEPS="dpkg-dev \
@@ -150,13 +128,33 @@ ARG LGPL_DEPS="g++ \
                libglib2.0"
 
 
+ARG INSTALL_SOURCES="yes"
+
 # hadolint ignore=DL3008
-RUN sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y curl && ln -snf /usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k) /etc/localtime && \
-    apt-get install -y --no-install-recommends ${DEPS} ${LGPL_DEPS} && \
-    apt-get source --download-only ${LGPL_DEPS} || true && \
+    apt-get install -y --no-install-recommends ${DEPS} && \
+    dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     rm -rf /var/lib/apt/lists/*
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    if [ "$INSTALL_SOURCES" = "yes" ]; then \
+      sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+      apt-get update && \
+	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > all_packages.txt && \
+	  grep -v -f base_packages.txt all_packages.txt | while read line; do \
+	  package=`echo $line`; \
+	  name=(${package//:/ }); \
+      grep -l GPL /usr/share/doc/${name[0]}/copyright; \
+      exit_status=$?; \
+	  if [ $exit_status -eq 0 ]; then \
+	    apt-get source -q --download-only $package;  \
+	  fi \
+      done && \
+      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
 
 
 # setup Python
@@ -177,6 +175,7 @@ WORKDIR /tmp
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
     find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o \( -name "*requirements*.in" -and -not -name "*requirements-tensorflow.in" \) \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
+
 
 ENV VENV_TF2 /opt/intel/venv_tf2
 
@@ -218,18 +217,31 @@ RUN apt-get update && \
     rm -rf ${TEMP_DIR}
 
 # for VPU
-ARG DEPENDENCIES=udev
+ARG LGPL_DEPS=udev
 
 WORKDIR /thirdparty
+
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ${DEPENDENCIES} && \
-    rm -rf /var/lib/apt/lists/*
+    dpkg --get-selections | grep -v deinstall | awk '{print $1}' > no_vpu_packages.txt && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    if [ "$INSTALL_SOURCES" = "yes" ]; then \
+      sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+      apt-get update && \
+	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > vpu_packages.txt && \
+	  grep -v -f no_vpu_packages.txt vpu_packages.txt | while read line; do \
+	  package=`echo $line`; \
+	  name=(${package//:/ }); \
+      grep -l GPL /usr/share/doc/${name[0]}/copyright; \
+      exit_status=$?; \
+	  if [ $exit_status -eq 0 ]; then \
+	    apt-get source -q --download-only $package;  \
+	  fi \
+      done && \
+      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
-
-# download source for udev LGPL package
-COPY --from=base /tmp/systemd.zip /thirdparty/systemd.zip
 
 WORKDIR /opt/libusb-1.0.22/libusb
 RUN /bin/mkdir -p '/usr/local/lib' && \
