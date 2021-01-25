@@ -38,7 +38,7 @@ def pytest_configure(config):
         'markers', 'gpu: run tests on GPU device',
     )
     dist = config.getoption('--distribution')
-    if dist == 'runtime':
+    if dist.endswith('runtime'):
         log.info('Setting up runtime image dependencies')
         mount_root = pathlib.Path(config.getoption('--mount_root'))
         package_url = config.getoption('--package_url')
