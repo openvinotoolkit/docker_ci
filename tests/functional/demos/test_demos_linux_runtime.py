@@ -10,8 +10,7 @@ import pytest
 @pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
 @pytest.mark.parametrize('_is_distribution', ['runtime'], indirect=True)
 class TestDemosLinuxRuntime:
-    def test_detection_ssd_python_cpu(self, tester, image, mount_root, sample_name):
-        dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
+    def test_detection_ssd_python_cpu(self, tester, image, dev_root, sample_name):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
@@ -39,8 +38,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.gpu
-    def test_detection_ssd_python_gpu(self, tester, image, mount_root, sample_name):
-        dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
+    def test_detection_ssd_python_gpu(self, tester, image, dev_root, sample_name):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -69,8 +67,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.vpu
-    def test_detection_ssd_python_vpu(self, tester, image, mount_root, sample_name):
-        dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
+    def test_detection_ssd_python_vpu(self, tester, image, dev_root, sample_name):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
             'mem_limit': '3g',
@@ -102,8 +99,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.hddl
-    def test_detection_ssd_python_hddl(self, tester, image, mount_root, sample_name):
-        dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
+    def test_detection_ssd_python_hddl(self, tester, image, dev_root, sample_name):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
@@ -132,8 +128,7 @@ class TestDemosLinuxRuntime:
              ], self.test_detection_ssd_python_hddl.__name__, **kwargs,
         )
 
-    def test_segmentation_python_cpu(self, tester, image, mount_root):
-        dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
+    def test_segmentation_python_cpu(self, tester, image, dev_root):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
@@ -163,8 +158,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.gpu
-    def test_segmentation_python_gpu(self, tester, image, mount_root):
-        dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
+    def test_segmentation_python_gpu(self, tester, image, dev_root):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -195,8 +189,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.vpu
-    def test_segmentation_python_vpu(self, tester, image, mount_root):
-        dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
+    def test_segmentation_python_vpu(self, tester, image, dev_root):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
             'mem_limit': '3g',
@@ -231,8 +224,7 @@ class TestDemosLinuxRuntime:
 
     @pytest.mark.hddl
     @pytest.mark.xfail(reason='38557 issue')
-    def test_segmentation_python_hddl(self, tester, image, mount_root):
-        dev_root = (pathlib.Path(mount_root) / 'openvino_dev').iterdir().__next__()
+    def test_segmentation_python_hddl(self, tester, image, dev_root):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',

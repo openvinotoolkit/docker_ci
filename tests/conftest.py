@@ -137,6 +137,17 @@ def docker_api():
     return DockerAPI()
 
 
+@pytest.fixture(scope='session')
+def dev_root(request):
+    openvino_dev_path = pathlib.Path(request.config.getoption('--mount_root')) / 'openvino_dev'
+    dev_root_path = openvino_dev_path.iterdir().__next__()
+    if dev_root_path.exists() and sum(f.stat().st_size for f in openvino_dev_path.rglob('*')) < 10000000:
+        pytest.skip(f'The test was skipped because the mount dependencies folder was not removed completely. '
+                    f'Try to remove it manually via "sudo rm -r {openvino_dev_path}"')
+
+    return dev_root_path
+
+
 def switch_container_engine(engine):
     """Switch Windows docker Engine to -SwitchLinuxEngine or -SwitchWindowsEngine"""
     cmd_line = ['cmd', '/c', 'where', 'docker']
