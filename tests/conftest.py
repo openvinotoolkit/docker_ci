@@ -38,7 +38,7 @@ def pytest_configure(config):
         'markers', 'gpu: run tests on GPU device',
     )
     dist = config.getoption('--distribution')
-    if dist == 'runtime':
+    if dist.endswith('runtime'):
         log.info('Setting up runtime image dependencies')
         mount_root = pathlib.Path(config.getoption('--mount_root'))
         package_url = config.getoption('--package_url')
@@ -135,6 +135,17 @@ def package_url(request):
 @pytest.fixture(scope='session')
 def docker_api():
     return DockerAPI()
+
+
+@pytest.fixture(scope='session')
+def dev_root(request):
+    openvino_dev_path = pathlib.Path(request.config.getoption('--mount_root')) / 'openvino_dev'
+    dev_root_path = openvino_dev_path.iterdir().__next__()
+    if dev_root_path.exists() and sum(f.stat().st_size for f in openvino_dev_path.rglob('*')) < 10000000:
+        pytest.skip(f'The test was skipped because the mount dependencies folder was not removed completely. '
+                    f'Try to remove it manually via "sudo rm -r {openvino_dev_path}"')
+
+    return dev_root_path
 
 
 def switch_container_engine(engine):
