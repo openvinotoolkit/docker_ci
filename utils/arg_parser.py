@@ -471,7 +471,7 @@ def parse_args(name: str, description: str):  # noqa
                          'Please specify --product_version directly.')
 
     if args.distribution == 'custom' and not args.package_url:
-        args.package_url = INTEL_OPENVINO_VERSION[list(INTEL_OPENVINO_VERSION.keys())[-1]]['ubuntu18']['dev']
+        args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]['dev']
 
     if args.distribution == 'custom':
         if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'opencv'],
