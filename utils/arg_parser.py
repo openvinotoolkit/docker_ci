@@ -6,6 +6,7 @@ import argparse
 import contextlib
 import pathlib
 import re
+import subprocess
 import sys
 import typing
 
@@ -191,7 +192,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-dist',
             '--distribution',
-            choices=['base', 'runtime', 'data_runtime', 'dev', 'data_dev', 'internal_dev', 'proprietary'],
+            choices=['base', 'runtime', 'data_runtime', 'dev', 'data_dev', 'internal_dev', 'proprietary', 'custom'],
             required=' test' in parser.prog,
             help='Distribution type: dev, data_dev, runtime, data_runtime, internal_dev, '
                  'proprietary (product pkg with an installer) or '
@@ -321,6 +322,9 @@ def parse_args(name: str, description: str):  # noqa
     if args.mode == 'test' and not (args.tags and args.distribution):
         parser.error('Options --tags and --distribution are mandatory. Image operation system is "ubuntu18"'
                      ' by default.')
+
+    if args.mode != 'test' and args.distribution == 'custom':
+        parser.error('Only the test mode is available for the custom distribution.')
 
     if args.mode == 'test' and 'runtime' in args.distribution and not args.package_url:
         print('\nYou can run samples/demos on runtime docker image. '
@@ -460,8 +464,23 @@ def parse_args(name: str, description: str):  # noqa
         if match:
             # save product version YYYY.U
             args.product_version = match.group(1)
+        elif args.distribution == 'custom':
+            args.product_version = list(INTEL_OPENVINO_VERSION.keys())[-1]
         else:
             parser.error('Cannot get product_version from the package URL and docker image. '
                          'Please specify --product_version directly.')
+
+    if args.distribution == 'custom' and not args.package_url:
+        args.package_url = INTEL_OPENVINO_VERSION[list(INTEL_OPENVINO_VERSION.keys())[-1]]['ubuntu18']['dev']
+
+    if args.distribution == 'custom':
+        if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'opencv'],
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:  # nosec
+            args.distribution = 'custom-no-cv'
+        elif subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'deployment_tools/open_model_zoo'],
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:  # nosec
+            args.distribution = 'custom-no-omz'
+        else:
+            args.distribution = 'custom-full'
 
     return args
