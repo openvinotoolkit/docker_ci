@@ -7,8 +7,8 @@ from utils.exceptions import FailedTest
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
-@pytest.mark.parametrize('_is_image_os', ['winserver2019'], indirect=True)
-@pytest.mark.parametrize('_is_distribution', ['dev', 'proprietary'], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('winserver2019')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
 class TestSamplesWindows:
     def test_hello_classification_cpp_cpu(self, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}

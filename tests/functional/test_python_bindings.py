@@ -8,8 +8,8 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
-@pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
-@pytest.mark.parametrize('_is_distribution', ['runtime'], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('runtime')], indirect=True)
 class TestPythonBindings:
     def test_opencv_bindings(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent

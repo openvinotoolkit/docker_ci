@@ -5,8 +5,8 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution', '_is_package_url_specified')
-@pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20', 'centos7'], indirect=True)
-@pytest.mark.parametrize('_is_distribution', ['data_runtime'], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('data_runtime')], indirect=True)
 class TestDemosLinuxDataRuntime:
     def test_detection_ssd_python_cpu(self, tester, image, dev_root, sample_name):
         kwargs = {
