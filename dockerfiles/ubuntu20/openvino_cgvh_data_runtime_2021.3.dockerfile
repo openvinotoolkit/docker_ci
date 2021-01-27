@@ -17,13 +17,73 @@ RUN apt-get update && \
 WORKDIR /tmp
 RUN curl -L https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz --output pypi-kenlm.tar.gz
 
-{% for pre_command in pre_commands %}
-{{ pre_command|safe }}
-{% endfor %}
+
+# get product from URL
+ARG package_url
+ARG TEMP_DIR=/tmp/openvino_installer
+
+WORKDIR ${TEMP_DIR}
+# hadolint ignore=DL3020
+ADD ${package_url} ${TEMP_DIR}
+
+# install product by copying archive content
+ARG TEMP_DIR=/tmp/openvino_installer
+ENV INTEL_OPENVINO_DIR /opt/intel/openvino
+
+RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
+    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
+    OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
+    OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
+    mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
+    cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
+    rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
+
+
+
+# for GPU
+ARG GMMLIB
+ARG IGC_CORE
+ARG IGC_OPENCL
+ARG INTEL_OPENCL
+ARG INTEL_OCLOC
+ARG TEMP_DIR=/tmp/opencl
+
+WORKDIR ${TEMP_DIR}
+RUN curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-gmmlib_${GMMLIB}_amd64.deb" --output "intel-gmmlib_${GMMLIB}_amd64.deb" && \
+    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-core_${IGC_CORE}_amd64.deb" --output "intel-igc-core_${IGC_CORE}_amd64.deb" && \
+    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-opencl_${IGC_OPENCL}_amd64.deb" --output "intel-igc-opencl_${IGC_OPENCL}_amd64.deb" && \
+    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-opencl_${INTEL_OPENCL}_amd64.deb" --output "intel-opencl_${INTEL_OPENCL}_amd64.deb" && \
+    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-ocloc_${INTEL_OCLOC}_amd64.deb" --output "intel-ocloc_${INTEL_OCLOC}_amd64.deb"
+
+
+# for VPU
+ARG BUILD_DEPENDENCIES="autoconf \
+                        automake \
+                        build-essential \
+                        libtool \
+                        unzip"
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ${BUILD_DEPENDENCIES} && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt
+RUN curl -L https://github.com/libusb/libusb/archive/v1.0.22.zip --output v1.0.22.zip && \
+    unzip v1.0.22.zip && rm -rf v1.0.22.zip
+
+WORKDIR /opt/libusb-1.0.22
+RUN ./bootstrap.sh && \
+    ./configure --disable-udev --enable-shared && \
+    make -j4
+
 # -----------------
 FROM ubuntu:20.04 AS ov_base
 
-LABEL Description="This is the {{ distribution }} image for {{ product_name }} on Ubuntu 20.04 LTS"
+LABEL Description="This is the data_runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
 LABEL Vendor="Intel Corporation"
 
 USER root
@@ -45,24 +105,7 @@ WORKDIR /thirdparty
 
 ARG INSTALL_SOURCES="yes"
 
-{% if 'runtime' == distribution %}
-ARG DEPS="dpkg-dev \
-          tzdata \
-          curl"
-ARG LGPL_DEPS="g++ \
-               gcc \
-               libgtk-3-0"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python"
-{% elif 'dev' == distribution %}
-ARG DEPS="dpkg-dev \
-          tzdata \
-          curl"
-ARG LGPL_DEPS="g++ \
-               gcc \
-               libc6-dev \
-               libgtk-3-0"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=pot"
-{% elif 'data_runtime' == distribution %}
+
 ARG DEPS="dpkg-dev \
           tzdata \
           curl \
@@ -92,64 +135,9 @@ ARG LGPL_DEPS="g++ \
                libnettle7 \
                libglib2.0-0"
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=dlstreamer"
-{% else %}
-ARG DEPS="dpkg-dev \
-          tzdata \
-          curl \
-          libopenexr24 \
-          flex"
-ARG LGPL_DEPS="g++ \
-               gcc \
-               libc6-dev \
-               libgtk-3-0 \
-               libgstreamer1.0-0 \
-               gstreamer1.0-plugins-base \
-               gstreamer1.0-plugins-good \
-               gstreamer1.0-plugins-bad \
-               gstreamer1.0-vaapi \
-               ffmpeg \
-               libgl-dev \
-               libtag-extras1 \
-               libfaac0 \
-               python3-gi \
-               gstreamer1.0-plugins-ugly \
-               gstreamer1.0-libav \
-               libgstreamer-plugins-base1.0-dev \
-               gstreamer1.0-alsa \
-               libgstrtspserver-1.0-dev \
-               python3-gst-1.0 \
-               libfluidsynth2 \
-               libnettle7 \
-               libglib2.0-0"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=pot -c=opencv_opt -c=dlstreamer"
-{% endif %}
 
-{% if build_id < '2021.3' %}
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${DEPS} && \
-    dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
-    rm -rf /var/lib/apt/lists/*
 
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
-    if [ "$INSTALL_SOURCES" = "yes" ]; then \
-      sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
-      apt-get update && \
-	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > all_packages.txt && \
-	  grep -v -f base_packages.txt all_packages.txt | while read line; do \
-	  package=`echo $line`; \
-	  name=(${package//:/ }); \
-      grep -l GPL /usr/share/doc/${name[0]}/copyright; \
-      exit_status=$?; \
-	  if [ $exit_status -eq 0 ]; then \
-	    apt-get source -q --download-only $package;  \
-	  fi \
-      done && \
-      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
-{% else %}
+
 # hadolint ignore=DL3008
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${DEPS} && \
@@ -175,11 +163,90 @@ RUN apt-get update && \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
     rm -rf /var/lib/apt/lists/* && rm -rf *.txt
-{% endif %}
 
-{% for command in commands %}
-{{ command|safe }}
-{% endfor %}
+
+
+# setup Python
+ENV PYTHON_VER python3.8
+
+
+
+RUN ${PYTHON_VER} -m pip install --upgrade pip
+
+# runtime package
+WORKDIR /tmp
+
+RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
+    if [ -f ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt ]; then \
+        ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt; \
+    fi
+
+# for CPU
+
+# for GPU
+ARG TEMP_DIR=/tmp/opencl
+
+COPY --from=base ${TEMP_DIR} ${TEMP_DIR}
+
+WORKDIR ${TEMP_DIR}
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
+    rm -rf /var/lib/apt/lists/* && \
+    dpkg -i ${TEMP_DIR}/*.deb && \
+    ldconfig && \
+    rm -rf ${TEMP_DIR}
+
+# for VPU
+ARG LGPL_DEPS=udev
+
+WORKDIR /thirdparty
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    dpkg --get-selections | grep -v deinstall | awk '{print $1}' > no_vpu_packages.txt && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    if [ "$INSTALL_SOURCES" = "yes" ]; then \
+      sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+      apt-get update && \
+	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > vpu_packages.txt && \
+	  grep -v -f no_vpu_packages.txt vpu_packages.txt | while read line; do \
+	  package=`echo $line`; \
+	  name=(${package//:/ }); \
+      grep -l GPL /usr/share/doc/${name[0]}/copyright; \
+      exit_status=$?; \
+	  if [ $exit_status -eq 0 ]; then \
+	    apt-get source -q --download-only $package;  \
+	  fi \
+      done && \
+      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+
+COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
+
+WORKDIR /opt/libusb-1.0.22/libusb
+RUN /bin/mkdir -p '/usr/local/lib' && \
+    /bin/bash ../libtool   --mode=install /usr/bin/install -c   libusb-1.0.la '/usr/local/lib' && \
+    /bin/mkdir -p '/usr/local/include/libusb-1.0' && \
+    /usr/bin/install -c -m 644 libusb.h '/usr/local/include/libusb-1.0' && \
+    /bin/mkdir -p '/usr/local/lib/pkgconfig'
+
+WORKDIR /opt/libusb-1.0.22/
+RUN /usr/bin/install -c -m 644 libusb-1.0.pc '/usr/local/lib/pkgconfig' && \
+    cp ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/97-myriad-usbboot.rules /etc/udev/rules.d/ && \
+    ldconfig
+
+# for HDDL
+WORKDIR /tmp
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libboost-filesystem-dev \
+        libboost-thread-dev \
+        libjson-c4 \
+        libxxf86vm-dev && \
+    rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
+
 
 # Post-installation cleanup and setting up OpenVINO environment variables
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
@@ -203,6 +270,3 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
 
 # Setup custom layers below
-{% for layer in layers %}
-{{ layer|safe }}
-{% endfor %}
