@@ -19,8 +19,8 @@ class TestPyPiDependencies:
             pypi_log_folder.mkdir()
         kwargs = {
             'volumes': {
-                root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},
-                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},
+                root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec
+                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
             },
         }
         tester.test_docker_image(
@@ -49,8 +49,8 @@ class TestPyPiDependencies:
             pypi_log_folder.mkdir()
         kwargs = {
             'volumes': {
-                root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},
-                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},
+                root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec
+                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
             },
         }
         tester.test_docker_image(

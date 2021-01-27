@@ -24,15 +24,15 @@ jobs:
 
       - name: Running Bandit
         if: ${{ matrix.os == 'ubuntu-18.04' }}
-        run: python -m bandit -r ./ -f screen |& tee bandit.log
+        run: python -m bandit -r ./ -f screen
           
       - name: Running PEP checks
         if: ${{ matrix.os == 'ubuntu-18.04' }}
-        run: python -m flake8 ./ --config=setup.cfg --show-source |& tee flake8.log
+        run: python -m flake8 ./ --config=setup.cfg --show-source
 
       - name: Running MyPy checks
         if: ${{ matrix.os == 'ubuntu-18.04' }}
-        run: python -m mypy ./ --config-file ./setup.cfg --show-error-context --show-column-numbers --pretty |& tee mypy.log
+        run: python -m mypy ./ --config-file ./setup.cfg --show-error-context --show-column-numbers --pretty
 
       - name: Running pytest (not Docker image tests)
         if: ${{ always() }}
@@ -44,7 +44,4 @@ jobs:
         with:
           name: codestyle_checks
           path: |
-            ./bandit.log
-            ./flake8.log
-            ./mypy.log
             ./utils_unittests.html
