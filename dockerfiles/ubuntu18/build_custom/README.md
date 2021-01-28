@@ -31,7 +31,7 @@ You can manually setup cmake parameters to build a custom package from source co
 * [openvino_cmake.txt](openvino_cmake.txt)
 * [opencv_cmake.txt](opencv_cmake.txt)
 
-**Notes**:  
+>**Note**:  
 By default, these files already contain some parameters.  
 Do not override PATH/PREFIX options. This can break a build of package.
 
@@ -65,13 +65,12 @@ docker build --target opencv -t ie:opencv .
 ## How to test
 You can use our default pipeline to test your image:
 ```
-python3 docker_openvino.py test -t [image:tag] -dist dev -p 2021.2 
+python3 docker_openvino.py test -t [image:tag] -dist custom 
 ```
 
-If Open Model Zoo is not contained in your image:
-```
-python3 docker_openvino.py test -t [image:tag] -dist runtime -u [package_url] 
-```
+>**Note**:  
+Docker_ci automatically runs the corresponding tests.  
+By default, the product version is equal to the latest release version. Use `-p` to override this.
 
 ## How to run
 Please follow [Run built image](../get-started.md#run-built-image) section in DockerHub CI getting started guide.

@@ -38,7 +38,7 @@ def pytest_configure(config):
         'markers', 'gpu: run tests on GPU device',
     )
     dist = config.getoption('--distribution')
-    if dist.endswith('runtime'):
+    if dist in ('data_runtime', 'runtime', 'custom-no-omz', 'custom-no-cv'):
         log.info('Setting up runtime image dependencies')
         mount_root = pathlib.Path(config.getoption('--mount_root'))
         package_url = config.getoption('--package_url')
@@ -166,54 +166,26 @@ def switch_container_engine(engine):
 
 @pytest.fixture(scope='session')
 def _is_distribution(request):
-    settings = []
-    if isinstance(request.param, str):
-        settings.append(request.param)
-    else:
-        settings = request.param
+    settings = [request.param] if isinstance(request.param, str) else request.param
     image_dist = request.config.getoption('--distribution')
-    if not any(map(lambda x: x in image_dist, settings)):
-        pytest.skip(f'Test requires the product distribution should be {request.param} but get '
-                    f'{image_dist}')
+    if image_dist not in settings:
+        pytest.skip(f'Test requires the product distribution should be {request.param} but get {image_dist}')
+
+
+@pytest.fixture(scope='session')
+def _is_not_distribution(request):
+    settings = [request.param] if isinstance(request.param, str) else request.param
+    image_dist = request.config.getoption('--distribution')
+    if image_dist in settings:
+        pytest.skip(f'Test requires the product distribution should not be {request.param} but get {image_dist}')
 
 
 @pytest.fixture(scope='session')
 def _is_image_os(request):
-    settings = []
-    if isinstance(request.param, str):
-        settings.append(request.param)
-    else:
-        settings = request.param
+    settings = [request.param] if isinstance(request.param, str) else request.param
     image_os = request.config.getoption('--image_os')
-    if not any(map(lambda x: x in image_os, settings)):
-        pytest.skip(f'Test requires the image os should be {request.param} but get '
-                    f'{image_os}')
-
-
-@pytest.fixture(scope='session')
-def _is_image(request):
-    settings = []
-    if isinstance(request.param, str):
-        settings.append(request.param)
-    else:
-        settings = request.param
-    image_name = request.config.getoption('--image')
-    if not any(map(lambda x: x in image_name, settings)):
-        pytest.skip(f'Test requires the image should be {request.param} but get '
-                    f'{image_name}')
-
-
-@pytest.fixture(scope='session')
-def _is_not_image(request):
-    settings = []
-    if isinstance(request.param, str):
-        settings.append(request.param)
-    else:
-        settings = request.param
-    image_name = request.config.getoption('--image')
-    if any(map(lambda x: x in image_name, settings)):
-        pytest.skip(f'Test requires the image should not be {request.param} but get '
-                    f'{image_name}')
+    if image_os not in settings:
+        pytest.skip(f'Test requires the image os should be {request.param} but get {image_os}')
 
 
 @pytest.fixture(scope='session')
