@@ -5,8 +5,8 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
-@pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
-@pytest.mark.parametrize('_is_distribution', ['data_dev', 'proprietary'], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('data_dev', 'proprietary')], indirect=True)
 class TestDLStreamerLinux:
     def test_draw_face_attributes_cpp_cpu(self, tester, image):
         kwargs = {'mem_limit': '3g'}

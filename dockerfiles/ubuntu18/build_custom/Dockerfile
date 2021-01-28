@@ -4,19 +4,17 @@ FROM ubuntu:18.04 AS setup_openvino
 
 # hadolint ignore=DL3008
 RUN apt-get update; \
+    DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
+        tzdata \
         git \
         git-lfs \
         sudo \
-        curl \
         python3-dev \
         python3-pip \
         python3-venv \
         python3-setuptools; \
     rm -rf /var/lib/apt/lists/*
-
-# Set location
-RUN ln -snf "/usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k)" /etc/localtime
 
 ARG openvino_branch="master"
 
@@ -75,8 +73,9 @@ FROM copy_openvino AS openvino
 
 # hadolint ignore=DL3008
 RUN apt-get update; \
+    DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-        curl \
+        tzdata \
         wget \
         udev \
         sudo \
@@ -85,9 +84,6 @@ RUN apt-get update; \
         python3-venv \
         python3-setuptools; \
     rm -rf /var/lib/apt/lists/*
-
-# Set location
-RUN ln -snf "/usr/share/zoneinfo/$(curl https://ipapi.co/timezone -k)" /etc/localtime
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 RUN chmod +x install_dependencies/install_openvino_dependencies.sh; \
