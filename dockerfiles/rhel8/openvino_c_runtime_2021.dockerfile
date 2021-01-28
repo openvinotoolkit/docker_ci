@@ -56,7 +56,7 @@ COPY --from=base /opt/intel /opt/intel
 ARG LGPL_DEPS="gcc-c++ \
                gtk3"
 
-ARG INSTALL_SOURCES="yes"
+ARG INSTALL_SOURCES="no"
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033

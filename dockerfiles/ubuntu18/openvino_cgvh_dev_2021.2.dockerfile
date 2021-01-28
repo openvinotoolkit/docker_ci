@@ -111,7 +111,7 @@ ARG LGPL_DEPS="g++ \
                libgtk-3-0"
 
 
-ARG INSTALL_SOURCES="yes"
+ARG INSTALL_SOURCES="no"
 
 # hadolint ignore=DL3008
 RUN apt-get update && \

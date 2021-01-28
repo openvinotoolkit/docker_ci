@@ -139,7 +139,7 @@ RUN apt-get update && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     rm -rf /var/lib/apt/lists/*
 
-ARG INSTALL_SOURCES="yes"
+ARG INSTALL_SOURCES="no"
 
 # hadolint ignore=DL3008
 RUN apt-get update && \

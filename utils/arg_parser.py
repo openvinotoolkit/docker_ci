@@ -122,7 +122,8 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             action='append',
             default=[],
             help='Specify build or template arguments for your layer. '
-                 'You can use "no_samples=True" to remove OMZ, IE samples and demos from final docker image.',
+                 'You can use "no_samples=True" to remove OMZ, IE samples and demos from final docker image. '
+                 'Set "INSTALL_SOURCES=yes" to download source for 3d party LGPL/GPL dependencies.',
         )
 
     @staticmethod

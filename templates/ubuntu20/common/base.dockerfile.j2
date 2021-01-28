@@ -13,10 +13,6 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-# download source for pypi-kenlm LGPL package
-WORKDIR /tmp
-RUN curl -L https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz --output pypi-kenlm.tar.gz
-
 {% for pre_command in pre_commands %}
 {{ pre_command|safe }}
 {% endfor %}
@@ -42,6 +38,8 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 COPY --from=base /opt/intel /opt/intel
 
 WORKDIR /thirdparty
+
+ARG INSTALL_SOURCES="no"
 
 {% if 'runtime' == distribution %}
 ARG DEPS=dpkg-dev
@@ -90,8 +88,6 @@ RUN apt-get update && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     rm -rf /var/lib/apt/lists/*
 
-ARG INSTALL_SOURCES="yes"
-
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
@@ -111,6 +107,11 @@ RUN apt-get update && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
     rm -rf /var/lib/apt/lists/* && rm -rf *.txt
 
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
+        echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. Please use tag <YYYY.U_src> to pull the image with downloaded sources." > DockerImage_readme.txt ; \
+    fi
+
 {% for command in commands %}
 {{ command|safe }}
 {% endfor %}
@@ -128,7 +129,7 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
     fi;
 
 RUN apt-get update && \
-    apt-get autoremove -y dpkg-dev && \
+    apt-get autoremove -y dpkg-dev gfortran && \
     rm -rf /var/lib/apt/lists/*
 
 USER openvino

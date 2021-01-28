@@ -61,7 +61,7 @@ COPY --from=base /opt/intel /opt/intel
 ARG LGPL_DEPS="gcc-c++ \
                gtk3"
 
-ARG INSTALL_SOURCES="yes"
+ARG INSTALL_SOURCES="no"
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033
@@ -79,6 +79,11 @@ RUN yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
 	  done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
 	yum clean all && rm -rf /var/cache/yum && rm -rf *.txt
+
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
+        echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. Please use tag <YYYY.U_src> to pull the image with downloaded sources." > DockerImage_readme.txt ; \
+    fi
 
 
 

@@ -128,7 +128,7 @@ ARG LGPL_DEPS="g++ \
                libglib2.0"
 
 
-ARG INSTALL_SOURCES="yes"
+ARG INSTALL_SOURCES="no"
 
 # hadolint ignore=DL3008
 RUN apt-get update && \

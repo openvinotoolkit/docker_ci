@@ -20,11 +20,11 @@ on:
         required: true
         default: ''
       tags:
-        description: 'Tags, ex. -t image_name:YYY.U -t image_name:latest'
+        description: 'Tags, ex. -t image_name:YYYY.U -t image_name:YYYY.U_src -t image_name:latest'
         required: true
         default: ''
       args:
-        description: 'Additional arguments, ex. --build_arg no_samples=True'
+        description: 'Additional arguments, ex. --build_arg no_samples=True --build_arg INSTALL_SOURCES=yes'
         required: false
         default: ''
 
