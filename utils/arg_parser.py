@@ -6,7 +6,7 @@ import argparse
 import contextlib
 import pathlib
 import re
-import subprocess
+import subprocess  # nosec
 import sys
 import typing
 
@@ -474,11 +474,11 @@ def parse_args(name: str, description: str):  # noqa
         args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]['dev']
 
     if args.distribution == 'custom':
-        if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'opencv'],
-                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:  # nosec
+        if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'opencv'],  # nosec
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
             args.distribution = 'custom-no-cv'
-        elif subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'deployment_tools/open_model_zoo'],
-                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:  # nosec
+        elif subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'deployment_tools/open_model_zoo'],  # nosec
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
             args.distribution = 'custom-no-omz'
         else:
             args.distribution = 'custom-full'
