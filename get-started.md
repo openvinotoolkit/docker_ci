@@ -109,7 +109,7 @@ You can add your build arguments as well:
 ```cmd
   --build_arg VAR_NAME=VALUE  Specify build or template arguments for your layer.
                               You can use "no_samples=True" to remove OMZ, IE samples and demos from final docker image.
-                              You can use "INSTALL_SOURCES=no" to remove sources for LGPL/GPL 3d party packages.
+                              You can use "INSTALL_SOURCES=yes" to download source for 3d party LGPL/GPL dependencies.
 ```
 
 ## Building image
