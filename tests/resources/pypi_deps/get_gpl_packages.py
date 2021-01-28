@@ -40,7 +40,9 @@ for pkg in pkg_licenses:
         if 'LGPL' not in pkg['License']:
             log.error(f'GPL package was found in PyPi environment: {pkg}')
             exit_code = 1
-log.debug(f'Found GPL/LGPL packages: {gpl_pkgs}')
+log.info(f'Found GPL/LGPL packages: ')
+for pkg in gpl_pkgs:
+    log.info(pkg)
 with open(args.logs, 'w') as gpl_licenses_file:
     json.dump(gpl_pkgs, gpl_licenses_file)
 log.info(f'See GPL/LGPL licenses in the json log: {args.logs}')
