@@ -8,6 +8,7 @@ from unittest import mock
 import pytest
 
 from utils.arg_parser import parse_args
+from utils.loader import INTEL_OPENVINO_VERSION
 
 default_args = {
     'build_arg': [],
@@ -201,6 +202,19 @@ default_args = {
         },
         id='Successful deploy',
     ),
+    pytest.param(
+        {
+            'mode': 'test',
+            'tags': ['custom:no-cv'],
+            'distribution': 'custom',
+        },
+        {
+            'distribution': 'custom-no-cv',
+            'product_version': list(INTEL_OPENVINO_VERSION.keys())[-1],
+            'package_url': INTEL_OPENVINO_VERSION[list(INTEL_OPENVINO_VERSION.keys())[-1]]['ubuntu18']['dev'],
+        },
+        id='Successful test custom image',
+    ),
 
 ])
 @mock.patch('utils.arg_parser.DockerCIArgumentParser.parse_args')
@@ -353,6 +367,15 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         },
         'Option --registry is mandatory for this mode.',
         id='All without --registry',
+    ),
+    pytest.param(
+        {
+            'mode': 'build',
+            'tags': ['custom:no-cv'],
+            'distribution': 'custom',
+        },
+        'Only the test mode is available for the custom distribution.',
+        id='Use custom image in not test mode',
     ),
 ])
 @mock.patch('utils.arg_parser.DockerCIArgumentParser.parse_args')
