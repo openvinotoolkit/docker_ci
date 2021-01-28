@@ -70,7 +70,7 @@ python3 docker_openvino.py test -t [image:tag] -dist custom
 
 >**Note**:  
 Docker_ci automatically runs the corresponding tests.  
-By default, the product version is equal to the latest release version.
+By default, the product version is equal to the latest release version. Use `-p` to override this.
 
 ## How to run
 Please follow [Run built image](../get-started.md#run-built-image) section in DockerHub CI getting started guide.
