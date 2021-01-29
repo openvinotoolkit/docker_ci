@@ -87,7 +87,7 @@ RUN apt-get update; \
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 RUN chmod +x install_dependencies/install_openvino_dependencies.sh; \
-    ./install_dependencies/install_openvino_dependencies.sh
+    ./install_dependencies/install_openvino_dependencies.sh -y
 
 RUN chmod +x install_dependencies/install_NEO_OCL_driver.sh; \
     ./install_dependencies/install_NEO_OCL_driver.sh -y
