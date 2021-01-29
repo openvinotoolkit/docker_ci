@@ -8,6 +8,7 @@ import pytest
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('data_runtime', 'custom-no-omz', 'custom-no-cv')], indirect=True)
 class TestDemosLinuxDataRuntime:
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_detection_ssd_python_cpu(self, tester, image, distribution, dev_root, sample_name):
         kwargs = {
             'mem_limit': '3g',
@@ -36,6 +37,7 @@ class TestDemosLinuxDataRuntime:
         )
 
     @pytest.mark.gpu
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_detection_ssd_python_gpu(self, tester, image, distribution, dev_root, sample_name):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
@@ -65,6 +67,7 @@ class TestDemosLinuxDataRuntime:
         )
 
     @pytest.mark.vpu
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_detection_ssd_python_vpu(self, tester, image, distribution, dev_root, sample_name):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
@@ -97,6 +100,7 @@ class TestDemosLinuxDataRuntime:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_detection_ssd_python_hddl(self, tester, image, distribution, dev_root, sample_name):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],

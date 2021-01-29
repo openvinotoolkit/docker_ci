@@ -267,6 +267,7 @@ class TestDemosLinux:
             self.test_text_cpp_hddl.__name__, **kwargs,
         )
 
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_detection_ssd_python_cpu(self, tester, image, sample_name):
         tester.test_docker_image(
             image,
@@ -283,6 +284,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_detection_ssd_python_gpu(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -300,6 +302,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.vpu
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_detection_ssd_python_vpu(self, tester, image, sample_name):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -318,6 +321,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_detection_ssd_python_hddl(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -486,6 +490,7 @@ class TestDemosLinux:
             self.test_segmentation_python_hddl.__name__, **kwargs,
         )
 
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_object_detection_centernet_python_cpu(self, tester, image, sample_name):
         tester.test_docker_image(
             image,
@@ -505,6 +510,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_object_detection_centernet_python_gpu(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -525,6 +531,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.vpu
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_object_detection_centernet_python_vpu(self, tester, image, sample_name):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -546,6 +553,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.usefixtures('_python_ngraph_required')
     def test_object_detection_centernet_python_hddl(self, tester, image, sample_name):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
