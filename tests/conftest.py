@@ -202,6 +202,14 @@ def _min_product_version(request):
                     f'but get {image_version}')
 
 
+@pytest.fixture(scope='session')
+def _python_ngraph_required(request):
+    image = request.config.getoption('--image')
+    if subprocess.call(['docker', 'run', '--rm', image, 'bash', '-c', 'find python | grep pyngraph'],  # nosec
+                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
+        pytest.skip('Test requires ngraph python bindings.')
+
+
 def pytest_generate_tests(metafunc):
     image_version = metafunc.config.getoption('--product_version')
     if image_version is None:
