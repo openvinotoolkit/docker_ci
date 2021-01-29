@@ -19,11 +19,6 @@ RUN if [ "$INSTALL_SOURCES" = "yes" ]; then \
         curl -L https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz --output lake8-import-order-0.18.1.tar.gz; \
     fi
 
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libblas-dev liblapack-dev gfortran && \
-    rm -rf /var/lib/apt/lists/*
-
 {% if '2021.2' not in build_id %}
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
@@ -33,7 +28,3 @@ WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_
 RUN ${PYTHON_VER} -m pip install --no-cache-dir scipy==1.2.1 jstyleson==0.0.2 pandas==0.24.2 hyperopt==0.1.2 addict==2.2.1 chainer==7.7.0 && \
     ${PYTHON_VER} -m pip install . --no-deps
 {% endif %}
-
-RUN apt-get update && \
-    apt-get autoremove -y gfortran && \
-    rm -rf /var/lib/apt/lists/*
