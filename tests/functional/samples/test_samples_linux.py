@@ -397,3 +397,26 @@ class TestSamplesLinux:
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL"',
              ], self.test_classification_async_cpp_hddl.__name__, **kwargs,
         )
+
+    def test_benchmark_app_cpp_cpu(self, tester, image):
+        kwargs = {'mem_limit': '3g'}
+        tester.test_docker_image(
+            image,
+            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'cd /opt/intel/openvino/inference_engine/samples/cpp && '
+             'apt update && apt install make && '
+             '/opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+             '--name googlenet-v1 -o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             'cd /opt/intel/openvino/deployment_tools/model_optimizer && '
+             'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/googlenet-v1/'
+             'googlenet-v1.caffemodel"',
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/root/inference_engine_cpp_samples_build/intel64/Release/benchmark_app '
+             '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/googlenet-v1.xml '
+             '-i /opt/intel/openvino/deployment_tools/demo/car.png -d CPU -api async --progress true"',
+             ], self.test_benchmark_app_cpp_cpu.__name__, **kwargs,
+        )
