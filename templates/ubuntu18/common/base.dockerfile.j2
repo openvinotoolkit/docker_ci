@@ -41,17 +41,24 @@ WORKDIR /thirdparty
 
 ARG INSTALL_SOURCES="no"
 
+{% if build_id < '2021.3' %}
 {% if 'runtime' == distribution %}
-ARG DEPS=dpkg-dev
+ARG DEPS="dpkg-dev \
+          tzdata \
+          curl"
 ARG LGPL_DEPS=libgtk-3-0
 {% elif 'dev' == distribution %}
-ARG DEPS=dpkg-dev
+ARG DEPS="dpkg-dev \
+          tzdata \
+          curl"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
                libgtk-3-0"
 {% else %}
 ARG DEPS="dpkg-dev \
+          tzdata \
+          curl \
           libopenexr22 \
           flex"
 ARG LGPL_DEPS="g++ \
@@ -74,16 +81,33 @@ ARG LGPL_DEPS="g++ \
                gstreamer1.0-alsa \
                libglib2.0"
 {% endif %}
-
-
+{% else %}
+ARG DEPS="dpkg-dev \
+          tzdata \
+          curl"
+{% if 'runtime' == distribution %}
+ARG LGPL_DEPS=
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python"
+{% elif 'dev' == distribution %}
+ARG LGPL_DEPS="g++ \
+               gcc \
+               libc6-dev"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python"
+{% else %}
+ARG LGPL_DEPS="g++ \
+               gcc \
+               libc6-dev"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=dlstreamer"
+{% endif %}
+{% endif %}
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl tzdata && \
-    apt-get install -y --no-install-recommends ${DEPS} && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${DEPS} && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     rm -rf /var/lib/apt/lists/*
 
+{% if build_id < '2021.3' %}
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
@@ -102,6 +126,27 @@ RUN apt-get update && \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
     rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+{% else %}
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y ${INSTALL_PACKAGES} && \
+    if [ "$INSTALL_SOURCES" = "yes" ]; then \
+      sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+      apt-get update && \
+	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > all_packages.txt && \
+	  grep -v -f base_packages.txt all_packages.txt | while read line; do \
+	  package=`echo $line`; \
+	  name=(${package//:/ }); \
+      grep -l GPL /usr/share/doc/${name[0]}/copyright; \
+      exit_status=$?; \
+	  if [ $exit_status -eq 0 ]; then \
+	    apt-get source -q --download-only $package;  \
+	  fi \
+      done && \
+      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+{% endif %}
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
