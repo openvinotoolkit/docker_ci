@@ -50,7 +50,7 @@ RUN powershell.exe -Command `
   Start-Process %TMP%\\python-3.7.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python37' -Wait ; `
   Remove-Item %TMP%\\python-3.7.exe -Force
 
-RUN python -m pip install --upgrade pip
+RUN python -m pip install --upgrade pip==20.3.3
 
 # download package from external URL
 ARG package_url
