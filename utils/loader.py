@@ -220,6 +220,11 @@ INTEL_OPENVINO_VERSION = {
                 'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
                            'l_openvino_toolkit_runtime_centos7_p_2021.2.185.tgz',
             },
+        'rhel8':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
+                           'l_openvino_toolkit_runtime_rhel8_p_2021.2.185.tgz',
+            },
     },
 }
 DIVE_URL = {
