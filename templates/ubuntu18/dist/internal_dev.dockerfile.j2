@@ -1,7 +1,11 @@
 # internal package
 WORKDIR /tmp
 
+{% if build_id < '2021.3' %}
 RUN ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+{% else %}
+RUN ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y
+{% endif %}
 
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
