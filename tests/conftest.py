@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2020 Intel Corporation
+# Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import logging
 import pathlib
@@ -213,8 +213,12 @@ def _min_product_version(request):
 @pytest.fixture(scope='session')
 def _python_ngraph_required(request):
     image = request.config.getoption('--image')
-    if subprocess.call(['docker', 'run', '--rm', image, 'bash', '-c', 'find python | grep pyngraph'],  # nosec
-                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
+    if request.config.getoption('--image_os') == 'winserver2019':
+        command = ['docker', 'run', '--rm', image, 'cmd', '/c', 'dir /b/s python | findstr pyngraph']
+    else:
+        command = ['docker', 'run', '--rm', image, 'bash', '-c', 'find python | grep pyngraph']
+    process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)  # nosec
+    if process.returncode != 0:
         pytest.skip('Test requires ngraph python bindings.')
 
 

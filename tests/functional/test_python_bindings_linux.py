@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2020 Intel Corporation
+# Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import os
 import pathlib
@@ -17,14 +17,13 @@ kwargs = {
 
 @pytest.mark.usefixtures('_is_image_os', '_is_not_distribution')
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7')], indirect=True)
-class TestPythonBindings:
+class TestPythonBindingsLinux:
     @pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-cv')], indirect=True)
     def test_opencv_bindings(self, tester, image):
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'sh /opt/intel/openvino/python_bindings/create_py.sh && '
-             'python3 /tmp/python_bindings/opencv_bindings.py"',
+             'python3 /opt/intel/openvino/python_bindings/opencv_bindings.py"',
              ],
             self.test_opencv_bindings.__name__, **kwargs,
         )
@@ -34,8 +33,7 @@ class TestPythonBindings:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'sh /opt/intel/openvino/python_bindings/create_py.sh && '
-             'python3 /tmp/python_bindings/openvino_bindings.py"',
+             'python3 /opt/intel/openvino/python_bindings/openvino_bindings.py"',
              ],
             self.test_openvino_bindings.__name__, **kwargs,
         )
@@ -47,8 +45,7 @@ class TestPythonBindings:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'sh /opt/intel/openvino/python_bindings/create_py.sh && '
-             'python3 /tmp/python_bindings/ngraph_bindings.py"',
+             'python3 /opt/intel/openvino/python_bindings/ngraph_bindings.py"',
              ],
             self.test_ngraph_bindings.__name__, **kwargs,
         )
