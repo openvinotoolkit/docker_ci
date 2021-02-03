@@ -36,8 +36,13 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
 # -----------------
 FROM registry.access.redhat.com/ubi8/ubi:8.2 AS ov_base
 
-LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL 8.2"
-LABEL Vendor="Intel Corporation"
+LABEL name="rhel8_runtime" \
+      maintainer="openvino_docker@intel.com" \
+      vendor="Intel Corporation" \
+      version="2021.3" \
+      release="2021.3" \
+      summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
+      description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8.2"
 
 USER root
 WORKDIR /
@@ -81,6 +86,9 @@ RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
         echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. Please use tag <YYYY.U_src> to pull the image with downloaded sources." > DockerImage_readme.txt ; \
     fi
 
+WORKDIR /licenses
+RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
+
 
 # setup Python
 ENV PYTHON_VER python3.6
@@ -102,6 +110,7 @@ RUN if [ "$INSTALL_SOURCES" = "yes" ]; then \
     fi
 
 # for CPU
+
 
 # Post-installation cleanup and setting up OpenVINO environment variables
 RUN rm -rf /tmp && mkdir /tmp
