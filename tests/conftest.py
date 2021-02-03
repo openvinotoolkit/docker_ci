@@ -148,6 +148,14 @@ def dev_root(request):
     return dev_root_path
 
 
+@pytest.fixture(scope='session')
+def install_openvino_dependencies(request):
+    if request.config.getoption('--product_version') < '2021.3':
+        return '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh'
+    else:
+        return '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y'
+
+
 def switch_container_engine(engine):
     """Switch Windows docker Engine to -SwitchLinuxEngine or -SwitchWindowsEngine"""
     cmd_line = ['cmd', '/c', 'where', 'docker']
