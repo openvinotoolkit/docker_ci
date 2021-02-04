@@ -153,7 +153,7 @@ def install_openvino_dependencies(request):
     if request.config.getoption('--product_version') < '2021.3':
         return '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh'
     else:
-        return '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y'
+        return '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -e'
 
 
 def switch_container_engine(engine):
