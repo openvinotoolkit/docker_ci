@@ -109,7 +109,7 @@ ARG DEPS="dpkg-dev \
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
 
 
 

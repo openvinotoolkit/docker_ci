@@ -45,14 +45,18 @@ ARG INSTALL_SOURCES="no"
 {% if 'runtime' == distribution %}
 ARG DEPS="dpkg-dev \
           tzdata \
-          curl"
+          curl \
+          libgl1 \
+          libtinfo5"
 ARG LGPL_DEPS="g++ \
                gcc \
                libgtk-3-0"
 {% elif 'dev' == distribution %}
 ARG DEPS="dpkg-dev \
           tzdata \
-          curl"
+          curl \
+          libgl1 \
+          libtinfo5"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
@@ -64,8 +68,11 @@ ARG LGPL_DEPS="g++ \
 ARG DEPS="dpkg-dev \
           tzdata \
           curl \
+          libgl1 \
+          libtinfo5 \
           libopenexr24 \
-          flex"
+          flex \
+          vainfo"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
@@ -88,13 +95,17 @@ ARG LGPL_DEPS="g++ \
                python3-gst-1.0 \
                libfluidsynth2 \
                libnettle7 \
-               libglib2.0-0"
+               libglib2.0-0 \
+               gstreamer1.0-tools"
 {% else %}
 ARG DEPS="dpkg-dev \
           tzdata \
           curl \
+          libgl1 \
+          libtinfo5 \
           libopenexr24 \
-          flex"
+          flex \
+          vainfo"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
@@ -120,7 +131,8 @@ ARG LGPL_DEPS="g++ \
                python3-gst-1.0 \
                libfluidsynth2 \
                libnettle7 \
-               libglib2.0-0"
+               libglib2.0-0 \
+               gstreamer1.0-tools"
 {% endif %}
 {% else %}
 ARG DEPS="dpkg-dev \
@@ -129,22 +141,22 @@ ARG DEPS="dpkg-dev \
 {% if 'runtime' == distribution %}
 ARG LGPL_DEPS="g++ \
                gcc"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
 {% elif 'dev' == distribution %}
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=pot"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=pot"
 {% elif 'data_runtime' == distribution %}
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=dlstreamer"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=opencv_opt -c=dlstreamer"
 {% else %}
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=dlstreamer -c=pot"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=opencv_opt -c=dlstreamer -c=pot"
 {% endif %}
 {% endif %}
 
