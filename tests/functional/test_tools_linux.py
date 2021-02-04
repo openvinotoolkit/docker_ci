@@ -29,7 +29,7 @@ class TestToolsLinux:
             self.test_benchmark.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev', 'proprietary')], indirect=True)
     def test_cl_compiler(self, tester, image):
         kwargs = {'mem_limit': '3g'}
