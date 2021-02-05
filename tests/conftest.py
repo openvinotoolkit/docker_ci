@@ -153,10 +153,16 @@ def dev_root(request):
 
 @pytest.fixture(scope='session')
 def install_openvino_dependencies(request):
-    if request.config.getoption('--product_version') < '2021.3':
+    # installation of 3d party dependencies for data processing components isn't required since 2021.2
+    if request.config.getoption('--product_version') < '2021.2':
         return '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh'
     else:
-        return '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -e'
+        image_os = request.config.getoption('--image_os')
+        if 'ubuntu' in image_os:
+            return '/bin/bash -ac "apt update && apt install -y build-essential sudo"'
+        elif any(x in image_os for x in ('centos', 'rhel')):
+            return '/bin/bash -ac "yum update -y && yum install -y make"'
+    return ''
 
 
 def switch_container_engine(engine):

@@ -77,7 +77,7 @@ class TestDLStreamerLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             'apt update', 'apt install wget',
+             'apt install wget',  # TODO delete after resolving 48489
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples/gst_launch/audio_detect && '
              './download_audio_models.sh && ./audio_event_detection.sh"'],
