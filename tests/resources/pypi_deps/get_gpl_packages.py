@@ -6,9 +6,12 @@
 import argparse
 import json
 import logging
+import os
 import sys
 
-parser = argparse.ArgumentParser(description='This is GPl/LGPL licenses checker for PyPi packages')
+parser = argparse.ArgumentParser(prog=os.path.basename(__file__),
+                                 description='This is GPl/LGPL licenses checker for PyPi packages',
+                                 add_help=True)
 parser.add_argument(
     '-f',
     '--file',
@@ -27,8 +30,8 @@ parser.add_argument(
 
 logging.basicConfig(level='INFO')
 log = logging.getLogger(__name__)
-log.info('Start searching GPl/LGPL licenses in the installed PyPi packages ...')
 args = parser.parse_args()
+log.info('Start searching GPl/LGPL licenses in the installed PyPi packages ...')
 with open(args.file) as licenses_file:
     pkg_licenses = json.load(licenses_file)
 
