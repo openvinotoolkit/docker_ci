@@ -24,7 +24,7 @@ RUN chmod +x install_build_dependencies.sh; \
     ./install_build_dependencies.sh
 
 RUN chmod +x scripts/install_dependencies/install_NEO_OCL_driver.sh; \
-    ./scripts/install_dependencies/install_NEO_OCL_driver.sh -y
+    ./scripts/install_dependencies/install_NEO_OCL_driver.sh -y --no_numa
 
 # hadolint ignore=DL3013
 RUN chmod +x scripts/install_dependencies/install_openvino_dependencies.sh; \
@@ -85,7 +85,7 @@ RUN chmod +x install_dependencies/install_openvino_dependencies.sh; \
     ./install_dependencies/install_openvino_dependencies.sh -y -c=python -c=dev
 
 RUN chmod +x install_dependencies/install_NEO_OCL_driver.sh; \
-    ./install_dependencies/install_NEO_OCL_driver.sh -y
+    ./install_dependencies/install_NEO_OCL_driver.sh -y --no_numa
 
 WORKDIR /opt/libusb-1.0.22
 RUN ./libtool --mode=install install -c libusb/libusb-1.0.la /usr/local/lib/; \
