@@ -32,7 +32,7 @@ With this guide, you will learn how to:
 3. [Deploy image](#deploy-image)  
 4. [Test image](#test-image)  
 5. [Build, test, deploy an image (All in one)](#all-in-one)  
-6. [Run built image](#run-built-image)  
+6. [Run a container](#run-a-container)  
 7. [Troubleshooting](#troubleshooting) 
 
 ## Generate Dockerfile
@@ -59,6 +59,8 @@ Select a product version. It will use public released product in docker image:
 ```
 
 Or if you have a product package link, you can specify directly:
+You can get OpenVINO distribution packages (runtime, dev, data_dev) directly from [public storage](https://storage.openvinotoolkit.org/repositories/openvino/packages/) and proprietary package with registration [here](https://software.intel.com/content/www/us/en/develop/tools/openvino-toolkit/download.html).
+
 ```cmd
   -u, --package_url URL  Package external or local url, use http://, https://, ftp:// access scheme or relative <root_project> local path
 ```
@@ -84,6 +86,8 @@ You can customize platform targets and minimize image size:
                      Dockerfile name format has the first letter from device name, 
                      e.g. for CPU, HDDL it will be openvino_ch_<distribution>_<product_version>.dockerfile
 ```
+
+OpenVINO documentation for [supported devices](https://docs.openvinotoolkit.org/latest/openvino_docs_IE_DG_supported_plugins_Supported_Devices.html).
 
 **Prerequisite:** Install the dependencies Microsoft Visual Studio* with C++ 2019, 2017, or 2015 with MSBuild
 
@@ -197,7 +201,7 @@ python3 docker_openvino.py <mode> --help
 ```
 Available modes: gen_dockerfile, build, build_test, test, deploy, **all**(by default)
 
-## Run built image
+## Run a container
 
 To start the interactive session, run the following command allows inference on the **CPU**:
 

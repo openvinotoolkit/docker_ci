@@ -4,7 +4,6 @@ ARG IGC_CORE
 ARG IGC_OPENCL
 ARG INTEL_OPENCL
 ARG INTEL_OCLOC
-ARG INTEL_ZERO
 ARG TEMP_DIR=/tmp/opencl
 
 WORKDIR ${TEMP_DIR}
@@ -14,5 +13,6 @@ RUN curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_
     curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-opencl_${INTEL_OPENCL}_amd64.deb" --output "intel-opencl_${INTEL_OPENCL}_amd64.deb" && \
     curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-ocloc_${INTEL_OCLOC}_amd64.deb" --output "intel-ocloc_${INTEL_OCLOC}_amd64.deb"
 {% if '20.35.17767' == INTEL_OPENCL %}
+ARG INTEL_ZERO
 RUN curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-level-zero-gpu_${INTEL_ZERO}_amd64.deb" --output "intel-level-zero-gpu_${INTEL_ZERO}_amd64.deb"
 {% endif %}

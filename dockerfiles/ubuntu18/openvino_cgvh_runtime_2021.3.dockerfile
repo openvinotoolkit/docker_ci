@@ -109,7 +109,7 @@ ARG DEPS="dpkg-dev \
           curl"
 
 ARG LGPL_DEPS=
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
 
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2020 Intel Corporation
+# Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import logging
 import pathlib
@@ -148,6 +148,14 @@ def dev_root(request):
     return dev_root_path
 
 
+@pytest.fixture(scope='session')
+def install_openvino_dependencies(request):
+    if request.config.getoption('--product_version') < '2021.3':
+        return '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh'
+    else:
+        return '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -e'
+
+
 def switch_container_engine(engine):
     """Switch Windows docker Engine to -SwitchLinuxEngine or -SwitchWindowsEngine"""
     cmd_line = ['cmd', '/c', 'where', 'docker']
@@ -168,7 +176,7 @@ def switch_container_engine(engine):
 def _is_distribution(request):
     settings = [request.param] if isinstance(request.param, str) else request.param
     image_dist = request.config.getoption('--distribution')
-    if image_dist not in settings:
+    if not any(map(lambda x: x in image_dist, settings)):
         pytest.skip(f'Test requires the product distribution should be {request.param} but get {image_dist}')
 
 
@@ -205,8 +213,12 @@ def _min_product_version(request):
 @pytest.fixture(scope='session')
 def _python_ngraph_required(request):
     image = request.config.getoption('--image')
-    if subprocess.call(['docker', 'run', '--rm', image, 'bash', '-c', 'find python | grep pyngraph'],  # nosec
-                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
+    if request.config.getoption('--image_os') == 'winserver2019':
+        command = ['docker', 'run', '--rm', image, 'cmd', '/c', 'dir /b/s python | findstr pyngraph']
+    else:
+        command = ['docker', 'run', '--rm', image, 'bash', '-c', 'find python | grep pyngraph']
+    process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)  # nosec
+    if process.returncode != 0:
         pytest.skip('Test requires ngraph python bindings.')
 
 
