@@ -87,7 +87,10 @@ docker build --build-arg package_url=https://storage.openvinotoolkit.org/reposit
              --build-arg INTEL_OCLOC=19.41.14441 \
             -t ubuntu18_dev:2021.1 -f dockerfiles/ubuntu18/openvino_cgvh_dev_2021.dockerfile .
 ```
+----------------
 
+* Custom image with CPU, iGPU, VPU support
+To learn more, follow [Build custom Intel® Distribution of OpenVINO™ toolkit Docker image](ubuntu18/build_custom/README.md).
 
 ## Prebuilt images
 
