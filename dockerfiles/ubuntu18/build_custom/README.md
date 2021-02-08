@@ -17,14 +17,14 @@ If you want to rebuild the entire image, use docker `--no-cache` option:
 docker build --no-cache -t image:tag .
 ```
 
-To specify a branches with source code use docker `--build-arg` option to override the following variables:  
-`openvino_branch`, `opencv_branch`, `omz_branch`  
-By default, they are equal to "master".
+You can use docker `--build-arg` option to override the following variables:  
+`OPENVINO_BRANCH`, `OPENCV_BRANCH`, `OMZ_BRANCH` - To specify a branches with source code. By default, they are equal to "master".  
+`OCL_VERSION` - To specify the version of Intel® Graphics Compute Runtime for OpenCL™ Driver on Linux. By default, it is equal to "19.41.14441".
 
 **For example**:  
 This command builds an image with OpenVINO™ 2021.2 release.
 ```
-docker build -t openvino:2021.2 --build-arg openvino_branch="releases/2021/2" .
+docker build -t openvino:2021.2 --build-arg OPENVINO_BRANCH="releases/2021/2" .
 ```
 
 You can manually setup cmake parameters to build a custom package from source code using these files:  
