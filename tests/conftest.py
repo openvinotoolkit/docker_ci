@@ -2,11 +2,11 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import logging
+import os
 import pathlib
 import shutil
 import subprocess  # nosec
 import sys
-import os
 
 import pytest
 from utils.docker_api import DockerAPI
@@ -36,6 +36,9 @@ def pytest_configure(config):
     )
     config.addinivalue_line(
         'markers', 'gpu: run tests on GPU device',
+    )
+    config.addinivalue_line(
+        'markers', 'save_pypi_deps: run test to save PyPi dependencies',
     )
     dist = config.getoption('--distribution')
     if dist in ('data_runtime', 'runtime', 'custom-no-omz', 'custom-no-cv'):
@@ -262,3 +265,6 @@ def pytest_runtest_setup(item):
                                      shell=False)  # nosec
             if process.returncode != 0:
                 pytest.skip('Test requires Intel GPU device on the host machine')
+
+        if 'save_pypi_deps' in mark.name and 'save_pypi_deps' != item.config.known_args_namespace.keyword:
+            pytest.skip('Test should be executed directly -m save_pypi_deps -k save_pypi_deps')
