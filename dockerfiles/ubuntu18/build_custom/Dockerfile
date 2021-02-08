@@ -122,7 +122,10 @@ RUN apt-get update; \
         libavutil-dev \
         libswscale-dev \
         libavresample-dev \
-        libgstreamer-plugins-base1.0-dev; \
+        libgstreamer1.0-dev \
+        libgstreamer-plugins-base1.0-dev \
+        libgstreamer-plugins-good1.0-dev \
+        libgstreamer-plugins-bad1.0-dev; \
     rm -rf /var/lib/apt/lists/*
 
 ARG opencv_branch="master"
