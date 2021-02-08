@@ -13,11 +13,11 @@ RUN apt-get update; \
         tzdata; \
     rm -rf /var/lib/apt/lists/*
 
-ARG openvino_branch="master"
+ARG OPENVINO_BRANCH="master"
 
 RUN git-lfs install; \
     git clone https://github.com/openvinotoolkit/openvino.git \
-    --recurse-submodules --shallow-submodules --depth 1 -b ${openvino_branch} /tmp/openvino
+    --recurse-submodules --shallow-submodules --depth 1 -b ${OPENVINO_BRANCH} /tmp/openvino
 
 WORKDIR /tmp/openvino
 RUN chmod +x install_build_dependencies.sh; \
@@ -128,10 +128,10 @@ RUN apt-get update; \
         libgstreamer-plugins-bad1.0-dev; \
     rm -rf /var/lib/apt/lists/*
 
-ARG opencv_branch="master"
+ARG OPENCV_BRANCH="master"
 
 WORKDIR /tmp
-RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${opencv_branch}
+RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
 
 COPY opencv_cmake.txt /tmp
 
@@ -155,10 +155,10 @@ CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM opencv AS open_model_zoo
 
-ARG omz_branch="master"
+ARG OMZ_BRANCH="master"
 
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools
-RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git --depth 1 -b ${omz_branch}; \
+RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git --depth 1 -b ${OMZ_BRANCH}; \
     python3 -m pip install --no-cache-dir -r open_model_zoo/tools/downloader/requirements.in; \
     ln -s ../open_model_zoo/demos inference_engine/demos
 
