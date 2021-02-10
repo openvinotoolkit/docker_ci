@@ -19,9 +19,9 @@ As well you can use available dockerfiles from `<root_project>/dockerfiles/<imag
 ## Supported Operating Systems for Docker image:
  - Ubuntu 18.04 LTS
  - Ubuntu 20.04 LTS
- - CentOS 7.6
- - CentOS 8.2 
- - RHEL 8.2  
+ - CentOS 7
+ - CentOS 8
+ - RHEL 8 
  - Windows Server Core base OS LTSC 2019
 
 ## Prebuilt images

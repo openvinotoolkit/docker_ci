@@ -18,7 +18,7 @@ RUN yum update -y && yum install -y curl ca-certificates && \
 # -----------------
 FROM centos:8.2.2004 AS ov_base
 
-LABEL Description="This is the {{ distribution }} image for {{ product_name }} on CentOS 8.2"
+LABEL Description="This is the {{ distribution }} image for {{ product_name }} on CentOS 8"
 LABEL Vendor="Intel Corporation"
 
 USER root

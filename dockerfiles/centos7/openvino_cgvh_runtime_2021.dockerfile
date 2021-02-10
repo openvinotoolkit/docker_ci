@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM centos:7.6.1810 AS base
+FROM centos:7 AS base
 
 # hadolint ignore=DL3002
 USER root
@@ -74,9 +74,9 @@ RUN ./bootstrap.sh && \
     make -j4
 
 # -----------------
-FROM centos:7.6.1810 AS ov_base
+FROM centos:7 AS ov_base
 
-LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on CentOS 7.6"
+LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on CentOS 7"
 LABEL Vendor="Intel Corporation"
 
 USER root
