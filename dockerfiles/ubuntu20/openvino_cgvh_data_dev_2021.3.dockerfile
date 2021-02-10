@@ -39,22 +39,6 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
 
 
 
-# for GPU
-ARG GMMLIB
-ARG IGC_CORE
-ARG IGC_OPENCL
-ARG INTEL_OPENCL
-ARG INTEL_OCLOC
-ARG TEMP_DIR=/tmp/opencl
-
-WORKDIR ${TEMP_DIR}
-RUN curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-gmmlib_${GMMLIB}_amd64.deb" --output "intel-gmmlib_${GMMLIB}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-core_${IGC_CORE}_amd64.deb" --output "intel-igc-core_${IGC_CORE}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-opencl_${IGC_OPENCL}_amd64.deb" --output "intel-igc-opencl_${IGC_OPENCL}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-opencl_${INTEL_OPENCL}_amd64.deb" --output "intel-opencl_${INTEL_OPENCL}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-ocloc_${INTEL_OCLOC}_amd64.deb" --output "intel-ocloc_${INTEL_OCLOC}_amd64.deb"
-
-
 # for VPU
 ARG BUILD_DEPENDENCIES="autoconf \
                         automake \
@@ -185,18 +169,14 @@ RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deploym
 # for CPU
 
 # for GPU
+ARG INTEL_OPENCL
 ARG TEMP_DIR=/tmp/opencl
 
-COPY --from=base ${TEMP_DIR} ${TEMP_DIR}
 
-WORKDIR ${TEMP_DIR}
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
-    rm -rf /var/lib/apt/lists/* && \
-    dpkg -i ${TEMP_DIR}/*.deb && \
-    ldconfig && \
-    rm -rf ${TEMP_DIR}
+WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
+RUN ./install_NEO_OCL_driver.sh --no_numa -y -d ${INTEL_OPENCL} && \
+    rm -rf /var/lib/apt/lists/*
+
 
 # for VPU
 ARG LGPL_DEPS=udev
