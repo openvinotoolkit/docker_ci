@@ -1,11 +1,13 @@
 # for GPU
+ARG INTEL_OPENCL
 ARG TEMP_DIR=/tmp/opencl
 
+RUN groupmod -g 44 video
+
+{% if build_id < '2021.3' %}
 COPY --from=base ${TEMP_DIR} ${TEMP_DIR}
 
 WORKDIR ${TEMP_DIR}
-
-RUN groupmod -g 44 video
 
 # hadolint ignore=DL3031, DL3033
 RUN yum update -y && yum install -y epel-release && \
@@ -15,3 +17,9 @@ RUN yum update -y && yum install -y epel-release && \
     ldconfig && \
     rm -rf ${TEMP_DIR} && \
     yum remove -y epel-release
+{% else %}
+WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
+RUN ./install_NEO_OCL_driver.sh --no_numa -y -d ${INTEL_OPENCL} && \
+    yum clean all && rm -rf /var/cache/yum && \
+    yum remove -y epel-release
+{% endif %}

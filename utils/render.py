@@ -58,7 +58,8 @@ class DockerFileRender:
             pre_devices = ['gpu', 'vpu']
             for device in pre_devices:
                 if device in args.device:
-                    pre_device_settings.append(f'pre_{device}')
+                    if args.product_version < '2021.3' or device != 'gpu':
+                        pre_device_settings.append(f'pre_{device}')
             settings.extend([args.source, args.install_type, *pre_device_settings])
 
         pre_commands = [self.get_template(arg, kwargs).render() for arg in settings]

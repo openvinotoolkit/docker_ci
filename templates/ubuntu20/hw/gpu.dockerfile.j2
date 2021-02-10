@@ -1,13 +1,20 @@
 # for GPU
+ARG INTEL_OPENCL
 ARG TEMP_DIR=/tmp/opencl
 
+{% if build_id < '2021.3' %}
 COPY --from=base ${TEMP_DIR} ${TEMP_DIR}
 
 WORKDIR ${TEMP_DIR}
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
-    rm -rf /var/lib/apt/lists/* && \
     dpkg -i ${TEMP_DIR}/*.deb && \
     ldconfig && \
-    rm -rf ${TEMP_DIR}
+    rm -rf ${TEMP_DIR} && \
+    rm -rf /var/lib/apt/lists/*
+{% else %}
+WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
+RUN ./install_NEO_OCL_driver.sh --no_numa -y -d ${INTEL_OPENCL} && \
+    rm -rf /var/lib/apt/lists/*
+{% endif %}
