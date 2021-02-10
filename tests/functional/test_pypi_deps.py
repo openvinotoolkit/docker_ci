@@ -7,6 +7,8 @@ import pathlib
 import pytest
 
 
+@pytest.mark.usefixtures('_is_not_distribution')
+@pytest.mark.parametrize('_is_not_distribution', [('base')], indirect=True)
 class TestPyPiDependencies:
     @pytest.mark.xfail(reason='47558 GPL Unidecode PyPi package as dependency for OMZ text_to_speech_demo')
     def test_gpl_pypi_deps(self, tester, image):
