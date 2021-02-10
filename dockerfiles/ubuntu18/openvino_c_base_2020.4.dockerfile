@@ -12,12 +12,14 @@ RUN apt-get update && \
       python3-minimal \
       python3-pip
 
-ARG build_id
+ARG PUBLIC_KEY="https://apt.repos.intel.com/openvino/2020/GPG-PUB-KEY-INTEL-OPENVINO-2020"
+ARG APT_REPOSITORY="deb https://apt.repos.intel.com/openvino/2020 all main"
+ARG BUILD_ID
 # Install full package
-RUN curl -o GPG-PUB-KEY-INTEL-OPENVINO-2020 https://apt.repos.intel.com/openvino/2020/GPG-PUB-KEY-INTEL-OPENVINO-2020 && \
+RUN curl -o GPG-PUB-KEY-INTEL-OPENVINO-2020 ${PUBLIC_KEY} && \
     apt-key add GPG-PUB-KEY-INTEL-OPENVINO-2020 && \
-    echo "deb https://apt.repos.intel.com/openvino/2020 all main" | tee - a /etc/apt/sources.list.d/intel-openvino-2020.list && \
-    apt-get update && apt-get install -y --no-install-recommends intel-openvino-dev-ubuntu18-"${build_id}" && \
+    echo ${APT_REPOSITORY} | tee - a /etc/apt/sources.list.d/intel-openvino-2020.list && \
+    apt-get update && apt-get install -y --no-install-recommends "intel-openvino-dev-ubuntu18-${BUILD_ID}" && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python and some dependencies for deployment manager
@@ -41,9 +43,9 @@ RUN cp -r /opt/intel/openvino/deployment_tools/inference_engine/share . && \
     cp /opt/intel/openvino/bin/setupvars.sh setupvars.sh
 
 # Replace full package by CPU package
-RUN rm -r /opt/intel/ && mkdir -p /opt/intel/openvino_"${build_id}" && \
-    tar -xf /openvino_pkg/openvino_deploy_package.tar.gz -C /opt/intel/openvino_"${build_id}" && \
-    ln --symbolic /opt/intel/openvino_"${build_id}"/ /opt/intel/openvino && \
+RUN rm -r /opt/intel/ && mkdir -p "/opt/intel/openvino_${BUILD_ID}" && \
+    tar -xf /openvino_pkg/openvino_deploy_package.tar.gz -C "/opt/intel/openvino_${BUILD_ID}" && \
+    ln --symbolic "/opt/intel/openvino_${BUILD_ID}" /opt/intel/openvino && \
     mv setupvars.sh /opt/intel/openvino/bin && \
     mv /licensing /opt/intel/openvino/licensing && \
     mv /share /opt/intel/openvino/deployment_tools/inference_engine/share && \
