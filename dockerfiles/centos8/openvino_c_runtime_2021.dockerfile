@@ -40,7 +40,7 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
 # -----------------
 FROM centos:8.2.2004 AS ov_base
 
-LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on CentOS 8.2"
+LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on CentOS 8"
 LABEL Vendor="Intel Corporation"
 
 USER root
