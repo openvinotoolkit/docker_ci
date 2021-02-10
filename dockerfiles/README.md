@@ -61,9 +61,9 @@ You can use Docker CI framework to build an image, please follow [Get Started wi
 ```bash
 python3 docker_openvino.py build --file "dockerfiles/ubuntu18/openvino_c_base_2020.3.dockerfile" -os ubuntu18 -dist base -p 2020.3.341
 ```
-Or via Docker Engine directly, but you need specify `build_id` argument:
+Or via Docker Engine directly, but you need specify `BUILD_ID` argument:
 ```bash
-docker build --build-arg build_id=2020.3.341 -t ubuntu18_base_cpu:2020.3.341 - < dockerfiles/ubuntu18/openvino_c_base_2020.3.dockerfile
+docker build --build-arg BUILD_ID=2020.3.341 -t ubuntu18_base_cpu:2020.3.341 - < dockerfiles/ubuntu18/openvino_c_base_2020.3.dockerfile
 ```
 ----------------
 
