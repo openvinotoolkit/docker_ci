@@ -249,9 +249,13 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
 
+
+# "apt-get autoremove -y dpkg-dev" also removes the libglib2.0-dev package that is required to build dl_streamer samples
 RUN apt-get update && \
     apt-get autoremove -y dpkg-dev && \
+    apt-get install libglib2.0-dev -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
+
 
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}

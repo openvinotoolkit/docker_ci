@@ -86,7 +86,7 @@ ARG LGPL_DEPS="g++ \
                libnettle6 \
                gstreamer1.0-plugins-ugly \
                gstreamer1.0-alsa \
-               libglib2.0 \
+               libglib2.0-dev \
                gstreamer1.0-tools"
 {% endif %}
 {% else %}
@@ -177,9 +177,17 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
 
+{% if 'runtime' == distribution or 'dev' == distribution %}
 RUN apt-get update && \
     apt-get autoremove -y dpkg-dev && \
     rm -rf /var/lib/apt/lists/*
+{% else %}
+# "apt-get autoremove -y dpkg-dev" also removes the libglib2.0-dev package that is required to build dl_streamer samples
+RUN apt-get update && \
+    apt-get autoremove -y dpkg-dev && \
+    apt-get install libglib2.0-dev -y --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
+{% endif %}
 
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}
