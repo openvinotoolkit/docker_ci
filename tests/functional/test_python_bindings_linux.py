@@ -12,11 +12,12 @@ kwargs = {
     'volumes': {
         root / 'tests' / 'resources' / 'python_bindings': {'bind': '/opt/intel/openvino/python_bindings'},
     },
+    'devices': ['/dev/dri:/dev/dri'],
 }
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_not_distribution')
-@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7')], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
 class TestPythonBindingsLinux:
     @pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-cv')], indirect=True)
     def test_opencv_bindings(self, tester, image):

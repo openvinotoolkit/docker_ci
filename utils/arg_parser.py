@@ -390,8 +390,10 @@ def parse_args(name: str, description: str):  # noqa
 
         # workaround for https://bugs.python.org/issue16399 issue
         if not args.device and 'win' not in args.os:
-            if args.distribution == 'base' or args.os == 'centos8' or args.os == 'rhel8':
+            if args.distribution == 'base' or args.os == 'centos8':
                 args.device = ['cpu']
+            elif args.os == 'rhel8':
+                args.device = ['cpu', 'gpu']
             else:
                 args.device = ['cpu', 'gpu', 'vpu', 'hddl']
         elif not args.device:

@@ -39,10 +39,10 @@ FROM registry.access.redhat.com/ubi8/ubi:8.2 AS ov_base
 LABEL name="rhel8_runtime" \
       maintainer="openvino_docker@intel.com" \
       vendor="Intel Corporation" \
-      version="2021.3" \
-      release="2021.3" \
+      version="2021.2" \
+      release="2021.2" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
-      description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8.2"
+      description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
 USER root
 WORKDIR /
