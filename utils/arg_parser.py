@@ -302,6 +302,9 @@ def parse_args(name: str, description: str):  # noqa
             'http://', 'https://', 'ftp://')):
         args.package_url = str(pathlib.Path(args.package_url).as_posix())
 
+    if args.mode not in ('test', 'deploy') and hasattr(args, 'distribution') and args.distribution == 'custom':
+        parser.error('For a custom distribution, only test and deploy modes are available.')
+
     if hasattr(args, 'sdl_check') and args.sdl_check and (
             'snyk' not in args.sdl_check and 'bench_security' not in args.sdl_check):
         parser.error('Incorrect arguments for --sdl_check. Available tests: snyk, bench_security')
@@ -323,9 +326,6 @@ def parse_args(name: str, description: str):  # noqa
     if args.mode == 'test' and not (args.tags and args.distribution):
         parser.error('Options --tags and --distribution are mandatory. Image operation system is "ubuntu18"'
                      ' by default.')
-
-    if args.mode != 'test' and args.distribution == 'custom':
-        parser.error('Only the test mode is available for the custom distribution.')
 
     if args.mode == 'test' and 'runtime' in args.distribution and not args.package_url:
         print('\nYou can run samples/demos on runtime docker image. '
@@ -471,10 +471,10 @@ def parse_args(name: str, description: str):  # noqa
             parser.error('Cannot get product_version from the package URL and docker image. '
                          'Please specify --product_version directly.')
 
-    if args.distribution == 'custom' and not args.package_url:
+    if hasattr(args, 'distribution') and args.distribution == 'custom' and not args.package_url:
         args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]['dev']
 
-    if args.distribution == 'custom':
+    if hasattr(args, 'distribution') and args.distribution == 'custom':
         if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'opencv'],  # nosec
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
             args.distribution = 'custom-no-cv'
