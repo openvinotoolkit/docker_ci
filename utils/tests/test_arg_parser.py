@@ -374,8 +374,8 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
             'tags': ['custom:no-cv'],
             'distribution': 'custom',
         },
-        'Only the test mode is available for the custom distribution.',
-        id='Use custom image in not test mode',
+        'For a custom distribution, only test and deploy modes are available.',
+        id='Use custom image in not test or deploy mode',
     ),
 ])
 @mock.patch('utils.arg_parser.DockerCIArgumentParser.parse_args')
