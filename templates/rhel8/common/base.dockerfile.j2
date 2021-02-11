@@ -8,9 +8,17 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+ARG SUBSCRIPTION_USER=
+ARG SUBSCRIPTION_PASSWD=
+
+RUN subscription-manager register --username $SUBSCRIPTION_USER  --password $SUBSCRIPTION_PASSWD --auto-attach && \
+    subscription-manager release --set=`cat /etc/*release | grep VERSION_ID | cut -f2 -d'"'`
+
 {% for pre_command in pre_commands %}
 {{ pre_command|safe }}
 {% endfor %}
+
+RUN subscription-manager unregister
 # -----------------
 FROM registry.access.redhat.com/ubi8/ubi:8.2 AS ov_base
 
@@ -20,12 +28,15 @@ LABEL name="rhel8_runtime" \
       version="2021.3" \
       release="2021.3" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
-      description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8.2"
+      description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
 USER root
 WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
+
+RUN subscription-manager register --username $SUBSCRIPTION_USER  --password $SUBSCRIPTION_PASSWD --auto-attach && \
+    subscription-manager release --set=`cat /etc/*release | grep VERSION_ID | cut -f2 -d'"'`
 
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
 RUN useradd -ms /bin/bash -G video,users openvino && \
@@ -72,16 +83,11 @@ RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
 {% endfor %}
 
 # Post-installation cleanup and setting up OpenVINO environment variables
-RUN rm -rf /tmp && mkdir /tmp
+RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc; \
-    fi; \
-    if [ -d "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk ]; then \
-        ln --symbolic "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk/ /opt/intel/mediasdk || true; \
-        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
-        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
 
 USER openvino

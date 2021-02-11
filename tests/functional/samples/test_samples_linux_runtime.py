@@ -7,7 +7,7 @@ from utils.exceptions import FailedTest
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution', '_is_package_url_specified')
-@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'centos8')], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'centos8', 'rhel8')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('runtime', 'custom-no-omz')], indirect=True)
 class TestSamplesLinuxRuntime:
     def test_hello_classification_cpp_cpu(self, tester, image, dev_root, install_openvino_dependencies):

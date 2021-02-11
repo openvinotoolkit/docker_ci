@@ -1,0 +1,18 @@
+{
+    "/opt/intel/openvino/python/python3.6/requirements.txt": [
+        "numpy>=1.16.3\n",
+        "cython>=0.29.17\n"
+    ],
+    "/opt/intel/openvino/python/python3.7/requirements.txt": [
+        "numpy>=1.16.3\n",
+        "cython>=0.29.17\n"
+    ],
+    "/opt/intel/openvino/python/requirements.txt": [
+        "numpy >= 1.11.3; python_version>=\"3.4\"\n"
+    ],
+    "requirements": [
+        "/opt/intel/openvino/python/requirements.txt",
+        "/opt/intel/openvino/python/python3.7/requirements.txt",
+        "/opt/intel/openvino/python/python3.6/requirements.txt"
+    ]
+}
