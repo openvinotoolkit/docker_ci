@@ -21,7 +21,7 @@ class TestPyPiChanges:
         if pypi_deps_origin_file_name:
             pypi_deps_origin_file_name = f'{pypi_deps_origin_file_name.group(1)}.json'
         if not pypi_log_folder.exists():
-            pypi_log_folder.mkdir()
+            pypi_log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
                 root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec
@@ -43,7 +43,7 @@ class TestPyPiChanges:
         image_folder = image.replace('/', '_').replace(':', '_')
         pypi_log_folder = root / 'logs' / image_folder / 'pypi_changes'
         if not pypi_log_folder.exists():
-            pypi_log_folder.mkdir()
+            pypi_log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
                 root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec

@@ -16,7 +16,7 @@ class TestPyPiDependencies:
         image_folder = image.replace('/', '_').replace(':', '_')
         pypi_log_folder = root / 'logs' / image_folder / 'pypi_deps'
         if not pypi_log_folder.exists():
-            pypi_log_folder.mkdir()
+            pypi_log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
                 root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec
@@ -64,7 +64,7 @@ class TestPyPiDependencies:
         image_folder = image.replace('/', '_').replace(':', '_')
         pypi_log_folder = root / 'logs' / image_folder / 'pypi_deps'
         if not pypi_log_folder.exists():
-            pypi_log_folder.mkdir()
+            pypi_log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
                 root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec

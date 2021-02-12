@@ -66,7 +66,7 @@ class TestSDLImage:
     @pytest.mark.skipif(not sys.platform.startswith('linux'), reason="Windows doesn't support linux images")
     @pytest.fixture(scope='module')
     def _snyk_pull(self, docker_api):
-        image_name = 'snyk/snyk-cli:1.374.0-docker'
+        image_name = 'snyk/snyk-cli:1.413.4-docker'
         docker_api.client.images.pull(image_name)
         yield
         docker_api.client.images.remove(image_name, force=True)
