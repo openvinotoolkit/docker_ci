@@ -67,7 +67,7 @@ class TestDemosLinuxDataRuntime:
         )
 
     @pytest.mark.vpu
-    @pytest.mark.usefixtures('_python_ngraph_required')
+    @pytest.mark.usefixtures('_python_ngraph_required', '_python_vpu_plugin_required')
     def test_detection_ssd_python_vpu(self, tester, image, distribution, dev_root, sample_name):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
@@ -196,6 +196,7 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.vpu
+    @pytest.mark.usefixtures('_python_vpu_plugin_required')
     def test_segmentation_python_vpu(self, tester, image, distribution, dev_root):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],

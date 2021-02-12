@@ -198,6 +198,14 @@ def _is_not_distribution(request):
 
 
 @pytest.fixture(scope='session')
+def _is_not_image_os(request):
+    settings = [request.param] if isinstance(request.param, str) else request.param
+    image_os = request.config.getoption('--image_os')
+    if image_os in settings:
+        pytest.skip(f'Test requires the image os should not be {request.param} but get {image_os}')
+
+
+@pytest.fixture(scope='session')
 def _is_image_os(request):
     settings = [request.param] if isinstance(request.param, str) else request.param
     image_os = request.config.getoption('--image_os')
@@ -229,6 +237,17 @@ def _python_ngraph_required(request):
     process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)  # nosec
     if process.returncode != 0:
         pytest.skip('Test requires ngraph python bindings.')
+
+
+@pytest.fixture(scope='session')
+def _python_vpu_plugin_required(request):
+    image = request.config.getoption('--image')
+    if request.config.getoption('--image_os') != 'winserver2019':
+        command = ['docker', 'run', '--rm', image, 'bash', '-c',
+                   'find deployment_tools/inference_engine/lib/intel64 | grep libmyriadPlugin.so']
+        process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)  # nosec
+        if process.returncode != 0:
+            pytest.skip('Test requires VPU plugin.')
 
 
 def pytest_generate_tests(metafunc):

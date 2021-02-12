@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi8:8.2 AS base
+FROM registry.access.redhat.com/ubi8/ubi:8.2 AS base
 
 # hadolint ignore=DL3002
 USER root
@@ -94,7 +94,7 @@ RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
 ENV PYTHON_VER python3.6
 
 # hadolint ignore=DL3031, DL3033
-RUN yum update -y && yum install -y python3 && \
+RUN yum install -y python3 && \
     yum clean all && rm -rf /var/cache/yum
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip

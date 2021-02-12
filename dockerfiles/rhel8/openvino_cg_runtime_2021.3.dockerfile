@@ -14,9 +14,31 @@ ARG SUBSCRIPTION_PASSWD=
 RUN subscription-manager register --username $SUBSCRIPTION_USER  --password $SUBSCRIPTION_PASSWD --auto-attach && \
     subscription-manager release --set=`cat /etc/*release | grep VERSION_ID | cut -f2 -d'"'`
 
-{% for pre_command in pre_commands %}
-{{ pre_command|safe }}
-{% endfor %}
+
+# get product from URL
+ARG package_url
+ARG TEMP_DIR=/tmp/openvino_installer
+
+WORKDIR ${TEMP_DIR}
+# hadolint ignore=DL3020
+ADD ${package_url} ${TEMP_DIR}
+
+# install product by copying archive content
+ARG TEMP_DIR=/tmp/openvino_installer
+ENV INTEL_OPENVINO_DIR /opt/intel/openvino
+
+RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
+    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
+    OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
+    OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
+    mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
+    cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
+    rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
+
+
 # -----------------
 FROM registry.access.redhat.com/ubi8/ubi:8.2 AS ov_base
 
@@ -80,9 +102,39 @@ RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
 WORKDIR /licenses
 RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
 
-{% for command in commands %}
-{{ command|safe }}
-{% endfor %}
+
+# setup Python
+ENV PYTHON_VER python3.6
+
+RUN ${PYTHON_VER} -m pip install --upgrade pip
+
+# runtime package
+
+# download source for PyPi LGPL packages
+WORKDIR /thirdparty
+RUN if [ "$INSTALL_SOURCES" = "yes" ]; then \
+        curl -L https://files.pythonhosted.org/packages/81/41/e6cb9026374771e3bdb4c0fe8ac0c51c693a14b4f72f26275da15f7a4d8b/ethtool-0.14.tar.gz --output ethtool-0.14.tar.gz; \
+        curl -L https://files.pythonhosted.org/packages/ef/86/c5a34243a932346c59cb25eb49a4d1dec227974209eb9b618d0ed57ea5be/gpg-1.10.0.tar.gz --output gpg-1.10.0.tar.gz; \
+        curl -L https://files.pythonhosted.org/packages/e0/e8/1e4f21800015a9ca153969e85fc29f7962f8f82fc5dbc1ecbdeb9dc54c75/PyGObject-3.28.3.tar.gz --output PyGObject-3.28.3.tar.gz; \
+    fi
+
+WORKDIR /tmp
+
+RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt
+
+# for CPU
+
+# for GPU
+ARG INTEL_OPENCL
+
+RUN groupmod -g 44 video
+
+# hadolint ignore=DL3031, DL3033
+WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
+RUN ./install_NEO_OCL_driver.sh --no_numa -y -d ${INTEL_OPENCL} && \
+    yum clean all && rm -rf /var/cache/yum && \
+    yum remove -y epel-release
+
 
 # Post-installation cleanup and setting up OpenVINO environment variables
 RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
@@ -98,6 +150,3 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
 
 # Setup custom layers below
-{% for layer in layers %}
-{{ layer|safe }}
-{% endfor %}
