@@ -27,6 +27,6 @@ class TestDockerfile:
             switch_container_engine('-SwitchLinuxEngine')
         docker_api.client.images.pull(image_name)
         yield
-        docker_api.client.images.remove(image_name)
+        docker_api.client.images.remove(image_name, force=True)
         if sys.platform.startswith('win32'):
             switch_container_engine('-SwitchWindowsEngine')

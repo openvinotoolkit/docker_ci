@@ -31,4 +31,4 @@ class TestSDLHost:
         image_name = 'docker/docker-bench-security:latest'
         docker_api.client.images.pull(image_name)
         yield
-        docker_api.client.images.remove(image_name)
+        docker_api.client.images.remove(image_name, force=True)

@@ -69,4 +69,4 @@ class TestSDLImage:
         image_name = 'snyk/snyk-cli:1.374.0-docker'
         docker_api.client.images.pull(image_name)
         yield
-        docker_api.client.images.remove(image_name)
+        docker_api.client.images.remove(image_name, force=True)
