@@ -2,6 +2,9 @@
 # Copyright (C) 2019-2020 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
+apt update
+apt install -y build-essential curl cmake
+
 export TBB_DIR=${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake
 
 mkdir -p demo/build
