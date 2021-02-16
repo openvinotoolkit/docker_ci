@@ -64,6 +64,15 @@ LABEL Vendor="Intel Corporation"
 COPY --from=ov_base /opt/intel /opt/intel
 RUN echo "source /opt/intel/openvino_2021/bin/setupvars.sh" | tee -a /root/.bashrc
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      curl \
+      ca-certificates \
+      g++ \
+      make \
+      cmake && \
+      rm -rf /var/lib/apt/lists/*
+
 # Creating user openvino
 RUN useradd -ms /bin/bash -G users openvino && \
     chown openvino -R /home/openvino
