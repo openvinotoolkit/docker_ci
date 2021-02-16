@@ -4,6 +4,9 @@
 
 export TBB_DIR=${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake
 
+apt update
+apt install -y --no-install-recommends make ca-certificates
+
 mkdir -p demo/build
 cd demo
 
