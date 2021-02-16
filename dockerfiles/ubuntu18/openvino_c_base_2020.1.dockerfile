@@ -60,9 +60,7 @@ RUN echo "source /opt/intel/openvino/bin/setupvars.sh" | tee -a /root/.bashrc
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       curl \
-      ca-certificates \
       g++ \
-      make \
       cmake && \
       rm -rf /var/lib/apt/lists/*
 
