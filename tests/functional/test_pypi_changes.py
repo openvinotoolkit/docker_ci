@@ -35,7 +35,7 @@ class TestPyPiChanges:
             self.test_pypi_changes_linux.__name__, **kwargs,
         )
 
-    @pytest.mark.save_pypi_deps
+    @pytest.mark.save_deps
     @pytest.mark.usefixtures('_is_image_os')
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'centos8', 'rhel8')], indirect=True)
     def test_save_pypi_deps_linux(self, tester, image):

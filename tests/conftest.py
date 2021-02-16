@@ -38,7 +38,7 @@ def pytest_configure(config):
         'markers', 'gpu: run tests on GPU device',
     )
     config.addinivalue_line(
-        'markers', 'save_pypi_deps: run test to save PyPi dependencies',
+        'markers', 'save_deps: run test to save PyPi dependencies',
     )
     dist = config.getoption('--distribution')
     if dist in ('data_runtime', 'runtime', 'custom-no-omz', 'custom-no-cv'):
@@ -291,5 +291,5 @@ def pytest_runtest_setup(item):
             if process.returncode != 0:
                 pytest.skip('Test requires Intel GPU device on the host machine')
 
-        if 'save_pypi_deps' in mark.name and 'save_pypi_deps' != item.config.known_args_namespace.keyword:
-            pytest.skip('Test should be executed directly -m save_pypi_deps -k save_pypi_deps')
+        if 'save_deps' in mark.name and 'save_deps' != item.config.known_args_namespace.keyword:
+            pytest.skip('Test should be executed directly -m save_deps -k save_deps')
