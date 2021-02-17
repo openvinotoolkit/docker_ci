@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-import difflib
 import os
 import pathlib
-import re
 
 import pytest
 
@@ -12,61 +10,55 @@ import pytest
 @pytest.mark.usefixtures('_is_not_distribution')
 @pytest.mark.parametrize('_is_not_distribution', [('base')], indirect=True)
 class TestLinuxDependencies:
-    @pytest.mark.save_deps
     @pytest.mark.usefixtures('_is_image_os')
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'centos8', 'rhel8')], indirect=True)
-    def test_save_install_script_deps(self, tester, image):
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+    def test_gpl_apt_deps(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')
         log_folder = root / 'logs' / image_folder / 'linux_deps'
-        linux_deps_file_name = re.search(r'(.*_\d{4}\.\d)', image.split('/')[-1].replace(':', '_'))
-        if linux_deps_file_name:
-            linux_deps_file_name = f'{linux_deps_file_name.group(1)}.txt'
         if not log_folder.exists():
             log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
-                root / 'tests' / 'resources' / 'deps_checking' / 'linux_deps':
-                    {'bind': '/tmp/linux_deps', 'mode': 'rw'},  # nosec
-                log_folder: {'bind': '/tmp/logs/linux_deps', 'mode': 'rw'},  # nosec
+                root / 'tests' / 'resources' / 'linux_deps': {'bind': '/tmp/linux_deps', 'mode': 'rw'},  # nosec
+                log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
             },
         }
+        # dpkg has no standard way to get licenses of installed packages
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -p 2>&1 | sed \'s/ /\\n/g\' | '
-             f'tee /tmp/linux_deps/{linux_deps_file_name}"'
+            ['/bin/bash -ac "dpkg-query --list 2>&1 | tee /tmp/logs/apt_deps.log"',
+             '/bin/bash -ac "apt-cache depends --no-recommends --no-suggests --no-enhances '
+             '$(dpkg-query --show -f=\'${Package} \') 2>&1 | tee /tmp/logs/apt_deps_tree.log"',
+             '/bin/bash -ac "python3 /tmp/linux_deps/search_gpl_packages_apt.py -w /thirdparty/base_packages.txt '
+             '-p $(dpkg-query --show -f=\'${Package} \') -l /tmp/logs/gpl_packages.txt"',
              ],
-            self.test_save_install_script_deps.__name__, **kwargs,
+            self.test_gpl_apt_deps.__name__, **kwargs,
         )
 
     @pytest.mark.usefixtures('_is_image_os')
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'centos8', 'rhel8')], indirect=True)
-    def test_install_script_deps_change(self, tester, image):
+    @pytest.mark.parametrize('_is_image_os', [('centos7', 'centos8', 'rhel8')], indirect=True)
+    def test_gpl_yum_deps(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')
         log_folder = root / 'logs' / image_folder / 'linux_deps'
-        linux_deps_file_name = re.search(r'(.*_\d{4}\.\d)', image.split('/')[-1].replace(':', '_'))
-        if linux_deps_file_name:
-            linux_deps_file_name = f'{linux_deps_file_name.group(1)}.txt'
         if not log_folder.exists():
             log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
-                root / 'tests' / 'resources' / 'deps_checking' / 'linux_deps':
-                    {'bind': '/tmp/linux_deps', 'mode': 'rw'},  # nosec
+                root / 'tests' / 'resources' / 'linux_deps': {'bind': '/tmp/linux_deps', 'mode': 'rw'},  # nosec
                 log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
             },
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -p 2>&1 | sed \'s/ /\\n/g\' | '
-             f'tee /tmp/logs/{linux_deps_file_name}"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 /tmp/linux_deps/linux_deps_check.py -i {image} -e /tmp/linux_deps/{linux_deps_file_name} '
-             f'-c /tmp/logs/{linux_deps_file_name} -l /tmp/logs"',
+            ['/bin/bash -ac "rpm -qa --qf \'%{name}:%{version}:%{license}\n\' | column -t -s \':\' 2>&1 '
+             '| tee /tmp/logs/yum_deps.log"',
+             '/bin/bash -ac "for i in $(rpm -qa --qf \'%{name} \'); '
+             'do echo \\\"Dependencies of $i:\\\"; rpm -qR $i | '
+             'sed \'s/^/  /\'; done 2>&1 | tee /tmp/logs/yum_deps_tree.log"',
+             'python3 /tmp/linux_deps/search_gpl_packages_yum.py -f /tmp/logs/yum_deps.log '
+             '-w /thirdparty/base_packages.txt -l /tmp/logs/gpl_packages.txt',
              ],
-            self.test_install_script_deps_change.__name__, **kwargs,
+            self.test_gpl_yum_deps.__name__, **kwargs,
         )
-

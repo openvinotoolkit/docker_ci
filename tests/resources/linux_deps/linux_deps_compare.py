@@ -13,7 +13,7 @@ import uuid
 
 def load_package_list(path):
     with open(path) as file:
-        return sorted(map(str.strip, file.readlines()))
+        return sorted(filter(None, map(str.strip, file.readlines())))
 
 
 def compare_deps_lists(expected, actual, image, log):
@@ -62,14 +62,14 @@ def main() -> int:
     log.info(f'Start comparing dependencies for {args.image} image ...')
 
     image_name = re.search(r'(.*_\d{4}\.\d)', args.image.split('/')[-1].replace(':', '_'))
-    if image_name and not args.expected:
-        args.expected = pathlib.Path(args.logs) / f'{image_name.group(1)}.txt'
-
-    exit_code = 0
+    if not image_name:
+        log.error('Invalid image name')
+        return -1
 
     packages_expected = load_package_list(args.expected)
     packages_current = load_package_list(args.current)
     log.info('Find changes in package list:')
+    exit_code = 0
     if packages_expected != packages_current:
         log.error('FAILED')
         compare_deps_lists(packages_expected, packages_current, image_name.group(1), args.logs)
