@@ -10,7 +10,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 
 # get product from URL
-ARG package_url
+ARG package_url=https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/l_openvino_toolkit_runtime_rhel8_p_2021.2.185.tgz
 ARG TEMP_DIR=/tmp/openvino_installer
 
 WORKDIR ${TEMP_DIR}
