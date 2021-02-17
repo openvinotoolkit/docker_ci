@@ -21,7 +21,7 @@ RUN apt-get update && \
 	  fi \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 

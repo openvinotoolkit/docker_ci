@@ -184,7 +184,7 @@ RUN apt-get update && \
 	  fi \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+    rm -rf /var/lib/apt/lists/*
 {% else %}
 
 # hadolint ignore=DL3008
@@ -205,7 +205,7 @@ RUN apt-get update && \
 	  fi \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+    rm -rf /var/lib/apt/lists/*
 {% endif %}
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
