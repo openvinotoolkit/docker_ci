@@ -7,7 +7,11 @@ Before target using a docker container, please update third-party packages to ge
 It needs because an docker image has 3d party snapshot on the time that it was built. 
 When you will use a docker container based on the image, several new security vulnerabilities may be already fixed and need just update these 3d party packages.
 ```cmd
+# for Ubuntu
 apt update && apt upgrade -y --no-install-recommends && rm -rf /var/lib/apt/lists/*
+
+# for CentOS/RHEL
+yum -y update-minimal --security --setopt=tsflags=nodocs && yum clean all
 ```
 We recommend to use the latest version of PyPi packages installer to resolve dependency issues as well.
 ```cmd
