@@ -27,11 +27,11 @@ class TestLinuxDependencies:
         # dpkg has no standard way to get licenses of installed packages
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac "dpkg-query --list 2>&1 | tee /tmp/logs/apt_deps.log"',
+            ['/bin/bash -ac "dpkg-query --show -f=\'${Package} ${Version}\n\' 2>&1 | tee /tmp/logs/apt_deps.log"',
              '/bin/bash -ac "apt-cache depends --no-recommends --no-suggests --no-enhances '
              '$(dpkg-query --show -f=\'${Package} \') 2>&1 | tee /tmp/logs/apt_deps_tree.log"',
-             '/bin/bash -ac "python3 /tmp/linux_deps/search_gpl_packages_apt.py -w /thirdparty/base_packages.txt '
-             '-p $(dpkg-query --show -f=\'${Package} \') -l /tmp/logs/gpl_packages.txt"',
+             '/bin/bash -ac "python3 /tmp/linux_deps/search_gpl_packages.py -f /tmp/logs/apt_deps.log -p apt '
+             '-w /thirdparty/base_packages.txt -l /tmp/logs/gpl_packages.txt"',
              ],
             self.test_gpl_apt_deps.__name__, **kwargs,
         )
@@ -57,7 +57,7 @@ class TestLinuxDependencies:
              '/bin/bash -ac "for i in $(rpm -qa --qf \'%{name} \'); '
              'do echo \\\"Dependencies of $i:\\\"; rpm -qR $i | '
              'sed \'s/^/  /\'; done 2>&1 | tee /tmp/logs/yum_deps_tree.log"',
-             'python3 /tmp/linux_deps/search_gpl_packages_yum.py -f /tmp/logs/yum_deps.log '
+             'python3 /tmp/linux_deps/search_gpl_packages.py -f /tmp/logs/yum_deps.log -p yum '
              '-w /thirdparty/base_packages.txt -l /tmp/logs/gpl_packages.txt',
              ],
             self.test_gpl_yum_deps.__name__, **kwargs,

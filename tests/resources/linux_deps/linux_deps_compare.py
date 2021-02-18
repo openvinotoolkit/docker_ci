@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+"""Check changes in Linux packages to install
+"""
 import argparse
 import difflib
 import logging
@@ -9,23 +11,26 @@ import re
 import os
 import sys
 import uuid
+import typing
 
 
-def load_package_list(path):
+def load_package_list(path: str) -> typing.List[str]:
+    """Get package list from text file (each on a separate line)"""
     with open(path) as file:
         return sorted(filter(None, map(str.strip, file.readlines())))
 
 
-def compare_deps_lists(expected, actual, image, log):
+def compare_deps_lists(expected: typing.List[str], actual: typing.List[str], image: str, log: str):
+    """Compare two packages lists and save HTML diff"""
     with open(pathlib.Path(log) / f'pkgs_changes_linux_{uuid.uuid4()}.html', mode='w') as html_log:
         html_log.write(difflib.HtmlDiff().make_file(expected, actual, 'origin', image))
 
 
 def main() -> int:
-    """PyPi dependencies manager to get PyPi dependencies and compare with original"""
+    """Compare list of packages to install with expected and create HTML report if different"""
     parser = argparse.ArgumentParser(prog=os.path.basename(__file__),
-                                     description='This is PyPi dependencies manager to get PyPi dependencies and '
-                                                 'compare with original',
+                                     description='This is script to compare list of packages to install with expected '
+                                                 'and create HTML diff report if different',
                                      add_help=True)
     parser.add_argument(
         '-i',
@@ -39,20 +44,19 @@ def main() -> int:
         '--expected',
         metavar='PATH',
         required=True,
-        help='Path for file with expected dependencies of image',
+        help='Path to file with expected dependencies of image',
     )
     parser.add_argument(
         '-c',
         '--current',
         metavar='PATH',
         required=True,
-        help='Path for file with current dependencies of image',
+        help='Path to file with current dependencies of image',
     )
     parser.add_argument(
         '-l',
         '--logs',
         metavar='PATH',
-        required=False,
         default=str(pathlib.Path(os.path.realpath(__file__)).parent),
         help='Log path folder to store logs',
     )
