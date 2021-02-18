@@ -30,12 +30,10 @@ class TestLinuxChanges:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             "/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -p 2>&1 | sed 's/ /\\n/g' | "
-             f'tee /tmp/logs/{linux_deps_file_name}"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 /tmp/linux_deps/linux_deps_compare.py -i {image} -e /tmp/linux_deps/{linux_deps_file_name} '
-             f'-c /tmp/logs/{linux_deps_file_name} -l /tmp/logs"',
+            ['/bin/bash -ac ". /opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -p 2>&1 | '
+             f"sed 's/ /\\n/g' | tee /tmp/logs/{linux_deps_file_name}\"",
+             f'/bin/bash -ac "python3 /tmp/linux_deps/linux_deps_compare.py -i {image} '
+             f'-e /tmp/linux_deps/{linux_deps_file_name} -c /tmp/logs/{linux_deps_file_name} -l /tmp/logs"',
              ],
             self.test_linux_deps_change.__name__, **kwargs,
         )
@@ -60,9 +58,8 @@ class TestLinuxChanges:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             "/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -p 2>&1 | sed 's/ /\\n/g' | "
-             f'tee /tmp/linux_deps/{linux_deps_file_name}"',
+            ['/bin/bash -ac ". /opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -p 2>&1 | '
+             f"sed 's/ /\\n/g' | tee /tmp/linux_deps/{linux_deps_file_name}\"",
              ],
             self.test_save_linux_deps.__name__, **kwargs,
         )
