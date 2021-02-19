@@ -31,7 +31,7 @@ class TestLinuxDependencies:
              '/bin/bash -ac "apt-cache depends --no-recommends --no-suggests --no-enhances '
              '$(dpkg-query --show -f=\'${Package} \') 2>&1 | tee /tmp/logs/apt_deps_tree.log"',
              '/bin/bash -ac "python3 /tmp/linux_deps/search_gpl_packages.py -f /tmp/logs/apt_deps.log -p apt '
-             '-w /thirdparty/base_packages.txt -l /tmp/logs/gpl_packages.txt"',
+             '-w /thirdparty/base_packages.txt -l /tmp/logs/gpl_packages.log"',
              ],
             self.test_gpl_apt_deps.__name__, **kwargs,
         )
@@ -58,7 +58,7 @@ class TestLinuxDependencies:
              'do echo \\\"Dependencies of $i:\\\"; rpm -qR $i | '
              'sed \'s/^/  /\'; done 2>&1 | tee /tmp/logs/yum_deps_tree.log"',
              'python3 /tmp/linux_deps/search_gpl_packages.py -f /tmp/logs/yum_deps.log -p yum '
-             '-w /thirdparty/base_packages.txt -l /tmp/logs/gpl_packages.txt',
+             '-w /thirdparty/base_packages.txt -l /tmp/logs/gpl_packages.log',
              ],
             self.test_gpl_yum_deps.__name__, **kwargs,
         )

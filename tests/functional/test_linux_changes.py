@@ -19,7 +19,7 @@ class TestLinuxChanges:
         log_folder = root / 'logs' / image_folder / 'linux_deps'
         linux_deps_file_name = re.search(r'(.*_\d{4}\.\d)', image.split('/')[-1].replace(':', '_'))
         if linux_deps_file_name:
-            linux_deps_file_name = f'{linux_deps_file_name.group(1)}.txt'
+            linux_deps_file_name = f'{linux_deps_file_name.group(1)}'
         if not log_folder.exists():
             log_folder.mkdir(parents=True)
         kwargs = {
@@ -31,9 +31,9 @@ class TestLinuxChanges:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -p 2>&1 | '
-             f"sed 's/ /\\n/g' | tee /tmp/logs/{linux_deps_file_name}\"",
+             f"sed 's/ /\\n/g' | tee /tmp/logs/{linux_deps_file_name}.log\"",
              f'/bin/bash -ac "python3 /tmp/linux_deps/linux_deps_compare.py -i {image} '
-             f'-e /tmp/linux_deps/{linux_deps_file_name} -c /tmp/logs/{linux_deps_file_name} -l /tmp/logs"',
+             f'-e /tmp/linux_deps/{linux_deps_file_name}.txt -c /tmp/logs/{linux_deps_file_name}.log -l /tmp/logs"',
              ],
             self.test_linux_deps_change.__name__, **kwargs,
         )
