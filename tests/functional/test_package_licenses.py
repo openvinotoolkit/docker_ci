@@ -20,7 +20,6 @@ def test_package_licenses(tester, image):
     }
     tester.test_docker_image(
         image,
-        ['/bin/bash -ac "chmod +x /tmp/linux_deps/package_licenses.sh && '
-         '/tmp/linux_deps/package_licenses.sh"'],
+        ['/bin/bash -ac "/tmp/linux_deps/package_licenses.sh"'],
         test_package_licenses.__name__, **kwargs,
     )
