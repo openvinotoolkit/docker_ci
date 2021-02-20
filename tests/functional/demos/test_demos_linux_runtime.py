@@ -9,7 +9,8 @@ import pytest
 @pytest.mark.parametrize('_is_distribution', [('data_runtime', 'custom-no-omz', 'custom-no-cv')], indirect=True)
 class TestDemosLinuxDataRuntime:
     @pytest.mark.usefixtures('_python_ngraph_required')
-    def test_detection_ssd_python_cpu(self, tester, image, distribution, dev_root, sample_name):
+    @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
+    def test_detection_ssd_python_cpu(self, tester, image, distribution, dev_root, omz_python_demo_path):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
@@ -29,8 +30,7 @@ class TestDemosLinuxDataRuntime:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             f'{sample_name} '
+             f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
              ], self.test_detection_ssd_python_cpu.__name__, **kwargs,
@@ -38,7 +38,8 @@ class TestDemosLinuxDataRuntime:
 
     @pytest.mark.gpu
     @pytest.mark.usefixtures('_python_ngraph_required')
-    def test_detection_ssd_python_gpu(self, tester, image, distribution, dev_root, sample_name):
+    @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
+    def test_detection_ssd_python_gpu(self, tester, image, distribution, dev_root, omz_python_demo_path):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -59,8 +60,7 @@ class TestDemosLinuxDataRuntime:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             f'{sample_name} '
+             f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
              ], self.test_detection_ssd_python_gpu.__name__, **kwargs,
@@ -68,7 +68,8 @@ class TestDemosLinuxDataRuntime:
 
     @pytest.mark.vpu
     @pytest.mark.usefixtures('_python_ngraph_required', '_python_vpu_plugin_required')
-    def test_detection_ssd_python_vpu(self, tester, image, distribution, dev_root, sample_name):
+    @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
+    def test_detection_ssd_python_vpu(self, tester, image, distribution, dev_root, omz_python_demo_path):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
             'mem_limit': '3g',
@@ -92,8 +93,7 @@ class TestDemosLinuxDataRuntime:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             f'{sample_name} '
+             f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
              ], self.test_detection_ssd_python_vpu.__name__, **kwargs,
@@ -101,7 +101,8 @@ class TestDemosLinuxDataRuntime:
 
     @pytest.mark.hddl
     @pytest.mark.usefixtures('_python_ngraph_required')
-    def test_detection_ssd_python_hddl(self, tester, image, distribution, dev_root, sample_name):
+    @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
+    def test_detection_ssd_python_hddl(self, tester, image, distribution, dev_root, omz_python_demo_path):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
@@ -123,8 +124,7 @@ class TestDemosLinuxDataRuntime:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             f'{sample_name} '
+             f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show"',
              ], self.test_detection_ssd_python_hddl.__name__, **kwargs,
@@ -135,7 +135,8 @@ class TestDemosLinuxDataRuntime:
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('runtime', 'custom-no-omz', 'custom-no-cv')], indirect=True)
 class TestDemosLinuxRuntime:
-    def test_segmentation_python_cpu(self, tester, image, distribution, dev_root):
+    @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
+    def test_segmentation_python_cpu(self, tester, image, distribution, dev_root, omz_python_demo_path):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
@@ -156,8 +157,7 @@ class TestDemosLinuxRuntime:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'segmentation_demo/segmentation_demo.py '
+             f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU"',
              ],
@@ -165,7 +165,8 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.gpu
-    def test_segmentation_python_gpu(self, tester, image, distribution, dev_root):
+    @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
+    def test_segmentation_python_gpu(self, tester, image, distribution, dev_root, omz_python_demo_path):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -187,8 +188,7 @@ class TestDemosLinuxRuntime:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'segmentation_demo/segmentation_demo.py '
+             f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU"',
              ],
@@ -197,7 +197,8 @@ class TestDemosLinuxRuntime:
 
     @pytest.mark.vpu
     @pytest.mark.usefixtures('_python_vpu_plugin_required')
-    def test_segmentation_python_vpu(self, tester, image, distribution, dev_root):
+    @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
+    def test_segmentation_python_vpu(self, tester, image, distribution, dev_root, omz_python_demo_path):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
             'mem_limit': '3g',
@@ -222,8 +223,7 @@ class TestDemosLinuxRuntime:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'segmentation_demo/segmentation_demo.py '
+             f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD"',
              ],
@@ -232,7 +232,8 @@ class TestDemosLinuxRuntime:
 
     @pytest.mark.hddl
     @pytest.mark.xfail(reason='38557 issue')
-    def test_segmentation_python_hddl(self, tester, image, distribution, dev_root):
+    @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
+    def test_segmentation_python_hddl(self, tester, image, distribution, dev_root, omz_python_demo_path):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
@@ -255,8 +256,7 @@ class TestDemosLinuxRuntime:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/'
-             'segmentation_demo/segmentation_demo.py '
+             f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL"',
              ],

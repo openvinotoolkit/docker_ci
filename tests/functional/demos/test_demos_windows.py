@@ -72,7 +72,8 @@ class TestDemosWindows:
             self.test_text_cpp_cpu.__name__, **kwargs,
         )
 
-    def test_detection_ssd_python_cpu(self, tester, image, sample_name):
+    @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
+    def test_detection_ssd_python_cpu(self, tester, image, omz_python_demo_path):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
@@ -81,9 +82,7 @@ class TestDemosWindows:
              'downloader\\\\downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\'
-             'python_demos\\\\'
-             f'{sample_name} '
+             f'python {omz_python_demo_path} '
              '-m C:\\\\intel\\\\openvino\\\\intel\\\\vehicle-detection-adas-0002\\\\FP16\\\\'
              'vehicle-detection-adas-0002.xml '
              '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU --no_show',
@@ -114,7 +113,8 @@ class TestDemosWindows:
             self.test_segmentation_cpp_cpu.__name__, **kwargs,
         )
 
-    def test_segmentation_python_cpu(self, tester, image):
+    @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
+    def test_segmentation_python_cpu(self, tester, image, omz_python_demo_path):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
@@ -123,8 +123,7 @@ class TestDemosWindows:
              'downloader\\\\downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\'
-             'python_demos\\\\segmentation_demo\\\\segmentation_demo.py '
+             f'python {omz_python_demo_path} '
              '-m C:\\\\intel\\\\openvino\\\\intel\\\\semantic-segmentation-adas-0001\\\\FP16\\\\'
              'semantic-segmentation-adas-0001.xml '
              '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU',
@@ -132,7 +131,8 @@ class TestDemosWindows:
             self.test_segmentation_python_cpu.__name__, **kwargs,
         )
 
-    def test_object_detection_centernet_python_cpu(self, tester, image, sample_name):
+    @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
+    def test_object_detection_centernet_python_cpu(self, tester, image, omz_python_demo_path):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
@@ -145,9 +145,7 @@ class TestDemosWindows:
              'downloader\\\\converter.py '
              '--name ctdet_coco_dlav0_384 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\'
-             'python_demos\\\\'
-             f'{sample_name} '
+             f'python {omz_python_demo_path} '
              '-m C:\\\\intel\\\\openvino\\\\public\\\\ctdet_coco_dlav0_384\\\\FP16\\\\ctdet_coco_dlav0_384.xml '
              '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU --no_show',
              ],
