@@ -165,6 +165,53 @@ def install_openvino_dependencies(request):
     return ''
 
 
+@pytest.fixture()
+def omz_python_demo_path(request):
+    product_version = request.config.getoption('--product_version')
+    demo_name = request.param
+    is_ssd = 'ssd' in request.node.name
+    is_centernet = 'centernet' in request.node.name
+    parameters = ''
+    if demo_name == 'object_detection':
+        if is_ssd:
+            parameters = ' -at ssd'
+        elif is_centernet:
+            parameters = ' -at centernet'
+    if demo_name == 'segmentation' and product_version >= '2021.3':
+        parameters = ' --no_show'
+
+    if request.config.getoption('--image_os') == 'winserver2019':
+        base_path = 'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos'
+        if product_version <= '2021.1' and demo_name == 'object_detection':
+            python_demos = f'{base_path}\\\\python_demos'
+            if is_ssd:
+                return f'{python_demos}\\\\object_detection_demo_ssd_async\\\\object_detection_demo_ssd_async.py'
+            elif is_centernet:
+                return f'{python_demos}\\\\object_detection_demo_centernet\\\\object_detection_demo_centernet.py'
+            else:
+                pytest.fail('This object_detection_demo parameter is not supported on the current image version')
+        elif product_version <= '2021.2':
+            demo_name += '_demo' if demo_name != 'action_recognition' else ''
+            return f'{base_path}\\\\python_demos\\\\{demo_name}\\\\{demo_name}.py'
+        else:
+            return f'{base_path}\\\\{demo_name}_demo\\\\python\\\\{demo_name}_demo.py{parameters}'
+    else:
+        base_path = '/opt/intel/openvino/deployment_tools/open_model_zoo/demos'
+
+        if product_version <= '2021.1' and demo_name == 'object_detection':
+            if is_ssd:
+                return f'{base_path}/python_demos/object_detection_demo_ssd_async/object_detection_demo_ssd_async.py'
+            elif is_centernet:
+                return f'{base_path}/python_demos/object_detection_demo_centernet/object_detection_demo_centernet.py'
+            else:
+                pytest.fail('This object_detection_demo parameter is not supported on the current image version')
+        elif product_version <= '2021.2':
+            demo_name += '_demo' if demo_name != 'action_recognition' else ''
+            return f'{base_path}/python_demos/{demo_name}/{demo_name}.py{parameters}'
+        else:
+            return f'{base_path}/{demo_name}_demo/python/{demo_name}_demo.py{parameters}'
+
+
 def switch_container_engine(engine):
     """Switch Windows docker Engine to -SwitchLinuxEngine or -SwitchWindowsEngine"""
     cmd_line = ['cmd', '/c', 'where', 'docker']
@@ -248,23 +295,6 @@ def _python_vpu_plugin_required(request):
         process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)  # nosec
         if process.returncode != 0:
             pytest.skip('Test requires VPU plugin.')
-
-
-def pytest_generate_tests(metafunc):
-    image_version = metafunc.config.getoption('--product_version')
-    if image_version is None:
-        return
-    is_older = True if image_version <= '2021.1' else False
-    is_ssd = True if 'ssd' in metafunc.definition.name else False
-    is_centernet = True if 'centernet' in metafunc.definition.name else False
-    if 'sample_name' in metafunc.fixturenames and is_older and is_ssd:
-        metafunc.parametrize('sample_name', ['object_detection_demo_ssd_async/object_detection_demo_ssd_async.py'])
-    elif 'sample_name' in metafunc.fixturenames and is_ssd and not is_older:
-        metafunc.parametrize('sample_name', ['object_detection_demo/object_detection_demo.py -at ssd'])
-    elif 'sample_name' in metafunc.fixturenames and is_centernet and is_older:
-        metafunc.parametrize('sample_name', ['object_detection_demo_centernet/object_detection_demo_centernet.py'])
-    elif 'sample_name' in metafunc.fixturenames and is_centernet and not is_older:
-        metafunc.parametrize('sample_name', ['object_detection_demo/object_detection_demo.py -at centernet'])
 
 
 def pytest_runtest_setup(item):
