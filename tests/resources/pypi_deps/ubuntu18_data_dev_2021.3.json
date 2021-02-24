@@ -48,42 +48,47 @@
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements.txt": [
         "tensorflow>=1.15.2,<2.0; python_version < \"3.8\"\n",
         "tensorflow>=2.2; python_version >= \"3.8\"\n",
-        "mxnet>=1.0.0,<=1.5.1\n",
+        "mxnet>=1.0.0,<=1.7.0\n",
         "networkx>=1.11\n",
         "numpy>=1.14.0,<1.19.0\n",
         "protobuf>=3.6.1\n",
         "onnx>=1.1.2\n",
         "test-generator==0.1.1\n",
         "defusedxml>=0.5.0\n",
-        "urllib3>=1.25.9\n"
+        "urllib3>=1.25.9\n",
+        "requests>=2.20.0\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_caffe.txt": [
         "networkx>=1.11\n",
         "numpy>=1.14.0\n",
         "protobuf>=3.6.1\n",
         "test-generator==0.1.1\n",
-        "defusedxml>=0.5.0\n"
+        "defusedxml>=0.5.0\n",
+        "requests>=2.20.0\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_kaldi.txt": [
         "networkx>=1.11\n",
         "numpy>=1.14.0\n",
         "test-generator==0.1.1\n",
-        "defusedxml>=0.5.0\n"
+        "defusedxml>=0.5.0\n",
+        "requests>=2.20.0\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_mxnet.txt": [
-        "mxnet>=1.0.0,<=1.5.1\n",
+        "mxnet>=1.0.0,<=1.7.0\n",
         "networkx>=1.11\n",
         "numpy>=1.14.0\n",
         "test-generator==0.1.1\n",
         "defusedxml>=0.5.0\n",
-        "urllib3>=1.25.9\n"
+        "urllib3>=1.25.9\n",
+        "requests>=2.20.0\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_onnx.txt": [
         "onnx>=1.1.2\n",
         "networkx>=1.11\n",
         "numpy>=1.14.0\n",
         "test-generator==0.1.1\n",
-        "defusedxml>=0.5.0\n"
+        "defusedxml>=0.5.0\n",
+        "requests>=2.20.0\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_tf.txt": [
         "tensorflow>=1.15.2,<2.0; python_version < \"3.8\"\n",
@@ -91,40 +96,47 @@
         "networkx>=1.11\n",
         "numpy>=1.14.0,<1.19.0\n",
         "test-generator==0.1.1\n",
-        "defusedxml>=0.5.0\n"
+        "defusedxml>=0.5.0\n",
+        "requests>=2.20.0\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_tf2.txt": [
         "tensorflow>=2.2\n",
         "networkx>=1.11\n",
         "numpy>=1.14.0\n",
         "test-generator==0.1.1\n",
-        "defusedxml>=0.5.0\n"
+        "defusedxml>=0.5.0\n",
+        "requests>=2.20.0\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/3d_segmentation_demo/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/3d_segmentation_demo/python/requirements.txt": [
         "#3d segmentation demo specific requirements\n",
         "nibabel\n",
-        "pillow\n",
+        "pillow>=8.1\n",
         "scipy\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/bert_question_answering_demo/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/bert_question_answering_demo/python/requirements.txt": [
         "opencv-python>=3.4.0\n",
         "numpy>=1.11.0\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/bert_question_answering_embedding_demo/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/bert_question_answering_embedding_demo/python/requirements.txt": [
         "numpy>=1.11.0\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/handwritten_text_recognition_demo/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/formula_recognition_demo/python/requirements.txt": [
+        "sympy\n",
+        "tqdm\n",
+        "numpy\n"
+    ],
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/handwritten_text_recognition_demo/python/requirements.txt": [
         "opencv-python\n",
         "numpy\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/human_pose_estimation_3d_demo/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/human_pose_estimation_3d_demo/python/requirements.txt": [
         "numpy>=1.17.0\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/machine_translation_demo/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/machine_translation_demo/python/requirements.txt": [
         "tokenizers>=0.8.1rc1\n",
         "numpy>=1.11.0\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/multi_camera_multi_target_tracking/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/multi_camera_multi_target_tracking_demo/python/requirements.txt": [
         "setuptools\n",
         "matplotlib>=3.0.3\n",
         "motmetrics>=1.2.0\n",
@@ -135,7 +147,7 @@
         "tensorboardX>=2.0\n",
         "tqdm>=4.32.2\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/requirements.txt": [
         "matplotlib\n",
         "motmetrics\n",
         "nibabel\n",
@@ -147,26 +159,25 @@
         "tensorboardX\n",
         "tqdm\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/speech_recognition_demo/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/speech_recognition_demo/python/requirements.txt": [
         "numpy\n",
         "tqdm\n",
         "librosa\n",
         "pyyaml\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/text_to_speech_demo/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/text_to_speech_demo/python/requirements.txt": [
         "numpy>=1.18.3\n",
         "inflect>=4.1.0\n",
-        "Unidecode>=0.4.20\n",
         "tqdm>=4.46.1\n"
     ],
-    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/whiteboard_inpainting_demo/requirements.txt": [
+    "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/whiteboard_inpainting_demo/python/requirements.txt": [
         "numpy>=1.16.4\n"
     ],
     "/opt/intel/openvino/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements-core.in": [
         "# core components\n",
-        "numpy>=1.16.3,<1.18\n",
+        "numpy>=1.16.3\n",
         "PyYAML\n",
-        "pillow>=2.6.1\n"
+        "pillow>=8.1\n"
     ],
     "/opt/intel/openvino/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements-test.in": [
         "pytest~=5.0\n",
@@ -209,10 +220,12 @@
         "# editdistance calculation\n",
         "editdistance\n",
         "\n",
-        "\n",
         "# DNA sequence matching\n",
         "parasail<=1.2\n",
-        "fast-ctc-decode\n"
+        "fast-ctc-decode\n",
+        "\n",
+        "# raw image formats processing\n",
+        "rawpy\n"
     ],
     "/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements-caffe2.in": [
         "future\n",
@@ -230,7 +243,8 @@
         "# release at the time of writing, so whether it helps, remains to be seen.\n",
         "# For now, just cap the PyTorch version at 1.6.x.\n",
         "torch>=1.5,<1.7\n",
-        "torchvision\n"
+        "torchvision<0.8\n",
+        "yacs\n"
     ],
     "/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements-tensorflow.in": [
         "tensorflow>=2.3\n",
@@ -291,17 +305,18 @@
         "/opt/intel/openvino/python/python3.6/requirements.txt",
         "/opt/intel/openvino/python/python3.6/openvino/tools/benchmark/requirements.txt",
         "/opt/intel/openvino/deployment_tools/inference_engine/samples/python/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/human_pose_estimation_3d_demo/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/handwritten_text_recognition_demo/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/multi_camera_multi_target_tracking/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/bert_question_answering_demo/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/bert_question_answering_embedding_demo/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/whiteboard_inpainting_demo/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/3d_segmentation_demo/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/machine_translation_demo/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/speech_recognition_demo/requirements.txt",
-        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/python_demos/text_to_speech_demo/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/human_pose_estimation_3d_demo/python/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/handwritten_text_recognition_demo/python/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/multi_camera_multi_target_tracking_demo/python/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/bert_question_answering_demo/python/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/bert_question_answering_embedding_demo/python/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/whiteboard_inpainting_demo/python/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/3d_segmentation_demo/python/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/machine_translation_demo/python/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/speech_recognition_demo/python/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/formula_recognition_demo/python/requirements.txt",
+        "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/text_to_speech_demo/python/requirements.txt",
         "/opt/intel/openvino/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements-test.in",
         "/opt/intel/openvino/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements-core.in",
         "/opt/intel/openvino/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements.in",
