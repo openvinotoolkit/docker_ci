@@ -120,6 +120,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 RUN apt-get update; \
     apt-get install -y --no-install-recommends \
         git \
+        libva-dev \
         libgtk-3-dev \
         libavcodec-dev \
         libavformat-dev \
