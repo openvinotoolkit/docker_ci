@@ -5,7 +5,7 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 RUN apt-get update && \
     apt-get install -y --no-install-recommends cpio && \
     rm -rf /var/lib/apt/lists/* && \
-    tar -xzf ${TEMP_DIR}/*.tgz --strip 1 &&
+    tar -xzf ${TEMP_DIR}/*.tgz --strip 1 && \
     sed -i 's/decline/accept/g' silent.cfg && \
     ${TEMP_DIR}/install.sh -s silent.cfg && \
     OV_BUILD="$(find /opt/intel -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
