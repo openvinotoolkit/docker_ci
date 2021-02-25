@@ -11,7 +11,6 @@ import pytest
 @pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-omz',
                                                    'custom-no-cv', 'custom-full')], indirect=True)
 class TestPyPiDependencies:
-    @pytest.mark.xfail(reason='47558 GPL Unidecode PyPi package as dependency for OMZ text_to_speech_demo')
     def test_gpl_pypi_deps(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')
