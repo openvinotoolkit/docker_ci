@@ -23,8 +23,9 @@ $ docker run -it --rm --device /dev/dri --group-add=$(stat -c "%g" /dev/dri/rend
 ```
 Now you can use the container with GPU access under non-root user.
 
-# 2. Configure an image to use GPU device on Ubuntu 20 host and save it:
-Run a OpenVINO container as root with access to GPU device: 
+## 2. Configure an Image to Use a GPU Device on an Ubuntu 20 Host and Save It
+
+To run an OpenVINO container as root with access to a GPU device, use the command below: 
 ```bash
 $ docker run -it --rm --user root --device /dev/dri --name my_container <image_name>
 ```
