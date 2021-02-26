@@ -41,7 +41,7 @@ Create group render in the container with the same group ID as on your host:
 ```bash
 $ addgroup --gid 134 render
 ```
-Check groups for GPU device in the container, it should be look like:
+Check groups for the GPU device in the container:
 ```bash
 $ ls -l /dev/dri/
 ```
