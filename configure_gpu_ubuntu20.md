@@ -13,7 +13,7 @@ Choose one of the options below to configure a container.
 
 
 # 1. Configure a container to use GPU device on Ubuntu 20 host under non-root user
-To run a OpenVINO container as non-root with access to GPU device, please specify render group ID from your host:
+To run an OpenVINO container as non-root with access to a GPU device, specify the render group ID from your host:
 ```bash
 $ docker run -it --rm --device /dev/dri  --group-add=<render_group_id_on_host> <image_name> 
 ```
