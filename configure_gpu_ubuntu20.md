@@ -3,7 +3,7 @@
 Intel® Graphics Compute Runtime for OpenCL™ driver components are required to use a GPU plugin and write custom layers for Intel® Integrated Graphics. 
 The driver is installed in the OpenVINO™ Docker image but you need to activate it in the container for a non-root user if you have Ubuntu 20.04 on your host.
 To access GPU capabilities, you need to have correct permissions on the host and Docker container. 
-The following will list the group assigned ownership of the render nodes on your host:
+Run the following commands to list the group assigned ownership of the render nodes on your host:
 ```bash
 $ stat -c "group_name=%G group_id=%g" /dev/dri/render*
 group_name=render group_id=134
