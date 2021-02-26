@@ -8,8 +8,8 @@ Run the following commands to list the group assigned ownership of the render no
 $ stat -c "group_name=%G group_id=%g" /dev/dri/render*
 group_name=render group_id=134
 ```
-OpenVINO™ Docker images don't contain render group for openvino (non-root) user, because render group doesn't have strict group ID unlike video group. 
-We suppose two options to configure a container for you. Please choose one:
+OpenVINO™ Docker images do not contain a render group for openvino non-root users because the render group does not have a strict group ID, unlike the video group. 
+Choose one of the options below to configure a container.
 
 
 # 1. Configure a container to use GPU device on Ubuntu 20 host under non-root user
