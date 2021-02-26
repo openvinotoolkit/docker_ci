@@ -31,6 +31,9 @@ $ docker run -it --rm --user root --device /dev/dri --name my_container <image_n
 Check groups for GPU device in the container, it should be look like:
 ```bash
 $ ls -l /dev/dri/
+```
+The output should look like the following:
+```bash
 crw-rw---- 1 root video  226,   0 Feb 20 14:28 card0
 crw-rw---- 1 root   134  226, 128 Feb 20 14:28 renderD128
 ```
