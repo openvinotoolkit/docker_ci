@@ -50,7 +50,7 @@ The output should look like the following:
 crw-rw---- 1 root video  226,   0 Feb 20 14:28 card0
 crw-rw---- 1 root render 226, 128 Feb 20 14:28 renderD128
 ```
-Add non-root user to the render group and check it:
+Add the non-root user to the render group:
 ```bash
 $ usermod -a -G render openvino
 $ id openvino
