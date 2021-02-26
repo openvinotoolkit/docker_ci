@@ -37,7 +37,7 @@ The output should look like the following:
 crw-rw---- 1 root video  226,   0 Feb 20 14:28 card0
 crw-rw---- 1 root   134  226, 128 Feb 20 14:28 renderD128
 ```
-Create group render in the container with the same group ID as on your host: 
+Create a render group in the container with the same group ID as on your host: 
 ```bash
 $ addgroup --gid 134 render
 ```
