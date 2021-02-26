@@ -234,7 +234,7 @@ To enable **GPU** access, make sure you've built the image with support for GPU 
 ```bash
 docker run -itu root:root --rm --device /dev/dri:/dev/dri <image_name>:latest
 ```
-If your host system is Ubuntu 20, please follow the [configuration guide for the Intel® Graphics Compute Runtime for OpenCL™ on Ubuntu* 20.04](./configure_gpu_ubuntu20.md). 
+If your host system is Ubuntu 20, follow the [Configuration Guide for the Intel® Graphics Compute Runtime for OpenCL™ on Ubuntu* 20.04](./configure_gpu_ubuntu20.md). 
 
 To run inference on the **VPU**, make sure you've built the image with support for VPU and run:
 ```bash
