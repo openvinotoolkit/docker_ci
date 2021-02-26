@@ -21,7 +21,7 @@ For example, get render group ID on your host:
 ```bash
 $ docker run -it --rm --device /dev/dri --group-add=$(stat -c "%g" /dev/dri/render*) <image_name> 
 ```
-Now you can use the container with GPU access under non-root user.
+Now you can use the container with GPU access under the non-root user.
 
 ## 2. Configure an Image to Use a GPU Device on an Ubuntu 20 Host and Save It
 
