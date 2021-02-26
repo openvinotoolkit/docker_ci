@@ -38,22 +38,48 @@ class TestPyPiDependencies:
         )
 
     def test_conflict_pypi_deps(self, tester, image):
+        root = pathlib.Path(os.path.realpath(__name__)).parent
+        image_folder = image.replace('/', '_').replace(':', '_')
+        pypi_log_folder = root / 'logs' / image_folder / 'pypi_deps'
+        if not pypi_log_folder.exists():
+            pypi_log_folder.mkdir(parents=True)
+        kwargs = {
+            'volumes': {
+                root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec
+                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
+            },
+        }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac "python3 -m pip check"'],
-            self.test_conflict_pypi_deps.__name__,
+            ['/bin/bash -o pipefail -ac "python3 -m pip check 2>&1 | tee /tmp/logs/pip_check.log || '
+             'python3 /tmp/pypi_deps/process_pip_conflicts.py -f /tmp/logs/pip_check.log '
+             '-w /tmp/pypi_deps/pip_known_issues.txt"'],
+            self.test_conflict_pypi_deps.__name__, **kwargs,
         )
 
     @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
     @pytest.mark.parametrize('_is_image_os', ['ubuntu18'], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev', 'data_dev', 'proprietary')], indirect=True)
     def test_conflict_pypi_deps_venv_tf2(self, tester, image):
+        root = pathlib.Path(os.path.realpath(__name__)).parent
+        image_folder = image.replace('/', '_').replace(':', '_')
+        pypi_log_folder = root / 'logs' / image_folder / 'pypi_deps'
+        if not pypi_log_folder.exists():
+            pypi_log_folder.mkdir(parents=True)
+        kwargs = {
+            'volumes': {
+                root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec
+                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
+            },
+        }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac "cd /opt/intel/venv_tf2 && . ./bin/activate && '
-             'python3 -m pip check"',
+            ['/bin/bash -o pipefail -ac "cd /opt/intel/venv_tf2 && . ./bin/activate && '
+             'python3 -m pip check 2>&1 | tee /tmp/logs/pip_check_tf2.log || '
+             'python3 /tmp/pypi_deps/process_pip_conflicts.py -f /tmp/logs/pip_check_tf2.log '
+             '-w /tmp/pypi_deps/pip_known_issues.txt"',
              ],
-            self.test_conflict_pypi_deps_venv_tf2.__name__,
+            self.test_conflict_pypi_deps_venv_tf2.__name__, **kwargs,
         )
 
     @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
