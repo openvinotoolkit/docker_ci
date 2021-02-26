@@ -17,7 +17,6 @@ class TestDemosWindows:
             self.test_security_cpu.__name__, **kwargs,
         )
 
-    @pytest.mark.xfail(reason='39822 issue')
     def test_squeezenet_cpu(self, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
