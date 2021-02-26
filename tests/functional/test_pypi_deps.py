@@ -32,7 +32,7 @@ class TestPyPiDependencies:
              'pip-licenses --output-file /tmp/logs/pypi_licenses.log',
              'pip-licenses -f json --output-file /tmp/logs/pypi_licenses.json',
              'python3 /tmp/pypi_deps/get_gpl_packages.py -f /tmp/logs/pypi_licenses.json '
-             '-l /tmp/logs/pypi_licenses_gpl.json',
+             '-l /tmp/logs/pypi_licenses_gpl.json -w /tmp/pypi_deps/gpl_whitelist_rhel.txt',
              ],
             self.test_gpl_pypi_deps.__name__, **kwargs,
         )
