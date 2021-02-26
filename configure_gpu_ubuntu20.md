@@ -28,7 +28,7 @@ Run a OpenVINO container as root with access to GPU device:
 ```bash
 $ docker run -it --rm --user root --device /dev/dri --name my_container <image_name>
 ```
-Check groups for GPU device in the container, it should be look like:
+Check groups for the GPU device in the container:
 ```bash
 $ ls -l /dev/dri/
 ```
