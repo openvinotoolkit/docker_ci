@@ -17,7 +17,7 @@ To run a OpenVINO container as non-root with access to GPU device, please specif
 ```bash
 $ docker run -it --rm --device /dev/dri  --group-add=<render_group_id_on_host> <image_name> 
 ```
-For example, get render group ID on your host:
+For example, get the render group ID on your host:
 ```bash
 $ docker run -it --rm --device /dev/dri --group-add=$(stat -c "%g" /dev/dri/render*) <image_name> 
 ```
