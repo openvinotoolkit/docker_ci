@@ -54,8 +54,8 @@ Then re-login as non-root user:
 ```bash
 $ su openvino
 ```
-Now you can use the container with GPU access under non-root user or you can save that container as the image and push to your registry. 
-Execute the following commands in another terminal:
+Now you can use the container with GPU access under the non-root user or you can save that container as an image and push it to your registry. 
+Open another terminal and run the commands below::
 ```bash
 $ docker commit my_container my_image
 $ docker run -it --rm --device /dev/dri --user openvino  my_image
