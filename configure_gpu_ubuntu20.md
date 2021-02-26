@@ -51,6 +51,9 @@ Add non-root user to the render group and check it:
 ```bash
 $ usermod -a -G render openvino
 $ id openvino
+```
+Check that the group now contains the user:
+```bash
 uid=1000(openvino) gid=1000(openvino) groups=1000(openvino),44(video),100(users),134(render)
 ```
 Then re-login as non-root user:
