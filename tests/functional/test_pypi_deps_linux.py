@@ -10,7 +10,7 @@ import pytest
 @pytest.mark.usefixtures('_is_not_distribution')
 @pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-omz',
                                                    'custom-no-cv', 'custom-full')], indirect=True)
-class TestPyPiDependencies:
+class TestPyPiDependenciesLinux:
     def test_gpl_pypi_deps(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')
