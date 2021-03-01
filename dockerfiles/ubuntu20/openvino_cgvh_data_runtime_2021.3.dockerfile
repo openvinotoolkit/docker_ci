@@ -86,10 +86,11 @@ WORKDIR /thirdparty
 ARG INSTALL_SOURCES="no"
 
 
-ARG DEPS="dpkg-dev \
-          tzdata \
+ARG DEPS="tzdata \
           curl"
 
+ARG DEPS="${DEPS} \
+           intel-media-va-driver-non-free"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
@@ -99,8 +100,9 @@ ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=opencv_opt -c=dl
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${DEPS} && \
+    apt-get install -y --no-install-recommends dpkg-dev && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -123,7 +125,7 @@ RUN apt-get update && \
 	  fi \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+    rm -rf /var/lib/apt/lists/*
 
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
@@ -182,7 +184,7 @@ RUN apt-get update && \
 	  fi \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
