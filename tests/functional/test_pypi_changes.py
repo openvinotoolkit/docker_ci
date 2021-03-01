@@ -9,7 +9,7 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_not_distribution')
-@pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-omz',
+@pytest.mark.parametrize('_is_not_distribution', [('base', 'internal_dev', 'custom-no-omz',
                                                    'custom-no-cv', 'custom-full')], indirect=True)
 class TestPyPiChanges:
     @pytest.mark.usefixtures('_is_image_os')
