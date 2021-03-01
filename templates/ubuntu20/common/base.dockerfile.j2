@@ -43,8 +43,7 @@ ARG INSTALL_SOURCES="no"
 
 {% if build_id < '2021.3' %}
 {% if 'runtime' == distribution %}
-ARG DEPS="dpkg-dev \
-          tzdata \
+ARG DEPS="tzdata \
           curl \
           libgl1 \
           libtinfo5"
@@ -52,8 +51,7 @@ ARG LGPL_DEPS="g++ \
                gcc \
                libgtk-3-0"
 {% elif 'dev' == distribution %}
-ARG DEPS="dpkg-dev \
-          tzdata \
+ARG DEPS="tzdata \
           curl \
           libgl1 \
           libtinfo5"
@@ -65,14 +63,14 @@ ARG LGPL_DEPS="g++ \
                liblapack-dev \
                gfortran"
 {% elif 'data_runtime' == distribution %}
-ARG DEPS="dpkg-dev \
-          tzdata \
+ARG DEPS="tzdata \
           curl \
           libgl1 \
           libtinfo5 \
           libopenexr24 \
           flex \
-          vainfo"
+          vainfo \
+          intel-media-va-driver-non-free"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
@@ -98,8 +96,7 @@ ARG LGPL_DEPS="g++ \
                libglib2.0-0 \
                gstreamer1.0-tools"
 {% else %}
-ARG DEPS="dpkg-dev \
-          tzdata \
+ARG DEPS="tzdata \
           curl \
           libgl1 \
           libtinfo5 \
@@ -135,8 +132,7 @@ ARG LGPL_DEPS="g++ \
                gstreamer1.0-tools"
 {% endif %}
 {% else %}
-ARG DEPS="dpkg-dev \
-          tzdata \
+ARG DEPS="tzdata \
           curl"
 {% if 'runtime' == distribution %}
 ARG LGPL_DEPS="g++ \
@@ -148,6 +144,8 @@ ARG LGPL_DEPS="g++ \
                libc6-dev"
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=pot"
 {% elif 'data_runtime' == distribution %}
+ARG DEPS="${DEPS} \
+           intel-media-va-driver-non-free"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
@@ -162,8 +160,9 @@ ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=opencv_opt -c=dl
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${DEPS} && \
+    apt-get install -y --no-install-recommends dpkg-dev && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
 {% if build_id < '2021.3' %}
