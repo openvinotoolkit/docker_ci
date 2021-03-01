@@ -9,7 +9,7 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_not_distribution')
-@pytest.mark.parametrize('_is_not_distribution', [('base')], indirect=True)
+@pytest.mark.parametrize('_is_not_distribution', [('base', 'internal_dev')], indirect=True)
 class TestLinuxChanges:
     @pytest.mark.usefixtures('_is_image_os')
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'centos8', 'rhel8')], indirect=True)
