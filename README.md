@@ -26,7 +26,9 @@ As well you can use available dockerfiles from `<root_project>/dockerfiles/<imag
 
 ## Prebuilt images
 
-Prebuilt images are available on [Docker Hub](https://hub.docker.com/u/openvino)
+Prebuilt images are available on: 
+- [Docker Hub](https://hub.docker.com/u/openvino)
+- [Quay.io](https://quay.io/organization/openvino)
 
 ## Licenses
 The DockerHub CI framework for Intel® Distribution of OpenVINO™ toolkit is licensed under [Apache License Version 2.0](./LICENSE).

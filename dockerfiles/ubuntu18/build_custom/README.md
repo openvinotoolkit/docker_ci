@@ -76,7 +76,10 @@ By default, the product version is equal to the latest release version. Use `-p`
 Please follow [Run built image](../get-started.md#run-built-image) section in DockerHub CI getting started guide.
 
 ## Prebuilt images
-Prebuilt images are available on [Docker Hub](https://hub.docker.com/u/openvino)
+
+Prebuilt images are available on: 
+- [Docker Hub](https://hub.docker.com/u/openvino)
+- [Quay.io](https://quay.io/organization/openvino)
 
 ## License
 This Dockerfile contains third-party components with different licenses.  
