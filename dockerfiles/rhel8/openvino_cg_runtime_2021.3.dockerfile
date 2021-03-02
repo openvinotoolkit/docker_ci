@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi8/ubi:8.2 AS base
+FROM registry.access.redhat.com/ubi8 AS base
 
 # hadolint ignore=DL3002
 USER root
@@ -8,10 +8,10 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-ARG SUBSCRIPTION_USER=
-ARG SUBSCRIPTION_PASSWD=
+ARG SUBSCRIPTION_ORG=
+ARG SUBSCRIPTION_KEY=
 
-RUN subscription-manager register --username $SUBSCRIPTION_USER  --password $SUBSCRIPTION_PASSWD --auto-attach && \
+RUN subscription-manager register --org=$SUBSCRIPTION_ORG --activationkey=$SUBSCRIPTION_KEY && subscription-manager attach && \
     subscription-manager release --set=`cat /etc/*release | grep VERSION_ID | cut -f2 -d'"'`
 
 
@@ -40,10 +40,7 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
 
 
 # -----------------
-FROM registry.access.redhat.com/ubi8/ubi:8.2 AS ov_base
-
-ARG SUBSCRIPTION_USER=
-ARG SUBSCRIPTION_PASSWD=
+FROM registry.access.redhat.com/ubi8 AS ov_base
 
 LABEL name="rhel8_runtime" \
       maintainer="openvino_docker@intel.com" \
@@ -58,7 +55,10 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-RUN subscription-manager register --username $SUBSCRIPTION_USER  --password $SUBSCRIPTION_PASSWD --auto-attach && \
+ARG SUBSCRIPTION_ORG=
+ARG SUBSCRIPTION_KEY=
+
+RUN subscription-manager register --org=$SUBSCRIPTION_ORG --activationkey=$SUBSCRIPTION_KEY && subscription-manager attach && \
     subscription-manager release --set=`cat /etc/*release | grep VERSION_ID | cut -f2 -d'"'`
 
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
@@ -78,19 +78,21 @@ ARG INSTALL_SOURCES="no"
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033
-RUN rpm -qa --qf "%{name}\n" > base_packages.txt && \
+RUN yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
 	yum install -y ${LGPL_DEPS} && \
 	${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
 	if [ "$INSTALL_SOURCES" = "yes" ]; then \
+        yum install -y yum-utils && \
 		rpm -qa --qf "%{name}\n" > all_packages.txt && \
 		grep -v -f base_packages.txt all_packages.txt | while read line; do \
 		package=`echo $line`; \
 		rpm -qa $package --qf "%{name}: %{license}\n" | grep GPL; \
 		exit_status=$?; \
 		if [ $exit_status -eq 0 ]; then \
-		    yumdownloader --source -y $package;  \
+		    yumdownloader --skip-broken --source -y $package;  \
 		fi \
 	  done && \
+	  yum autoremove -y yum-utils && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
 	yum clean all && rm -rf /var/cache/yum
 
