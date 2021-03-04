@@ -212,6 +212,15 @@ def omz_python_demo_path(request):
             return f'{base_path}/{demo_name}_demo/python/{demo_name}_demo.py{parameters}'
 
 
+@pytest.fixture(scope='session')
+def omz_python_demos_requirements_file(request):
+    base_path = '/opt/intel/openvino/deployment_tools/open_model_zoo/demos'
+    if request.config.getoption('--product_version') <= '2021.2':
+        return f'{base_path}/python_demos/requirements.txt'
+    else:
+        return f'{base_path}/requirements.txt'
+
+
 def switch_container_engine(engine):
     """Switch Windows docker Engine to -SwitchLinuxEngine or -SwitchWindowsEngine"""
     cmd_line = ['cmd', '/c', 'where', 'docker']

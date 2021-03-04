@@ -136,7 +136,8 @@ class TestDemosLinuxDataRuntime:
 @pytest.mark.parametrize('_is_distribution', [('runtime', 'custom-no-omz', 'custom-no-cv')], indirect=True)
 class TestDemosLinuxRuntime:
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
-    def test_segmentation_python_cpu(self, tester, image, distribution, dev_root, omz_python_demo_path):
+    def test_segmentation_python_cpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
+                                     omz_python_demos_requirements_file):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
@@ -153,7 +154,8 @@ class TestDemosLinuxRuntime:
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install setuptools && '
              f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
+             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+             f'-r {omz_python_demos_requirements_file} && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -166,7 +168,8 @@ class TestDemosLinuxRuntime:
 
     @pytest.mark.gpu
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
-    def test_segmentation_python_gpu(self, tester, image, distribution, dev_root, omz_python_demo_path):
+    def test_segmentation_python_gpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
+                                     omz_python_demos_requirements_file):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -184,7 +187,8 @@ class TestDemosLinuxRuntime:
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install setuptools && '
              f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
+             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+             f'-r {omz_python_demos_requirements_file} && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -198,7 +202,8 @@ class TestDemosLinuxRuntime:
     @pytest.mark.vpu
     @pytest.mark.usefixtures('_python_vpu_plugin_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
-    def test_segmentation_python_vpu(self, tester, image, distribution, dev_root, omz_python_demo_path):
+    def test_segmentation_python_vpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
+                                     omz_python_demos_requirements_file):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
             'mem_limit': '3g',
@@ -219,7 +224,8 @@ class TestDemosLinuxRuntime:
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install setuptools && '
              f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
+             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+             f'-r {omz_python_demos_requirements_file} && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -233,7 +239,8 @@ class TestDemosLinuxRuntime:
     @pytest.mark.hddl
     @pytest.mark.xfail(reason='38557 issue')
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
-    def test_segmentation_python_hddl(self, tester, image, distribution, dev_root, omz_python_demo_path):
+    def test_segmentation_python_hddl(self, tester, image, distribution, dev_root, omz_python_demo_path,
+                                      omz_python_demos_requirements_file):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
@@ -252,7 +259,8 @@ class TestDemosLinuxRuntime:
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 -m pip install setuptools && '
              f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in && '
+             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+             f'-r {omz_python_demos_requirements_file} && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
