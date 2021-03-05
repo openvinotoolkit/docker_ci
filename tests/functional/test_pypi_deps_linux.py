@@ -20,8 +20,9 @@ class TestPyPiDependenciesLinux:
             pypi_log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
-                root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec
-                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
+                root / 'tests' / 'resources' / 'pypi_deps':
+                    {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec # noqa: S108
+                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec # noqa: S108
             },
         }
         tester.test_docker_image(
@@ -46,8 +47,9 @@ class TestPyPiDependenciesLinux:
             pypi_log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
-                root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec
-                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
+                root / 'tests' / 'resources' / 'pypi_deps':
+                    {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec # noqa: S108
+                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec # noqa: S108
             },
         }
         tester.test_docker_image(
@@ -69,8 +71,9 @@ class TestPyPiDependenciesLinux:
             pypi_log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
-                root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec
-                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
+                root / 'tests' / 'resources' / 'pypi_deps':
+                    {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec # noqa: S108
+                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec # noqa: S108
             },
         }
         tester.test_docker_image(
@@ -94,8 +97,9 @@ class TestPyPiDependenciesLinux:
             pypi_log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
-                root / 'tests' / 'resources' / 'pypi_deps': {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec
-                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
+                root / 'tests' / 'resources' / 'pypi_deps':
+                    {'bind': '/tmp/pypi_deps', 'mode': 'rw'},  # nosec # noqa: S108
+                pypi_log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec # noqa: S108
             },
         }
         tester.test_docker_image(
