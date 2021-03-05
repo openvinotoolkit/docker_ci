@@ -9,7 +9,7 @@ import pytest
 @pytest.mark.parametrize('_is_distribution', [('data_dev', 'proprietary', 'custom-full')], indirect=True)
 class TestDemosLinuxDataDev:
     @pytest.mark.parametrize('omz_python_demo_path', ['action_recognition'], indirect=True)
-    def test_action_recognition_python_cpu(self, tester, image, omz_python_demo_path):
+    def test_action_recognition_python_cpu(self, tester, image, omz_python_demo_path, product_version):
         tester.test_docker_image(
             image,
             ['/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
@@ -19,7 +19,7 @@ class TestDemosLinuxDataDev:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 {omz_python_demo_path} '
+             f'python3 {omz_python_demo_path} {"-at en-de" if product_version >= "2021.3" else ""} '
              '-m_en /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-encoder/FP16/'
              'action-recognition-0001-encoder.xml '
              '-m_de /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-decoder/FP16/'
@@ -31,7 +31,7 @@ class TestDemosLinuxDataDev:
 
     @pytest.mark.gpu
     @pytest.mark.parametrize('omz_python_demo_path', ['action_recognition'], indirect=True)
-    def test_action_recognition_python_gpu(self, tester, image, omz_python_demo_path):
+    def test_action_recognition_python_gpu(self, tester, image, omz_python_demo_path, product_version):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -42,7 +42,7 @@ class TestDemosLinuxDataDev:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 {omz_python_demo_path} '
+             f'python3 {omz_python_demo_path} {"-at en-de" if product_version >= "2021.3" else ""} '
              '-m_en /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-encoder/FP16/'
              'action-recognition-0001-encoder.xml '
              '-m_de /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-decoder/FP16/'
@@ -54,7 +54,7 @@ class TestDemosLinuxDataDev:
 
     @pytest.mark.vpu
     @pytest.mark.parametrize('omz_python_demo_path', ['action_recognition'], indirect=True)
-    def test_action_recognition_python_vpu(self, tester, image, omz_python_demo_path):
+    def test_action_recognition_python_vpu(self, tester, image, omz_python_demo_path, product_version):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
@@ -66,7 +66,7 @@ class TestDemosLinuxDataDev:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 {omz_python_demo_path} '
+             f'python3 {omz_python_demo_path} {"-at en-de" if product_version >= "2021.3" else ""} '
              '-m_en /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-encoder/FP16/'
              'action-recognition-0001-encoder.xml '
              '-m_de /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-decoder/FP16/'
@@ -78,7 +78,7 @@ class TestDemosLinuxDataDev:
 
     @pytest.mark.hddl
     @pytest.mark.parametrize('omz_python_demo_path', ['action_recognition'], indirect=True)
-    def test_action_recognition_python_hddl(self, tester, image, omz_python_demo_path):
+    def test_action_recognition_python_hddl(self, tester, image, omz_python_demo_path, product_version):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
@@ -90,7 +90,7 @@ class TestDemosLinuxDataDev:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 {omz_python_demo_path} '
+             f'python3 {omz_python_demo_path} {"-at en-de" if product_version >= "2021.3" else ""} '
              '-m_en /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-encoder/FP16/'
              'action-recognition-0001-encoder.xml '
              '-m_de /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-decoder/FP16/'
