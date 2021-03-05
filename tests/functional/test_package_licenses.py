@@ -14,8 +14,8 @@ def test_package_licenses(tester, image):
     image_folder = image.replace('/', '_').replace(':', '_')
     kwargs = {
         'volumes': {
-            root / 'logs' / image_folder / 'linux_deps': {'bind': '/tmp/logs'},  # nosec
-            root / 'tests' / 'resources' / 'linux_deps': {'bind': '/tmp/linux_deps'},  # nosec
+            root / 'logs' / image_folder / 'linux_deps': {'bind': '/tmp/logs'},  # nosec # noqa: S108
+            root / 'tests' / 'resources' / 'linux_deps': {'bind': '/tmp/linux_deps'},  # nosec # noqa: S108
         },
     }
     tester.test_docker_image(

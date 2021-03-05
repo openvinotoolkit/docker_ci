@@ -20,8 +20,9 @@ class TestLinuxDependencies:
             log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
-                root / 'tests' / 'resources' / 'linux_deps': {'bind': '/tmp/linux_deps', 'mode': 'rw'},  # nosec
-                log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
+                root / 'tests' / 'resources' / 'linux_deps':
+                    {'bind': '/tmp/linux_deps', 'mode': 'rw'},  # nosec # noqa: S108
+                log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec # noqa: S108
             },
         }
         # dpkg has no standard way to get licenses of installed packages
@@ -46,8 +47,9 @@ class TestLinuxDependencies:
             log_folder.mkdir(parents=True)
         kwargs = {
             'volumes': {
-                root / 'tests' / 'resources' / 'linux_deps': {'bind': '/tmp/linux_deps', 'mode': 'rw'},  # nosec
-                log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec
+                root / 'tests' / 'resources' / 'linux_deps':
+                    {'bind': '/tmp/linux_deps', 'mode': 'rw'},  # nosec # noqa: S108
+                log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec # noqa: S108
             },
         }
         tester.test_docker_image(
