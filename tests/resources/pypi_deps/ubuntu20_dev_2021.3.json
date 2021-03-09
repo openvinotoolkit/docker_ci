@@ -217,7 +217,7 @@
         "editdistance\n",
         "\n",
         "# DNA sequence matching\n",
-        "parasail<=1.2\n",
+        "parasail\n",
         "fast-ctc-decode\n",
         "\n",
         "# raw image formats processing\n",
