@@ -18,5 +18,5 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/demos && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/demos
 {% endif %}
 {% if 'runtime' == distribution %}
-RUN rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/data_processing
+RUN rm -rf ${INTEL_OPENVINO_DIR}/data_processing
 {% endif %}
