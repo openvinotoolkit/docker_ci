@@ -70,7 +70,8 @@ ARG DEPS="tzdata \
           libopenexr24 \
           flex \
           vainfo \
-          intel-media-va-driver-non-free"
+          intel-media-va-driver-non-free \
+          libva-dev"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev \
@@ -145,7 +146,8 @@ ARG LGPL_DEPS="g++ \
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=pot"
 {% elif 'data_runtime' == distribution %}
 ARG DEPS="${DEPS} \
-           intel-media-va-driver-non-free"
+           intel-media-va-driver-non-free \
+           libva-dev"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
@@ -226,6 +228,9 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         ln --symbolic "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk/ /opt/intel/mediasdk || true; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
+    else \
+        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri \nexport GST_VAAPI_ALL_DRIVERS=1\n" >> /home/openvino/.bashrc; \
+        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri \nexport GST_VAAPI_ALL_DRIVERS=1\n" >> /root/.bashrc; \
     fi;
 
 RUN apt-get update && \
