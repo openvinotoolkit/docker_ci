@@ -52,3 +52,7 @@ RUN python -m pip uninstall -y opencv-python && `
 WORKDIR ${INTEL_OPENVINO_DIR}/bin
 RUN powershell -Command "(Get-Content setupvars.bat) -replace '^set PYTHONPATH=.*python.*PYTHONPATH.*$', 'set PYTHONPATH=%INTEL_OPENVINO_DIR%\python\python%Major%.%Minor%;%PYTHONPATH%' | Out-File -encoding default setupvars.bat"
 {% endif %}
+
+{% if build_id > '2021.3' %}
+RUN pip uninstall -y opencv-python
+{% endif %}

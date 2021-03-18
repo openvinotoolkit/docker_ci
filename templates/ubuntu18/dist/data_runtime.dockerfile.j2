@@ -13,3 +13,7 @@ RUN curl -LO https://github.com/Intel-Media-SDK/MediaSDK/releases/download/intel
     cp /tmp/MediaStack/LICENSE ${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/ && \
     cp /tmp/MediaStack/install_media.sh ${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/
 {% endif %}
+
+{% if build_id > '2021.3' %}
+RUN pip uninstall -y opencv-python
+{% endif %}
