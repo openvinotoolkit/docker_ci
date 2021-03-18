@@ -5,3 +5,7 @@ RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/
     if [ -f ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt ]; then \
         ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt; \
     fi
+
+{% if build_id > '2021.3' %}
+RUN pip uninstall -y opencv-python
+{% endif %}
