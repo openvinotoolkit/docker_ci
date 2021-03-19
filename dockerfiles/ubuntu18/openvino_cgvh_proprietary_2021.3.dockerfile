@@ -8,9 +8,11 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
+    apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -70,6 +72,8 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
@@ -99,7 +103,7 @@ ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=dlstreamer -c=cl_
 RUN apt-get update && \
     apt-get install -y --no-install-recommends dpkg-dev && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${DEPS} && \
+    apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -173,6 +177,8 @@ WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/setup.py install --install-extras && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/build
+
+
 
 # for CPU
 

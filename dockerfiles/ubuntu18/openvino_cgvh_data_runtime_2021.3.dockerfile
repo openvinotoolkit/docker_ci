@@ -8,9 +8,11 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
+    apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -71,6 +73,8 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
@@ -100,7 +104,7 @@ ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=dlstreamer -c=cl_
 RUN apt-get update && \
     apt-get install -y --no-install-recommends dpkg-dev && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ${DEPS} && \
+    apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -152,6 +156,8 @@ RUN curl -LO https://github.com/Intel-Media-SDK/MediaSDK/releases/download/intel
     tar -xvzf /tmp/MediaStack.tar.gz && cp -dfr /tmp/MediaStack/opt ${INTEL_OPENVINO_DIR}/opt && \
     cp /tmp/MediaStack/LICENSE ${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/ && \
     cp /tmp/MediaStack/install_media.sh ${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/
+
+
 
 
 # for CPU
