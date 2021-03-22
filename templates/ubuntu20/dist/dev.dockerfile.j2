@@ -39,6 +39,6 @@ RUN ${PYTHON_VER} -m pip install --no-cache-dir scipy==1.2.1 jstyleson==0.0.2 pa
     ${PYTHON_VER} -m pip install . --no-deps
 {% endif %}
 
-{% if build_id > '2021.3' %}
+{% if build_id >= '2021.4' %}
 RUN pip uninstall -y opencv-python
 {% endif %}
