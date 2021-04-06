@@ -46,7 +46,7 @@ RUN python -m pip install --no-cache-dir scipy==1.2.1 jstyleson==0.0.2 pandas==0
     python -m pip install . --no-deps
 {% endif %}
 
-{% if '2020' in build_id %}
+{% if '2020' in build_id and build_id < '2020.3.2' %}
 RUN python -m pip uninstall -y opencv-python && `
     python -m pip install --no-cache-dir opencv-python-headless
 WORKDIR ${INTEL_OPENVINO_DIR}/bin
