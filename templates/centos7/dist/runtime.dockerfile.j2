@@ -1,8 +1,12 @@
 # runtime package
 WORKDIR /tmp
 
+{% if '2020' in build_id %}
+RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt
+{% else %}
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
     ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt
+{% endif %}
 
 {% if build_id >= '2021.4' %}
 RUN pip uninstall -y opencv-python
