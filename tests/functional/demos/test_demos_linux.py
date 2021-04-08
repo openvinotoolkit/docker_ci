@@ -20,10 +20,10 @@ class TestDemosLinuxDataDev:
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} {"-at en-de" if product_version >= "2021.3" else ""} '
-             '-m_en /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-encoder/FP16/'
-             'action-recognition-0001-encoder.xml '
-             '-m_de /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-decoder/FP16/'
-             'action-recognition-0001-decoder.xml '
+             f'-m_en /opt/intel/openvino/intel/{"" if "2020" in product_version else "action-recognition-0001/"}'
+             'action-recognition-0001-encoder/FP16/action-recognition-0001-encoder.xml '
+             f'-m_de /opt/intel/openvino/intel/{"" if "2020" in product_version else "action-recognition-0001/"}'
+             'action-recognition-0001-decoder/FP16/action-recognition-0001-decoder.xml '
              '-i /root/action_recognition.mp4 -d CPU --no_show"',
              ],
             self.test_action_recognition_python_cpu.__name__,
@@ -43,10 +43,10 @@ class TestDemosLinuxDataDev:
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} {"-at en-de" if product_version >= "2021.3" else ""} '
-             '-m_en /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-encoder/FP16/'
-             'action-recognition-0001-encoder.xml '
-             '-m_de /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-decoder/FP16/'
-             'action-recognition-0001-decoder.xml '
+             f'-m_en /opt/intel/openvino/intel/{"" if "2020" in product_version else "action-recognition-0001/"}'
+             'action-recognition-0001-encoder/FP16/action-recognition-0001-encoder.xml '
+             f'-m_de /opt/intel/openvino/intel/{"" if "2020" in product_version else "action-recognition-0001/"}'
+             'action-recognition-0001-decoder/FP16/action-recognition-0001-decoder.xml '
              '-i /root/action_recognition.mp4 -d GPU --no_show"',
              ],
             self.test_action_recognition_python_gpu.__name__, **kwargs,
@@ -67,10 +67,10 @@ class TestDemosLinuxDataDev:
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} {"-at en-de" if product_version >= "2021.3" else ""} '
-             '-m_en /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-encoder/FP16/'
-             'action-recognition-0001-encoder.xml '
-             '-m_de /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-decoder/FP16/'
-             'action-recognition-0001-decoder.xml '
+             f'-m_en /opt/intel/openvino/intel/{"" if "2020" in product_version else "action-recognition-0001/"}'
+             'action-recognition-0001-encoder/FP16/action-recognition-0001-encoder.xml '
+             f'-m_de /opt/intel/openvino/intel/{"" if "2020" in product_version else "action-recognition-0001/"}'
+             'action-recognition-0001-decoder/FP16/action-recognition-0001-decoder.xml '
              '-i /root/action_recognition.mp4 -d MYRIAD --no_show"',
              ],
             self.test_action_recognition_python_vpu.__name__, **kwargs,
@@ -91,10 +91,10 @@ class TestDemosLinuxDataDev:
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} {"-at en-de" if product_version >= "2021.3" else ""} '
-             '-m_en /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-encoder/FP16/'
-             'action-recognition-0001-encoder.xml '
-             '-m_de /opt/intel/openvino/intel/action-recognition-0001/action-recognition-0001-decoder/FP16/'
-             'action-recognition-0001-decoder.xml '
+             f'-m_en /opt/intel/openvino/intel/{"" if "2020" in product_version else "action-recognition-0001/"}'
+             'action-recognition-0001-encoder/FP16/action-recognition-0001-encoder.xml '
+             f'-m_de /opt/intel/openvino/intel/{"" if "2020" in product_version else "action-recognition-0001/"}'
+             'action-recognition-0001-decoder/FP16/action-recognition-0001-decoder.xml '
              '-i /root/action_recognition.mp4 -d HDDL --no_show"',
              ],
             self.test_action_recognition_python_hddl.__name__, **kwargs,

@@ -153,11 +153,18 @@ def dev_root(request):
 
 @pytest.fixture(scope='session')
 def install_openvino_dependencies(request):
-    # installation of 3d party dependencies for data processing components isn't required since 2021.2
-    if request.config.getoption('--product_version') < '2021.2':
-        return '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh'
+    image_os = request.config.getoption('--image_os')
+    install_deps = '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh'
+
+    if '2020' in request.config.getoption('--product_version'):
+        if 'ubuntu' in image_os:
+            return f'/bin/bash -ac "apt update && apt install -y sudo && yes n | {install_deps}"'
+        elif 'centos' in image_os:
+            return f'/bin/bash -ac "yum update -y && yum install -y sudo && yes n | {install_deps}"'
+    elif request.config.getoption('--product_version') < '2021.2':
+        # installation of 3d party dependencies for data processing components isn't required since 2021.2
+        return install_deps
     else:
-        image_os = request.config.getoption('--image_os')
         if 'ubuntu' in image_os:
             return '/bin/bash -ac "apt update && apt install -y build-essential sudo curl cmake"'
         elif any(x in image_os for x in ('centos', 'rhel')):
