@@ -60,7 +60,8 @@ class TestPyPiDependenciesLinux:
             self.test_conflict_pypi_deps.__name__, **kwargs,
         )
 
-    @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
+    @pytest.mark.usefixtures('_min_product_version', '_is_image_os', '_is_distribution')
+    @pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
     @pytest.mark.parametrize('_is_image_os', ['ubuntu18'], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev', 'data_dev', 'proprietary')], indirect=True)
     def test_conflict_pypi_deps_venv_tf2(self, tester, image):
@@ -86,7 +87,8 @@ class TestPyPiDependenciesLinux:
             self.test_conflict_pypi_deps_venv_tf2.__name__, **kwargs,
         )
 
-    @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
+    @pytest.mark.usefixtures('_min_product_version', '_is_image_os', '_is_distribution')
+    @pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
     @pytest.mark.parametrize('_is_image_os', ['ubuntu18'], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev', 'data_dev', 'proprietary')], indirect=True)
     def test_gpl_pypi_deps_venv_tf2(self, tester, image):
