@@ -49,7 +49,7 @@ class TestDemosWindows:
             self.test_crossroad_cpp_cpu.__name__, **kwargs,
         )
 
-    def test_text_cpp_cpu(self, tester, image):
+    def test_text_cpp_cpu(self, tester, image, product_version):
         kwargs = {'user': 'ContainerAdministrator', 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -63,6 +63,7 @@ class TestDemosWindows:
              'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\text_detection_demo '
+             f'{"-dt image" if "2020" in product_version else ""} '
              '-m_td C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\intel\\\\'
              'text-detection-0004\\\\FP16\\\\text-detection-0004.xml '
