@@ -193,9 +193,10 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-dist',
             '--distribution',
-            choices=['base', 'runtime', 'data_runtime', 'dev', 'data_dev', 'internal_dev', 'proprietary', 'custom'],
+            choices=['base', 'runtime', 'data_runtime', 'dev', 'dev_no_samples',
+                     'data_dev', 'internal_dev', 'proprietary', 'custom'],
             required=' test' in parser.prog,
-            help='Distribution type: dev, data_dev, runtime, data_runtime, internal_dev, '
+            help='Distribution type: dev, dev_no_samples, data_dev, runtime, data_runtime, internal_dev, '
                  'proprietary (product pkg with an installer) or '
                  'base (with CPU only and without installing dependencies). '
                  'Using key --file <path_to_dockerfile> and '
@@ -318,6 +319,9 @@ def parse_args(name: str, description: str):  # noqa
 
     if args.mode == 'deploy' and not args.tags:
         parser.error('The following argument is required: -t/--tags')
+
+    if args.mode in ('build', 'build_test', 'all') and args.distribution == 'dev_no_samples' and args.os != 'ubuntu18':
+        parser.error('Distribution dev_no_samples is available only for ubuntu18 operation system')
 
     if args.mode == 'gen_dockerfile' and args.distribution == 'base':
         parser.error('Generating dockerfile for base distribution is not available. '
