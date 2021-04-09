@@ -114,11 +114,15 @@ class Launcher:
             for arg in self.args.build_arg:
                 self.kwargs.update({arg.split('=')[0]: arg.split('=')[-1]})
 
-    def generate_docker_file(self):
+    def generate_docker_file(self, save_in_logs=False):
         """Generating dockerfile based on templates and CLI options"""
         log.info('Preparing to generate the dockerfile...')
         self.render = DockerFileRender(self.args.os)
-        self.args.file = self.render.generate_dockerfile(self.args, self.kwargs)
+        if save_in_logs:
+            save_to_dir = self.logdir
+        else:
+            save_to_dir = pathlib.Path(self.location) / 'dockerfiles' / self.args.os
+        self.args.file = self.render.generate_dockerfile(self.args, save_to_dir, self.kwargs)
         if 'hadolint' in self.args.linter_check:
             log.info(logger.LINE_DOUBLE)
             log.info('Running linter checks on the generated dockerfile...')
@@ -388,14 +392,14 @@ if __name__ == '__main__':
             launcher.set_docker_api()
             launcher.setup_build_args()
             if not args.file:
-                launcher.generate_docker_file()
+                launcher.generate_docker_file(save_in_logs=True)
             launcher.build()
 
         if args.mode == 'build_test':
             launcher.set_docker_api()
             launcher.setup_build_args()
             if not args.file:
-                launcher.generate_docker_file()
+                launcher.generate_docker_file(save_in_logs=True)
             launcher.build()
             launcher.test()
 
@@ -406,7 +410,7 @@ if __name__ == '__main__':
             launcher.set_docker_api()
             launcher.setup_build_args()
             if not args.file:
-                launcher.generate_docker_file()
+                launcher.generate_docker_file(save_in_logs=True)
             launcher.build()
             if not args.nightly:
                 launcher.test()

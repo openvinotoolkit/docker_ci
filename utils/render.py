@@ -40,7 +40,8 @@ class DockerFileRender:
                                 f'Please add your layer.dockerfile.j2 to '
                                 f'<project_root>/templates/<image_os>/layers folder')
 
-    def generate_dockerfile(self, args: argparse.Namespace, kwargs: typing.Dict[str, str]) -> pathlib.Path:
+    def generate_dockerfile(self, args: argparse.Namespace, save_to_dir: pathlib.Path,
+                            kwargs: typing.Dict[str, str]) -> pathlib.Path:
         """Creating of dockerfile based on templates and CLI parameters"""
         settings = []
         if 'win' in args.os:
@@ -66,7 +67,6 @@ class DockerFileRender:
         commands = [self.get_template(arg, kwargs).render() for arg in [args.python,
                                                                         args.distribution, *args.device]]
         layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
-        save_to_dir = pathlib.Path(self.location) / 'dockerfiles' / args.os
         if not save_to_dir.exists():
             save_to_dir.mkdir()
         save_to = save_to_dir / args.dockerfile_name
