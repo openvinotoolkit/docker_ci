@@ -9,27 +9,11 @@ import subprocess  # nosec
 import sys
 
 import pytest
+from xdist.scheduler import LoadScopeScheduling
 from utils.docker_api import DockerAPI
 from utils.exceptions import FailedTest
 from utils.tester import DockerImageTester
 from utils.utilities import download_file, unzip_file
-
-try:
-    from xdist.scheduler import LoadScopeScheduling
-
-    class OVDockerTestsScheduler(LoadScopeScheduling):
-        """Custom parallel test scheduler
-        """
-        def _split_scope(self, nodeid):
-            # run tests on HDDL device sequentially
-            if 'hddl' in nodeid:
-                return 'hddl'
-            return super()._split_scope(nodeid)
-
-    def pytest_xdist_make_scheduler(log, config):
-        return OVDockerTestsScheduler(config, log)
-except ImportError:
-    pass
 
 log = logging.getLogger('docker_ci')
 
@@ -110,6 +94,20 @@ def pytest_sessionfinish(session, exitstatus):
     log.info('Removing mount dependencies')
     shutil.rmtree(temp_folder, ignore_errors=True)
     log.info('Cleanup completed')
+
+
+class OVDockerTestsScheduler(LoadScopeScheduling):
+    """Custom parallel test scheduler
+    """
+    def _split_scope(self, nodeid):
+        # run tests on HDDL device sequentially
+        if 'hddl' in nodeid:
+            return 'hddl'
+        return super()._split_scope(nodeid)
+
+
+def pytest_xdist_make_scheduler(log, config):
+    return OVDockerTestsScheduler(config, log)
 
 
 @pytest.fixture(scope='session')

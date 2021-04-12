@@ -23,10 +23,10 @@ flake8-rst-docstrings
 more-itertools
 packaging
 pluggy
-py
 pytest
 pytest-html
 pytest-metadata
+pytest-xdist
 flake8-pytest-style
 flake8-expression-complexity
 flake8-class-attributes-order
