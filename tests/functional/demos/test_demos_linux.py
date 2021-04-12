@@ -80,7 +80,7 @@ class TestDemosLinuxDataDev:
     @pytest.mark.parametrize('omz_python_demo_path', ['action_recognition'], indirect=True)
     def test_action_recognition_python_hddl(self, tester, image, omz_python_demo_path, product_version):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             ['/bin/bash -ac "curl -LJo /root/action_recognition.mp4 '
@@ -89,13 +89,13 @@ class TestDemosLinuxDataDev:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              f'python3 {omz_python_demo_path} {"-at en-de" if product_version >= "2021.3" else ""} '
              f'-m_en /opt/intel/openvino/intel/{"" if "2020" in product_version else "action-recognition-0001/"}'
              'action-recognition-0001-encoder/FP16/action-recognition-0001-encoder.xml '
              f'-m_de /opt/intel/openvino/intel/{"" if "2020" in product_version else "action-recognition-0001/"}'
              'action-recognition-0001-decoder/FP16/action-recognition-0001-decoder.xml '
-             '-i /root/action_recognition.mp4 -d HDDL --no_show"',
+             '-i /root/action_recognition.mp4 -d HDDL --no_show && rm -f /dev/shm/hddl_*"',
              ],
             self.test_action_recognition_python_hddl.__name__, **kwargs,
         )
@@ -140,12 +140,12 @@ class TestDemosLinux:
     @pytest.mark.hddl
     def test_security_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             '/opt/intel/openvino/deployment_tools/demo/demo_security_barrier_camera.sh -d HDDL '
-             '-sample-options -no_show',
+             '/bin/bash -ac "umask 0000 && /opt/intel/openvino/deployment_tools/demo/demo_security_barrier_camera.sh '
+             '-d HDDL -sample-options -no_show && rm -f /dev/shm/hddl_*"',
              ], self.test_security_hddl.__name__, **kwargs,
         )
 
@@ -181,11 +181,13 @@ class TestDemosLinux:
     @pytest.mark.hddl
     def test_squeezenet_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             '/opt/intel/openvino/deployment_tools/demo/demo_squeezenet_download_convert_run.sh -d HDDL',
+             '/bin/bash -ac "umask 0000 && '
+             '/opt/intel/openvino/deployment_tools/demo/demo_squeezenet_download_convert_run.sh -d HDDL && '
+             'rm -f /dev/shm/hddl_*"',
              ], self.test_squeezenet_hddl.__name__, **kwargs,
         )
 
@@ -255,7 +257,7 @@ class TestDemosLinux:
     @pytest.mark.hddl
     def test_crossroad_cpp_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -265,11 +267,11 @@ class TestDemosLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name person-vehicle-bike-detection-crossroad-0078 '
              '--precisions FP16 -o /root/omz_demos_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              '/root/omz_demos_build/intel64/Release/crossroad_camera_demo '
              '-m /root/omz_demos_build/intel64/Release/intel/person-vehicle-bike-detection-crossroad-0078/FP16/'
              'person-vehicle-bike-detection-crossroad-0078.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL -no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL -no_show && rm -f /dev/shm/hddl_*"',
              ],
             self.test_crossroad_cpp_hddl.__name__, **kwargs,
         )
@@ -335,10 +337,9 @@ class TestDemosLinux:
         )
 
     @pytest.mark.hddl
-    @pytest.mark.xfail(reason='38557 issue')
     def test_text_cpp_hddl(self, tester, image, product_version, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         options = '-dt image' if '2021' not in product_version else ''
         tester.test_docker_image(
             image,
@@ -348,10 +349,11 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-             f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp {options} -d_td HDDL -no_show"',
+             f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp {options} -d_td HDDL -no_show && '
+             'rm -f /dev/shm/hddl_*"',
              ],
             self.test_text_cpp_hddl.__name__, **kwargs,
         )
@@ -414,16 +416,16 @@ class TestDemosLinux:
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     def test_detection_ssd_python_hddl(self, tester, image, omz_python_demo_path):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show && rm -f /dev/shm/hddl_*"',
              ],
             self.test_detection_ssd_python_hddl.__name__, **kwargs,
         )
@@ -489,10 +491,9 @@ class TestDemosLinux:
         )
 
     @pytest.mark.hddl
-    @pytest.mark.xfail(reason='38557 issue')
     def test_segmentation_cpp_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -501,11 +502,11 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              '/root/omz_demos_build/intel64/Release/segmentation_demo '
              '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/'
              'semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL -no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL -no_show && rm -f /dev/shm/hddl_*"',
              ],
             self.test_segmentation_cpp_hddl.__name__, **kwargs,
         )
@@ -561,20 +562,19 @@ class TestDemosLinux:
         )
 
     @pytest.mark.hddl
-    @pytest.mark.xfail(reason='38557 issue')
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
     def test_segmentation_python_hddl(self, tester, image, omz_python_demo_path):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*"',
              ],
             self.test_segmentation_python_hddl.__name__, **kwargs,
         )
@@ -646,7 +646,7 @@ class TestDemosLinux:
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     def test_object_detection_centernet_python_hddl(self, tester, image, omz_python_demo_path):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -655,10 +655,10 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/converter.py '
              '--name ctdet_coco_dlav0_384 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show && rm -f /dev/shm/hddl_*"',
              ],
             self.test_object_detection_centernet_python_hddl.__name__, **kwargs,
         )

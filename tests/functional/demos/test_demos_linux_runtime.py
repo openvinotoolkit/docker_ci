@@ -115,6 +115,7 @@ class TestDemosLinuxDataRuntime:
             'mem_limit': '3g',
             'volumes': {
                 '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
+                '/dev/shm': {'bind': '/dev/shm'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'demo': {
                     'bind': '/opt/intel/openvino/deployment_tools/demo',
                 },
@@ -131,10 +132,10 @@ class TestDemosLinuxDataRuntime:
              f'-r {omz_python_demos_requirements_file} && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show && rm -f /dev/shm/hddl_*"',
              ], self.test_detection_ssd_python_hddl.__name__, **kwargs,
         )
 
@@ -245,7 +246,6 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.hddl
-    @pytest.mark.xfail(reason='38557 issue')
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
     def test_segmentation_python_hddl(self, tester, image, distribution, dev_root, omz_python_demo_path,
                                       omz_python_demos_requirements_file):
@@ -254,6 +254,7 @@ class TestDemosLinuxRuntime:
             'mem_limit': '3g',
             'volumes': {
                 '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
+                '/dev/shm': {'bind': '/dev/shm'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'demo': {
                     'bind': '/opt/intel/openvino/deployment_tools/demo',
                 },
@@ -271,10 +272,10 @@ class TestDemosLinuxRuntime:
              f'-r {omz_python_demos_requirements_file} && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*"',
              ],
             self.test_segmentation_python_hddl.__name__, **kwargs,
         )
