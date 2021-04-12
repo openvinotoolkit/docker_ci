@@ -4,7 +4,7 @@ This repository folder contains Dockerfile to build an image with the Intel® Di
 
 ## Prebuilt images
 
-Prebuilt images are available on [Quay.io](https://quay.io/organization/openvino).
+Prebuilt images are available on [Red Hat* Quay.io](https://quay.io/organization/openvino) and [Red Hat* Ecosystem Catalog](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3) Registries.
 
 ## Prerequisites
 

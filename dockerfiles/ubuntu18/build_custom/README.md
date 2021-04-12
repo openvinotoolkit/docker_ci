@@ -79,7 +79,9 @@ Please follow [Run built image](../get-started.md#run-built-image) section in Do
 
 Prebuilt images are available on: 
 - [Docker Hub](https://hub.docker.com/u/openvino)
-- [Quay.io](https://quay.io/organization/openvino)
+- [Red Hat* Quay.io](https://quay.io/organization/openvino)
+- [Red Hat* Ecosystem Catalog](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
+
 
 ## License
 This Dockerfile contains third-party components with different licenses.  

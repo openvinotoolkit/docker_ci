@@ -96,7 +96,9 @@ To learn more, follow [Build custom Intel® Distribution of OpenVINO™ toolkit 
 
 Prebuilt images are available on: 
 - [Docker Hub](https://hub.docker.com/u/openvino)
-- [Quay.io](https://quay.io/organization/openvino)
+- [Red Hat* Quay.io](https://quay.io/organization/openvino)
+- [Red Hat* Ecosystem Catalog](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
+
 
 ## How to run a container
 

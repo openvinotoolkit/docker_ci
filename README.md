@@ -28,7 +28,8 @@ As well you can use available dockerfiles from `<root_project>/dockerfiles/<imag
 
 Prebuilt images are available on: 
 - [Docker Hub](https://hub.docker.com/u/openvino)
-- [Quay.io](https://quay.io/organization/openvino)
+- [Red Hat* Quay.io](https://quay.io/organization/openvino)
+- [Red Hat* Ecosystem Catalog](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
 
 ## Licenses
 The DockerHub CI framework for Intel® Distribution of OpenVINO™ toolkit is licensed under [Apache License Version 2.0](./LICENSE).
