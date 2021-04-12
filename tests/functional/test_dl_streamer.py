@@ -57,7 +57,7 @@ class TestDLStreamerLinux:
     @pytest.mark.hddl
     def test_draw_face_attributes_cpp_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp'], 'mem_limit': '3g'}  # nosec # noqa: S108
+                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -66,7 +66,8 @@ class TestDLStreamerLinux:
              './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
              'cd build && cmake ../ && make && '
              'curl -O https://storage.openvinotoolkit.org/data/test_data/videos/face-demographics-walking.mp4 && '
-             './draw_face_attributes -i face-demographics-walking.mp4 -n -d HDDL"'],
+             'umask 0000 && ./draw_face_attributes -i face-demographics-walking.mp4 -n -d HDDL && '
+             'rm -f /dev/shm/hddl_*"'],
             self.test_draw_face_attributes_cpp_hddl.__name__, **kwargs,
         )
 

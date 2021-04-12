@@ -14,6 +14,23 @@ from utils.exceptions import FailedTest
 from utils.tester import DockerImageTester
 from utils.utilities import download_file, unzip_file
 
+try:
+    from xdist.scheduler import LoadScopeScheduling
+
+    class OVDockerTestsScheduler(LoadScopeScheduling):
+        """Custom parallel test scheduler
+        """
+        def _split_scope(self, nodeid):
+            # run tests on HDDL device sequentially
+            if 'hddl' in nodeid:
+                return 'hddl'
+            return super()._split_scope(nodeid)
+
+    def pytest_xdist_make_scheduler(log, config):
+        return OVDockerTestsScheduler(config, log)
+except ImportError:
+    pass
+
 log = logging.getLogger('docker_ci')
 
 

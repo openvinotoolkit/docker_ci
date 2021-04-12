@@ -154,6 +154,7 @@ class TestSamplesLinuxRuntime:
             'mem_limit': '3g',
             'volumes': {
                 '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
+                '/dev/shm': {'bind': '/dev/shm'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'inference_engine' / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/inference_engine/samples/cpp',
                 },
@@ -186,10 +187,10 @@ class TestSamplesLinuxRuntime:
              'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
              '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
              'alexnet.caffemodel"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
              '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-             '/opt/intel/openvino/deployment_tools/demo/car.png HDDL"',
+             '/opt/intel/openvino/deployment_tools/demo/car.png HDDL && rm -f /dev/shm/hddl_*"',
              ], self.test_hello_classification_cpp_hddl.__name__, **kwargs,
         )
 
@@ -370,6 +371,7 @@ class TestSamplesLinuxRuntime:
             'mem_limit': '3g',
             'volumes': {
                 '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
+                '/dev/shm': {'bind': '/dev/shm'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'inference_engine' / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/inference_engine/samples/cpp',
                 },
@@ -397,11 +399,11 @@ class TestSamplesLinuxRuntime:
              'python3 -B /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precisions FP16 '
              '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
              '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
              'vehicle-detection-adas-0002.xml '
-             '/opt/intel/openvino/deployment_tools/demo/car_1.bmp HDDL 1"',
+             '/opt/intel/openvino/deployment_tools/demo/car_1.bmp HDDL 1 && rm -f /dev/shm/hddl_*"',
              ], self.test_hello_reshape_cpp_hddl.__name__, **kwargs,
         )
 
@@ -528,6 +530,7 @@ class TestSamplesLinuxRuntime:
             'mem_limit': '3g',
             'volumes': {
                 '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
+                '/dev/shm': {'bind': '/dev/shm'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'inference_engine' / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/inference_engine/samples/cpp',
                 },
@@ -552,11 +555,11 @@ class TestSamplesLinuxRuntime:
              'python3 -B /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precisions FP16 '
              '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/object_detection_sample_ssd '
              '-m /root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
              'vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*"',
              ], self.test_object_detection_cpp_hddl.__name__, **kwargs,
         )
 
@@ -704,6 +707,7 @@ class TestSamplesLinuxRuntime:
             'mem_limit': '3g',
             'volumes': {
                 '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
+                '/dev/shm': {'bind': '/dev/shm'},  # nosec # noqa: S108
                 dev_root / 'deployment_tools' / 'inference_engine' / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/inference_engine/samples/cpp',
                 },
@@ -736,9 +740,9 @@ class TestSamplesLinuxRuntime:
              'python3 -B mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
              '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
              'alexnet.caffemodel"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
+             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
              '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*"',
              ], self.test_classification_async_cpp_hddl.__name__, **kwargs,
         )
