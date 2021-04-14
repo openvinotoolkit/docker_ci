@@ -12,14 +12,34 @@ SHELL ["cmd", "/S", "/C"]
 USER ContainerAdministrator
 
 
-ARG HTTPS_PROXY
 
 
+# setup MSBuild 2019
+RUN powershell.exe -Command Invoke-WebRequest -URI https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile %TMP%\\vs_buildtools.exe
+
+RUN %TMP%\\vs_buildtools.exe --quiet --norestart --wait --nocache `
+	 --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools" `
+     --add Microsoft.VisualStudio.Workload.MSBuildTools `
+     --add Microsoft.VisualStudio.Workload.UniversalBuildTools `
+     --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended `
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 `
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 `
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 `
+     --remove Microsoft.VisualStudio.Component.Windows81SDK || IF "%ERRORLEVEL%"=="3010" EXIT 0 && powershell set-executionpolicy remotesigned
+
+# setup CMake
+
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://cmake.org/files/v3.14/cmake-3.14.7-win64-x64.msi -OutFile %TMP%\\cmake-3.14.7-win64-x64.msi ; `
+    Start-Process %TMP%\\cmake-3.14.7-win64-x64.msi -ArgumentList '/quiet /norestart' -Wait ; `
+    Remove-Item %TMP%\\cmake-3.14.7-win64-x64.msi -Force
+
+RUN SETX /M PATH "C:\Program Files\CMake\Bin;%PATH%"
 
 # Setup Microsoft Visual C++ 2015-2019 Redistributable (x64) - 14.27.29016
 
 RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -Proxy %HTTPS_PROXY%  -OutFile "%TMP%\vc_redist.x64.exe" ; `
+    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -OutFile "%TMP%\vc_redist.x64.exe" ; `
     Start-Process %TMP%\\vc_redist.x64.exe -ArgumentList '/quiet /norestart' -Wait ; `
     Remove-Item "%TMP%\vc_redist.x64.exe" -Force
 
@@ -29,7 +49,7 @@ ARG PYTHON_VER=python3.7
 
 
 RUN powershell.exe -Command `
-  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe -Proxy %HTTPS_PROXY% -OutFile %TMP%\\python-3.7.exe ; `
+  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe -OutFile %TMP%\\python-3.7.exe ; `
   Start-Process %TMP%\\python-3.7.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python37' -Wait ; `
   Remove-Item %TMP%\\python-3.7.exe -Force
 
@@ -98,8 +118,8 @@ RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter
 # download source for LGPL packages
 
 RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/ee/2d/9cdc2b527e127b4c9db64b86647d567985940ac3698eeabc7ffaccb4ea61/chardet-4.0.0.tar.gz -Proxy %HTTPS_PROXY% -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\open_model_zoo\\chardet-4.0.0.tar.gz ; `
-    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz -Proxy %HTTPS_PROXY% -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\open_model_zoo\\flake8-import-order-0.18.1.tar.gz
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/ee/2d/9cdc2b527e127b4c9db64b86647d567985940ac3698eeabc7ffaccb4ea61/chardet-4.0.0.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\open_model_zoo\\chardet-4.0.0.tar.gz ; `
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\open_model_zoo\\flake8-import-order-0.18.1.tar.gz
 
 
 
@@ -112,6 +132,8 @@ RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_toolkit
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\requirements.txt" && `
     python -m pip install .
+
+
 
 
 
