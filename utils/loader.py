@@ -129,6 +129,35 @@ INTEL_OPENVINO_VERSION = {
                             'l_openvino_toolkit_data_dev_ubuntu18_p_2020.3.341.tgz',
             },
     },
+    '2020.3.2': {
+        'winserver2019':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                       'w_openvino_toolkit_dev_p_2020.3.355.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                           'w_openvino_toolkit_runtime_p_2020.3.355.zip',
+                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/17804/'
+                               'w_openvino_toolkit_p_2020.3.355.exe',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                            'w_openvino_toolkit_data_dev_p_2020.3.355.zip',
+            },
+        'ubuntu18':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2020.3.355.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2020.3.355.tgz',
+                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/17805/'
+                               'l_openvino_toolkit_p_2020.3.355.tgz',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2020.3.355.tgz',
+            },
+        'centos7':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                           'l_openvino_toolkit_runtime_centos7_p_2020.3.355.tgz',
+            },
+    },
     '2020.4': {
         'winserver2019':
             {
