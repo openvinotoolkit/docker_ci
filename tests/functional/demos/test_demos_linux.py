@@ -469,48 +469,6 @@ class TestDemosLinux:
             self.test_segmentation_cpp_gpu.__name__, **kwargs,
         )
 
-    @pytest.mark.vpu
-    def test_segmentation_cpp_vpu(self, tester, image, install_openvino_dependencies):
-        kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
-                  'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        tester.test_docker_image(
-            image,
-            [install_openvino_dependencies,
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name semantic-segmentation-adas-0001 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/root/omz_demos_build/intel64/Release/segmentation_demo '
-             '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/'
-             'semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD -no_show"',
-             ],
-            self.test_segmentation_cpp_vpu.__name__, **kwargs,
-        )
-
-    @pytest.mark.hddl
-    def test_segmentation_cpp_hddl(self, tester, image, install_openvino_dependencies):
-        kwargs = {'devices': ['/dev/ion:/dev/ion'],
-                  'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
-        tester.test_docker_image(
-            image,
-            [install_openvino_dependencies,
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/demos/build_demos.sh"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name semantic-segmentation-adas-0001 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
-             '/root/omz_demos_build/intel64/Release/segmentation_demo '
-             '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/'
-             'semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL -no_show && rm -f /dev/shm/hddl_*"',
-             ],
-            self.test_segmentation_cpp_hddl.__name__, **kwargs,
-        )
-
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
     def test_segmentation_python_cpu(self, tester, image, omz_python_demo_path):
         tester.test_docker_image(
