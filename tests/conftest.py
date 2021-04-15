@@ -99,6 +99,7 @@ def pytest_sessionfinish(session, exitstatus):
 class OVDockerTestsScheduler(LoadScopeScheduling):
     """Custom parallel test scheduler
     """
+
     def _split_scope(self, nodeid):
         # run tests on HDDL device sequentially
         if 'hddl' in nodeid:
@@ -352,6 +353,7 @@ def pytest_runtest_setup(item):
             if process.returncode != 0:
                 pytest.skip('Test requires Intel GPU device on the host machine')
 
-        if 'save_deps' in mark.name and ('save' not in item.config.known_args_namespace.keyword and
-                                         'deps' not in item.config.known_args_namespace.keyword):
+        is_save_key = 'save' in item.config.known_args_namespace.keyword
+        is_deps_key = 'deps' in item.config.known_args_namespace.keyword
+        if 'save_deps' in mark.name and not (is_save_key or is_deps_key):
             pytest.skip('Test should be executed directly -m save_deps -k <save_test_name>')
