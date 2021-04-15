@@ -10,6 +10,7 @@ import logging
 import os
 import pathlib
 import re
+import subprocess
 import sys
 
 import typing
@@ -33,7 +34,28 @@ def get_pkgs_from_requirement(requirement: str) -> typing.List[str]:
     return packages
 
 
-def get_image_requirements(src) -> dict:
+def get_pot_dependencies(src: str) -> dict:
+    """Get POT dependencies from setup.py
+            Return: dictionary
+            name: path to POT setup.py
+            content: list packages"""
+    pot_content = {}
+    pot_path = pathlib.Path(src) / 'deployment_tools/tools/post_training_optimization_toolkit/setup.py'
+    if pot_path.exists():
+        pot_path = str(pot_path)
+        pot_content['name'] = pot_path
+        cmd_line = ['python3', pot_path, 'egg_info']
+        process = subprocess.run(cmd_line,
+                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, check=False)  # nosec
+        if process.returncode == 0:
+            pot_content['content'] = get_pkgs_from_requirement('pot.egg-info/requires.txt')
+        else:
+            pot_content = {}
+
+    return pot_content
+
+
+def get_image_requirements(src: str) -> dict:
     """Create dictionary to store requirements' data
         Return: dictionary
         main key/value: requirements: list all requirement_filepaths
@@ -128,13 +150,30 @@ def main() -> int:
     log.info(f'Start analyzing PyPi dependencies for {args.image} image ...')
 
     image_name = re.search(r'(.*_\d{4}\.\d)', args.image.split('/')[-1].replace(':', '_'))
+
     if image_name and not args.image_json:
         args.image_json = pathlib.Path(args.logs) / f'{image_name.group(1)}.json'
+    elif not image_name and not args.image_json:
+        image_name = args.image.split('/')[-1].replace(':', '_')
+        args.image_json = pathlib.Path(args.logs) / f'{image_name}.json'
+    else:
+        log.error(f'Can not get image name and setup path to save results. '
+                  f'Please setup it directly via --image and --image_json options')
+        return 4
 
     exit_code = 0
     if args.save:
         log.info(f'Save PyPi dependencies in {args.image_json} file')
         image_content = get_image_requirements(args.path)
+        if 'runtime' not in args.image:
+            log.info('Try to get POT dependencies ...')
+            pot_content = get_pot_dependencies(args.path)
+            if pot_content:
+                log.info('POT dependencies were found')
+                image_content['requirements'].append(pot_content['name'])
+                image_content[pot_content['name']] = pot_content['content']
+            else:
+                log.warning('POT dependencies were not found')
         save_dict_to_json(image_content, file=args.image_json)
     else:
         if not pathlib.Path(args.image_json).exists():
