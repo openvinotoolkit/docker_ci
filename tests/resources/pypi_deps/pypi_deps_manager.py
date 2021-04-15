@@ -42,9 +42,9 @@ def get_pot_dependencies(src: str) -> dict:
     pot_content = {}
     pot_path = pathlib.Path(src) / 'deployment_tools/tools/post_training_optimization_toolkit/setup.py'
     if pot_path.exists():
-        pot_path = str(pot_path)
-        pot_content['name'] = pot_path
-        cmd_line = ['python3', pot_path, 'egg_info']
+        pot_path_str = str(pot_path)
+        pot_content['name'] = pot_path_str
+        cmd_line = ['python3', pot_path_str, 'egg_info']
         process = subprocess.run(cmd_line,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, check=False)  # nosec
         if process.returncode == 0:
