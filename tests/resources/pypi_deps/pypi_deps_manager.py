@@ -10,7 +10,7 @@ import logging
 import os
 import pathlib
 import re
-import subprocess
+import subprocess  # nosec
 import sys
 
 import typing
