@@ -48,7 +48,7 @@ def get_pot_dependencies(src: str) -> dict:
         process = subprocess.run(cmd_line,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, check=False)  # nosec
         if process.returncode == 0:
-            pot_content['content'] = get_pkgs_from_requirement('pot.egg-info/requires.txt')
+            pot_content['content'] = get_pkgs_from_requirement('pot.egg-info/requires.txt')  # type: ignore
         else:
             pot_content = {}
 
