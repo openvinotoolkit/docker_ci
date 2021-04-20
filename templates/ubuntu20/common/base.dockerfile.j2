@@ -243,6 +243,7 @@ RUN apt-get update && \
 
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}
+ENV DEBIAN_FRONTEND=noninteractive
 
 CMD ["/bin/bash"]
 
