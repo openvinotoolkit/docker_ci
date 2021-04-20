@@ -6,9 +6,16 @@ RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/
         ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/data_processing/dl_streamer/requirements.txt; \
     fi
 
-{% if build_id >= '2021.3' and build_id <= '2021.4'%}
+{% if build_id >= '2021.3' and build_id < '2021.4'%}
 # install Intel(R) Media SDK with libva driver
 RUN curl -LO https://github.com/Intel-Media-SDK/MediaSDK/releases/download/intel-mediasdk-20.5.1/MediaStack.tar.gz && \
+    tar -xvzf /tmp/MediaStack.tar.gz && cp -dfr /tmp/MediaStack/opt ${INTEL_OPENVINO_DIR}/opt && \
+    cp /tmp/MediaStack/LICENSE ${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/ && \
+    cp /tmp/MediaStack/install_media.sh ${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/
+{% endif %}
+{% if build_id >= '2021.4' and build_id < '2022'%}
+# install Intel(R) Media SDK with libva driver
+RUN curl -LO https://github.com/Intel-Media-SDK/MediaSDK/releases/download/intel-mediasdk-21.1.3/MediaStack.tar.gz && \
     tar -xvzf /tmp/MediaStack.tar.gz && cp -dfr /tmp/MediaStack/opt ${INTEL_OPENVINO_DIR}/opt && \
     cp /tmp/MediaStack/LICENSE ${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/ && \
     cp /tmp/MediaStack/install_media.sh ${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/
