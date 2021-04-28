@@ -22,6 +22,7 @@ default_args = {
     # 'mode':'build',
     'msbuild': None,
     'ocl_release': '19.41.14441',
+    'openshift': None,
     'os': 'ubuntu18',
     'package_url': None,
     'product_version': None,

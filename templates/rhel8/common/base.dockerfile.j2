@@ -4,21 +4,32 @@ FROM registry.access.redhat.com/ubi8 AS base
 
 # hadolint ignore=DL3002
 USER root
+{% if openshift %}
+COPY entitlement.pem /etc/pki/entitlement
+COPY entitlement-key.pem /etc/pki/entitlement
+COPY ./rhsm-conf /etc/rhsm
+COPY ./rhsm-ca /etc/rhsm/ca
+{% endif %}
 WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+{% if not openshift %}
 ARG SUBSCRIPTION_ORG=
 ARG SUBSCRIPTION_KEY=
 
 RUN subscription-manager register --org=$SUBSCRIPTION_ORG --activationkey=$SUBSCRIPTION_KEY && subscription-manager attach && \
     subscription-manager release --set=`cat /etc/*release | grep VERSION_ID | cut -f2 -d'"'`
+{% endif %}
 
 {% for pre_command in pre_commands %}
 {{ pre_command|safe }}
 {% endfor %}
+
+{% if not openshift %}
 # -----------------
 FROM registry.access.redhat.com/ubi8 AS ov_base
+{% endif %}
 
 LABEL name="rhel8_runtime" \
       maintainer="openvino_docker@intel.com" \
@@ -33,21 +44,25 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+{% if not openshift %}
 ARG SUBSCRIPTION_ORG=
 ARG SUBSCRIPTION_KEY=
 
 RUN subscription-manager register --org=$SUBSCRIPTION_ORG --activationkey=$SUBSCRIPTION_KEY && subscription-manager attach && \
     subscription-manager release --set=`cat /etc/*release | grep VERSION_ID | cut -f2 -d'"'`
+{% endif %}
 
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
+{% if not openshift %}
 RUN mkdir /opt/intel
 
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 COPY --from=base /opt/intel /opt/intel
+{% endif %}
 
 ARG LGPL_DEPS="gcc-c++"
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt"
@@ -56,7 +71,11 @@ ARG INSTALL_SOURCES="no"
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033
+{% if openshift -%}
+RUN rm /etc/rhsm-host && yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
+{%- else -%}
 RUN yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
+{%- endif -%}
 	yum install -y ${LGPL_DEPS} && \
 	${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
 	if [ "$INSTALL_SOURCES" = "yes" ]; then \
@@ -87,7 +106,11 @@ RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
 {% endfor %}
 
 # Post-installation cleanup and setting up OpenVINO environment variables
+{% if openshift %}
+RUN rm -rf /tmp && mkdir /tmp && rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
+{% else %}
 RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
+{% endif %}
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
