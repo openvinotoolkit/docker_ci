@@ -2,6 +2,10 @@
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
+{% if openshift %}
+COPY ${package_url} ${TEMP_DIR}/
+{% else %}
 WORKDIR ${TEMP_DIR}
 # hadolint ignore=DL3020
 ADD ${package_url} ${TEMP_DIR}
+{% endif %}

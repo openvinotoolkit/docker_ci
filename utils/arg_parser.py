@@ -233,6 +233,13 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             help='Name of the Dockerfile, that uses to build an image.',
         )
 
+        parser.add_argument(
+            '--openshift',
+            action='store_true',
+            default=False,
+            help='Create a dockerfile intended to build on Red Hat OpenShift (RHEL images only)',
+        )
+
     @staticmethod
     def set_default_subparser(name: str):
         """Set default subparser"""
@@ -352,6 +359,12 @@ def parse_args(name: str, description: str):  # noqa
         if not args.file.exists():
             parser.error(f'Cannot find specified Dockerfile: {str(args.file)}.')
 
+    if args.openshift:
+        if args.mode != 'gen_dockerfile':
+            parser.error('Only dockerfile generation is supported for OpenShift')
+        elif args.os != 'rhel8':
+            parser.error('Dockerfile generation intended for OpenShift is supported only for RHEL-based images')
+
     if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all'):
         if args.ocl_release not in INTEL_OCL_RELEASE:
             parser.error('Provided Intel(R) Graphics Compute Runtime for OpenCL(TM) release is not acceptable.')
@@ -440,10 +453,12 @@ def parse_args(name: str, description: str):  # noqa
         if not args.dockerfile_name:
             devices = ''.join([d[0] for d in args.device])
             layers = '_'.join(args.layers)
+            openshift = 'openshift_' if args.openshift else ''
+            version = args.product_version
             if layers:
-                args.dockerfile_name = f'openvino_{layers}_{args.product_version}.dockerfile'
+                args.dockerfile_name = f'openvino_{openshift}{layers}_{version}.dockerfile'
             else:
-                args.dockerfile_name = f'openvino_{devices}_{args.distribution}_{args.product_version}.dockerfile'
+                args.dockerfile_name = f'openvino_{devices}_{openshift}{args.distribution}_{version}.dockerfile'
 
     if not hasattr(args, 'tags') or not args.tags:
         layers = '_'.join(args.layers)
