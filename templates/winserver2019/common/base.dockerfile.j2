@@ -19,6 +19,9 @@ ARG HTTPS_PROXY
 {{ command|safe }}
 {% endfor %}
 
+RUN rmdir /s /q %INTEL_OPENVINO_DIR%\.distribution & mkdir %INTEL_OPENVINO_DIR%\.distribution && `
+    copy /b NUL %INTEL_OPENVINO_DIR%\.distribution\docker
+
 WORKDIR ${INTEL_OPENVINO_DIR}
 
 # Post-installation cleanup

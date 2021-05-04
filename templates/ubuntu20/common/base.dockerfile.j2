@@ -18,6 +18,8 @@ RUN apt-get update && \
 {% for pre_command in pre_commands %}
 {{ pre_command|safe }}
 {% endfor %}
+RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
+    touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 # -----------------
 FROM ubuntu:20.04 AS ov_base
 

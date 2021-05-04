@@ -15,6 +15,9 @@ RUN yum update -y && yum install -y curl ca-certificates && \
 {% for pre_command in pre_commands %}
 {{ pre_command|safe }}
 {% endfor %}
+RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
+    touch ${INTEL_OPENVINO_DIR}/.distribution/docker
+
 # -----------------
 FROM centos:7 AS ov_base
 
