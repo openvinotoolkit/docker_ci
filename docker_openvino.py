@@ -99,7 +99,7 @@ class Launcher:
         self.docker_api = DockerAPI()
 
     def setup_build_args(self):
-        """Setting up arguments passed to `docker build` command"""
+        """Setting up arguments passed to a template engine and `docker build` command"""
         self.kwargs.update({
             'product_name': self.product_name,
             'package_url': self.args.package_url,
@@ -166,6 +166,8 @@ class Launcher:
             self.args.file = pathlib.Path(self.args.file).relative_to(self.location)
         self.builder = DockerImageBuilder()
         curr_time = timeit.default_timer()
+        if not self.args.openshift:
+            self.kwargs.pop('openshift')
         log.info(f"Build log location: {self.logdir / 'image_build.log'}")
         self.image = self.builder.build_docker_image(dockerfile=self.args.file,
                                                      directory=str(self.location),
