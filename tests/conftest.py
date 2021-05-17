@@ -307,6 +307,14 @@ def _min_product_version(request):
 
 
 @pytest.fixture(scope='session')
+def _max_product_version(request):
+    image_version = request.config.getoption('--product_version')
+    if image_version is not None and request.param < image_version:
+        pytest.skip(f'Test requires the product_version should be {request.param} or older '
+                    f'but get {image_version}')
+
+
+@pytest.fixture(scope='session')
 def _python_ngraph_required(request):
     image = request.config.getoption('--image')
     if request.config.getoption('--image_os') == 'winserver2019':

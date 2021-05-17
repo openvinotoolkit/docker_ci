@@ -13,7 +13,7 @@ RUN ${PYTHON_VER} -m venv ${VENV_TF2} && \
     pip install --no-cache-dir -U pip==19.3.1 && \
     pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/model_optimizer/requirements_tf2.txt && \
     deactivate
-{% elif build_id > '2021.1' %}
+{% elif build_id > '2021.1' and build_id < '2021.4' %}
 ENV VENV_TF2 /opt/intel/venv_tf2
 
 RUN ${PYTHON_VER} -m venv ${VENV_TF2} && \
