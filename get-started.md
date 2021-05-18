@@ -36,7 +36,7 @@ With this guide, you will learn how to:
 7. [Troubleshooting](#troubleshooting) 
 
 ## Generate Dockerfile
-You can use [available Dockerfiles](../dockerfiles/README.md) from `<root_project>/dockerfiles/<image_os>` folder or generate Dockerfile with your settings. 
+You can use [available Dockerfiles](dockerfiles/README.md) from `<root_project>/dockerfiles/<image_os>` folder or generate Dockerfile with your settings. 
 Run the following command in the repository's root:  
 ```bash
 python3 docker_openvino.py gen_dockerfile --distribution dev --product_version 2020.4
