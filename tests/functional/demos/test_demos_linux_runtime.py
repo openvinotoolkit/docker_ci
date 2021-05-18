@@ -106,7 +106,8 @@ class TestDemosLinuxDataRuntime:
         )
 
     @pytest.mark.hddl
-    @pytest.mark.usefixtures('_python_ngraph_required')
+    @pytest.mark.usefixtures('_python_ngraph_required', '_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     def test_detection_ssd_python_hddl(self, tester, image, distribution, dev_root, omz_python_demo_path,
                                        omz_python_demos_requirements_file):
@@ -246,6 +247,8 @@ class TestDemosLinuxRuntime:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
     def test_segmentation_python_hddl(self, tester, image, distribution, dev_root, omz_python_demo_path,
                                       omz_python_demos_requirements_file):

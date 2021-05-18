@@ -148,6 +148,8 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_hello_classification_cpp_hddl(self, tester, image, dev_root, install_openvino_dependencies):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
@@ -365,6 +367,8 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_hello_reshape_cpp_hddl(self, tester, image, dev_root, install_openvino_dependencies):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
@@ -524,6 +528,8 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_object_detection_cpp_hddl(self, tester, image, dev_root, install_openvino_dependencies):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
@@ -701,6 +707,8 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_classification_async_cpp_hddl(self, tester, image, dev_root, install_openvino_dependencies):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
