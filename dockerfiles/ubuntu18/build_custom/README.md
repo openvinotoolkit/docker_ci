@@ -12,6 +12,10 @@ Go to the folder with the Dockerfile and run:
 docker build -t [image:tag] .
 ```
 
+* `/opt/intel/openvino` folder will contain OpenVINO build
+* `/opt/intel/repo` will contain OpenVINO™ and OpenCV git repositories in `openvino` and `opencv` folders accordingly.
+
+
 If you want to rebuild the entire image, use docker `--no-cache` option:
 ```
 docker build --no-cache -t image:tag .
@@ -32,7 +36,7 @@ You can manually setup cmake parameters to build a custom package from source co
 * [opencv_cmake.txt](opencv_cmake.txt)
 
 >**Note**:  
-By default, these files already contain some parameters.  
+By default, these files already contain some parameters for *Debug* build  
 Do not override PATH/PREFIX options. This can break a build of package.
 
 ### Build stages
@@ -69,11 +73,11 @@ python3 docker_openvino.py test -t [image:tag] -dist custom
 ```
 
 >**Note**:  
-Docker_ci automatically runs the corresponding tests.  
+Docker CI framework automatically runs the corresponding tests.  
 By default, the product version is equal to the latest release version. Use `-p` to override this.
 
 ## How to run
-Please follow [Run built image](../get-started.md#run-built-image) section in DockerHub CI getting started guide.
+Please follow [Run built image](../get-started.md#run-built-image) section in Docker CI getting started guide.
 
 ## Prebuilt images
 

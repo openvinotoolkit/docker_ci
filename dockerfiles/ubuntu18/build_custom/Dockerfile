@@ -6,6 +6,7 @@ FROM ubuntu:18.04 AS setup_openvino
 RUN apt-get update; \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
+        apt-utils \
         git \
         git-lfs \
         ca-certificates \
@@ -17,9 +18,9 @@ ARG OPENVINO_BRANCH="master"
 
 RUN git-lfs install; \
     git clone https://github.com/openvinotoolkit/openvino.git \
-    --recurse-submodules --shallow-submodules --depth 1 -b ${OPENVINO_BRANCH} /tmp/openvino
+    --recurse-submodules --shallow-submodules --depth 1 -b ${OPENVINO_BRANCH} /opt/intel/repo/openvino
 
-WORKDIR /tmp/openvino
+WORKDIR /opt/intel/repo/openvino
 RUN chmod +x install_build_dependencies.sh; \
     ./install_build_dependencies.sh
 
@@ -32,18 +33,18 @@ RUN chmod +x scripts/install_dependencies/install_NEO_OCL_driver.sh; \
 RUN chmod +x scripts/install_dependencies/install_openvino_dependencies.sh; \
     ./scripts/install_dependencies/install_openvino_dependencies.sh -y -c=python; \
     python3 -m pip install --no-cache-dir --upgrade pip; \
-    python3 -m pip install --no-cache-dir -r inference-engine/ie_bridges/python/requirements.txt
+    python3 -m pip install --no-cache-dir -r inference-engine/ie_bridges/python/src/requirements-dev.txt
 
-WORKDIR /tmp
+WORKDIR /opt/intel/repo
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM setup_openvino AS build_openvino
 
-COPY openvino_cmake.txt /tmp
+COPY openvino_cmake.txt /opt/intel/repo
 
-WORKDIR /tmp/openvino/build
+WORKDIR /opt/intel/repo/openvino/build
 # hadolint ignore=SC2046
-RUN cmake $(cat /tmp/openvino_cmake.txt) /tmp/openvino; \
+RUN cmake $(cat /opt/intel/repo/openvino_cmake.txt) /opt/intel/repo/openvino; \
     make "-j$(nproc)"; \
     make install
 
@@ -57,14 +58,16 @@ RUN ./bootstrap.sh; \
     ./configure --disable-udev --enable-shared; \
     make "-j$(nproc)"
 
-WORKDIR /tmp
+WORKDIR /opt/intel/repo
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM ubuntu:18.04 AS copy_openvino
 
 ENV INTEL_OPENVINO_DIR="/opt/intel/openvino"
 
-COPY --from=build_openvino /tmp/openvino/build/install ${INTEL_OPENVINO_DIR}
+COPY --from=build_openvino /opt/intel/repo /opt/intel/repo
+RUN rm -rf /opt/intel/repo/openvino/build/install
+COPY --from=build_openvino /opt/intel/repo/openvino/build/install ${INTEL_OPENVINO_DIR}
 COPY --from=build_openvino /tmp/libusb-1.0.22 /opt/libusb-1.0.22
 
 WORKDIR ${INTEL_OPENVINO_DIR}
@@ -76,9 +79,11 @@ FROM copy_openvino AS openvino
 RUN apt-get update; \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
+        apt-utils \
         wget \
         udev \
         sudo \
+        gdb \
         tzdata; \
     rm -rf /var/lib/apt/lists/*
 
@@ -135,25 +140,25 @@ RUN apt-get update; \
 
 ARG OPENCV_BRANCH="master"
 
-WORKDIR /tmp
+WORKDIR /opt/intel/repo
 RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
 
-COPY opencv_cmake.txt /tmp
+COPY opencv_cmake.txt /opt/intel/repo
 
-WORKDIR /tmp/opencv/build
+WORKDIR /opt/intel/repo/opencv/build
 # hadolint ignore=SC2046
 RUN . "${INTEL_OPENVINO_DIR}/bin/setupvars.sh"; \
-    cmake $(cat /tmp/opencv_cmake.txt) /tmp/opencv; \
+    cmake $(cat /opt/intel/repo/opencv_cmake.txt) /opt/intel/repo/opencv; \
     make "-j$(nproc)"; \
     make install
 
-WORKDIR /tmp/opencv/build/install
+WORKDIR /opt/intel/repo/opencv/build/install
 RUN cp -r . "${INTEL_OPENVINO_DIR}/opencv"; \
     cp -r "${INTEL_OPENVINO_DIR}/opencv/python/python3" "${INTEL_OPENVINO_DIR}/python"; \
     rm -r "${INTEL_OPENVINO_DIR}/opencv/python"; \
     echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/opencv/setupvars.sh"; \
     echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/opencv/setupvars.sh"; \
-    rm -r /tmp/*
+    rm -rf /opt/intel/repo/opencv/build/install
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
