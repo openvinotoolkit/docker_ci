@@ -9,7 +9,7 @@ You can reuse available Dockerfiles, add your layer and customize the image of O
 ## Documentation
 * [Get Started with DockerHub CI for OpenVINO™ toolkit](get-started.md)
 * [Available Dockerfiles](dockerfiles/README.md)
-* [Available Tutorials](tutorials/README.md)
+* [Available Tutorials](docs/tutorials/README.md)
 
 As [Docker\*](https://docs.docker.com/) is (mostly) just an isolation tool, the OpenVINO toolkit inside the container is the same as the OpenVINO toolkit installed natively on the host machine, 
 so the [OpenVINO documentation](https://docs.openvinotoolkit.org/) is fully applicable to containerized OpenVINO distribution.
