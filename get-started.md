@@ -211,7 +211,7 @@ docker run -it --rm <image_name>:latest
 ```
 If your host machine is MacOS* then inference run inside the docker Linux image is available for CPU only.
 
-**Windows image:**:
+**Windows image:**
 ```cmd
 docker run -it --rm <image_name>:latest
 ```
@@ -222,7 +222,7 @@ If you want to try some demos then run image with the root privileges (some addi
 ```bash
 docker run -itu root:root --rm <image_name>:latest /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d CPU -sample-options -no_show"
 ```
-**Windows image:**:
+**Windows image:**
 ```cmd
 docker run -itu ContainerAdministrator --rm <image_name>:latest cmd /S /C "cd deployment_tools\demo && demo_security_barrier_camera.bat -d CPU -sample-options -no_show"
 ```
