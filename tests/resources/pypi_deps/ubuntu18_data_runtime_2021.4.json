@@ -1,0 +1,21 @@
+{
+    "/opt/intel/openvino/data_processing/dl_streamer/requirements.txt": [
+        "numpy>=1.19.2\n",
+        "opencv-python>=4.2.0.34"
+    ],
+    "/opt/intel/openvino/python/python3.6/requirements.txt": [
+        "numpy~=1.19.5"
+    ],
+    "/opt/intel/openvino/python/python3.7/requirements.txt": [
+        "numpy~=1.19.5"
+    ],
+    "/opt/intel/openvino/python/requirements.txt": [
+        "numpy~=1.19.5"
+    ],
+    "requirements": [
+        "/opt/intel/openvino/data_processing/dl_streamer/requirements.txt",
+        "/opt/intel/openvino/python/requirements.txt",
+        "/opt/intel/openvino/python/python3.7/requirements.txt",
+        "/opt/intel/openvino/python/python3.6/requirements.txt"
+    ]
+}

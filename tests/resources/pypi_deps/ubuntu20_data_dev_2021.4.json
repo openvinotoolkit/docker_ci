@@ -1,4 +1,8 @@
 {
+    "/opt/intel/openvino/data_processing/dl_streamer/requirements.txt": [
+        "numpy>=1.19.2\n",
+        "opencv-python>=4.2.0.34"
+    ],
     "/opt/intel/openvino/deployment_tools/inference_engine/samples/python/requirements.txt": [
         "opencv-python==4.5.*\n",
         "numpy~=1.19.5\n"
@@ -233,15 +237,38 @@
     "/opt/intel/openvino/python/python3.7/requirements.txt": [
         "numpy~=1.19.5"
     ],
+    "/opt/intel/openvino/python/python3.8/openvino/tools/benchmark/requirements.txt": [
+        "py-cpuinfo>=7.0.0\n",
+        "numpy~=1.19.5\n",
+        "progress>=1.5\n",
+        "opencv-python==4.5.*"
+    ],
+    "/opt/intel/openvino/python/python3.8/requirements.txt": [
+        "numpy~=1.19.5"
+    ],
+    "/opt/intel/openvino/python/python3.9/openvino/tools/benchmark/requirements.txt": [
+        "py-cpuinfo>=7.0.0\n",
+        "numpy~=1.19.5\n",
+        "progress>=1.5\n",
+        "opencv-python==4.5.*"
+    ],
+    "/opt/intel/openvino/python/python3.9/requirements.txt": [
+        "numpy~=1.19.5"
+    ],
     "/opt/intel/openvino/python/requirements.txt": [
         "numpy~=1.19.5"
     ],
     "requirements": [
+        "/opt/intel/openvino/data_processing/dl_streamer/requirements.txt",
         "/opt/intel/openvino/python/requirements.txt",
         "/opt/intel/openvino/python/python3.7/requirements.txt",
         "/opt/intel/openvino/python/python3.7/openvino/tools/benchmark/requirements.txt",
         "/opt/intel/openvino/python/python3.6/requirements.txt",
         "/opt/intel/openvino/python/python3.6/openvino/tools/benchmark/requirements.txt",
+        "/opt/intel/openvino/python/python3.9/requirements.txt",
+        "/opt/intel/openvino/python/python3.9/openvino/tools/benchmark/requirements.txt",
+        "/opt/intel/openvino/python/python3.8/requirements.txt",
+        "/opt/intel/openvino/python/python3.8/openvino/tools/benchmark/requirements.txt",
         "/opt/intel/openvino/deployment_tools/inference_engine/samples/python/requirements.txt",
         "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/requirements.txt",
         "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/human_pose_estimation_3d_demo/python/requirements.txt",
