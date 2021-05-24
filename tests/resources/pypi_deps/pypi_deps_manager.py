@@ -156,10 +156,6 @@ def main() -> int:
     elif not image_name and not args.image_json:
         image_name = args.image.split('/')[-1].replace(':', '_')
         args.image_json = pathlib.Path(args.logs) / f'{image_name}.json'
-    else:
-        log.error(f'Can not get image name and setup path to save results. '
-                  f'Please setup it directly via --image and --image_json options')
-        return 4
 
     exit_code = 0
     if args.save:
