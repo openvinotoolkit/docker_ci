@@ -1,0 +1,24 @@
+{
+    "/opt/intel/openvino/python/python3.6/requirements.txt": [
+        "numpy~=1.19.5"
+    ],
+    "/opt/intel/openvino/python/python3.7/requirements.txt": [
+        "numpy~=1.19.5"
+    ],
+    "/opt/intel/openvino/python/python3.8/requirements.txt": [
+        "numpy~=1.19.5"
+    ],
+    "/opt/intel/openvino/python/python3.9/requirements.txt": [
+        "numpy~=1.19.5"
+    ],
+    "/opt/intel/openvino/python/requirements.txt": [
+        "numpy~=1.19.5"
+    ],
+    "requirements": [
+        "/opt/intel/openvino/python/requirements.txt",
+        "/opt/intel/openvino/python/python3.7/requirements.txt",
+        "/opt/intel/openvino/python/python3.6/requirements.txt",
+        "/opt/intel/openvino/python/python3.9/requirements.txt",
+        "/opt/intel/openvino/python/python3.8/requirements.txt"
+    ]
+}
