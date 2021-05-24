@@ -102,7 +102,7 @@ Now, you can set a **Breakpoint** on any place of `samples/cpp/hello_query_devic
 *Prerequisites:* Install [Python extention](https://marketplace.visualstudio.com/items?itemName=ms-python.python) to VS Code
 
 Lets try [Hello Query Device Python* Sample](https://docs.openvinotoolkit.org/latest/openvino_inference_engine_ie_bridges_python_sample_hello_query_device_README.html) which queries Inference Engine devices and prints their metrics and default configuration values.
-You need to setup Python interpretator in VS Code: `View -> Command Palette... (F1) -> Python: Select Interpreter` to run Python sample.
+You need to setup Python interpreter in VS Code: `View -> Command Palette... (F1) -> Python: Select Interpreter` to run Python sample.
 
 Then you need to **Add Configuration** for the Python sample: `View -> Command Palette... (F1) -> Open launch.json` with the following settings:
 
