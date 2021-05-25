@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:18.04 AS setup_openvino
 
+LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL Vendor="Intel Corporation"
+
 # hadolint ignore=DL3008
 RUN apt-get update; \
     DEBIAN_FRONTEND=noninteractive \
@@ -40,6 +43,9 @@ CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM setup_openvino AS build_openvino
 
+LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL Vendor="Intel Corporation"
+
 COPY openvino_cmake.txt /opt/intel/repo
 
 WORKDIR /opt/intel/repo/openvino/build
@@ -63,6 +69,9 @@ CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM ubuntu:18.04 AS copy_openvino
 
+LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL Vendor="Intel Corporation"
+
 ENV INTEL_OPENVINO_DIR="/opt/intel/openvino"
 
 COPY --from=build_openvino /opt/intel/repo /opt/intel/repo
@@ -74,6 +83,9 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM copy_openvino AS openvino
+
+LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL Vendor="Intel Corporation"
 
 # hadolint ignore=DL3008
 RUN apt-get update; \
@@ -118,6 +130,9 @@ RUN printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM openvino AS opencv
+
+LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL Vendor="Intel Corporation"
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
@@ -164,6 +179,9 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM opencv AS open_model_zoo
+
+LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL Vendor="Intel Corporation"
 
 ARG OMZ_BRANCH="master"
 
