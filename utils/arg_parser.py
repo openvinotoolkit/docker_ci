@@ -416,11 +416,13 @@ def parse_args(name: str, description: str):  # noqa
         elif not args.device:
             args.device = ['cpu']
 
+        if not args.package_url and not args.product_version:
+            args.product_version = max(INTEL_OPENVINO_VERSION.__iter__())
         args.build_id = args.product_version
         if not args.package_url and args.distribution not in ('base', 'internal_dev'):
             if not args.distribution or not args.product_version:
                 parser.error('Insufficient arguments. Provide --package_url '
-                             'or --distribution and --product_version arguments')
+                             'or --distribution (with optional --product_version) arguments')
             if args.mode != 'gen_dockerfile':
                 args.build_id = args.product_version  # save product version YYY.U.[BBB]
                 lts_version = re.search(r'^\d{4}\.\d.\d$', args.product_version)

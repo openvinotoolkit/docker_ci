@@ -270,9 +270,8 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
     pytest.param(
         {
             'mode': 'build',
-            'distribution': 'dev',
         },
-        'Insufficient arguments. Provide --package_url or --distribution and --product_version arguments',
+        'Insufficient arguments. Provide --package_url or --distribution (with optional --product_version) arguments',
         id='Build without --package_url, --distribution, --product_version',
     ),
     pytest.param(
