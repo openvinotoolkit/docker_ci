@@ -1,5 +1,5 @@
 setuptools
-docker
+docker!=5.0.0 # workaround for https://github.com/docker/docker-py/issues/2807
 jinja2
 pytest
 pytest-html
