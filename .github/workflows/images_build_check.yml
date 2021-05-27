@@ -1,0 +1,54 @@
+name: Images build check
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  image_build:
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, windows-2019]
+        image_os: [centos7, ubuntu18, ubuntu20, winserver2019]
+        image_distribution: [runtime]
+        exclude:
+          - os: ubuntu-18.04
+            image_os: winserver2019
+          - os: windows-2019
+            image_os: centos7
+          - os: windows-2019
+            image_os: ubuntu18
+          - os: windows-2019
+            image_os: ubuntu20
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v2
+      - name: Setting up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+      - name: Setting up Python dependencies
+        if: ${{ always() }}
+        run: python -m pip install -r requirements.txt
+      - name: Build Linux image (runtime, latest release)
+        if: ${{ matrix.os == 'ubuntu-18.04' && matrix.image_os != 'winserver2019' }}
+        run: python docker_openvino.py build --dist ${{ matrix.image_distribution }} -os ${{ matrix.image_os }}
+      - name: Build Windows image (runtime, latest release)
+        if: ${{ matrix.os == 'windows-2019' && matrix.image_os == 'winserver2019' }}
+        run: python docker_openvino.py build --dist ${{ matrix.image_distribution }} -os ${{ matrix.image_os }}
+      - name: Checking resulting image
+        if: ${{ always() }}
+        run: docker images
+      - name: Collecting artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: logs
+          path: |
+            logs/
+            ./*.html
+            ./*.log
