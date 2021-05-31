@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi8 AS ov_base
+FROM registry.access.redhat.com/ubi8
 
 LABEL name="rhel8_runtime" \
       maintainer="openvino_docker@intel.com" \
