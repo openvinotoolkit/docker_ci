@@ -1,4 +1,4 @@
-# Build Intel® Distribution of OpenVINO™ toolkit Docker image using Red Hat® OpenShift® Container Platform 
+# Build Intel® Distribution of OpenVINO™ toolkit Docker image using Red Hat® portal Build System 
 
 This repository folder contains Dockerfiles with the Intel® Distribution of OpenVINO™ toolkit for automation building via Red Hat* portal Build System.
 
