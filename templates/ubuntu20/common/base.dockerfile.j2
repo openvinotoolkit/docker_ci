@@ -149,7 +149,7 @@ ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=pot"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
 {% elif 'data_runtime' == distribution %}
 ARG DEPS="${DEPS} \
            intel-media-va-driver-non-free \
@@ -162,7 +162,7 @@ ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=opencv_opt -c=dl
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=opencv_opt -c=dlstreamer -c=pot"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=opencv_opt -c=dlstreamer"
 {% endif %}
 {% endif %}
 
