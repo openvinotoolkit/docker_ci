@@ -74,6 +74,42 @@ default_args = {
             'mode': 'build',
             'package_url': 'openvino_dev_p_2020.1.320.zip',
             'source': 'local',
+            'tag_postfix': '_qqq',
+        },
+        {
+            'device': ['cpu', 'gpu', 'vpu', 'hddl'],
+            'dockerfile_name': 'openvino_cgvh_dev_2020.1.dockerfile',
+            'python': 'python36',
+            'tags': ['ubuntu18_dev:2020.1.320_qqq', 'ubuntu18_dev:latest'],
+            'distribution': 'dev',
+            'install_type': 'copy',
+            'product_version': '2020.1',
+        },
+        id='check tag postfix',
+    ),
+    pytest.param(
+        {
+            'mode': 'build',
+            'package_url': 'openvino_dev_p_2020.1.320.zip',
+            'source': 'local',
+            'ocl_release': '20.35.17767',
+        },
+        {
+            'device': ['cpu', 'gpu', 'vpu', 'hddl'],
+            'dockerfile_name': 'openvino_cgvh_dev_2020.1.dockerfile',
+            'python': 'python36',
+            'tags': ['ubuntu18_dev:2020.1.320_tgl', 'ubuntu18_dev:latest'],
+            'distribution': 'dev',
+            'install_type': 'copy',
+            'product_version': '2020.1',
+        },
+        id='check tgl tag',
+    ),
+    pytest.param(
+        {
+            'mode': 'build',
+            'package_url': 'openvino_dev_p_2020.1.320.zip',
+            'source': 'local',
             'os': 'winserver2019',
         },
         {

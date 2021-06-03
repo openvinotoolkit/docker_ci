@@ -35,6 +35,14 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
                  'Default is <os>_<distribution>:<product_version> and latest. You can specify some tags.',
         )
 
+        parser.add_argument(
+            '--tag_postfix',
+            metavar='_NAME',
+            default='',
+            help='Add special postfix to the end of tag image. '
+                 'Image name will be like this <os>_<distribution>:<product_version><tag_postfix>',
+        )
+
     @staticmethod
     def add_linter_check_args(parser: argparse.ArgumentParser):
         parser.add_argument(
@@ -464,17 +472,22 @@ def parse_args(name: str, description: str):  # noqa
 
     if not hasattr(args, 'tags') or not args.tags:
         layers = '_'.join(args.layers)
+        tgl_postfix = ''
+
+        if args.ocl_release == '20.35.17767':
+            tgl_postfix = '_tgl'
+
         if layers:
             args.tags = [f'{args.os}_{layers}:'
-                         f'{args.build_id if args.build_id else args.product_version}',
+                         f'{args.build_id if args.build_id else args.product_version}{tgl_postfix}{args.tag_postfix}',
                          f'{args.os}_{layers}:latest']
         elif args.distribution == 'base':
             args.tags = [f'{args.os}_{args.distribution}_cpu:'
-                         f'{args.product_version}',
+                         f'{args.product_version}{args.tag_postfix}',
                          f'{args.os}_{args.distribution}_cpu:latest']
         else:
             args.tags = [f'{args.os}_{args.distribution}:'
-                         f'{args.build_id if args.build_id else args.product_version}',
+                         f'{args.build_id if args.build_id else args.product_version}{tgl_postfix}{args.tag_postfix}',
                          f'{args.os}_{args.distribution}:latest']
 
     if args.mode not in ('test', 'deploy'):
