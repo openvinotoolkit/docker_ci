@@ -133,6 +133,11 @@ Specify a tag for image
                               Default is <os>_<distribution>:<product_version> and latest. You can specify some tags.
 ```
 
+```cmd
+  --tag_postfix _NAME        Add special postfix to the end of tag image. 
+                             Image name will be like this <os>_<distribution>:<product_version><tag_postfix>
+```
+
 ## Deploy image
 **Prerequisite:** previously login to your registry: `docker login <registry_url>`
 
