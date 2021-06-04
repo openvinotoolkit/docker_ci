@@ -29,6 +29,7 @@ default_args = {
     'python': None,
     'source': 'url',
     'tags': None,
+    'tag_postfix': '',
 }
 
 
@@ -80,7 +81,7 @@ default_args = {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
             'dockerfile_name': 'openvino_cgvh_dev_2020.1.dockerfile',
             'python': 'python36',
-            'tags': ['ubuntu18_dev:2020.1.320_qqq', 'ubuntu18_dev:latest'],
+            'tags': ['ubuntu18_dev:2020.1.320', 'ubuntu18_dev:latest', 'ubuntu18_dev:2020.1.320_qqq'],
             'distribution': 'dev',
             'install_type': 'copy',
             'product_version': '2020.1',
