@@ -52,6 +52,14 @@ Now, we can attach to the container from VS Code.
 
 ## Integrate VS Code and OpenVINO container
 
+Fire up VS Code:
+
+```cmd
+code .
+```
+
+*Note:* You can use a container on a remote host as well. At first you need connect to the remote host and then execute connection to the container. See [explicit instructions](https://code.visualstudio.com/docs/remote/ssh#_connect-to-a-remote-host) on VS Code site.
+
 To attach to a Docker container, either select **Remote-Containers: Attach to Running Container...** from the Command Palette (F1) or use the **Remote Explorer** in the Activity Bar and from the Containers view, select the **Attach to Container** inline action on the container you want to connect to.
 
 Then, you can open OpenVINO build and repositories in VS Code editor:
@@ -71,7 +79,9 @@ Lets build samples in Debug mode. We need to update `build_samples.sh` script an
 
 Then, you can see built samples in `/root/inference_engine_cpp_samples_build/intel64/Debug/` folder.
 
-Now you need to **Add Configuration** for the Python sample: `View -> Command Palette... (F1) -> Open launch.json` with the following settings:
+Select the Run icon in the Activity Bar on the side of VS Code to bring up the [Run view](https://code.visualstudio.com/docs/editor/debugging#_run-view). You can also use the keyboard shortcut `Ctrl+Shift+D`.
+If running and debugging is not yet configured (no launch.json has been created), VS Code shows the Run start view. Click on "create a launch.json file" link and select an option "C/C++ (gdb) Launch". 
+Please update launch.json with the following settings:
 
 ```sh
         {
@@ -95,6 +105,8 @@ Now you need to **Add Configuration** for the Python sample: `View -> Command Pa
         }
 ```
 
+After that you can access to the launch.json file via default command palette flow: `View -> Command Palette... (F1) -> Open launch.json`.
+
 Now, you can set a **Breakpoint** on any place of `samples/cpp/hello_query_device/main.cpp` sample and run Debug (F5).
 
 ## Debug Python sample
@@ -104,7 +116,10 @@ Now, you can set a **Breakpoint** on any place of `samples/cpp/hello_query_devic
 Lets try [Hello Query Device Python* Sample](https://docs.openvinotoolkit.org/latest/openvino_inference_engine_ie_bridges_python_sample_hello_query_device_README.html) which queries Inference Engine devices and prints their metrics and default configuration values.
 You need to setup Python interpreter in VS Code: `View -> Command Palette... (F1) -> Python: Select Interpreter` to run Python sample.
 
-Then you need to **Add Configuration** for the Python sample: `View -> Command Palette... (F1) -> Open launch.json` with the following settings:
+Then you need to **Add Configuration** for the Python sample.
+Select the Run icon in the Activity Bar on the side of VS Code to bring up the [Run view](https://code.visualstudio.com/docs/editor/debugging#_run-view). You can also use the keyboard shortcut `Ctrl+Shift+D`.
+If running and debugging is not yet configured (no launch.json has been created), VS Code shows the Run start view. Click on "create a launch.json file" link and select an option "Python: Current file". 
+You will see Debug Configuration with the following settings:
 
 ```sh
         {
@@ -115,6 +130,8 @@ Then you need to **Add Configuration** for the Python sample: `View -> Command P
             "console": "integratedTerminal"
         }
 ```
+
+After that you can access to the launch.json file via default command palette flow: `View -> Command Palette... (F1) -> Open launch.json`.
 
 Now, you can set a **Breakpoint** on any place of `samples/python/hello_query_device/hello_query_device.py` sample and run Debug (F5).
 
