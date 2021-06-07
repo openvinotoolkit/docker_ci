@@ -24,7 +24,7 @@ jobs:
 
       - name: Running Bandit
         if: ${{ matrix.os == 'ubuntu-18.04' }}
-        run: python -m bandit -r ./ -f screen
+        run: python -m bandit -r ./ -f screen -c bandit.yaml
           
       - name: Running PEP checks
         if: ${{ matrix.os == 'ubuntu-18.04' }}
