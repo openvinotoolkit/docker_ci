@@ -481,21 +481,21 @@ def parse_args(name: str, description: str):  # noqa
             args.tags = [f'{args.os}_{layers}:'
                          f'{args.build_id if args.build_id else args.product_version}{tgl_postfix}',
                          f'{args.os}_{layers}:latest']
-            if args.tag_postfix:
+            if hasattr(args, 'tag_postfix') and args.tag_postfix:
                 args.tags.append(f'{args.os}_{layers}:{args.build_id if args.build_id else args.product_version}'
                                  f'{tgl_postfix}{args.tag_postfix}')
         elif args.distribution == 'base':
             args.tags = [f'{args.os}_{args.distribution}_cpu:'
                          f'{args.product_version}',
                          f'{args.os}_{args.distribution}_cpu:latest']
-            if args.tag_postfix:
+            if hasattr(args, 'tag_postfix') and args.tag_postfix:
                 args.tags.append(f'{args.os}_{args.distribution}_cpu:'
                                  f'{args.product_version}{args.tag_postfix}')
         else:
             args.tags = [f'{args.os}_{args.distribution}:'
                          f'{args.build_id if args.build_id else args.product_version}{tgl_postfix}',
                          f'{args.os}_{args.distribution}:latest']
-            if args.tag_postfix:
+            if hasattr(args, 'tag_postfix') and args.tag_postfix:
                 args.tags.append(f'{args.os}_{args.distribution}:'
                                  f'{args.build_id if args.build_id else args.product_version}'
                                  f'{tgl_postfix}{args.tag_postfix}')
