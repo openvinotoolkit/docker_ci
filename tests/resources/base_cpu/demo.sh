@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (C) 2019-2020 Intel Corporation
+# Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
 export TBB_DIR=${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake
