@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:20.04 AS base
+FROM ubuntu:18.04 AS base
 
 # hadolint ignore=DL3002
 USER root
@@ -8,14 +8,12 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
+    apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
     rm -rf /var/lib/apt/lists/*
-
-# download source for pypi-kenlm LGPL package
-WORKDIR /tmp
-RUN curl -L https://files.pythonhosted.org/packages/7f/e6/1639d2de28c27632e3136015ecfd67774cca6f55146507baeaef06b113ba/pypi-kenlm-0.1.20190403.tar.gz --output pypi-kenlm.tar.gz
 
 
 # get product from URL
@@ -42,24 +40,6 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
 
 
-RUN rm -rf ${INTEL_OPENVINO_DIR}/data_processing
-
-
-# for GPU
-ARG GMMLIB
-ARG IGC_CORE
-ARG IGC_OPENCL
-ARG INTEL_OPENCL
-ARG INTEL_OCLOC
-ARG TEMP_DIR=/tmp/opencl
-
-WORKDIR ${TEMP_DIR}
-RUN curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-gmmlib_${GMMLIB}_amd64.deb" --output "intel-gmmlib_${GMMLIB}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-core_${IGC_CORE}_amd64.deb" --output "intel-igc-core_${IGC_CORE}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-igc-opencl_${IGC_OPENCL}_amd64.deb" --output "intel-igc-opencl_${IGC_OPENCL}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-opencl_${INTEL_OPENCL}_amd64.deb" --output "intel-opencl_${INTEL_OPENCL}_amd64.deb" && \
-    curl -L "https://github.com/intel/compute-runtime/releases/download/${INTEL_OPENCL}/intel-ocloc_${INTEL_OCLOC}_amd64.deb" --output "intel-ocloc_${INTEL_OCLOC}_amd64.deb"
-
 
 # for VPU
 ARG BUILD_DEPENDENCIES="autoconf \
@@ -82,16 +62,20 @@ RUN ./bootstrap.sh && \
     ./configure --disable-udev --enable-shared && \
     make -j4
 
+RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
+    touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 # -----------------
-FROM ubuntu:20.04 AS ov_base
+FROM ubuntu:18.04 AS ov_base
 
-LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
+LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
 LABEL Vendor="Intel Corporation"
 
 USER root
 WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
 RUN useradd -ms /bin/bash -G video,users openvino && \
@@ -105,25 +89,31 @@ COPY --from=base /opt/intel /opt/intel
 
 WORKDIR /thirdparty
 
+ARG INSTALL_SOURCES="no"
 
-ARG DEPS=dpkg-dev
+
+ARG DEPS="tzdata \
+          curl"
+
 ARG LGPL_DEPS="g++ \
                gcc \
-               libgtk-3-0"
+               libc6-dev"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
+
 
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl tzdata && \
-    apt-get install -y --no-install-recommends ${DEPS} && \
+    apt-get install -y --no-install-recommends dpkg-dev && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
+    apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
-ARG INSTALL_SOURCES="no"
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y ${INSTALL_PACKAGES} && \
     if [ "$INSTALL_SOURCES" = "yes" ]; then \
       sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
       apt-get update && \
@@ -138,41 +128,71 @@ RUN apt-get update && \
 	  fi \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+    rm -rf /var/lib/apt/lists/*
+
+
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
+        echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. Please use tag <YYYY.U_src> to pull the image with downloaded sources." > DockerImage_readme.txt ; \
+    fi
 
 
 # setup Python
-ENV PYTHON_VER python3.8
+ENV PYTHON_VER python3.6
 
-
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-dev lib${PYTHON_VER} && \
-    rm -rf /var/lib/apt/lists/*
 
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip
 
-# runtime package
+# dev package
 WORKDIR /tmp
 
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt
+RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
+    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
+    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o \( -name "*requirements*.in" -and -not -name "*requirements-tensorflow.in" \) \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
+
+
+
+WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker
+RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
+    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements.in && \
+    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
+
+
+# download source for PyPi LGPL packages
+WORKDIR /thirdparty
+RUN if [ "$INSTALL_SOURCES" = "yes" ]; then \
+        curl -L https://files.pythonhosted.org/packages/ee/2d/9cdc2b527e127b4c9db64b86647d567985940ac3698eeabc7ffaccb4ea61/chardet-4.0.0.tar.gz --output chardet-4.0.0.tar.gz; \
+        curl -L https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz --output lake8-import-order-0.18.1.tar.gz; \
+    fi
+
+
+
+WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
+RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
+    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/setup.py install --install-extras && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/build
+
+
+
+RUN pip uninstall -y opencv-python
+
 
 # for CPU
 
 # for GPU
+
+ARG INTEL_OPENCL
+
+
 ARG TEMP_DIR=/tmp/opencl
 
-COPY --from=base ${TEMP_DIR} ${TEMP_DIR}
 
-WORKDIR ${TEMP_DIR}
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
-    rm -rf /var/lib/apt/lists/* && \
-    dpkg -i ${TEMP_DIR}/*.deb && \
-    ldconfig && \
-    rm -rf ${TEMP_DIR}
+WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
+RUN ./install_NEO_OCL_driver.sh --no_numa -y -d ${INTEL_OPENCL} && \
+    rm -rf /var/lib/apt/lists/*
+
 
 # for VPU
 ARG LGPL_DEPS=udev
@@ -197,7 +217,7 @@ RUN apt-get update && \
 	  fi \
       done && \
       echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/* && rm -rf *.txt
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
@@ -218,10 +238,9 @@ WORKDIR /tmp
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        libboost-filesystem-dev \
-        libboost-thread-dev \
-        libjson-c4 \
-        libxxf86vm-dev && \
+        libboost-filesystem1.65-dev \
+        libboost-thread1.65-dev \
+        libjson-c3 libxxf86vm-dev && \
     rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
 
@@ -232,16 +251,20 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc; \
     fi; \
     if [ -d "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk ]; then \
+        ln --symbolic "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk/ /opt/intel/mediasdk || true; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
+
 
 RUN apt-get update && \
     apt-get autoremove -y dpkg-dev && \
     rm -rf /var/lib/apt/lists/*
 
+
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}
+ENV DEBIAN_FRONTEND=noninteractive
 
 CMD ["/bin/bash"]
 

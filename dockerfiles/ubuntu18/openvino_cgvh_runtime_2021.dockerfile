@@ -42,7 +42,7 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
 
 
-RUN rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/data_processing
+RUN rm -rf ${INTEL_OPENVINO_DIR}/data_processing
 
 
 # for GPU
