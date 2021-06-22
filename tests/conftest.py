@@ -41,6 +41,9 @@ def pytest_configure(config):
     config.addinivalue_line(
         'markers', 'save_deps: run test to save PyPi dependencies',
     )
+    config.addinivalue_line(
+        'markers', 'xfail_log: mark test as xfailed if caplog contains the specified pattern',
+    )
     dist = config.getoption('--distribution')
     if dist in ('data_runtime', 'runtime', 'custom-no-omz', 'custom-no-cv'):
         log.info('Setting up runtime image dependencies')
@@ -84,6 +87,18 @@ def pytest_configure(config):
                                 or a local file in the project location as dependent package: {package_url}"""
                 log.error(err_msg)
                 raise FailedTest(err_msg)
+
+
+@pytest.mark.hookwrapper()
+def pytest_runtest_makereport(item, call):
+    """Mark test as xfailed if caplog contains the specified pattern"""
+    outcome = yield
+    xfail_cond_marker = item.get_closest_marker('xfail_log')
+    if call.when == 'call' and xfail_cond_marker:
+        report = outcome.get_result()
+        if report.outcome == 'failed' and xfail_cond_marker.kwargs['pattern'] in report.caplog:
+            report.outcome = 'skipped'
+            report.wasxfail = f"reason: {xfail_cond_marker.kwargs['reason']}"
 
 
 def pytest_sessionfinish(session, exitstatus):
