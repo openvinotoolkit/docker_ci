@@ -16,6 +16,9 @@ Additionally, we provide receipts on how to manually build a Docker image with O
 [Linux](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_docker_linux.html) and [Windows](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_docker_windows.html) containers.
 As well you can use available dockerfiles from `<root_project>/dockerfiles/<image_os>` folder.
 
+## DL Workbench docker Image:
+ - [Pre-built DL Workbench docker image](https://hub.docker.com/repository/docker/openvino/workbench)
+
 ## Supported Operating Systems for Docker image:
  - Ubuntu 18.04 LTS
  - Ubuntu 20.04 LTS
