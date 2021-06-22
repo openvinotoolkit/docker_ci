@@ -5,11 +5,10 @@
 - [Introduction](#introduction)
 - [System Requirements](#requirements)
 - [Install DL Workbench](#install)
-    - [Using Python wrapper](#wrapper)
-    - [Using plain Docker command](#docker)
+  - [Using Python wrapper](#wrapper)
+  - [Using plain Docker command](#docker)
+  - [DL Workbench Docker Image](#docker_image)
 - [Useful Links](#links)
-
-Copyright © 2018-2021 Intel Corporation
 
 ## <a id="introduction">Introduction</a>
 
@@ -25,7 +24,7 @@ The DL Workbench is an official UI environment of the OpenVINO™ toolkit that e
 
 In the DL Workbench, you can use the following OpenVINO™ toolkit components:
 
-Component  |                 Description 
+Component  |                 Description
 |:------------------:|:------------------|
 | [Open Model Zoo](https://docs.openvinotoolkit.org/latest/omz_tools_downloader.html)| Get access to the collection of high-quality pre-trained deep learning [public](https://docs.openvinotoolkit.org/latest/omz_models_group_public.html) and [Intel-trained](https://docs.openvinotoolkit.org/latest/omz_models_group_intel.html) models trained to resolve a variety of different tasks.  |
 | [Model Optimizer](https://docs.openvinotoolkit.org/latest/openvino_docs_MO_DG_Deep_Learning_Model_Optimizer_DevGuide.html) |Optimize and transform models trained in supported frameworks to the IR format. <br>Supported frameworks include TensorFlow\*, Caffe\*, Kaldi\*, MXNet\*, and ONNX\* format.  
@@ -140,8 +139,15 @@ For additional details, such as prerequisites, security, and troubleshooting, se
 
 * Copy the resulting command and execute it in your terminal.
 
+# <a id="docker_image">DL Workbench Docker Image</a>
+  
+  Pre-built DL Workbench Docker image is available on [Docker Hub*](https://hub.docker.com/repository/docker/openvino/workbench).
+
 # <a id="links">Additional Resources</a>
 * [Release Notes](https://software.intel.com/content/www/us/en/develop/articles/openvino-relnotes.html)
 * [Documentation](https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Introduction.html)
 * [Feedback](https://community.intel.com/t5/Intel-Distribution-of-OpenVINO/bd-p/distribution-openvino-toolkit)
 * [Troubleshooting](https://community.intel.com/t5/Intel-Distribution-of-OpenVINO/bd-p/distribution-openvino-toolkit)
+
+---
+\* Other names and brands may be claimed as the property of others.

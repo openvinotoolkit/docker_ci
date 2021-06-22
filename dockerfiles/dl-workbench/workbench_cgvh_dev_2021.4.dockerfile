@@ -1,4 +1,9 @@
+# Copyright (C) 2019-2021 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
 FROM openvino/ubuntu18_dev_no_samples:2021.4_tgl
+
+LABEL Description="This is the OpenVINO™ Deep Learning Workbench image on Ubuntu 18.04 LTS"
+LABEL Vendor="Intel Corporation"
 
 ARG db_password
 ARG rabbitmq_password
