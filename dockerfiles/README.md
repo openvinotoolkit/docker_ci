@@ -1,4 +1,5 @@
 # Dockerfiles with [Intel® Distribution of OpenVINO™ toolkit](https://github.com/openvinotoolkit/openvino)
+
 This repository folder contains Dockerfiles to build an docker image with the Intel® Distribution of OpenVINO™ toolkit.
 You can use Docker CI framework to build an image, please follow [Get Started with DockerHub CI for Intel® Distribution of OpenVINO™ toolkit](../get-started.md).
 
@@ -9,34 +10,38 @@ You can use Docker CI framework to build an image, please follow [Get Started wi
 5. [Prebuilt images](#prebuilt-images)  
 6. [How to run a container](#how-to-run-a-container)  
 
-## Supported Operating Systems for Docker image:
+## Supported Operating Systems for Docker image
+
  - `ubuntu18` folder (Ubuntu* 18.04 LTS)
  - `ubuntu20` folder (Ubuntu* 20.04 LTS)
  - `centos7` folder (CentOS* 7)
  - `centos8` folder (CentOS* 8)
- - `rhel8` folder (RHEL* 8) 
+ - `rhel8` folder (RHEL* 8)
  - `winserver2019` folder (Windows* Server Core base OS LTSC 2019)
+
+*Note*: `dl-workbench` folder contains Dockerfiles for OpenVINO™ Deep Learning Workbench.
 
 ## Supported devices and distributions
 
 ![OpenVINO Dockerfile Name](../docs/img/dockerfile_name.png)
-    
+
  **Devices:**
  - CPU
  - GPU
  - VPU (NCS2)
  - HDDL (VPU HDDL) (_Prerequisite_: run HDDL daemon on the host machine, follow the [configuration guide for HDDL device](../install_guide_vpu_hddl.md))
- 
+
  OpenVINO documentation for [supported devices](https://docs.openvinotoolkit.org/latest/openvino_docs_IE_DG_supported_plugins_Supported_Devices.html).
- 
+
  **Distributions:**
+
  - **runtime**: IE core, nGraph, OpenCV, plugins
  - **data_runtime**: runtime image content + DL Streamer runtimes
  - **dev**: IE core, nGraph, OpenCV, plugins, samples, demos, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Open Model Zoo tools (downloader, converter) 
  - **data_dev**: data_runtime image + dev image + Media SDK, Speech Libraries and End-to-End Speech Demos
  - **base** (only for CPU): IE core, nGraph
  - **proprietary**: data_dev + installer
- 
+
 You can generate Dockerfile with your settings, please follow the [DockerHub CI documentation](../get-started.md).
  * _runtime, data_runtime, dev, data_dev_ distributions based on archive package of OpenVINO product. You can just remove unnecessary parts.
  * _base_ distribution is created by [OpenVINO™ Deployment Manager](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_deployment_manager_tool.html).
@@ -109,5 +114,6 @@ Please follow [Run a container](../get-started.md#run-a-container) section in Do
 * [Install Intel® Distribution of OpenVINO™ toolkit for Linux* from a Docker* Image](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_linux.html)
 * [Install Intel® Distribution of OpenVINO™ toolkit for Windows* from Docker* Image](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html)
 * [Official Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
+
 ---
 \* Other names and brands may be claimed as the property of others.
