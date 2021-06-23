@@ -207,11 +207,15 @@ RUN apt-get update && \
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
 WORKDIR /opt/libusb-1.0.22/libusb
-RUN /bin/mkdir -p '/usr/local/lib' && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends binutils && \
+    /bin/mkdir -p '/usr/local/lib' && \
     /bin/bash ../libtool   --mode=install /usr/bin/install -c   libusb-1.0.la '/usr/local/lib' && \
     /bin/mkdir -p '/usr/local/include/libusb-1.0' && \
     /usr/bin/install -c -m 644 libusb.h '/usr/local/include/libusb-1.0' && \
-    /bin/mkdir -p '/usr/local/lib/pkgconfig'
+    /bin/mkdir -p '/usr/local/lib/pkgconfig' &&\
+    apt-get autoremove -y binutils && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/libusb-1.0.22/
 RUN /usr/bin/install -c -m 644 libusb-1.0.pc '/usr/local/lib/pkgconfig' && \
