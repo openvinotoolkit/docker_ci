@@ -10,6 +10,8 @@ from utils.exceptions import FailedTest
 @pytest.mark.parametrize('_is_image_os', [('winserver2019')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
 class TestSamplesWindows:
+    @pytest.mark.xfail_log(pattern='Error: Download',
+                           reason='Network problems when downloading alexnet files')
     def test_hello_classification_cpp_cpu(self, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
@@ -89,6 +91,8 @@ class TestSamplesWindows:
              ], self.test_object_detection_cpp_cpu.__name__, **kwargs,
         )
 
+    @pytest.mark.xfail_log(pattern='Error: Download',
+                           reason='Network problems when downloading alexnet files')
     def test_classification_async_cpp_cpu(self, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(

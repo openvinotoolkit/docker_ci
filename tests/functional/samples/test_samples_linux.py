@@ -10,6 +10,8 @@ from utils.exceptions import FailedTest
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary', 'custom-full')], indirect=True)
 class TestSamplesLinux:
+    @pytest.mark.xfail_log(pattern='Error: Download',
+                           reason='Network problems when downloading alexnet files')
     def test_hello_classification_cpp_cpu(self, tester, image, install_openvino_dependencies):
         tester.test_docker_image(
             image,
@@ -33,6 +35,8 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.gpu
+    @pytest.mark.xfail_log(pattern='Error: Download',
+                           reason='Network problems when downloading alexnet files')
     def test_hello_classification_cpp_gpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -57,6 +61,8 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.vpu
+    @pytest.mark.xfail_log(pattern='Error: Download',
+                           reason='Network problems when downloading alexnet files')
     def test_hello_classification_cpp_vpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -82,6 +88,8 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.xfail_log(pattern='Error: Download',
+                           reason='Network problems when downloading alexnet files')
     def test_hello_classification_cpp_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -302,6 +310,8 @@ class TestSamplesLinux:
              ], self.test_object_detection_cpp_hddl.__name__, **kwargs,
         )
 
+    @pytest.mark.xfail_log(pattern='Error: Download',
+                           reason='Network problems when downloading alexnet files')
     def test_classification_async_cpp_cpu(self, tester, image, install_openvino_dependencies):
         tester.test_docker_image(
             image,
@@ -325,6 +335,8 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.gpu
+    @pytest.mark.xfail_log(pattern='Error: Download',
+                           reason='Network problems when downloading alexnet files')
     def test_classification_async_cpp_gpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
@@ -349,6 +361,8 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.vpu
+    @pytest.mark.xfail_log(pattern='Error: Download',
+                           reason='Network problems when downloading alexnet files')
     def test_classification_async_cpp_vpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -374,6 +388,8 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.xfail_log(pattern='Error: Download',
+                           reason='Network problems when downloading alexnet files')
     def test_classification_async_cpp_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
