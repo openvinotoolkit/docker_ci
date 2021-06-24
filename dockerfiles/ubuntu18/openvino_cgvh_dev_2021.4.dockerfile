@@ -104,7 +104,6 @@ ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends dpkg-dev && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
@@ -222,11 +221,15 @@ RUN apt-get update && \
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
 WORKDIR /opt/libusb-1.0.22/libusb
-RUN /bin/mkdir -p '/usr/local/lib' && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends binutils && \
+    /bin/mkdir -p '/usr/local/lib' && \
     /bin/bash ../libtool   --mode=install /usr/bin/install -c   libusb-1.0.la '/usr/local/lib' && \
     /bin/mkdir -p '/usr/local/include/libusb-1.0' && \
     /usr/bin/install -c -m 644 libusb.h '/usr/local/include/libusb-1.0' && \
-    /bin/mkdir -p '/usr/local/lib/pkgconfig'
+    /bin/mkdir -p '/usr/local/lib/pkgconfig' &&\
+    apt-get autoremove -y binutils && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/libusb-1.0.22/
 RUN /usr/bin/install -c -m 644 libusb-1.0.pc '/usr/local/lib/pkgconfig' && \
@@ -255,12 +258,6 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
     fi;
-
-
-RUN apt-get update && \
-    apt-get autoremove -y dpkg-dev && \
-    rm -rf /var/lib/apt/lists/*
-
 
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}

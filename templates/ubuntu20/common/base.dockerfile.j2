@@ -168,7 +168,6 @@ ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=opencv_opt -c=dl
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends dpkg-dev && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
@@ -240,7 +239,7 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
     fi;
 
 RUN apt-get update && \
-    apt-get autoremove -y dpkg-dev gfortran && \
+    apt-get autoremove -y gfortran && \
     rm -rf /var/lib/apt/lists/*
 
 USER openvino

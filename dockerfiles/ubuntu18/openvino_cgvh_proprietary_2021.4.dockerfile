@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:20.04 AS base
+FROM ubuntu:18.04 AS base
 
 # hadolint ignore=DL3002
 USER root
@@ -24,20 +24,19 @@ WORKDIR ${TEMP_DIR}
 # hadolint ignore=DL3020
 ADD ${package_url} ${TEMP_DIR}
 
-# install product by copying archive content
-ARG TEMP_DIR=/tmp/openvino_installer
+# install product by installation script
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
-    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
-    OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
-    OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
-    mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
-    cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
-    rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
-    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
-    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends cpio && \
+    rm -rf /var/lib/apt/lists/* && \
+    tar -xzf ${TEMP_DIR}/*.tgz --strip 1 && \
+    sed -i 's/decline/accept/g' silent.cfg && \
+    ${TEMP_DIR}/install.sh -s silent.cfg && \
+    OV_BUILD="$(find /opt/intel -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && rm -rf ${TEMP_DIR} && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench
 
 
 
@@ -65,9 +64,9 @@ RUN ./bootstrap.sh && \
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 # -----------------
-FROM ubuntu:20.04 AS ov_base
+FROM ubuntu:18.04 AS ov_base
 
-LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
+LABEL Description="This is the proprietary image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
 LABEL Vendor="Intel Corporation"
 
 USER root
@@ -98,7 +97,7 @@ ARG DEPS="tzdata \
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=dlstreamer -c=cl_compiler"
 
 
 
@@ -107,7 +106,6 @@ RUN apt-get update && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
-
 
 
 # hadolint ignore=DL3008
@@ -138,18 +136,20 @@ RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
 
 
 # setup Python
-ENV PYTHON_VER python3.8
+ENV PYTHON_VER python3.6
 
 
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip
 
-# dev package
+# proprietary package
 WORKDIR /tmp
 
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu20.*" -o -name "*requirements*.in" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
+    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o \( -name "*requirements*.in" -and -not -name "*requirements-tensorflow.in" \) \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print -exec ${PYTHON_VER} -m pip install --no-cache-dir -r "{}" \;
+
+
 
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker
 RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
@@ -180,7 +180,10 @@ RUN pip uninstall -y opencv-python
 # for CPU
 
 # for GPU
+
 ARG INTEL_OPENCL
+
+
 ARG TEMP_DIR=/tmp/opencl
 
 
@@ -217,11 +220,15 @@ RUN apt-get update && \
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
 WORKDIR /opt/libusb-1.0.22/libusb
-RUN /bin/mkdir -p '/usr/local/lib' && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends binutils && \
+    /bin/mkdir -p '/usr/local/lib' && \
     /bin/bash ../libtool   --mode=install /usr/bin/install -c   libusb-1.0.la '/usr/local/lib' && \
     /bin/mkdir -p '/usr/local/include/libusb-1.0' && \
     /usr/bin/install -c -m 644 libusb.h '/usr/local/include/libusb-1.0' && \
-    /bin/mkdir -p '/usr/local/lib/pkgconfig'
+    /bin/mkdir -p '/usr/local/lib/pkgconfig' &&\
+    apt-get autoremove -y binutils && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/libusb-1.0.22/
 RUN /usr/bin/install -c -m 644 libusb-1.0.pc '/usr/local/lib/pkgconfig' && \
@@ -233,10 +240,9 @@ WORKDIR /tmp
 # hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        libboost-filesystem-dev \
-        libboost-thread-dev \
-        libjson-c4 \
-        libxxf86vm-dev && \
+        libboost-filesystem1.65-dev \
+        libboost-thread1.65-dev \
+        libjson-c3 libxxf86vm-dev && \
     rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
 
@@ -250,14 +256,7 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         ln --symbolic "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk/ /opt/intel/mediasdk || true; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /home/openvino/.bashrc; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/ \nexport GST_VAAPI_ALL_DRIVERS=1 \nexport LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LIBRARY_PATH \nexport LD_LIBRARY_PATH=\${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:\$LD_LIBRARY_PATH \n" >> /root/.bashrc; \
-    else \
-        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri \nexport GST_VAAPI_ALL_DRIVERS=1\n" >> /home/openvino/.bashrc; \
-        printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri \nexport GST_VAAPI_ALL_DRIVERS=1\n" >> /root/.bashrc; \
     fi;
-
-RUN apt-get update && \
-    apt-get autoremove -y gfortran && \
-    rm -rf /var/lib/apt/lists/*
 
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}
