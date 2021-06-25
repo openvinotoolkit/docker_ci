@@ -1,4 +1,34 @@
 {
+    "/opt/intel/openvino/data_processing/audio/speech_recognition/demos/live_speech_recognition_demo/requirements_centos7.txt": [
+        "# Python version 3.5, 3.6 or 3.7 is required due to wxPython availability\n",
+        "numpy >=1.16.6, < 1.20\n",
+        "SoundCard >= 0.4.1\n",
+        "-f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/centos-7\n",
+        "wxPython >= 4.1.0; python_version >= \"3.5\" and python_version <= \"3.7\"\n",
+        "\n"
+    ],
+    "/opt/intel/openvino/data_processing/audio/speech_recognition/demos/live_speech_recognition_demo/requirements_ubuntu18.txt": [
+        "# Python version 3.5, 3.6 or 3.7 is required due to wxPython availability\n",
+        "numpy >=1.16.6, < 1.20\n",
+        "SoundCard >= 0.4.1\n",
+        "-f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04\n",
+        "wxPython >= 4.1.0; python_version >= \"3.5\" and python_version <= \"3.7\"\n",
+        "\n"
+    ],
+    "/opt/intel/openvino/data_processing/audio/speech_recognition/demos/live_speech_recognition_demo/requirements_ubuntu20.txt": [
+        "# Python version 3.5, 3.6, 3.7 or 3.8 is required due to wxPython availability\n",
+        "numpy >=1.16.6, < 1.20\n",
+        "SoundCard >= 0.4.1\n",
+        "-f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-20.04\n",
+        "wxPython >= 4.1.0; python_version >= \"3.5\" and python_version <= \"3.8\"\n",
+        "\n"
+    ],
+    "/opt/intel/openvino/data_processing/audio/speech_recognition/demos/live_speech_recognition_demo/requirements_windows.txt": [
+        "numpy >=1.16.6, < 1.20\n",
+        "SoundCard >= 0.4.1\n",
+        "wxPython >= 4.1.0\n",
+        "\n"
+    ],
     "/opt/intel/openvino/data_processing/dl_streamer/requirements.txt": [
         "numpy >= 1.16.6, < 1.20\n",
         "opencv-python >= 4.2.0.34\n"
@@ -275,6 +305,10 @@
     ],
     "requirements": [
         "/opt/intel/openvino/data_processing/dl_streamer/requirements.txt",
+        "/opt/intel/openvino/data_processing/audio/speech_recognition/demos/live_speech_recognition_demo/requirements_ubuntu20.txt",
+        "/opt/intel/openvino/data_processing/audio/speech_recognition/demos/live_speech_recognition_demo/requirements_ubuntu18.txt",
+        "/opt/intel/openvino/data_processing/audio/speech_recognition/demos/live_speech_recognition_demo/requirements_windows.txt",
+        "/opt/intel/openvino/data_processing/audio/speech_recognition/demos/live_speech_recognition_demo/requirements_centos7.txt",
         "/opt/intel/openvino/python/requirements.txt",
         "/opt/intel/openvino/python/python3.7/requirements.txt",
         "/opt/intel/openvino/python/python3.7/openvino/tools/benchmark/requirements.txt",
