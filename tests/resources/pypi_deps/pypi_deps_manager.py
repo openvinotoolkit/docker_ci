@@ -5,6 +5,7 @@
 """
 import argparse
 import difflib
+import enum
 import json
 import logging
 import os
@@ -15,6 +16,16 @@ import sys
 
 import typing
 import uuid
+
+
+@enum.unique
+class ExitCode(enum.Enum):
+    """Enum that handles the script exitcodes"""
+    success = 0
+    failed_count = 1
+    failed_diff = 2
+    unavailable_reqs_config = 3
+    missing_req = 4
 
 
 def get_all_requirements(src: str) -> typing.List[str]:
@@ -157,7 +168,7 @@ def main() -> int:
         image_name = args.image.split('/')[-1].replace(':', '_')
         args.image_json = pathlib.Path(args.logs) / f'{image_name}.json'
 
-    exit_code = 0
+    exit_code = ExitCode.success
     if args.save:
         log.info(f'Save PyPi dependencies in {args.image_json} file')
         image_content = get_image_requirements(args.path)
@@ -175,7 +186,7 @@ def main() -> int:
         if not pathlib.Path(args.image_json).exists():
             log.error(f'Original data of PyPi dependencies for {args.image_json} is unavailable. '
                       f'Run {os.path.basename(__file__)} with option --save to create it.')
-            return 3
+            return ExitCode.unavailable_reqs_config.value
 
         image_content_original = load_dict_from_json(args.image_json)
         image_content_original_reqs = sorted(image_content_original['requirements'])
@@ -187,23 +198,28 @@ def main() -> int:
             compare_requirements_count(image_content_original_reqs,
                                        image_content_reqs,
                                        args.logs)
-            exit_code = 1
+            exit_code = ExitCode.failed_count
         else:
             log.info('PASSED')
 
         for original_requirement, requirement in zip(image_content_original_reqs, image_content_reqs):
             log.info(f'Find changes in {requirement} file:')
-            if image_content_original[original_requirement] != image_content[requirement]:
+            content_original = image_content_original.get(requirement, None)
+            content_image = image_content.get(requirement, None)
+            if content_original is None or content_image is None:
+                log.error('FAILED: Can not find the requirement file content!')
+                exit_code = ExitCode.missing_req
+            if content_original != content_image:
                 log.error('FAILED')
                 compare_packages_settings(image_content_original[original_requirement],
                                           image_content[requirement], requirement, args.logs)
-                exit_code = 2
+                exit_code = ExitCode.failed_diff
             else:
                 log.info('PASSED')
     if exit_code:
         log.info(f'See logs in {args.logs}')
 
-    return exit_code
+    return exit_code.value
 
 
 if __name__ == '__main__':
