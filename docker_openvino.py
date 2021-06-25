@@ -107,6 +107,7 @@ class Launcher:
             'year': self.args.year,
             'distribution': self.args.distribution,
             'openshift': self.args.openshift,
+            'os': self.args.os,
         })
         self.kwargs.update(get_system_proxy())
         self.kwargs.update(INTEL_OCL_RELEASE[self.args.ocl_release])

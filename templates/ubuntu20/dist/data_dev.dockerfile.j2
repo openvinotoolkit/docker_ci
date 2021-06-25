@@ -47,3 +47,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends python3-gi-cairo  && \
     rm -rf /var/lib/apt/lists/*
 {% endif %}
+
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+# Please use `third-party-programs-docker-dev.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
+COPY dockerfiles/{{os}}/third-party-programs-docker-dev.txt ${INTEL_OPENVINO_DIR}/licensing

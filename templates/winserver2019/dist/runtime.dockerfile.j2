@@ -13,3 +13,7 @@ RUN python -m pip uninstall -y opencv-python && `
 WORKDIR ${INTEL_OPENVINO_DIR}/bin
 RUN powershell -Command "(Get-Content setupvars.bat) -replace '^set PYTHONPATH=.*python.*PYTHONPATH.*$', 'set PYTHONPATH=%INTEL_OPENVINO_DIR%\python\python%Major%.%Minor%;%PYTHONPATH%' | Out-File -encoding default setupvars.bat"
 {% endif %}
+
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+# Please use `third-party-programs-docker-runtime.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
+COPY dockerfiles\{{os}}\third-party-programs-docker-runtime.txt ${INTEL_OPENVINO_DIR}/licensing
