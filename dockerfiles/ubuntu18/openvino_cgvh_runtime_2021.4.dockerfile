@@ -148,6 +148,10 @@ WORKDIR /tmp
 
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt
 
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+# Please use `third-party-programs-docker-runtime.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
+COPY dockerfiles/ubuntu18/third-party-programs-docker-runtime.txt ${INTEL_OPENVINO_DIR}/licensing
+
 # for CPU
 
 # for GPU
@@ -190,6 +194,7 @@ RUN apt-get update && \
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
 
+# libglib2.0-dev package that is required to build dl_streamer samples
 WORKDIR /opt/libusb-1.0.22/libusb
 RUN apt-get update && \
     apt-get install -y --no-install-recommends binutils && \
@@ -199,6 +204,7 @@ RUN apt-get update && \
     /usr/bin/install -c -m 644 libusb.h '/usr/local/include/libusb-1.0' && \
     /bin/mkdir -p '/usr/local/lib/pkgconfig' &&\
     apt-get autoremove -y binutils && \
+    apt-get install libglib2.0-dev -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/libusb-1.0.22/

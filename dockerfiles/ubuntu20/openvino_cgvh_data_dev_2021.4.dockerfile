@@ -178,6 +178,10 @@ RUN pip uninstall -y opencv-python
 
 
 
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+# Please use `third-party-programs-docker-dev.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
+COPY dockerfiles/ubuntu20/third-party-programs-docker-dev.txt ${INTEL_OPENVINO_DIR}/licensing
+
 # for CPU
 
 # for GPU

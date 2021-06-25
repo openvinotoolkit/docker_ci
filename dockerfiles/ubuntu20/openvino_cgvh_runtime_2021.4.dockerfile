@@ -150,6 +150,10 @@ WORKDIR /tmp
 
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt
 
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+# Please use `third-party-programs-docker-runtime.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
+COPY dockerfiles/ubuntu20/third-party-programs-docker-runtime.txt ${INTEL_OPENVINO_DIR}/licensing
+
 # for CPU
 
 # for GPU
