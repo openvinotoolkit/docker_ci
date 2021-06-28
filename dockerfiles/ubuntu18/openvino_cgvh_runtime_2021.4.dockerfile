@@ -204,7 +204,7 @@ RUN apt-get update && \
     /usr/bin/install -c -m 644 libusb.h '/usr/local/include/libusb-1.0' && \
     /bin/mkdir -p '/usr/local/lib/pkgconfig' &&\
     apt-get autoremove -y binutils && \
-    apt-get install libglib2.0-dev -y --no-install-recommends && \
+    apt-get install libglib2.0-dev g++ -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/libusb-1.0.22/
