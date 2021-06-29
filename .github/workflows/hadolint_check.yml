@@ -1,0 +1,38 @@
+name: Dockerfiles check
+
+on:
+  pull_request:
+    paths:
+      - 'dockerfiles/**'
+
+jobs:
+  hadolint_check:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v2
+      - name: Run hadolint dockerfiles check
+        shell: bash
+        run: |
+          set -o pipefail
+          has_issues=0
+          url="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files"
+          files=$(curl -s -X GET -G "$url" | jq -r '.[] | .filename')
+          for dockerfile in $(echo "$files" | tr '[:space:]' '\n' | grep "dockerfiles/.*\.dockerfile$")
+          do
+            echo "Scanning $dockerfile"
+            docker run --rm -i hadolint/hadolint:latest < "$dockerfile" | tee "${dockerfile}".log || has_issues=1
+            echo
+            os=$(echo "$dockerfile" | grep -oP '(?<=dockerfiles/).*?(?=/openvino_)' | tr / _)
+            cp "$dockerfile" "${os}_$(basename "$dockerfile")"
+            cp "$dockerfile".log "${os}_$(basename "$dockerfile").log"
+          done
+          exit "$has_issues"
+      - name: Collecting artifacts
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: hadolint_results
+          path: |
+            ./*.log
+            ./*.dockerfile
