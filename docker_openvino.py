@@ -102,6 +102,7 @@ class Launcher:
         """Setting up arguments passed to a template engine and `docker build` command"""
         self.kwargs.update({
             'product_name': self.product_name,
+            'product_version': self.args.product_version,
             'package_url': self.args.package_url,
             'build_id': self.args.build_id,
             'year': self.args.year,
