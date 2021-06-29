@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS ov_base
 
-LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
+LABEL Description="This is the data_dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
 LABEL Vendor="Intel Corporation"
 
 # Restore the default Windows shell for correct batch processing.
@@ -81,9 +81,12 @@ RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
 
 # for CPU
 
-# runtime package
+# data dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
-RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt"
+
+RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt" && `
+    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\openvino\tools\benchmark\requirements.txt"
+
 
 RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter *requirements*.* | ForEach-Object { `
        if (($_.Fullname -like '*post_training_optimization_toolkit*') -or ($_.Fullname -like '*accuracy_checker*') -or ($_.Fullname -like '*python3*') -or ($_.Fullname -like '*python2*') -or ($_.Fullname -like '*requirements_ubuntu*')) `
@@ -91,10 +94,30 @@ RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter
    }"
 
 
+# download source for LGPL packages
 
-WORKDIR ${INTEL_OPENVINO_DIR}/licensing
-# Please use `third-party-programs-docker-runtime.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
-COPY dockerfiles\winserver2019\third-party-programs-docker-runtime.txt ${INTEL_OPENVINO_DIR}/licensing
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/ee/2d/9cdc2b527e127b4c9db64b86647d567985940ac3698eeabc7ffaccb4ea61/chardet-4.0.0.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\open_model_zoo\\chardet-4.0.0.tar.gz ; `
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\open_model_zoo\\flake8-import-order-0.18.1.tar.gz
+
+
+
+WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\open_model_zoo\tools\accuracy_checker
+RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
+    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\accuracy_checker\requirements.in" && `
+    python -m pip install .
+
+
+WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_toolkit
+RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\requirements.txt" && `
+    python -m pip install .
+
+
+
+
+
+RUN pip uninstall -y opencv-python
+
 
 
 RUN rmdir /s /q %INTEL_OPENVINO_DIR%\.distribution & mkdir %INTEL_OPENVINO_DIR%\.distribution && `
