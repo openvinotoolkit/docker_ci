@@ -367,7 +367,7 @@ def parse_args(name: str, description: str):  # noqa
         if not args.file.exists():
             parser.error(f'Cannot find specified Dockerfile: {str(args.file)}.')
 
-    if args.openshift:
+    if hasattr(args, 'openshift') and args.openshift:
         if args.mode != 'gen_dockerfile':
             parser.error('Only dockerfile generation is supported for OpenShift')
         elif args.os != 'rhel8':
