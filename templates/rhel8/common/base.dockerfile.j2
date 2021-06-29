@@ -36,8 +36,8 @@ FROM registry.access.redhat.com/ubi8 AS ov_base
 LABEL name="rhel8_runtime" \
       maintainer="openvino_docker@intel.com" \
       vendor="Intel Corporation" \
-      version="2021.3" \
-      release="2021.3" \
+      version="{{ product_version }}" \
+      release="{{ product_version }}" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
       description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
