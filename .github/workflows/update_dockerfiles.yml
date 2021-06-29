@@ -46,7 +46,7 @@ jobs:
           commit-message: Update dockerfiles for ${{ github.event.inputs.product_version }} release
           title: Update dockerfiles for ${{ github.event.inputs.product_version }} release
           body: Automated dockerfiles update
-          branch: update-dockerfiles
+          branch: update-dockerfiles-${{ github.event.inputs.product_version }}
           delete-branch: true
       - name: Show Pull Request info
         run: |
