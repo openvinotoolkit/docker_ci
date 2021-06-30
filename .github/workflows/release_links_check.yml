@@ -29,12 +29,3 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Run package URLs check
         run: python -m utils.tests.check_loader_links --product_version ${{ github.event.inputs.product_version }}
-      - name: Collecting artifacts
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: logs
-          path: |
-            logs/
-            ./*.html
-            ./*.log
