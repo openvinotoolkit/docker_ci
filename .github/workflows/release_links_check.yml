@@ -2,8 +2,11 @@ name: Check URLs of release packages
 
 on:
   push:
-    branches:
-      - 'releases/**'
+    paths:
+      - 'utils/loader.py'
+  pull_request:
+    paths:
+      - 'utils/loader.py'
   workflow_dispatch:
     inputs:
       product_version:
