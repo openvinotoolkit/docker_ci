@@ -21,7 +21,11 @@ jobs:
           for dockerfile in $(echo "$files" | tr '[:space:]' '\n' | grep "dockerfiles/.*\.dockerfile$")
           do
             echo "Scanning $dockerfile"
-            docker run --rm -i hadolint/hadolint:latest < "$dockerfile" | tee "${dockerfile}".log || has_issues=1
+            docker run --rm -i hadolint/hadolint:latest hadolint \
+              --ignore DL3059 \
+              --ignore DL3006 \
+              --ignore DL3008 \
+              - < "$dockerfile" | tee "${dockerfile}".log || has_issues=1
             echo
             os=$(echo "$dockerfile" | grep -oP '(?<=dockerfiles/).*?(?=/openvino_)' | tr / _)
             cp "$dockerfile" "${os}_$(basename "$dockerfile")"
