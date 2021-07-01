@@ -12,4 +12,4 @@ RUN powershell.exe -Command `
   Start-Process %TMP%\\python-3.8.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python38' -Wait ; `
   Remove-Item %TMP%\\python-3.8.exe -Force
 {% endif %}
-RUN python -m pip install --upgrade pip==20.3.3
+RUN python -m pip install --no-cache-dir --upgrade pip==20.3.3
