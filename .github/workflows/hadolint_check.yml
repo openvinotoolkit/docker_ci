@@ -3,7 +3,7 @@ name: Dockerfiles check
 on:
   pull_request:
     paths:
-      - 'dockerfiles/**'
+      - 'dockerfiles/**/*.dockerfile'
 
 jobs:
   hadolint_check:
@@ -27,9 +27,9 @@ jobs:
               --ignore DL3008 \
               - < "$dockerfile" | tee "${dockerfile}".log || has_issues=1
             echo
-            os=$(echo "$dockerfile" | grep -oP '(?<=dockerfiles/).*?(?=/openvino_)' | tr / _)
-            cp "$dockerfile" "${os}_$(basename "$dockerfile")"
-            cp "$dockerfile".log "${os}_$(basename "$dockerfile").log"
+            name=$(echo "$dockerfile" | grep -oP '(?<=dockerfiles/).*' | tr / _)
+            cp "$dockerfile" "$name"
+            cp "$dockerfile".log "${name}.log"
           done
           exit "$has_issues"
       - name: Collecting artifacts
