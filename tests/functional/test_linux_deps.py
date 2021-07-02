@@ -38,7 +38,7 @@ class TestLinuxDependencies:
         )
 
     @pytest.mark.usefixtures('_is_image_os')
-    @pytest.mark.parametrize('_is_image_os', [('centos7', 'centos8', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('centos7', 'rhel8')], indirect=True)
     def test_gpl_yum_deps(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')

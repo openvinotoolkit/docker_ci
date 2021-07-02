@@ -60,7 +60,7 @@ def pytest_configure(config):
         mount_root.mkdir(parents=True, exist_ok=True)
         dev_package_url = package_url.replace('_runtime_', '_dev_')
         # Temporarily, until there is no dev package for these distros
-        if image_os in ('ubuntu20', 'centos7', 'centos8', 'rhel8'):
+        if image_os in ('ubuntu20', 'centos7', 'rhel8'):
             dev_package_url = dev_package_url.replace(image_os, 'ubuntu18')
         if package_url.startswith(('http://', 'https://', 'ftp://')):
             if 'win' in image_os:
