@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS ov_base
 
-LABEL Description="This is the {{ distribution }} image for {{ product_name }} on Windows Server LTSC 2019"
-LABEL Vendor="Intel Corporation"
+LABEL description="This is the {{ distribution }} image for {{ product_name }} on Windows Server LTSC 2019"
+LABEL vendor="Intel Corporation"
 
 # Restore the default Windows shell for correct batch processing.
 SHELL ["cmd", "/S", "/C"]

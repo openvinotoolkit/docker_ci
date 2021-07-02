@@ -21,8 +21,8 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 # -----------------
 FROM centos:7 AS ov_base
 
-LABEL Description="This is the {{ distribution }} image for {{ product_name }} on CentOS 7"
-LABEL Vendor="Intel Corporation"
+LABEL description="This is the {{ distribution }} image for {{ product_name }} on CentOS 7"
+LABEL vendor="Intel Corporation"
 
 USER root
 WORKDIR /
@@ -45,20 +45,20 @@ ARG LGPL_DEPS="gcc-c++ \
 ARG INSTALL_SOURCES="no"
 
 WORKDIR /thirdparty
-# hadolint ignore=DL3031, DL3033
+# hadolint ignore=DL3031, DL3033, SC2012
 RUN yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
 	yum install -y ${LGPL_DEPS} && \
 	if [ "$INSTALL_SOURCES" = "yes" ]; then \
 		rpm -qa --qf "%{name}\n" > all_packages.txt && \
 		grep -v -f base_packages.txt all_packages.txt | while read line; do \
-		package=`echo $line`; \
+		package=$(echo $line); \
 		rpm -qa $package --qf "%{name}: %{license}\n" | grep GPL; \
 		exit_status=$?; \
 		if [ $exit_status -eq 0 ]; then \
 		    yumdownloader --source -y $package;  \
 		fi \
       done && \
-      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+      echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
 	yum clean all && rm -rf /var/cache/yum
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing

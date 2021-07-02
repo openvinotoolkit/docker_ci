@@ -76,14 +76,15 @@ ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt"
 ARG INSTALL_SOURCES="no"
 
 WORKDIR /thirdparty
-# hadolint ignore=DL3031, DL3033
-RUN rm /etc/rhsm-host && yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \yum install -y ${LGPL_DEPS} && \
+# hadolint ignore=DL3031, DL3033, SC2012
+RUN rm /etc/rhsm-host && yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
+	yum install -y ${LGPL_DEPS} && \
 	${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
 	if [ "$INSTALL_SOURCES" = "yes" ]; then \
 	    yum install -y yum-utils && \
 		rpm -qa --qf "%{name}\n" > all_packages.txt && \
 		grep -v -f base_packages.txt all_packages.txt | while read line; do \
-		package=`echo $line`; \
+		package=$(echo $line); \
 		rpm -qa $package --qf "%{name}: %{license}\n" | grep GPL; \
 		exit_status=$?; \
 		if [ $exit_status -eq 0 ]; then \
@@ -91,7 +92,7 @@ RUN rm /etc/rhsm-host && yum -y update && rpm -qa --qf "%{name}\n" > base_packag
 		fi \
 	  done && \
 	  yum autoremove -y yum-utils && \
-      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+      echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
 	yum clean all && rm -rf /var/cache/yum
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing

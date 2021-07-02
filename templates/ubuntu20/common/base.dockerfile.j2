@@ -23,8 +23,8 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 # -----------------
 FROM ubuntu:20.04 AS ov_base
 
-LABEL Description="This is the {{ distribution }} image for {{ product_name }} on Ubuntu 20.04 LTS"
-LABEL Vendor="Intel Corporation"
+LABEL description="This is the {{ distribution }} image for {{ product_name }} on Ubuntu 20.04 LTS"
+LABEL vendor="Intel Corporation"
 
 USER root
 WORKDIR /
@@ -193,7 +193,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 {% else %}
 
-# hadolint ignore=DL3008
+# hadolint ignore=DL3008, SC2012
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
     ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y ${INSTALL_PACKAGES} && \
@@ -202,7 +202,7 @@ RUN apt-get update && \
       apt-get update && \
 	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > all_packages.txt && \
 	  grep -v -f base_packages.txt all_packages.txt | while read line; do \
-	  package=`echo $line`; \
+	  package=$(echo $line); \
 	  name=(${package//:/ }); \
       grep -l GPL /usr/share/doc/${name[0]}/copyright; \
       exit_status=$?; \
@@ -210,7 +210,7 @@ RUN apt-get update && \
 	    apt-get source -q --download-only $package;  \
 	  fi \
       done && \
-      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+      echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
     rm -rf /var/lib/apt/lists/*
 {% endif %}
 
