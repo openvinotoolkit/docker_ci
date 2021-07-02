@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM openvino/ubuntu18_dev_no_samples:2021.4_tgl
 
-LABEL Description="This is the OpenVINO™ Deep Learning Workbench image on Ubuntu 18.04 LTS"
-LABEL Vendor="Intel Corporation"
+LABEL description="This is the OpenVINO™ Deep Learning Workbench image on Ubuntu 18.04 LTS"
+LABEL vendor="Intel Corporation"
 
 ARG db_password
 ARG rabbitmq_password
@@ -32,7 +32,7 @@ ENV DB_NAME workbench
 USER root
 
 RUN groupadd -g ${GROUP_ID} ${GROUP_NAME}
-RUN useradd ${USER_NAME} -u ${USER_ID} -g ${GROUP_ID} -ms /bin/bash  && \
+RUN useradd ${USER_NAME} -l -u ${USER_ID} -g ${GROUP_ID} -ms /bin/bash  && \
     chown ${USER_NAME} -R /home/${USER_NAME}
 
 ENV WORKBENCH_PUBLIC_DIR /home/${USER_NAME}/.workbench
@@ -61,7 +61,7 @@ RUN ${PYTHON} -m pip install pip==19.3.1
 
 WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools
 RUN rm -rf ${OPENVINO_WORKBENCH_ROOT}
-ADD --chown=workbench workbench ${OPENVINO_WORKBENCH_ROOT}/
+COPY --chown=workbench workbench ${OPENVINO_WORKBENCH_ROOT}/
 
 # COPY JUPYTER TUTORIALS TO WORKBENCH PUBLIC ARTIFACTS DIRECTORY
 COPY --chown=workbench workbench/tutorials ${WORKBENCH_PUBLIC_DIR}/tutorials
@@ -77,6 +77,7 @@ RUN find ${WORKBENCH_PUBLIC_DIR} -type d -exec chmod 777 {} \;
 RUN chown -R ${USER_NAME} ${WORKBENCH_PUBLIC_DIR}
 
 # SET UP DEPENDENCIES FOR SERVER
+# hadolint ignore=SC2174
 RUN mkdir -m 777 -p ${OPENVINO_WORKBENCH_DATA_PATH} && chown -R ${USER_NAME} ${OPENVINO_WORKBENCH_ROOT}
 
 RUN ${PYTHON} -m pip install --no-cache-dir -r ${OPENVINO_WORKBENCH_ROOT}/requirements/requirements.txt && \
@@ -89,11 +90,11 @@ RUN xargs -n 1 curl -O < ${OPENVINO_WORKBENCH_ROOT}/docker/docker_python_lgpl.tx
 
 # Add ${USER_NAME} user to groups nginx, postgres and rabbitmq for running
 # services without sudo
-RUN for g in $(id -nG postgres); do gpasswd -a ${USER_NAME} ${g}; done && \
-    for g in $(id -nG rabbitmq); do gpasswd -a ${USER_NAME} ${g}; done && \
-    gpasswd -a ${USER_NAME} users && \
-    gpasswd -a ${USER_NAME} video && \
-    gpasswd -a ${USER_NAME} adm
+RUN for g in $(id -nG postgres); do gpasswd -a "${USER_NAME}" "${g}"; done && \
+    for g in $(id -nG rabbitmq); do gpasswd -a "${USER_NAME}" "${g}"; done && \
+    gpasswd -a "${USER_NAME}" users && \
+    gpasswd -a "${USER_NAME}" video && \
+    gpasswd -a "${USER_NAME}" adm
 
 RUN touch /var/run/nginx.pid && \
     rm -rf /etc/nginx/sites-enabled/default && \

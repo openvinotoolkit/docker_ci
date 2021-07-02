@@ -3,7 +3,7 @@ name: Dockerfiles check
 on:
   pull_request:
     paths:
-      - 'dockerfiles/**'
+      - 'dockerfiles/**/*ockerfile'
 
 jobs:
   hadolint_check:
@@ -18,7 +18,7 @@ jobs:
           has_issues=0
           url="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files"
           files=$(curl -s -X GET -G "$url" | jq -r '.[] | .filename')
-          for dockerfile in $(echo "$files" | tr '[:space:]' '\n' | grep "dockerfiles/.*\.dockerfile$")
+          for dockerfile in $(echo "$files" | tr '[:space:]' '\n' | grep -P "dockerfiles/.*(\.d|D)ockerfile$")
           do
             echo "Scanning $dockerfile"
             docker run --rm -i hadolint/hadolint:latest hadolint \
@@ -27,9 +27,9 @@ jobs:
               --ignore DL3008 \
               - < "$dockerfile" | tee "${dockerfile}".log || has_issues=1
             echo
-            os=$(echo "$dockerfile" | grep -oP '(?<=dockerfiles/).*?(?=/openvino_)' | tr / _)
-            cp "$dockerfile" "${os}_$(basename "$dockerfile")"
-            cp "$dockerfile".log "${os}_$(basename "$dockerfile").log"
+            name=$(echo "$dockerfile" | grep -oP '(?<=dockerfiles/).*' | tr / _)
+            cp "$dockerfile" "$name"
+            cp "$dockerfile".log "${name}.log"
           done
           exit "$has_issues"
       - name: Collecting artifacts
@@ -39,4 +39,4 @@ jobs:
           name: hadolint_results
           path: |
             ./*.log
-            ./*.dockerfile
+            ./*ockerfile

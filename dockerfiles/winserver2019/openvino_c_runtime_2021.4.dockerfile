@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS ov_base
 
-LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
-LABEL Vendor="Intel Corporation"
+LABEL description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
+LABEL vendor="Intel Corporation"
 
 # Restore the default Windows shell for correct batch processing.
 SHELL ["cmd", "/S", "/C"]
@@ -12,12 +12,14 @@ SHELL ["cmd", "/S", "/C"]
 USER ContainerAdministrator
 
 
+ARG HTTPS_PROXY
+
 
 
 # Setup Microsoft Visual C++ 2015-2019 Redistributable (x64) - 14.27.29016
 
 RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -OutFile "%TMP%\vc_redist.x64.exe" ; `
+    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -Proxy %HTTPS_PROXY%  -OutFile "%TMP%\vc_redist.x64.exe" ; `
     Start-Process %TMP%\\vc_redist.x64.exe -ArgumentList '/quiet /norestart' -Wait ; `
     Remove-Item "%TMP%\vc_redist.x64.exe" -Force
 
@@ -27,11 +29,11 @@ ARG PYTHON_VER=python3.7
 
 
 RUN powershell.exe -Command `
-  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe -OutFile %TMP%\\python-3.7.exe ; `
+  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe -Proxy %HTTPS_PROXY% -OutFile %TMP%\\python-3.7.exe ; `
   Start-Process %TMP%\\python-3.7.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python37' -Wait ; `
   Remove-Item %TMP%\\python-3.7.exe -Force
 
-RUN python -m pip install --upgrade pip==20.3.3
+RUN python -m pip install --no-cache-dir --upgrade pip==20.3.3
 
 # download package from external URL
 ARG package_url
