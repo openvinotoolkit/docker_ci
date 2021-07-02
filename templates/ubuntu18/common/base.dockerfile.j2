@@ -47,52 +47,6 @@ WORKDIR /thirdparty
 
 ARG INSTALL_SOURCES="no"
 
-{% if build_id < '2021.3' %}
-{% if 'runtime' == distribution %}
-ARG DEPS="tzdata \
-          curl \
-          libgl1 \
-          libtinfo5"
-ARG LGPL_DEPS=libgtk-3-0
-{% elif 'dev' == distribution %}
-ARG DEPS="tzdata \
-          curl \
-          libgl1 \
-          libtinfo5"
-ARG LGPL_DEPS="g++ \
-               gcc \
-               libc6-dev \
-               libgtk-3-0"
-{% else %}
-ARG DEPS="tzdata \
-          curl \
-          libgl1 \
-          libtinfo5 \
-          libopenexr22 \
-          flex \
-          vainfo"
-ARG LGPL_DEPS="g++ \
-               gcc \
-               libc6-dev \
-               libgtk-3-0 \
-               libgstreamer1.0-0 \
-               gstreamer1.0-plugins-base \
-               gstreamer1.0-plugins-good \
-               gstreamer1.0-plugins-bad \
-               gstreamer1.0-vaapi \
-               ffmpeg \
-               libgl-dev \
-               libtag-extras1 \
-               libfaac0 \
-               python3-gi \
-               libfluidsynth1 \
-               libnettle6 \
-               gstreamer1.0-plugins-ugly \
-               gstreamer1.0-alsa \
-               libglib2.0-dev \
-               gstreamer1.0-tools"
-{% endif %}
-{% else %}
 ARG DEPS="tzdata \
           curl"
 {% if 'runtime' == distribution %}
@@ -109,7 +63,6 @@ ARG LGPL_DEPS="g++ \
                libc6-dev"
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=dlstreamer -c=cl_compiler"
 {% endif %}
-{% endif %}
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
@@ -117,26 +70,6 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
-{% if build_id < '2021.3' %}
-# hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
-    if [ "$INSTALL_SOURCES" = "yes" ]; then \
-      sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
-      apt-get update && \
-	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > all_packages.txt && \
-	  grep -v -f base_packages.txt all_packages.txt | while read line; do \
-	  package=`echo $line`; \
-	  name=(${package//:/ }); \
-      grep -l GPL /usr/share/doc/${name[0]}/copyright; \
-      exit_status=$?; \
-	  if [ $exit_status -eq 0 ]; then \
-	    apt-get source -q --download-only $package;  \
-	  fi \
-      done && \
-      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
-    rm -rf /var/lib/apt/lists/*
-{% else %}
 # hadolint ignore=DL3008, SC2012
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
@@ -156,7 +89,6 @@ RUN apt-get update && \
       done && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
     rm -rf /var/lib/apt/lists/*
-{% endif %}
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
