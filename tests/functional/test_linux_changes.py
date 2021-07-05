@@ -63,7 +63,7 @@ class TestLinuxChanges:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -p 2>&1 | '
-             f"sed 's/ /\\n/g' | tee /tmp/linux_deps/{linux_deps_file_name}\"",
+             f"sed 's/ /\\n/g' | tee /tmp/logs/linux_deps/{linux_deps_file_name}\"",
              ],
             self.test_save_linux_deps.__name__, **kwargs,
         )
