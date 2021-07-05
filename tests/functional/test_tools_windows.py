@@ -28,8 +28,6 @@ class TestToolsWindows:
             self.test_benchmark.__name__, **kwargs,
         )
 
-    @pytest.mark.usefixtures('_min_product_version')
-    @pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev', 'proprietary')], indirect=True)
     def test_compile_tool(self, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}

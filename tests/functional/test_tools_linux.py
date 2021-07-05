@@ -43,8 +43,6 @@ class TestToolsLinux:
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev', 'proprietary')], indirect=True)
-    @pytest.mark.usefixtures('_min_product_version')
-    @pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
     def test_compile_tool(self, tester, image):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(

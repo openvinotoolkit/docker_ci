@@ -185,27 +185,15 @@ def dev_root(request):
 @pytest.fixture(scope='session')
 def install_openvino_dependencies(request):
     image_os = request.config.getoption('--image_os')
-    install_deps = '/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh'
-
-    if '2020' in request.config.getoption('--product_version'):
-        if 'ubuntu' in image_os:
-            return f'/bin/bash -ac "apt update && apt install -y sudo && yes n | {install_deps}"'
-        elif 'centos' in image_os:
-            return f'/bin/bash -ac "yum update -y && yum install -y sudo && yes n | {install_deps}"'
-    elif request.config.getoption('--product_version') < '2021.2':
-        # installation of 3d party dependencies for data processing components isn't required since 2021.2
-        return install_deps
-    else:
-        if 'ubuntu' in image_os:
-            return '/bin/bash -ac "apt update && apt install -y build-essential sudo curl cmake"'
-        elif any(x in image_os for x in ('centos', 'rhel')):
-            return '/bin/bash -ac "yum update -y && yum install -y make"'
+    if 'ubuntu' in image_os:
+        return '/bin/bash -ac "apt update && apt install -y build-essential sudo curl cmake"'
+    elif any(x in image_os for x in ('centos', 'rhel')):
+        return '/bin/bash -ac "yum update -y && yum install -y make"'
     return ''
 
 
 @pytest.fixture()
 def omz_python_demo_path(request):
-    product_version = request.config.getoption('--product_version')
     demo_name = request.param
     is_ssd = 'ssd' in request.node.name
     is_centernet = 'centernet' in request.node.name
@@ -215,48 +203,21 @@ def omz_python_demo_path(request):
             parameters = ' -at ssd'
         elif is_centernet:
             parameters = ' -at centernet'
-    if demo_name == 'segmentation' and product_version >= '2021.3':
+    if demo_name == 'segmentation':
         parameters = ' --no_show'
 
     if request.config.getoption('--image_os') == 'winserver2019':
         base_path = 'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos'
-        if product_version <= '2021.1' and demo_name == 'object_detection':
-            python_demos = f'{base_path}\\\\python_demos'
-            if is_ssd:
-                return f'{python_demos}\\\\object_detection_demo_ssd_async\\\\object_detection_demo_ssd_async.py'
-            elif is_centernet:
-                return f'{python_demos}\\\\object_detection_demo_centernet\\\\object_detection_demo_centernet.py'
-            else:
-                pytest.fail('This object_detection_demo parameter is not supported on the current image version')
-        elif product_version <= '2021.2':
-            demo_name += '_demo' if demo_name != 'action_recognition' else ''
-            return f'{base_path}\\\\python_demos\\\\{demo_name}\\\\{demo_name}.py'
-        else:
-            return f'{base_path}\\\\{demo_name}_demo\\\\python\\\\{demo_name}_demo.py{parameters}'
+        return f'{base_path}\\\\{demo_name}_demo\\\\python\\\\{demo_name}_demo.py{parameters}'
     else:
         base_path = '/opt/intel/openvino/deployment_tools/open_model_zoo/demos'
-
-        if product_version <= '2021.1' and demo_name == 'object_detection':
-            if is_ssd:
-                return f'{base_path}/python_demos/object_detection_demo_ssd_async/object_detection_demo_ssd_async.py'
-            elif is_centernet:
-                return f'{base_path}/python_demos/object_detection_demo_centernet/object_detection_demo_centernet.py'
-            else:
-                pytest.fail('This object_detection_demo parameter is not supported on the current image version')
-        elif product_version <= '2021.2':
-            demo_name += '_demo' if demo_name != 'action_recognition' else ''
-            return f'{base_path}/python_demos/{demo_name}/{demo_name}.py{parameters}'
-        else:
-            return f'{base_path}/{demo_name}_demo/python/{demo_name}_demo.py{parameters}'
+        return f'{base_path}/{demo_name}_demo/python/{demo_name}_demo.py{parameters}'
 
 
 @pytest.fixture(scope='session')
 def omz_python_demos_requirements_file(request):
     base_path = '/opt/intel/openvino/deployment_tools/open_model_zoo/demos'
-    if request.config.getoption('--product_version') <= '2021.2':
-        return f'{base_path}/python_demos/requirements.txt'
-    else:
-        return f'{base_path}/requirements.txt'
+    return f'{base_path}/requirements.txt'
 
 
 def switch_container_engine(engine):

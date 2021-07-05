@@ -71,8 +71,6 @@ class TestDLStreamerLinux:
             self.test_draw_face_attributes_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.usefixtures('_min_product_version')
-    @pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
     def test_gst_launch_audio_detect(self, tester, image, install_openvino_dependencies, product_version):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -80,13 +78,10 @@ class TestDLStreamerLinux:
             [install_openvino_dependencies,
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'cd /opt/intel/openvino/data_processing/dl_streamer/samples/gst_launch/audio_detect && '
-             f"{'./download_audio_models.sh && ' if product_version < '2021.4' else '../../download_models.sh && '}"
-             './audio_event_detection.sh"'],
+             '../../download_models.sh && ./audio_event_detection.sh"'],
             self.test_gst_launch_audio_detect.__name__, **kwargs,
         )
 
-    @pytest.mark.usefixtures('_min_product_version')
-    @pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
     def test_gst_launch_metapublish(self, tester, image, install_openvino_dependencies):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(

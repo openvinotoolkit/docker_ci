@@ -8,8 +8,7 @@ import re
 import pytest
 
 
-@pytest.mark.usefixtures('_min_product_version', '_is_not_distribution')
-@pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
+@pytest.mark.usefixtures('_is_not_distribution')
 @pytest.mark.parametrize('_is_not_distribution', [('base', 'internal_dev',
                                                    'custom-no-omz', 'custom-no-cv', 'custom-full')], indirect=True)
 class TestLinuxChanges:

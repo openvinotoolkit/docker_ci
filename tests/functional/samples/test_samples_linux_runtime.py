@@ -204,8 +204,6 @@ class TestSamplesLinuxRuntime:
              ], self.test_hello_classification_cpp_hddl.__name__, **kwargs,
         )
 
-    @pytest.mark.usefixtures('_min_product_version')
-    @pytest.mark.parametrize('_min_product_version', ['2021.2'], indirect=True)
     def test_hello_classification_cpp_fail(self, tester, image, dev_root, install_openvino_dependencies, caplog):
         kwargs = {
             'mem_limit': '3g',
