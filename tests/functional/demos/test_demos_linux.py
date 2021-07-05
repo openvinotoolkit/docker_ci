@@ -43,9 +43,9 @@ class TestDemosLinuxDataDev:
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} -at en-de '
-             f'-m_en /opt/intel/openvino/intel/action-recognition-0001/'
+             '-m_en /opt/intel/openvino/intel/action-recognition-0001/'
              'action-recognition-0001-encoder/FP16/action-recognition-0001-encoder.xml '
-             f'-m_de /opt/intel/openvino/intel/action-recognition-0001/'
+             '-m_de /opt/intel/openvino/intel/action-recognition-0001/'
              'action-recognition-0001-decoder/FP16/action-recognition-0001-decoder.xml '
              '-i /root/action_recognition.mp4 -d GPU --no_show"',
              ],
@@ -67,9 +67,9 @@ class TestDemosLinuxDataDev:
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} -at en-de '
-             f'-m_en /opt/intel/openvino/intel/action-recognition-0001/'
+             '-m_en /opt/intel/openvino/intel/action-recognition-0001/'
              'action-recognition-0001-encoder/FP16/action-recognition-0001-encoder.xml '
-             f'-m_de /opt/intel/openvino/intel/action-recognition-0001/'
+             '-m_de /opt/intel/openvino/intel/action-recognition-0001/'
              'action-recognition-0001-decoder/FP16/action-recognition-0001-decoder.xml '
              '-i /root/action_recognition.mp4 -d MYRIAD --no_show"',
              ],
@@ -91,9 +91,9 @@ class TestDemosLinuxDataDev:
              '--name action-recognition-0001-encoder,action-recognition-0001-decoder --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              f'python3 {omz_python_demo_path} -at en-de '
-             f'-m_en /opt/intel/openvino/intel/action-recognition-0001/'
+             '-m_en /opt/intel/openvino/intel/action-recognition-0001/'
              'action-recognition-0001-encoder/FP16/action-recognition-0001-encoder.xml '
-             f'-m_de /opt/intel/openvino/intel/action-recognition-0001/'
+             '-m_de /opt/intel/openvino/intel/action-recognition-0001/'
              'action-recognition-0001-decoder/FP16/action-recognition-0001-decoder.xml '
              '-i /root/action_recognition.mp4 -d HDDL --no_show && rm -f /dev/shm/hddl_*"',
              ],
@@ -289,7 +289,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-             f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td CPU -no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td CPU -no_show"',
              ],
             self.test_text_cpp_cpu.__name__, **kwargs,
         )
@@ -308,7 +308,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-             f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td GPU -no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td GPU -no_show"',
              ],
             self.test_text_cpp_gpu.__name__, **kwargs,
         )
@@ -328,7 +328,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-             f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td MYRIAD -no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td MYRIAD -no_show"',
              ],
             self.test_text_cpp_vpu.__name__, **kwargs,
         )
@@ -348,7 +348,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-             f'-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td HDDL -no_show && '
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d_td HDDL -no_show && '
              'rm -f /dev/shm/hddl_*"',
              ],
             self.test_text_cpp_hddl.__name__, **kwargs,
