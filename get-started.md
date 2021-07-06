@@ -20,7 +20,8 @@ DockerHub CI framework based on [Docker SDK for Python](https://github.com/docke
     `venv\Scripts\activate.bat` - on Windows
     
     `pip install -r requirements.txt`
-3. Now you can use `docker_openvino.py` to build/test/deploy an image. See detailed instruction below.
+3. Now you can use `docker_openvino.py` to build/test/deploy an image. See detailed instruction below.  
+**Note:** Please use Docker CI framework release version corresponding to the version of OpenVINO™ Toolkit.
 
 # How to
 

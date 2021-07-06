@@ -59,6 +59,8 @@ For example:
 
 ## How to build
 
+**Note:** Please use Docker CI framework release version corresponding to the version of OpenVINO™ Toolkit that you need to build.
+
 * Base image with CPU only:
 
 You can use Docker CI framework to build an image, please follow [Get Started with DockerHub CI for Intel® Distribution of OpenVINO™ toolkit](../get-started.md).
