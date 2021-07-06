@@ -15,7 +15,6 @@ You can use Docker CI framework to build an image, please follow [Get Started wi
  - `ubuntu18` folder (Ubuntu* 18.04 LTS)
  - `ubuntu20` folder (Ubuntu* 20.04 LTS)
  - `centos7` folder (CentOS* 7)
- - `centos8` folder (CentOS* 8)
  - `rhel8` folder (RHEL* 8)
  - `winserver2019` folder (Windows* Server Core base OS LTSC 2019)
 
@@ -58,6 +57,8 @@ For example:
 * take proprietary `l_openvino_toolkit_p_2021.3.249.tgz` package and specify `-dist proprietary` option for Docker CI `docker_openvino.py`  or take a Dockerfile with `proprietary` suffix.
 
 ## How to build
+
+**Note:** Please use Docker CI framework release version corresponding to the version of OpenVINO™ Toolkit that you need to build.
 
 * Base image with CPU only:
 

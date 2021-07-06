@@ -20,7 +20,8 @@ DockerHub CI framework based on [Docker SDK for Python](https://github.com/docke
     `venv\Scripts\activate.bat` - on Windows
     
     `pip install -r requirements.txt`
-3. Now you can use `docker_openvino.py` to build/test/deploy an image. See detailed instruction below.
+3. Now you can use `docker_openvino.py` to build/test/deploy an image. See detailed instruction below.  
+**Note:** Please use Docker CI framework release version corresponding to the version of OpenVINO™ Toolkit.
 
 # How to
 
@@ -77,7 +78,7 @@ Specify the product package source:
 
 Select an image operation system:
 ```cmd
-  -os {ubuntu18,ubuntu20,centos7,centos8,rhel8,winserver2019} Operation System for docker image. By default: ubuntu18
+  -os {ubuntu18,ubuntu20,centos7,rhel8,winserver2019} Operation System for docker image. By default: ubuntu18
 ```
 
 You can customize platform targets and minimize image size:

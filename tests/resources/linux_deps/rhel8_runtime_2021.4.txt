@@ -15,3 +15,4 @@ libstdc++
 libgcc
 cmake
 curl
+sudo

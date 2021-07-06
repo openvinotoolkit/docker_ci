@@ -16,8 +16,8 @@ jobs:
         run: |
           set -o pipefail
           has_issues=0
-          url="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files"
-          files=$(curl -s -X GET -G "$url" | jq -r '.[] | .filename')
+          url="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files?per_page=100"
+          files=$(curl -s -X GET -G "$url" | jq -r '.[] | select(.status!="removed") | .filename')
           for dockerfile in $(echo "$files" | tr '[:space:]' '\n' | grep -P "dockerfiles/.*(\.d|D)ockerfile$")
           do
             echo "Scanning $dockerfile"

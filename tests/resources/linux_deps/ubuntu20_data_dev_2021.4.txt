@@ -22,6 +22,7 @@ gcc
 libc6-dev
 make
 curl
+sudo
 libusb-1.0-0
 ffmpeg
 flex
@@ -45,10 +46,8 @@ libnettle7
 libopenexr24
 libtag-extras1
 python3-gi
+python3-gi-cairo
 python3-gst-1.0
 vainfo
 cpio
-libblas-dev
-liblapack-dev
-gfortran
 libtinfo5

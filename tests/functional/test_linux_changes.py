@@ -8,13 +8,12 @@ import re
 import pytest
 
 
-@pytest.mark.usefixtures('_min_product_version', '_is_not_distribution')
-@pytest.mark.parametrize('_min_product_version', ['2021.1'], indirect=True)
+@pytest.mark.usefixtures('_is_not_distribution')
 @pytest.mark.parametrize('_is_not_distribution', [('base', 'internal_dev',
                                                    'custom-no-omz', 'custom-no-cv', 'custom-full')], indirect=True)
 class TestLinuxChanges:
     @pytest.mark.usefixtures('_is_image_os')
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'centos8', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
     def test_linux_deps_change(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')
@@ -44,7 +43,7 @@ class TestLinuxChanges:
 
     @pytest.mark.save_deps
     @pytest.mark.usefixtures('_is_image_os')
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'centos8', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
     def test_save_linux_deps(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')
@@ -64,7 +63,7 @@ class TestLinuxChanges:
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -p 2>&1 | '
-             f"sed 's/ /\\n/g' | tee /tmp/linux_deps/{linux_deps_file_name}\"",
+             f"sed 's/ /\\n/g' | tee /tmp/logs/linux_deps/{linux_deps_file_name}\"",
              ],
             self.test_save_linux_deps.__name__, **kwargs,
         )

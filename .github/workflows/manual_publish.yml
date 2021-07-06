@@ -12,7 +12,7 @@ on:
         required: true
         default: 'dev'
       os:
-        description: 'OS for Docker image: ubuntu18, ubuntu20, centos7, centos8, winserver2019'
+        description: 'OS for Docker image: ubuntu18, ubuntu20, centos7, winserver2019'
         required: true
         default: ''
       host_os:

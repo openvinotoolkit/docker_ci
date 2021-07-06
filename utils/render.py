@@ -48,19 +48,14 @@ class DockerFileRender:
             if args.msbuild:
                 settings.append(args.msbuild)
                 settings.append(args.cmake)
-            if '2021' in args.year:
-                settings.append('vs')
-            else:
-                settings.append('vs')
-                settings.append('icl')
+            settings.append('vs')
             settings.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
         else:
             pre_device_settings = []
-            pre_devices = ['gpu', 'vpu']
+            pre_devices = ['vpu']
             for device in pre_devices:
                 if device in args.device:
-                    if args.product_version < '2021.3' or device != 'gpu':
-                        pre_device_settings.append(f'pre_{device}')
+                    pre_device_settings.append(f'pre_{device}')
             settings.extend([args.source, args.install_type, *pre_device_settings])
 
         pre_commands = [self.get_template(arg, kwargs).render() for arg in settings]

@@ -15,6 +15,7 @@ libstdc++
 libgcc
 cmake
 curl
+sudo
 libusbx
 OpenEXR-libs
 alsa-lib
