@@ -24,7 +24,6 @@ As well you can use available dockerfiles from `<root_project>/dockerfiles/<imag
  - Ubuntu 18.04 LTS
  - Ubuntu 20.04 LTS
  - CentOS 7
- - CentOS 8
  - RHEL 8
  - Windows Server Core base OS LTSC 2019
 
