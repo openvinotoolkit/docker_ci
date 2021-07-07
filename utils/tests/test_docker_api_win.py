@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 
 from utils.docker_api import DockerAPI
-from utils.exceptions import FailedStep
+from utils.exceptions import FailedStepError
 
 pywintypes = pytest.importorskip('pywintypes')
 
@@ -19,12 +19,12 @@ pywintypes = pytest.importorskip('pywintypes')
     ),
     pytest.param(
         pywintypes.error(2, 'WaitNamedPipe'),
-        FailedStep,
+        FailedStepError,
         id='WaitNamedPipe',
     ),
     pytest.param(
         pywintypes.error(2, 'CreateFile'),
-        FailedStep,
+        FailedStepError,
         id='CreateFile',
     ),
 ])
