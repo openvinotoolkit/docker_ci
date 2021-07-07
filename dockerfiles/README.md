@@ -82,16 +82,11 @@ python3 docker_openvino.py build --file "dockerfiles/ubuntu18/openvino_cgvh_dev_
 ```
 For data_dev/runtime/data_runtime/proprietary distributions, please set appropriate `-dist` and `--file` options.
 
-Or via Docker Engine directly, but you need specify `package_url` argument (see [Where to get OpenVINO package section](#where-to-get-openvino-package)) and OpenCL* version to support GPU:
-`GMMLIB`, `IGC_CORE`, `IGC_OPENCL`, `INTEL_OPENCL`, `INTEL_OCLOC`
+Or via Docker Engine directly, but you need specify `package_url` argument (see [Where to get OpenVINO package section](#where-to-get-openvino-package)) and OpenCL* version with `INTEL_OPENCL` argument to support GPU:
 ```bash
-docker build --build-arg package_url=https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.1/l_openvino_toolkit_dev_ubuntu18_p_2021.1.110.tgz \
-             --build-arg GMMLIB=19.3.2 \
-             --build-arg IGC_CORE=1.0.2597 \
-             --build-arg IGC_OPENCL=1.0.2597 \
-             --build-arg INTEL_OPENCL=19.41.14441 \
-             --build-arg INTEL_OCLOC=19.41.14441 \
-            -t ubuntu18_dev:2021.1 -f dockerfiles/ubuntu18/openvino_cgvh_dev_2021.dockerfile .
+docker build --build-arg package_url=https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/l_openvino_toolkit_dev_ubuntu18_p_2021.4.582.tgz \
+             --build-arg INTEL_OPENCL=20.35.17767 \
+             -t ubuntu18_dev:2021.4 -f dockerfiles/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile .
 ```
 ----------------
 
