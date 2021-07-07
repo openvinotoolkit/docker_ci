@@ -11,7 +11,7 @@ import sys
 import pytest
 from xdist.scheduler import LoadScopeScheduling
 from utils.docker_api import DockerAPI
-from utils.exceptions import FailedTest
+from utils.exceptions import FailedTestError
 from utils.tester import DockerImageTester
 from utils.utilities import download_file, unzip_file
 
@@ -86,7 +86,7 @@ def pytest_configure(config):
                 err_msg = f"""Provided path of the dependent package should be an http/https/ftp access scheme
                                 or a local file in the project location as dependent package: {package_url}"""
                 log.error(err_msg)
-                raise FailedTest(err_msg)
+                raise FailedTestError(err_msg)
 
 
 @pytest.mark.hookwrapper()

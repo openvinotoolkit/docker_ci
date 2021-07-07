@@ -4,31 +4,31 @@
 """Custom exceptions for this framework"""
 
 
-class FailedStep(Exception):
+class FailedStepError(Exception):
     """Generic non-specific exception"""
     pass
 
 
-class FailedBuild(Exception):
+class FailedBuildError(Exception):
     """Exception on failed Docker image build"""
     pass
 
 
-class FailedDeploy(Exception):
+class FailedDeployError(Exception):
     """Exception on failed Docker image push"""
     pass
 
 
-class FailedTest(Exception):
+class FailedTestError(Exception):
     """Exception on failed Docker image test"""
     pass
 
 
-class LayerNotFound(Exception):
+class LayerNotFoundError(Exception):
     """Exception on missing layer template for Dockerfile render"""
     pass
 
 
-class InputNotValid(Exception):
+class InputNotValidError(Exception):
     """Exception on invalid UTF-8 string"""
     pass

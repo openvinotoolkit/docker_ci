@@ -12,7 +12,7 @@ from docker.models.images import Image
 
 from utils import logger
 from utils.docker_api import DockerAPI
-from utils.exceptions import FailedTest
+from utils.exceptions import FailedTestError
 from utils.utilities import get_system_proxy
 
 log = logging.getLogger('docker_ci')
@@ -36,7 +36,7 @@ class DockerImageTester(DockerAPI):
         elif isinstance(image, str):
             file_tag = image.replace('/', '_').replace(':', '_')
         else:
-            raise FailedTest(f'{image} is not a proper image, must be of "str" or "docker.models.images.Image"')
+            raise FailedTestError(f'{image} is not a proper image, must be of "str" or "docker.models.images.Image"')
         log_filename = f'{test_name}.log'
         logfile = pathlib.Path(self.location) / 'logs' / file_tag / log_filename
         run_kwargs = {'auto_remove': True,
@@ -58,10 +58,10 @@ class DockerImageTester(DockerAPI):
             if not self.container or not is_cached:
                 self.container = self.client.containers.run(image=image, **run_kwargs)
         except APIError as err:
-            raise FailedTest(f'Docker daemon API error while starting the container: {err}')
+            raise FailedTestError(f'Docker daemon API error while starting the container: {err}')
 
         if not self.container:
-            raise FailedTest('Cannot create/start the container')
+            raise FailedTestError('Cannot create/start the container')
 
         try:
             output_total = []
@@ -76,19 +76,19 @@ class DockerImageTester(DockerAPI):
                     for output in output_total:
                         log.error(str(output))
                     logger.switch_to_summary()
-                    raise FailedTest(f'Test {test_name}: command {command} '
-                                     f'have returned non-zero exit code {exit_code}')
+                    raise FailedTestError(f'Test {test_name}: command {command} '
+                                          f'have returned non-zero exit code {exit_code}')
                 self.container.reload()
                 if self.container.status != 'running':
-                    raise FailedTest(f'Test {test_name}: command exit code is 0, but container status != "running" '
-                                     'after this command')
+                    raise FailedTestError(f'Test {test_name}: command exit code is 0, '
+                                          'but container status != "running" after this command')
             logger.switch_to_custom(logfile, str(logfile.parent))
             for output in output_total:
                 log.info(str(output))
             logger.switch_to_summary()
 
         except APIError as err:
-            raise FailedTest(f'Docker daemon API error while executing test {test_name}: {err}')
+            raise FailedTestError(f'Docker daemon API error while executing test {test_name}: {err}')
 
     def __del__(self):
         """Custom __del__ to manually stop (but not remove) testing container"""
