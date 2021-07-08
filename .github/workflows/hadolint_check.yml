@@ -1,0 +1,43 @@
+name: Dockerfiles check
+
+on:
+  push:
+    paths:
+      - 'dockerfiles/**/*ockerfile'
+  pull_request:
+    paths:
+      - 'dockerfiles/**/*ockerfile'
+
+jobs:
+  hadolint_check:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v2
+      - name: Run hadolint dockerfiles check
+        shell: bash
+        run: |
+          set -o pipefail
+          has_issues=0
+          while IFS= read -r -d '' dockerfile
+          do
+            echo "Scanning $dockerfile"
+            docker run --rm -i hadolint/hadolint:latest hadolint \
+              --ignore DL3059 \
+              --ignore DL3006 \
+              --ignore DL3008 \
+              - < "$dockerfile" | tee "${dockerfile}".log || has_issues=1
+            echo
+            name=$(echo "$dockerfile" | grep -oP '(?<=dockerfiles/).*' | tr / _)
+            cp "$dockerfile" "$name"
+            cp "$dockerfile".log "${name}.log"
+          done <  <(find dockerfiles/ \( -name '*.dockerfile' -o -name 'Dockerfile' \) -print0)
+          exit "$has_issues"
+      - name: Collecting artifacts
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: hadolint_results
+          path: |
+            ./*.log
+            ./*ockerfile
