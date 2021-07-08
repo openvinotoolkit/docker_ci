@@ -19,7 +19,7 @@ jobs:
         run: |
           set -o pipefail
           has_issues=0
-          for dockerfile in $(find dockerfiles/ \( -name '*.dockerfile' -o -name 'Dockerfile' \))
+          while IFS= read -r -d '' dockerfile
           do
             echo "Scanning $dockerfile"
             docker run --rm -i hadolint/hadolint:latest hadolint \
@@ -31,7 +31,7 @@ jobs:
             name=$(echo "$dockerfile" | grep -oP '(?<=dockerfiles/).*' | tr / _)
             cp "$dockerfile" "$name"
             cp "$dockerfile".log "${name}.log"
-          done
+          done <  <(find dockerfiles/ \( -name '*.dockerfile' -o -name 'Dockerfile' \) -print0)
           exit "$has_issues"
       - name: Collecting artifacts
         uses: actions/upload-artifact@v2
