@@ -1,6 +1,9 @@
 name: Dockerfiles check
 
 on:
+  push:
+    paths:
+      - 'dockerfiles/**/*ockerfile'
   pull_request:
     paths:
       - 'dockerfiles/**/*ockerfile'
@@ -16,9 +19,7 @@ jobs:
         run: |
           set -o pipefail
           has_issues=0
-          url="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${{ github.event.pull_request.number }}/files?per_page=100"
-          files=$(curl -s -X GET -G "$url" | jq -r '.[] | select(.status!="removed") | .filename')
-          for dockerfile in $(echo "$files" | tr '[:space:]' '\n' | grep -P "dockerfiles/.*(\.d|D)ockerfile$")
+          while IFS= read -r -d '' dockerfile
           do
             echo "Scanning $dockerfile"
             docker run --rm -i hadolint/hadolint:latest hadolint \
@@ -30,7 +31,7 @@ jobs:
             name=$(echo "$dockerfile" | grep -oP '(?<=dockerfiles/).*' | tr / _)
             cp "$dockerfile" "$name"
             cp "$dockerfile".log "${name}.log"
-          done
+          done <  <(find dockerfiles/ \( -name '*.dockerfile' -o -name 'Dockerfile' \) -print0)
           exit "$has_issues"
       - name: Collecting artifacts
         uses: actions/upload-artifact@v2
