@@ -2,7 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:18.04 as ov_base
 
+# hadolint ignore=DL3002
 USER root
+
+SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -25,7 +28,8 @@ RUN curl -o GPG-PUB-KEY-INTEL-OPENVINO-2021 ${PUBLIC_KEY} && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python and some dependencies for deployment manager
-RUN pip3 install pytest-shutil
+# hadolint ignore=DL3013
+RUN pip3 install --no-cache-dir pytest-shutil
 
 # Create CPU only package
 RUN mkdir openvino_pkg
@@ -58,8 +62,10 @@ RUN rm -r /opt/intel/ && mkdir -p "/opt/intel/openvino_${BUILD_ID}" && \
 
 FROM ubuntu:18.04
 
-LABEL Description="This is the base CPU only image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
-LABEL Vendor="Intel Corporation"
+LABEL description="This is the base CPU only image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL vendor="Intel Corporation"
+
+SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 COPY --from=ov_base /opt/intel /opt/intel
 RUN echo "source /opt/intel/openvino_2021/bin/setupvars.sh" | tee -a /root/.bashrc
