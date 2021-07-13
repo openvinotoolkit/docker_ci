@@ -56,7 +56,7 @@ class DockerImageBuilder(DockerAPI):
                     log.info(f'{key} {value}')
                     if key == 'error':
                         logger.switch_to_summary()
-                        log.error(f'{key} {value}')
+                        log.error(f'{value}')
                         return None
             logger.switch_to_summary()
             return self.client.images.get(tag)
