@@ -186,7 +186,7 @@ def dev_root(request):
 def install_openvino_dependencies(request):
     image_os = request.config.getoption('--image_os')
     if 'ubuntu' in image_os:
-        return '/bin/bash -ac "apt update && apt install -y build-essential sudo curl cmake"'
+        return '/bin/bash -ac "apt update && apt install -y build-essential curl cmake"'
     elif any(x in image_os for x in ('centos', 'rhel')):
         return '/bin/bash -ac "yum update -y && yum install -y make"'
     return ''
