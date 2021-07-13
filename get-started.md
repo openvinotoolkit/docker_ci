@@ -257,10 +257,10 @@ docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp <
 > docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp -v /dev/shm:/dev/shm <image_name>:latest
 > ```
 > Also, in some cases you can encounter a permission error for files in `/dev/shm` (see `hddldaemon.log`). The possible cause is uid and gid of the container user are different from uid and gid of the user which had created `hddldaemon` service on the host.  
-> You can try these solutions:
+> You can try one of these solutions:
 > * create the user in the docker container with uid and gid which are the same with the HDDL daemon's user 
-> * set container user umask to 000 (default is 022)
-> * start HDDL daemon as root
+> * set container user umask to 000: `umask 000`
+> * start HDDL daemon on the host as root and start container as root `docker run -u root` (NOT RECOMMENDED)
 
 And to run inference on all hardware targets supported, make sure you've built the image correctly and run:
 ```bash
