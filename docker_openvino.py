@@ -27,7 +27,6 @@ from utils.arg_parser import parse_args
 from utils.builder import DockerImageBuilder
 from utils.docker_api import DockerAPI
 from utils.exceptions import FailedBuildError, FailedDeployError, FailedStepError, FailedTestError
-from utils.loader import INTEL_OCL_RELEASE
 from utils.render import DockerFileRender
 from utils.utilities import (DEFAULT_DATA_CHUNK_SIZE, MAX_DEPLOY_RETRIES,
                              SLEEP_BETWEEN_RETRIES, download_file,
@@ -109,9 +108,9 @@ class Launcher:
             'distribution': self.args.distribution,
             'openshift': self.args.openshift,
             'os': self.args.os,
+            'INTEL_OPENCL': self.args.ocl_release,
         })
         self.kwargs.update(get_system_proxy())
-        self.kwargs.update(INTEL_OCL_RELEASE[self.args.ocl_release])
 
         if self.args.build_arg:
             for arg in self.args.build_arg:
@@ -159,7 +158,7 @@ class Launcher:
 
             self.args.package_url = (tmp_folder / archive_name).relative_to(self.location)
             self.args.package_url = str(pathlib.PurePosixPath(self.args.package_url))
-            log.info('Downloading finished')
+            log.info(f'Downloading {self.args.package_url} finished')
         self.kwargs['package_url'] = self.args.package_url
 
         log.info('Building Docker image...')
