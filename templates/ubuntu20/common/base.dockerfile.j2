@@ -145,7 +145,7 @@ ARG DEPS="tzdata \
 ARG LGPL_DEPS="g++ \
                gcc"
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
-{% elif 'dev' == distribution %}
+{% elif 'dev' == distribution or 'dev_no_samples' == distribution %}
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
