@@ -335,8 +335,9 @@ def parse_args(name: str, description: str):  # noqa
     if args.mode == 'deploy' and not args.tags:
         parser.error('The following argument is required: -t/--tags')
 
-    if args.mode in ('build', 'build_test', 'all') and args.distribution == 'dev_no_samples' and args.os != 'ubuntu18':
-        parser.error('Distribution dev_no_samples is available only for ubuntu18 operation system')
+    if args.mode in ('gen_dockerfile', 'build', 'build_test',
+                     'all') and args.distribution == 'dev_no_samples' and 'ubuntu' not in args.os:
+        parser.error('Distribution dev_no_samples is available only for Ubuntu operation system')
 
     if args.mode == 'gen_dockerfile' and args.distribution == 'base':
         parser.error('Generating dockerfile for base distribution is not available. '

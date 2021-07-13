@@ -1,9 +1,5 @@
 # for GPU
-{% if 'dev_no_samples' == distribution %}
-ARG INTEL_OPENCL=20.35.17767
-{% else %}
-ARG INTEL_OPENCL
-{% endif %}
+ARG INTEL_OPENCL=19.41.14441
 
 ARG TEMP_DIR=/tmp/opencl
 
