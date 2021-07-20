@@ -7,8 +7,9 @@ import pathlib
 import pytest
 
 
-@pytest.mark.usefixtures('_is_image_os', '_is_not_distribution')
+@pytest.mark.usefixtures('_is_image_os', '_min_product_version', '_is_not_distribution')
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
+@pytest.mark.parametrize('_min_product_version', ['2022.1'], indirect=True)
 @pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-omz', 'custom-no-cv',
                                                    'custom-full')], indirect=True)
 class TestSetupvarsChanges:
@@ -18,31 +19,29 @@ class TestSetupvarsChanges:
         log_folder = root / 'logs' / image_folder / 'environment_vars'
         if not log_folder.exists():
             log_folder.mkdir(parents=True)
-
-        env_template_file_name = f'{distribution}_env.dockerfile.j2'
-        expected_env_file_path = root / 'templates' / image_os / 'dist' / env_template_file_name
+        expected_env_file_path = root / 'templates' / image_os / 'env'
 
         kwargs = {
             'volumes': {
                 log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec # noqa: S108
-                expected_env_file_path.parent: {'bind': '/tmp/dist', 'mode': 'rw'},  # nosec # noqa: S108
+                expected_env_file_path: {'bind': '/tmp/dist', 'mode': 'rw'},  # nosec # noqa: S108
 
                 # temp
-                root / 'tests' / 'resources' / 'linux_deps':
-                    {'bind': '/tmp/linux_deps', 'mode': 'rw'},  # nosec # noqa: S108
+                root / 'tests' / 'resources' / 'environment_vars':
+                    {'bind': '/tmp/environment_vars', 'mode': 'rw'},  # nosec # noqa: S108
             },
 
         }
         tester.test_docker_image(
             image,
-            ["/bin/bash -c 'OLD_ENV=$(env | sort) && "
+            ["/bin/bash -c 'env > /tmp/logs/env_setupvars_before.txt && "
              'source /opt/intel/openvino/bin/setupvars.sh > /dev/null && '
-             'NEW_ENV=$(env | sort) && '
-             f'comm -13 <(echo -ne "$OLD_ENV") <(echo -ne "$NEW_ENV") | sed -e "s/^/ENV /" | '
-             f"tee /tmp/logs/{env_template_file_name}'",
-             f'/bin/bash -ac "python3 /tmp/linux_deps/linux_deps_compare.py -i {image} '
-             f'-e /tmp/dist/{env_template_file_name} '
-             f'-c /tmp/logs/{env_template_file_name} -l /tmp/logs"',
+             "env > /tmp/logs/env_setupvars_after.txt'",
+             '/bin/bash -ac "python3 /tmp/environment_vars/env_vars_changes_compare.py '
+             f'-e /tmp/dist/{distribution}_env.dockerfile.j2 '
+             '-b /tmp/logs/env_setupvars_before.txt -a /tmp/logs/env_setupvars_after.txt '
+             f'-c /tmp/environment_vars/{image_os}_env.json '
+             f'-i {image} -os {image_os} -dist {distribution} -l /tmp/logs"',
              ],
             self.test_setupvars_changes_linux.__name__, **kwargs,
         )

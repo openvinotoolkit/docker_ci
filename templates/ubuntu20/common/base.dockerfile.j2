@@ -130,8 +130,6 @@ ENV GST_VAAPI_ALL_DRIVERS=1
 {% if 'data_dev' == distribution or 'proprietary' == distribution %}
 RUN ln --symbolic "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk/ /opt/intel/mediasdk || true
 ENV LIBVA_DRIVERS_PATH=${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/
-ENV LIBRARY_PATH=${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:$LIBRARY_PATH
-ENV LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:$LD_LIBRARY_PATH
 {% else %}
 ENV LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri
 {% endif %}

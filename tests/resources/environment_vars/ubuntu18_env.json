@@ -1,0 +1,12 @@
+{
+  "appendable_vars": ["PATH", "PYTHONPATH", "PKG_CONFIG_PATH", "LD_LIBRARY_PATH", "LIBRARY_PATH"],
+  "base_values": {
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  },
+  "dist_suffixes": {
+    "data_dev": {
+      "LIBRARY_PATH": "/opt/intel/openvino/opt/intel/mediasdk/lib64/:",
+      "LD_LIBRARY_PATH": "/opt/intel/openvino/opt/intel/mediasdk/lib64/:"
+    }
+  }
+}

@@ -117,8 +117,6 @@ RUN ln --symbolic "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk/ /opt/intel/mediasd
 ENV LIBVA_DRIVER_NAME=iHD
 ENV LIBVA_DRIVERS_PATH=${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/
 ENV GST_VAAPI_ALL_DRIVERS=1
-ENV LIBRARY_PATH=${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:$LIBRARY_PATH
-ENV LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:$LD_LIBRARY_PATH
 {% endif %}
 
 USER openvino
