@@ -45,8 +45,6 @@ You can generate Dockerfile with your settings, please follow the [DockerHub CI 
  * _runtime, data_runtime, dev, data_dev_ distributions based on archive package of OpenVINO product. You can just remove unnecessary parts.
  * _base_ distribution is created by [OpenVINO™ Deployment Manager](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_deployment_manager_tool.html).
  * _proprietary_ distribution based on installer package of OpenVINO product. You can configure installation `COMPONENTS`, follow [Command-Line Silent Instructions](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_linux.html)
- * _proprietary, dev, data_dev_ distributions images for Ubuntu 18 contain Python TensorFlow* 2. virtual environment in `/opt/intel/venv_tf2` folder for Model Optimizer and Model Downloader/Converter, 
- because TensorFlow* 1. (default in the image) and TensorFlow* 2. are not compatible. Please follow this [guide](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments) to activate and use it. Ubuntu 20 based images have TensorFlow* 2 by default and don't have TensorFlow* 1 environment.
 
 ## Where to get OpenVINO package
 
