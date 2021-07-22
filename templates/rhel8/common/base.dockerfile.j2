@@ -114,11 +114,14 @@ RUN rm -rf /tmp && mkdir /tmp && rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 {% else %}
 RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
 {% endif %}
+
+{% if build_id < '2022.1' %}
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc; \
     fi;
+{% endif %}
 
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}

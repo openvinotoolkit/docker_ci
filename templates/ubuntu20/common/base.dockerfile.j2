@@ -110,6 +110,7 @@ RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
 {% endfor %}
 
 # Post-installation cleanup and setting up OpenVINO environment variables
+{% if build_id < '2022.1' %}
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
         printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
@@ -123,6 +124,18 @@ RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri \nexport GST_VAAPI_ALL_DRIVERS=1\n" >> /home/openvino/.bashrc; \
         printf "\nexport LIBVA_DRIVER_NAME=iHD \nexport LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri \nexport GST_VAAPI_ALL_DRIVERS=1\n" >> /root/.bashrc; \
     fi;
+{% else %}
+ENV LIBVA_DRIVER_NAME=iHD
+ENV GST_VAAPI_ALL_DRIVERS=1
+{% if 'data_dev' == distribution or 'proprietary' == distribution %}
+RUN ln --symbolic "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk/ /opt/intel/mediasdk || true
+ENV LIBVA_DRIVERS_PATH=${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/
+ENV LIBRARY_PATH=${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:$LIBRARY_PATH
+ENV LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/:$LD_LIBRARY_PATH
+{% else %}
+ENV LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri
+{% endif %}
+{% endif %}
 
 RUN apt-get update && \
     apt-get autoremove -y gfortran && \
