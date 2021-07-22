@@ -44,23 +44,30 @@ class DockerFileRender:
                             kwargs: typing.Dict[str, str]) -> pathlib.Path:
         """Creating of dockerfile based on templates and CLI parameters"""
         settings = []
+        content = []
         if 'win' in args.os:
             if args.msbuild:
                 settings.append(args.msbuild)
                 settings.append(args.cmake)
             settings.append('vs')
             settings.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
+            content.extend([args.python, args.distribution, *args.device])
         else:
+            env = f'{args.distribution}_env'
             pre_device_settings = []
             pre_devices = ['vpu']
             for device in pre_devices:
                 if device in args.device:
                     pre_device_settings.append(f'pre_{device}')
-            settings.extend([args.source, args.install_type, *pre_device_settings])
+            if args.product_version < '2022.1':
+                settings.extend([args.source, args.install_type, *pre_device_settings])
+                content.extend([args.python, args.distribution, *args.device])
+            else:
+                settings.extend([args.source, args.install_type, env, *pre_device_settings])
+                content.extend([env, args.python, args.distribution, *args.device])
 
         pre_commands = [self.get_template(arg, kwargs).render() for arg in settings]
-        commands = [self.get_template(arg, kwargs).render() for arg in [args.python,
-                                                                        args.distribution, *args.device]]
+        commands = [self.get_template(arg, kwargs).render() for arg in content]
         layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
         if args.openshift:
             save_to_dir /= 'openshift'
