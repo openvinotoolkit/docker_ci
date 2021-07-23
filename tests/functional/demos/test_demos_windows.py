@@ -125,7 +125,7 @@ class TestDemosWindows:
              f'python {omz_python_demo_path} '
              '-m C:\\\\intel\\\\openvino\\\\intel\\\\semantic-segmentation-adas-0001\\\\FP16\\\\'
              'semantic-segmentation-adas-0001.xml '
-             '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU',
+             '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU -at segmentation --no_show',
              ],
             self.test_segmentation_python_cpu.__name__, **kwargs,
         )

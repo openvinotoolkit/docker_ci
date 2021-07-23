@@ -171,7 +171,7 @@ class TestDemosLinuxRuntime:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU -at segmentation --no_show"',
              ],
             self.test_segmentation_python_cpu.__name__, **kwargs,
         )
@@ -204,7 +204,7 @@ class TestDemosLinuxRuntime:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU -at segmentation --no_show"',
              ],
             self.test_segmentation_python_gpu.__name__, **kwargs,
         )
@@ -241,7 +241,7 @@ class TestDemosLinuxRuntime:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD -at segmentation --no_show"',
              ],
             self.test_segmentation_python_vpu.__name__, **kwargs,
         )
@@ -276,7 +276,7 @@ class TestDemosLinuxRuntime:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
-             f'python3 {omz_python_demo_path} '
+             f'python3 {omz_python_demo_path} -at segmentation --no_show '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
              '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*"',
              ],
