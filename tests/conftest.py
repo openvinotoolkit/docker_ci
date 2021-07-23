@@ -203,8 +203,6 @@ def omz_python_demo_path(request):
             parameters = ' -at ssd'
         elif is_centernet:
             parameters = ' -at centernet'
-    if demo_name == 'segmentation':
-        parameters = ' --no_show'
 
     if request.config.getoption('--image_os') == 'winserver2019':
         base_path = 'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos'
