@@ -11,7 +11,7 @@ class TestDemosLinuxDataRuntime:
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     def test_detection_ssd_python_cpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
-                                      omz_python_demos_requirements_file):
+                                      omz_python_demos_requirements_file, bash):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
@@ -25,16 +25,14 @@ class TestDemosLinuxDataRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
-             f'-r {omz_python_demos_requirements_file} && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name vehicle-detection-adas-0002 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 {omz_python_demo_path} '
-             '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
+            [bash(f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
+                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  f'-r {omz_python_demos_requirements_file} && '
+                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  '--name vehicle-detection-adas-0002 --precision FP16'),
+             bash(f'python3 {omz_python_demo_path} '
+                  '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
+                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show'),
              ], self.test_detection_ssd_python_cpu.__name__, **kwargs,
         )
 
@@ -42,7 +40,7 @@ class TestDemosLinuxDataRuntime:
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     def test_detection_ssd_python_gpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
-                                      omz_python_demos_requirements_file):
+                                      omz_python_demos_requirements_file, bash):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -57,16 +55,14 @@ class TestDemosLinuxDataRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
-             f'-r {omz_python_demos_requirements_file} && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name vehicle-detection-adas-0002 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 {omz_python_demo_path} '
-             '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
+            [bash(f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
+                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  f'-r {omz_python_demos_requirements_file} && '
+                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  '--name vehicle-detection-adas-0002 --precision FP16'),
+             bash(f'python3 {omz_python_demo_path} '
+                  '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
+                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show'),
              ], self.test_detection_ssd_python_gpu.__name__, **kwargs,
         )
 
@@ -75,7 +71,7 @@ class TestDemosLinuxDataRuntime:
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     def test_detection_ssd_python_vpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
-                                      omz_python_demos_requirements_file):
+                                      omz_python_demos_requirements_file, bash):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
             'mem_limit': '3g',
@@ -93,16 +89,14 @@ class TestDemosLinuxDataRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
-             f'-r {omz_python_demos_requirements_file} && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name vehicle-detection-adas-0002 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 {omz_python_demo_path} '
-             '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
+            [bash(f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
+                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  f'-r {omz_python_demos_requirements_file} && '
+                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  '--name vehicle-detection-adas-0002 --precision FP16'),
+             bash(f'python3 {omz_python_demo_path} '
+                  '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
+                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show'),
              ], self.test_detection_ssd_python_vpu.__name__, **kwargs,
         )
 
@@ -111,7 +105,7 @@ class TestDemosLinuxDataRuntime:
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     def test_detection_ssd_python_hddl(self, tester, image, distribution, dev_root, omz_python_demo_path,
-                                       omz_python_demos_requirements_file):
+                                       omz_python_demos_requirements_file, bash):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
@@ -128,16 +122,14 @@ class TestDemosLinuxDataRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
-             f'-r {omz_python_demos_requirements_file} && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name vehicle-detection-adas-0002 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
-             f'python3 {omz_python_demo_path} '
-             '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show && rm -f /dev/shm/hddl_*"',
+            [bash(f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
+                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  f'-r {omz_python_demos_requirements_file} && '
+                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  '--name vehicle-detection-adas-0002 --precision FP16'),
+             bash(f'umask 0000 && python3 {omz_python_demo_path} '
+                  '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
+                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show && rm -f /dev/shm/hddl_*'),
              ], self.test_detection_ssd_python_hddl.__name__, **kwargs,
         )
 
@@ -148,7 +140,7 @@ class TestDemosLinuxDataRuntime:
 class TestDemosLinuxRuntime:
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
     def test_segmentation_python_cpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
-                                     omz_python_demos_requirements_file):
+                                     omz_python_demos_requirements_file, bash):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
@@ -162,17 +154,16 @@ class TestDemosLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install setuptools && '
-             f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
-             f'-r {omz_python_demos_requirements_file} && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name semantic-segmentation-adas-0001 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 {omz_python_demo_path} '
-             '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU -at segmentation --no_show"',
+            [bash('python3 -m pip install setuptools && '
+                  f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
+                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  f'-r {omz_python_demos_requirements_file} && '
+                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  '--name semantic-segmentation-adas-0001 --precision FP16'),
+             bash(f'python3 {omz_python_demo_path} '
+                  '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
+                  'semantic-segmentation-adas-0001.xml '
+                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU -at segmentation --no_show'),
              ],
             self.test_segmentation_python_cpu.__name__, **kwargs,
         )
@@ -180,7 +171,7 @@ class TestDemosLinuxRuntime:
     @pytest.mark.gpu
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
     def test_segmentation_python_gpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
-                                     omz_python_demos_requirements_file):
+                                     omz_python_demos_requirements_file, bash):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -195,17 +186,16 @@ class TestDemosLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install setuptools && '
-             f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
-             f'-r {omz_python_demos_requirements_file} && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name semantic-segmentation-adas-0001 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 {omz_python_demo_path} '
-             '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU -at segmentation --no_show"',
+            [bash('python3 -m pip install setuptools && '
+                  f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
+                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  f'-r {omz_python_demos_requirements_file} && '
+                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  '--name semantic-segmentation-adas-0001 --precision FP16'),
+             bash(f'python3 {omz_python_demo_path} '
+                  '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
+                  'semantic-segmentation-adas-0001.xml '
+                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU -at segmentation --no_show'),
              ],
             self.test_segmentation_python_gpu.__name__, **kwargs,
         )
@@ -215,7 +205,7 @@ class TestDemosLinuxRuntime:
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     def test_segmentation_python_vpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
-                                     omz_python_demos_requirements_file):
+                                     omz_python_demos_requirements_file, bash):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
             'mem_limit': '3g',
@@ -233,17 +223,16 @@ class TestDemosLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install setuptools && '
-             f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
-             f'-r {omz_python_demos_requirements_file} && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name semantic-segmentation-adas-0001 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             f'python3 {omz_python_demo_path} '
-             '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD -at segmentation --no_show"',
+            [bash('python3 -m pip install setuptools && '
+                  f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
+                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  f'-r {omz_python_demos_requirements_file} && '
+                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  '--name semantic-segmentation-adas-0001 --precision FP16'),
+             bash(f'python3 {omz_python_demo_path} '
+                  '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
+                  'semantic-segmentation-adas-0001.xml '
+                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD -at segmentation --no_show'),
              ],
             self.test_segmentation_python_vpu.__name__, **kwargs,
         )
@@ -253,7 +242,7 @@ class TestDemosLinuxRuntime:
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
     def test_segmentation_python_hddl(self, tester, image, distribution, dev_root, omz_python_demo_path,
-                                      omz_python_demos_requirements_file):
+                                      omz_python_demos_requirements_file, bash):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
@@ -270,17 +259,16 @@ class TestDemosLinuxRuntime:
         }
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 -m pip install setuptools && '
-             f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} -r '
-             '/opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
-             f'-r {omz_python_demos_requirements_file} && '
-             'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
-             '--name semantic-segmentation-adas-0001 --precision FP16"',
-             '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
-             f'python3 {omz_python_demo_path} -at segmentation --no_show '
-             '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*"',
+            [bash('python3 -m pip install setuptools && '
+                  f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
+                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  f'-r {omz_python_demos_requirements_file} && '
+                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  '--name semantic-segmentation-adas-0001 --precision FP16'),
+             bash(f'umask 0000 && python3 {omz_python_demo_path} -at segmentation --no_show '
+                  '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
+                  'semantic-segmentation-adas-0001.xml '
+                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*'),
              ],
             self.test_segmentation_python_hddl.__name__, **kwargs,
         )

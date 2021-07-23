@@ -192,6 +192,18 @@ def install_openvino_dependencies(request):
     return ''
 
 
+@pytest.fixture(scope='session')
+def bash(request):
+    distribution = request.config.getoption('--distribution')
+
+    def _bash(command):
+        if distribution in ('base', 'custom-no-omz', 'custom-no-cv', 'custom-full'):
+            return f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && {command}"'
+        else:
+            return f'/bin/bash -c "{command}"'
+    return _bash
+
+
 @pytest.fixture()
 def omz_python_demo_path(request):
     demo_name = request.param
