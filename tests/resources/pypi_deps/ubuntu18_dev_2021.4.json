@@ -13,20 +13,23 @@
         "onnx>=1.8.1\n",
         "defusedxml>=0.7.1\n",
         "urllib3>=1.26.4\n",
-        "requests>=2.25.1\n"
+        "requests>=2.25.1\n",
+        "fastjsonschema~=2.15.1\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_caffe.txt": [
         "networkx~=2.5\n",
         "numpy>=1.16.6,<1.20\n",
         "protobuf>=3.15.6\n",
         "defusedxml>=0.7.1\n",
-        "requests>=2.25.1\n"
+        "requests>=2.25.1\n",
+        "fastjsonschema~=2.15.1\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_kaldi.txt": [
         "networkx~=2.5\n",
         "numpy>=1.16.6,<1.20\n",
         "defusedxml>=0.7.1\n",
-        "requests>=2.25.1\n"
+        "requests>=2.25.1\n",
+        "fastjsonschema~=2.15.1\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_mxnet.txt": [
         "mxnet~=1.2.0; sys_platform == 'win32'\n",
@@ -35,14 +38,16 @@
         "numpy>=1.16.6,<1.20\n",
         "defusedxml>=0.7.1\n",
         "urllib3>=1.26.4\n",
-        "requests>=2.25.1\n"
+        "requests>=2.25.1\n",
+        "fastjsonschema~=2.15.1\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_onnx.txt": [
         "onnx>=1.8.1\n",
         "networkx~=2.5\n",
         "numpy>=1.16.6,<1.20\n",
         "defusedxml>=0.7.1\n",
-        "requests>=2.25.1\n"
+        "requests>=2.25.1\n",
+        "fastjsonschema~=2.15.1\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_tf.txt": [
         "# TensorFlow 1.x and 2.x are incompatible, use separate virtual environments for each version\n",
@@ -50,14 +55,16 @@
         "networkx~=2.5\n",
         "numpy>=1.16.6,<1.19\n",
         "defusedxml>=0.7.1\n",
-        "requests>=2.25.1\n"
+        "requests>=2.25.1\n",
+        "fastjsonschema~=2.15.1\n"
     ],
     "/opt/intel/openvino/deployment_tools/model_optimizer/requirements_tf2.txt": [
         "tensorflow~=2.4.1\n",
         "networkx~=2.5\n",
         "numpy>=1.16.6,<1.20\n",
         "defusedxml>=0.7.1\n",
-        "requests>=2.25.1\n"
+        "requests>=2.25.1\n",
+        "fastjsonschema~=2.15.1\n"
     ],
     "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/3d_segmentation_demo/python/requirements.txt": [
         "#3d segmentation demo specific requirements\n",
@@ -110,6 +117,7 @@
         "numpy>=1.16.6,<1.20\n",
         "scikit-learn>=0.24.1\n",
         "scipy~=1.5.4\n",
+        "sympy>=1.8\n",
         "tokenizers>=0.10.1\n",
         "tensorboardX>=2.1\n",
         "tqdm>=4.54.1\n"
@@ -169,6 +177,7 @@
         "\n",
         "# text detection\n",
         "shapely>=1.7.1\n",
+        "pyclipper>=1.2.1\n",
         "\n",
         "# brain tumor segmentation\n",
         "nibabel>=3.2.1\n",
@@ -180,6 +189,7 @@
         "# nlp, tokenization\n",
         "sentencepiece>=0.1.95\n",
         "tokenizers>=0.10.1\n",
+        "transformers>=4.5\n",
         "nltk>=3.5\n",
         "\n",
         "# editdistance calculation\n",
@@ -236,10 +246,22 @@
         "progress>=1.5\n",
         "opencv-python==4.5.*"
     ],
+    "/opt/intel/openvino/python/python3.6/openvino/tools/benchmark_tool/openvino/tools/benchmark/requirements.txt": [
+        "py-cpuinfo>=7.0.0\n",
+        "numpy>=1.16.6,<1.20\n",
+        "progress>=1.5\n",
+        "opencv-python==4.5.*"
+    ],
     "/opt/intel/openvino/python/python3.6/requirements.txt": [
         "numpy>=1.16.6,<1.20"
     ],
     "/opt/intel/openvino/python/python3.7/openvino/tools/benchmark/requirements.txt": [
+        "py-cpuinfo>=7.0.0\n",
+        "numpy>=1.16.6,<1.20\n",
+        "progress>=1.5\n",
+        "opencv-python==4.5.*"
+    ],
+    "/opt/intel/openvino/python/python3.7/openvino/tools/benchmark_tool/openvino/tools/benchmark/requirements.txt": [
         "py-cpuinfo>=7.0.0\n",
         "numpy>=1.16.6,<1.20\n",
         "progress>=1.5\n",
@@ -255,8 +277,10 @@
         "/opt/intel/openvino/python/requirements.txt",
         "/opt/intel/openvino/python/python3.7/requirements.txt",
         "/opt/intel/openvino/python/python3.7/openvino/tools/benchmark/requirements.txt",
+        "/opt/intel/openvino/python/python3.7/openvino/tools/benchmark_tool/openvino/tools/benchmark/requirements.txt",
         "/opt/intel/openvino/python/python3.6/requirements.txt",
         "/opt/intel/openvino/python/python3.6/openvino/tools/benchmark/requirements.txt",
+        "/opt/intel/openvino/python/python3.6/openvino/tools/benchmark_tool/openvino/tools/benchmark/requirements.txt",
         "/opt/intel/openvino/deployment_tools/inference_engine/samples/python/requirements.txt",
         "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/requirements.txt",
         "/opt/intel/openvino/deployment_tools/open_model_zoo/demos/human_pose_estimation_3d_demo/python/requirements.txt",
