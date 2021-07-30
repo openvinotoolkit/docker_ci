@@ -18,7 +18,7 @@ def normalize_env_variables(variables: typing.Dict[str, str]) -> typing.Dict[str
     """Cleanup environment variables dict from duplicates in PATH-like variables"""
     output = {}
     for name, value in variables.items():
-        if name in ['PATH', 'PYTHONPATH', 'PKG_CONFIG_PATH', 'LD_LIBRARY_PATH', 'LIBRARY_PATH']:
+        if name in ['PATH', 'PYTHONPATH', 'PKG_CONFIG_PATH', 'LD_LIBRARY_PATH', 'LIBRARY_PATH', 'OV_FRONTEND_PATH']:
             paths = set(filter(None, map(str.strip, value.split(':'))))
             output[name] = ':'.join(sorted(paths))
         else:
