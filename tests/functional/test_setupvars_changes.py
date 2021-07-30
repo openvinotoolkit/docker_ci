@@ -39,8 +39,7 @@ class TestSetupvarsChanges:
              '/bin/bash -ac "python3 /tmp/environment_vars/env_vars_changes_compare.py '
              f'-e /tmp/dist/{distribution}_env.dockerfile.j2 '
              '-b /tmp/logs/env_setupvars_before.txt -a /tmp/logs/env_setupvars_after.txt '
-             f'-c /tmp/environment_vars/{image_os}_env.json '
-             f'-i {image} -os {image_os} -dist {distribution} -l /tmp/logs"',
+             f'-i {image} -l /tmp/logs"',
              ],
             self.test_setupvars_changes_linux.__name__, **kwargs,
         )
