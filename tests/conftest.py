@@ -93,12 +93,12 @@ def pytest_configure(config):
 def pytest_runtest_makereport(item, call):
     """Mark test as xfailed if caplog contains the specified pattern"""
     outcome = yield
-    xfail_cond_marker = item.get_closest_marker('xfail_log')
-    if call.when == 'call' and xfail_cond_marker:
-        report = outcome.get_result()
-        if report.outcome == 'failed' and xfail_cond_marker.kwargs['pattern'] in report.caplog:
-            report.outcome = 'skipped'
-            report.wasxfail = f"reason: {xfail_cond_marker.kwargs['reason']}"
+    if call.when == 'call':
+        for xfail_cond_marker in item.iter_markers('xfail_log'):
+            report = outcome.get_result()
+            if report.outcome == 'failed' and xfail_cond_marker.kwargs['pattern'] in report.caplog:
+                report.outcome = 'skipped'
+                report.wasxfail = f"reason: {xfail_cond_marker.kwargs['reason']}"
 
 
 def pytest_sessionfinish(session, exitstatus):
