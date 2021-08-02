@@ -54,6 +54,8 @@ class TestDemosLinuxDataDev:
 
     @pytest.mark.vpu
     @pytest.mark.parametrize('omz_python_demo_path', ['action_recognition'], indirect=True)
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
+                           reason='Sporadic error on MYRIAD device')
     def test_action_recognition_python_vpu(self, tester, image, omz_python_demo_path, product_version):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -126,6 +128,8 @@ class TestDemosLinux:
         )
 
     @pytest.mark.vpu
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
+                           reason='Sporadic error on MYRIAD device')
     def test_security_vpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -168,6 +172,8 @@ class TestDemosLinux:
         )
 
     @pytest.mark.vpu
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
+                           reason='Sporadic error on MYRIAD device')
     def test_squeezenet_vpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -233,6 +239,8 @@ class TestDemosLinux:
         )
 
     @pytest.mark.vpu
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
+                           reason='Sporadic error on MYRIAD device')
     def test_crossroad_cpp_vpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -314,6 +322,8 @@ class TestDemosLinux:
         )
 
     @pytest.mark.vpu
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
+                           reason='Sporadic error on MYRIAD device')
     def test_text_cpp_vpu(self, tester, image, product_version, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -391,6 +401,8 @@ class TestDemosLinux:
     @pytest.mark.vpu
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
+                           reason='Sporadic error on MYRIAD device')
     def test_detection_ssd_python_vpu(self, tester, image, omz_python_demo_path):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -499,6 +511,7 @@ class TestDemosLinux:
 
     @pytest.mark.vpu
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     def test_segmentation_python_vpu(self, tester, image, omz_python_demo_path):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -576,6 +589,8 @@ class TestDemosLinux:
     @pytest.mark.vpu
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
+                           reason='Sporadic error on MYRIAD device')
     def test_object_detection_centernet_python_vpu(self, tester, image, omz_python_demo_path):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108

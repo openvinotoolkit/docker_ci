@@ -38,7 +38,7 @@ class TestDLStreamerLinux:
         )
 
     @pytest.mark.vpu
-    @pytest.mark.xfail(reason='Failed to construct OpenVINOImageInference. Can not init Myriad device: NC_ERROR.')
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     def test_draw_face_attributes_cpp_vpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108

@@ -106,6 +106,7 @@ class TestSamplesLinuxRuntime:
     @pytest.mark.usefixtures('_python_vpu_plugin_required')
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     def test_hello_classification_cpp_vpu(self, tester, image, dev_root, install_openvino_dependencies):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
@@ -329,6 +330,7 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.vpu
     @pytest.mark.usefixtures('_python_vpu_plugin_required')
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     def test_hello_reshape_cpp_vpu(self, tester, image, dev_root, install_openvino_dependencies):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
@@ -493,6 +495,7 @@ class TestSamplesLinuxRuntime:
 
     @pytest.mark.vpu
     @pytest.mark.usefixtures('_python_vpu_plugin_required')
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     def test_object_detection_cpp_vpu(self, tester, image, dev_root, install_openvino_dependencies):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
@@ -671,6 +674,7 @@ class TestSamplesLinuxRuntime:
     @pytest.mark.usefixtures('_python_vpu_plugin_required')
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     def test_classification_async_cpp_vpu(self, tester, image, dev_root, install_openvino_dependencies):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],

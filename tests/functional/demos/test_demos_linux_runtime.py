@@ -73,6 +73,7 @@ class TestDemosLinuxDataRuntime:
     @pytest.mark.vpu
     @pytest.mark.usefixtures('_python_ngraph_required', '_python_vpu_plugin_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     def test_detection_ssd_python_vpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
                                       omz_python_demos_requirements_file):
         kwargs = {
@@ -212,6 +213,7 @@ class TestDemosLinuxRuntime:
     @pytest.mark.vpu
     @pytest.mark.usefixtures('_python_vpu_plugin_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
+    @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     def test_segmentation_python_vpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
                                      omz_python_demos_requirements_file):
         kwargs = {
