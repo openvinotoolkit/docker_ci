@@ -20,32 +20,29 @@ kwargs = {
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
 class TestPythonBindingsLinux:
     @pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-cv')], indirect=True)
-    def test_opencv_bindings(self, tester, image):
+    def test_opencv_bindings(self, tester, image, bash):
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/python_bindings/opencv_bindings.py"',
+            [bash('python3 /opt/intel/openvino/python_bindings/opencv_bindings.py'),
              ],
             self.test_opencv_bindings.__name__, **kwargs,
         )
 
     @pytest.mark.parametrize('_is_not_distribution', [('base')], indirect=True)
-    def test_openvino_bindings(self, tester, image):
+    def test_openvino_bindings(self, tester, image, bash):
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/python_bindings/openvino_bindings.py"',
+            [bash('python3 /opt/intel/openvino/python_bindings/openvino_bindings.py'),
              ],
             self.test_openvino_bindings.__name__, **kwargs,
         )
 
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('_is_not_distribution', [('base')], indirect=True)
-    def test_ngraph_bindings(self, tester, image):
+    def test_ngraph_bindings(self, tester, image, bash):
         tester.test_docker_image(
             image,
-            ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
-             'python3 /opt/intel/openvino/python_bindings/ngraph_bindings.py"',
+            [bash('python3 /opt/intel/openvino/python_bindings/ngraph_bindings.py'),
              ],
             self.test_ngraph_bindings.__name__, **kwargs,
         )
