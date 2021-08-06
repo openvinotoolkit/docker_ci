@@ -203,6 +203,13 @@ def install_openvino_dependencies(request):
     return ''
 
 
+@pytest.fixture(scope='session')
+def bash(request):
+    def _bash(command):
+        return f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && {command}"'
+    return _bash
+
+
 @pytest.fixture()
 def omz_python_demo_path(request):
     product_version = request.config.getoption('--product_version')
