@@ -8,13 +8,13 @@ import pytest
 import requests
 
 from utils.docker_api import DockerAPI
-from utils.exceptions import FailedStep
+from utils.exceptions import FailedStepError
 
 
 @pytest.mark.parametrize(('test_exception', 'res_exception'), [
     pytest.param(
         requests.exceptions.ConnectionError,
-        FailedStep,
+        FailedStepError,
         id='ConnectionError',
     ),
 ])

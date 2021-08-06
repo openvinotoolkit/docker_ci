@@ -139,7 +139,7 @@ def check_printable_utf8_chars(string: str) -> str:
         )*$
     """
     if not re.search(regex, string, re.VERBOSE | re.DOTALL):
-        raise exceptions.InputNotValid(string)
+        raise exceptions.InputNotValidError(string)
     return string
 
 
@@ -153,6 +153,6 @@ def check_internal_local_path(path: str) -> str:
     abs_path = requests.utils.unquote(requests.utils.unquote(abs_path))  # type: ignore
 
     if '..' in abs_path or root not in abs_path:
-        raise exceptions.InputNotValid(
+        raise exceptions.InputNotValidError(
             f'Locate file inside <root_project> folder: {path}. Access to the files outside is prohibited.')
     return path

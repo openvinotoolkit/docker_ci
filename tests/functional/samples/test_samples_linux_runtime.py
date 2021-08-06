@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import pytest
 
-from utils.exceptions import FailedTest
+from utils.exceptions import FailedTestError
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution', '_is_package_url_specified')
@@ -225,7 +225,7 @@ class TestSamplesLinuxRuntime:
                 },
             },
         }
-        with pytest.raises(FailedTest):
+        with pytest.raises(FailedTestError):
             tester.test_docker_image(
                 image,
                 [install_openvino_dependencies,
