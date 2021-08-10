@@ -71,12 +71,12 @@ class TestDownloadFile:
         ),
         pytest.param(
             '\xED\xBF\xBF',
-            exceptions.InputNotValid,
+            exceptions.InputNotValidError,
             id='url string is not utf-8',
         ),
         pytest.param(
             'https:\00\0n',
-            exceptions.InputNotValid,
+            exceptions.InputNotValidError,
             id='url string with null char',
         ),
     ])
@@ -102,12 +102,12 @@ class TestDownloadFile:
     @pytest.mark.parametrize(('proxy', 'exception'), [
         pytest.param(
             {'http': '\00\0n'},
-            exceptions.InputNotValid,
+            exceptions.InputNotValidError,
             id='proxy string with null char',
         ),
         pytest.param(
             {'https': '\xED\xBF\xBF'},
-            exceptions.InputNotValid,
+            exceptions.InputNotValidError,
             id='proxy string is not utf-8',
         ),
     ])
@@ -207,7 +207,7 @@ class TestCheckPrintableUTF8Chars:
         ),
     ])
     def test_invalid_input(self, string):
-        with pytest.raises(exceptions.InputNotValid):
+        with pytest.raises(exceptions.InputNotValidError):
             utilities.check_printable_utf8_chars(string)
 
 
@@ -257,7 +257,7 @@ class TestCheckInternalLocalPath:
         ),
     ])
     def test_invalid_relative_path(self, path):
-        with pytest.raises(exceptions.InputNotValid):
+        with pytest.raises(exceptions.InputNotValidError):
             utilities.check_internal_local_path(path)
 
     @pytest.mark.parametrize(('root', 'path'), [
@@ -326,5 +326,5 @@ class TestCheckInternalLocalPath:
         temp_mock = mock.MagicMock(**{'absolute.return_value': path})
         temp_mock.parent = root
         mock_path.return_value = temp_mock
-        with pytest.raises(exceptions.InputNotValid):
+        with pytest.raises(exceptions.InputNotValidError):
             utilities.check_internal_local_path(path)

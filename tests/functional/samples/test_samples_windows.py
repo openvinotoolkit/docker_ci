@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import pytest
 
-from utils.exceptions import FailedTest
+from utils.exceptions import FailedTestError
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
@@ -43,7 +43,7 @@ class TestSamplesWindows:
     @pytest.mark.parametrize('_min_product_version', ['2021.2'], indirect=True)
     def test_hello_classification_cpp_fail(self, tester, image, caplog):
         kwargs = {'user': 'ContainerAdministrator'}
-        with pytest.raises(FailedTest):
+        with pytest.raises(FailedTestError):
             tester.test_docker_image(
                 image,
                 ['cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '

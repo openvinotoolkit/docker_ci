@@ -26,7 +26,7 @@ from utils import logger
 from utils.arg_parser import parse_args
 from utils.builder import DockerImageBuilder
 from utils.docker_api import DockerAPI
-from utils.exceptions import FailedBuild, FailedDeploy, FailedStep, FailedTest
+from utils.exceptions import FailedBuildError, FailedDeployError, FailedStepError, FailedTestError
 from utils.loader import INTEL_OCL_RELEASE
 from utils.render import DockerFileRender
 from utils.utilities import (DEFAULT_DATA_CHUNK_SIZE, MAX_DEPLOY_RETRIES,
@@ -179,7 +179,7 @@ class Launcher:
         log.info(f'Build time: {format_timedelta(timeit.default_timer() - curr_time)}')
 
         if not self.image:
-            raise FailedBuild(f'Error building Docker image {self.args.tags}')
+            raise FailedBuildError(f'Error building Docker image {self.args.tags}')
         log.info(f'Save image data in {self.args.image_json_path} file')
         try:
             if not self.args.image_json_path.parent.exists():
@@ -290,7 +290,7 @@ class Launcher:
         if result == pytest.ExitCode.OK:
             log.info('Tests: PASSED')
         else:
-            raise FailedTest('Tests: FAILED')
+            raise FailedTestError('Tests: FAILED')
 
     def tag(self):
         """Tag built Docker image"""
@@ -302,12 +302,12 @@ class Launcher:
                     is_passed = self.docker_api.client.images.get(self.image_name).tag(
                         self.args.registry + '/' + tag)
                     if not is_passed:
-                        raise FailedDeploy(f"Can't tag {self.image_name} image to {self.args.registry}/{tag}")
+                        raise FailedDeployError(f"Can't tag {self.image_name} image to {self.args.registry}/{tag}")
                     log.info(f'Image {self.image_name} successfully tagged as {self.args.registry}/{tag}')
         except ImageNotFound:
-            raise FailedDeploy(f'Image not found: {self.image_name}')
+            raise FailedDeployError(f'Image not found: {self.image_name}')
         except APIError as err:
-            raise FailedDeploy(f'Tagging failed: {err}')
+            raise FailedDeployError(f'Tagging failed: {err}')
 
     def deploy(self):
         """Push built Docker image to repo specified in CLI"""
@@ -335,7 +335,7 @@ class Launcher:
                     for line in log_generator:
                         for key, value in line.items():
                             if 'error' in key or 'errorDetail' in key:
-                                raise FailedDeploy(f'{value}')
+                                raise FailedDeployError(f'{value}')
                             log.info(f'{value}')
                     break
                 except (APIError, ReadTimeoutError) as err:
@@ -345,7 +345,7 @@ class Launcher:
                     time.sleep(SLEEP_BETWEEN_RETRIES)
                     continue
             else:
-                raise FailedDeploy(f'Push had failed after {MAX_DEPLOY_RETRIES} attempts')
+                raise FailedDeployError(f'Push had failed after {MAX_DEPLOY_RETRIES} attempts')
             logger.switch_to_summary()
             log.info(f'Push time: {format_timedelta(timeit.default_timer() - curr_time)}')
             log.info('Image successfully published')
@@ -424,19 +424,19 @@ if __name__ == '__main__':
                 exit_code = launcher.save()
             launcher.deploy()
 
-    except FailedStep as error:
+    except FailedStepError as error:
         logger.switch_to_summary()
         log.exception(error)  # noqa G200
         exit_code = ExitCode.failed
-    except FailedBuild as error:
+    except FailedBuildError as error:
         logger.switch_to_summary()
         log.exception(error)  # noqa G200
         exit_code = ExitCode.failed_build
-    except FailedTest as error:
+    except FailedTestError as error:
         logger.switch_to_summary()
         log.exception(error)  # noqa G200
         exit_code = ExitCode.failed_test
-    except FailedDeploy as error:
+    except FailedDeployError as error:
         logger.switch_to_summary()
         log.exception(error)  # noqa G200
         exit_code = ExitCode.failed_deploy

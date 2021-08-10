@@ -10,7 +10,7 @@ import sys
 import docker
 import requests
 
-from utils.exceptions import FailedStep
+from utils.exceptions import FailedStepError
 
 if sys.platform == 'win32':
     import pywintypes
@@ -28,10 +28,10 @@ class DockerAPI:
         try:
             self.client.ping()
         except requests.exceptions.ConnectionError:
-            raise FailedStep('Docker Engine is not running. Please start the docker daemon.')
+            raise FailedStepError('Docker Engine is not running. Please start the docker daemon.')
         except pywintypes.error as ex:
             if ex.winerror == 2 and ex.funcname in ('WaitNamedPipe', 'CreateFile'):
-                raise FailedStep('Docker Engine is not running. Please start the docker daemon.')
+                raise FailedStepError('Docker Engine is not running. Please start the docker daemon.')
             raise ex
 
     def version(self):

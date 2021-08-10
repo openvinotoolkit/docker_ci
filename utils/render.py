@@ -10,7 +10,7 @@ import typing
 
 import jinja2
 
-from utils.exceptions import LayerNotFound
+from utils.exceptions import LayerNotFoundError
 from utils.utilities import get_folder_structure_recursively
 
 log = logging.getLogger('docker_ci')
@@ -36,9 +36,9 @@ class DockerFileRender:
         try:
             return self.env.get_template(f'{name}.dockerfile.j2', globals=kwargs)
         except jinja2.exceptions.TemplateNotFound:
-            raise LayerNotFound(f'Layer {name}.dockerfile.j2 was not found. '
-                                f'Please add your layer.dockerfile.j2 to '
-                                f'<project_root>/templates/<image_os>/layers folder')
+            raise LayerNotFoundError(f'Layer {name}.dockerfile.j2 was not found. '
+                                     f'Please add your layer.dockerfile.j2 to '
+                                     f'<project_root>/templates/<image_os>/layers folder')
 
     def generate_dockerfile(self, args: argparse.Namespace, save_to_dir: pathlib.Path,
                             kwargs: typing.Dict[str, str]) -> pathlib.Path:

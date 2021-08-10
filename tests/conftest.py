@@ -11,7 +11,7 @@ import sys
 import pytest
 from xdist.scheduler import LoadScopeScheduling
 from utils.docker_api import DockerAPI
-from utils.exceptions import FailedTest
+from utils.exceptions import FailedTestError
 from utils.tester import DockerImageTester
 from utils.utilities import download_file, unzip_file
 
@@ -86,19 +86,19 @@ def pytest_configure(config):
                 err_msg = f"""Provided path of the dependent package should be an http/https/ftp access scheme
                                 or a local file in the project location as dependent package: {package_url}"""
                 log.error(err_msg)
-                raise FailedTest(err_msg)
+                raise FailedTestError(err_msg)
 
 
 @pytest.mark.hookwrapper()
 def pytest_runtest_makereport(item, call):
     """Mark test as xfailed if caplog contains the specified pattern"""
     outcome = yield
-    xfail_cond_marker = item.get_closest_marker('xfail_log')
-    if call.when == 'call' and xfail_cond_marker:
-        report = outcome.get_result()
-        if report.outcome == 'failed' and xfail_cond_marker.kwargs['pattern'] in report.caplog:
-            report.outcome = 'skipped'
-            report.wasxfail = f"reason: {xfail_cond_marker.kwargs['reason']}"
+    if call.when == 'call':
+        for xfail_cond_marker in item.iter_markers('xfail_log'):
+            report = outcome.get_result()
+            if report.outcome == 'failed' and xfail_cond_marker.kwargs['pattern'] in report.caplog:
+                report.outcome = 'skipped'
+                report.wasxfail = f"reason: {xfail_cond_marker.kwargs['reason']}"
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -201,6 +201,13 @@ def install_openvino_dependencies(request):
         elif any(x in image_os for x in ('centos', 'rhel')):
             return '/bin/bash -ac "yum update -y && yum install -y make"'
     return ''
+
+
+@pytest.fixture(scope='session')
+def bash(request):
+    def _bash(command):
+        return f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && {command}"'
+    return _bash
 
 
 @pytest.fixture()
