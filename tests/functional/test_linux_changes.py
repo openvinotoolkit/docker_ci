@@ -58,13 +58,13 @@ class TestLinuxChanges:
             'volumes': {
                 root / 'tests' / 'resources' / 'linux_deps':
                     {'bind': '/tmp/linux_deps', 'mode': 'rw'},  # nosec # noqa: S108
-                log_folder: {'bind': '/tmp/logs/linux_deps', 'mode': 'rw'},  # nosec # noqa: S108
+                log_folder: {'bind': '/tmp/logs', 'mode': 'rw'},  # nosec # noqa: S108
             },
         }
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -p 2>&1 | '
-             f"sed 's/ /\\n/g' | tee /tmp/linux_deps/{linux_deps_file_name}\"",
+             f"sed 's/ /\\n/g' | tee /tmp/logs/{linux_deps_file_name}\"",
              ],
             self.test_save_linux_deps.__name__, **kwargs,
         )
