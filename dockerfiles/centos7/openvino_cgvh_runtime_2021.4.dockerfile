@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM centos:7 AS base
 
+
 # hadolint ignore=DL3002
 USER root
 WORKDIR /
