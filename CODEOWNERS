@@ -1,10 +1,4 @@
 # See help here: https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners
 
-*  @openvinotoolkit/docker_ci-admins
-
-# DL Workbench
-/dockerfiles/dl-workbench/  @openvinotoolkit/workbench-maintainers
-
-# Documentation
-*.md  @openvinotoolkit/openvino-docs-maintainers
-*.ipynb  @openvinotoolkit/openvino-docs-maintainers
+**/*requirements*.* @openvinotoolkit/docker_ci-admins
+**/setup.py @openvinotoolkit/docker_ci-admins
