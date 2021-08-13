@@ -2,6 +2,9 @@
 
 *  @openvinotoolkit/docker_ci-admins
 
+**/*requirements*.* @openvinotoolkit/docker_ci-admins
+**/setup.py @openvinotoolkit/docker_ci-admins
+
 # DL Workbench
 /dockerfiles/dl-workbench/  @openvinotoolkit/workbench-maintainers
 
