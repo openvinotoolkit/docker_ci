@@ -52,3 +52,4 @@ libblas-dev
 liblapack-dev
 gfortran
 libtinfo5
+sudo

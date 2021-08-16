@@ -76,3 +76,4 @@ zlib
 python36-gi
 python36-gobject
 python36-gobject-devel
+sudo
