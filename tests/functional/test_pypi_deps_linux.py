@@ -8,7 +8,7 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_not_distribution', '_is_not_image_os')
-@pytest.mark.parametrize('_is_not_image_os', [('winserver2019')], indirect=True)
+@pytest.mark.parametrize('_is_not_image_os', [('winserver2019', 'windows20h2')], indirect=True)
 @pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-omz',
                                                    'custom-no-cv', 'custom-full')], indirect=True)
 class TestPyPiDependenciesLinux:

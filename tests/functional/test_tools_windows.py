@@ -5,7 +5,7 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
-@pytest.mark.parametrize('_is_image_os', [('winserver2019')], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('winserver2019', 'windows20h2')], indirect=True)
 class TestToolsWindows:
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_accuracy_checker(self, tester, image):

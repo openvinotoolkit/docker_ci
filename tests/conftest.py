@@ -225,7 +225,7 @@ def omz_python_demo_path(request):
     if demo_name == 'segmentation' and product_version >= '2021.3':
         parameters = ' --no_show'
 
-    if request.config.getoption('--image_os') == 'winserver2019':
+    if 'win' in request.config.getoption('--image_os'):
         base_path = 'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos'
         if product_version <= '2021.1' and demo_name == 'object_detection':
             python_demos = f'{base_path}\\\\python_demos'
@@ -339,7 +339,7 @@ def _max_product_version(request):
 @pytest.fixture(scope='session')
 def _python_ngraph_required(request):
     image = request.config.getoption('--image')
-    if request.config.getoption('--image_os') == 'winserver2019':
+    if 'win' in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'cmd', '/c', 'dir /b/s python | findstr pyngraph']
     else:
         command = ['docker', 'run', '--rm', image, 'bash', '-c', 'find python | grep pyngraph']
@@ -351,7 +351,7 @@ def _python_ngraph_required(request):
 @pytest.fixture(scope='session')
 def _python_vpu_plugin_required(request):
     image = request.config.getoption('--image')
-    if request.config.getoption('--image_os') != 'winserver2019':
+    if 'win' in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'bash', '-c',
                    'find deployment_tools/inference_engine/lib/intel64 | grep libmyriadPlugin.so']
         process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)  # nosec
