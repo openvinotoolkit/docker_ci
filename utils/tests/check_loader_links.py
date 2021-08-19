@@ -48,7 +48,7 @@ def check_release_links(product_version: str) -> typing.Set[bool]:
                                                   f'{prefix} wrong distribution in url'))
 
             # check w_ and l_ prefixes
-            if image_os == 'winserver2019':
+            if 'win' in image_os:
                 results.add(check_and_print_error('/w_' in url, f'{prefix} wrong os prefix'))
             else:
                 if dist != 'proprietary':

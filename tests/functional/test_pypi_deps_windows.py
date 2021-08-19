@@ -8,7 +8,7 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_image_os')
-@pytest.mark.parametrize('_is_image_os', [('winserver2019')], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('winserver2019', 'windows20h2')], indirect=True)
 class TestPyPiDependenciesWindows:
     def test_gpl_pypi_deps(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent

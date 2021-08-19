@@ -310,6 +310,17 @@ INTEL_OPENVINO_VERSION = {
                 'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/'
                             'w_openvino_toolkit_data_dev_p_2021.4.582.zip',
             },
+        'windows20h2':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/'
+                       'w_openvino_toolkit_dev_p_2021.4.582.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/'
+                           'w_openvino_toolkit_runtime_p_2021.4.582.zip',
+                'proprietary': 'https://registrationcenter-download.intel.com/akdlm/irc_nas/17987/'
+                               'w_openvino_toolkit_p_2021.4.582.exe',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/'
+                            'w_openvino_toolkit_data_dev_p_2021.4.582.zip',
+            },
         'ubuntu18':
             {
                 'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/'
