@@ -6,6 +6,21 @@ import pytest
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 @pytest.mark.parametrize('_is_image_os', [('winserver2019')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('data_dev', 'proprietary')], indirect=True)
+class TestSpeechDemoWindows:
+    def test_speech_recognition_cpu(self, tester, image):
+        kwargs = {'user': 'ContainerAdministrator'}
+        tester.test_docker_image(
+            image,
+            ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\ && '
+             'demo_speech_recognition.bat --no-show'],
+            self.test_speech_recognition_cpu.__name__, **kwargs,
+        )
+
+
+@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
+@pytest.mark.parametrize('_is_image_os', [('winserver2019')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
 class TestDemosWindows:
     def test_security_cpu(self, tester, image):
