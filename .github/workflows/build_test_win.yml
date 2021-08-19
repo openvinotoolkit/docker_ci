@@ -12,7 +12,7 @@ on:
         required: true
         default: 'dev'
       os:
-        description: 'OS for Docker image: winserver2019, windows20h2'
+        description: 'OS for Docker image: winserver2019'
         required: true
         default: 'winserver2019'
       args:
