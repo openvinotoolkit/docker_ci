@@ -351,7 +351,7 @@ def _python_ngraph_required(request):
 @pytest.fixture(scope='session')
 def _python_vpu_plugin_required(request):
     image = request.config.getoption('--image')
-    if 'win' in request.config.getoption('--image_os'):
+    if 'win' not in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'bash', '-c',
                    'find deployment_tools/inference_engine/lib/intel64 | grep libmyriadPlugin.so']
         process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)  # nosec
