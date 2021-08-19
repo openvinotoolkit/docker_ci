@@ -1,0 +1,6 @@
+# get product from local path
+ARG package_url
+ARG TEMP_DIR=/temp
+
+WORKDIR ${TEMP_DIR}
+COPY ${package_url} ${TEMP_DIR}

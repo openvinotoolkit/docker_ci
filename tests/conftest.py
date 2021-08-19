@@ -216,7 +216,7 @@ def omz_python_demo_path(request):
         elif is_centernet:
             parameters = ' -at centernet'
 
-    if request.config.getoption('--image_os') == 'winserver2019':
+    if 'win' in request.config.getoption('--image_os'):
         base_path = 'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos'
         return f'{base_path}\\\\{demo_name}_demo\\\\python\\\\{demo_name}_demo.py{parameters}'
     else:
@@ -303,7 +303,7 @@ def _max_product_version(request):
 @pytest.fixture(scope='session')
 def _python_ngraph_required(request):
     image = request.config.getoption('--image')
-    if request.config.getoption('--image_os') == 'winserver2019':
+    if 'win' in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'cmd', '/c', 'dir /b/s python | findstr pyngraph']
     else:
         command = ['docker', 'run', '--rm', image, 'bash', '-c', 'find python | grep pyngraph']
@@ -315,7 +315,7 @@ def _python_ngraph_required(request):
 @pytest.fixture(scope='session')
 def _python_vpu_plugin_required(request):
     image = request.config.getoption('--image')
-    if request.config.getoption('--image_os') != 'winserver2019':
+    if 'win' not in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'bash', '-c',
                    'find deployment_tools/inference_engine/lib/intel64 | grep libmyriadPlugin.so']
         process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)  # nosec

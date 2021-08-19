@@ -193,7 +193,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         """Adding arg needed to customize the generated dockerfile"""
         parser.add_argument(
             '-os',
-            choices=['ubuntu18', 'ubuntu20', 'centos7', 'winserver2019', 'rhel8'],
+            choices=['ubuntu18', 'ubuntu20', 'centos7', 'winserver2019', 'windows20h2', 'rhel8'],
             default='ubuntu18',
             help='Operation System for docker image. By default: ubuntu18',
         )
@@ -391,10 +391,8 @@ def parse_args(name: str, description: str):  # noqa
         if not args.python:
             if args.os in ('ubuntu18', 'centos7', 'rhel8'):
                 args.python = 'python36'
-            elif 'ubuntu20' in args.os:
-                args.python = 'python38'
             else:
-                args.python = 'python37'
+                args.python = 'python38'
 
         if not args.distribution and args.package_url:
             if '_internal_' in args.package_url:

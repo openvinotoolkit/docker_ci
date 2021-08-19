@@ -17,6 +17,7 @@ You can use Docker CI framework to build an image, please follow [Get Started wi
  - `centos7` folder (CentOS* 7)
  - `rhel8` folder (RHEL* 8)
  - `winserver2019` folder (Windows* Server Core base OS LTSC 2019)
+ - `windows20h2` folder (Windows* OS 20H2)
 
 *Note*: `dl-workbench` folder contains Dockerfiles for OpenVINO™ Deep Learning Workbench.
 

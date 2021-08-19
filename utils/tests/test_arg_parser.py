@@ -116,7 +116,7 @@ default_args = {
         {
             'device': ['cpu'],
             'dockerfile_name': 'openvino_c_dev_2020.1.dockerfile',
-            'python': 'python37',
+            'python': 'python38',
             'tags': ['winserver2019_dev:2020.1.320', 'winserver2019_dev:latest'],
             'distribution': 'dev',
             'product_version': '2020.1',

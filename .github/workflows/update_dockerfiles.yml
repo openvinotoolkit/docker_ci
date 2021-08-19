@@ -27,7 +27,8 @@ jobs:
                               ['ubuntu20']='runtime data_runtime dev data_dev'
                               ['centos7']='runtime'
                               ['rhel8']='runtime'
-                              ['winserver2019']='runtime dev data_dev proprietary' )
+                              ['winserver2019']='runtime dev data_dev proprietary'
+                              ['windows20h2']='runtime dev data_dev proprietary' )
           for image_os in "${!IMAGES[@]}"
           do
             for distr in ${IMAGES[$image_os]}
