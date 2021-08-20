@@ -12,28 +12,27 @@ SHELL ["cmd", "/S", "/C"]
 USER ContainerAdministrator
 
 
-ARG HTTPS_PROXY
-
 
 
 # Setup Microsoft Visual C++ 2015-2019 Redistributable (x64) - 14.27.29016
 
 RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -Proxy %HTTPS_PROXY%  -OutFile "%TMP%\vc_redist.x64.exe" ; `
+    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -OutFile "%TMP%\vc_redist.x64.exe" ; `
     Start-Process %TMP%\\vc_redist.x64.exe -ArgumentList '/quiet /norestart' -Wait ; `
     Remove-Item "%TMP%\vc_redist.x64.exe" -Force
 
 
 # setup Python
-ARG PYTHON_VER=python3.7
+ARG PYTHON_VER=python3.8
 
 
 RUN powershell.exe -Command `
-  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe -Proxy %HTTPS_PROXY% -OutFile %TMP%\\python-3.7.exe ; `
-  Start-Process %TMP%\\python-3.7.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python37' -Wait ; `
-  Remove-Item %TMP%\\python-3.7.exe -Force
+  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.8.9/python-3.8.9-amd64.exe -OutFile %TMP%\\python-3.8.exe ; `
+  Start-Process %TMP%\\python-3.8.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python38' -Wait ; `
+  Remove-Item %TMP%\\python-3.8.exe -Force
 
-RUN python -m pip install --no-cache-dir --upgrade pip==20.3.3
+# hadolint ignore=DL3013
+RUN python -m pip install --no-cache-dir --upgrade pip
 
 # download package from external URL
 ARG package_url
