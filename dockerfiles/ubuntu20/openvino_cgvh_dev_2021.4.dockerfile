@@ -67,8 +67,8 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 # -----------------
 FROM ubuntu:20.04 AS ov_base
 
-LABEL Description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
-LABEL Vendor="Intel Corporation"
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
+LABEL vendor="Intel Corporation"
 
 USER root
 WORKDIR /
@@ -110,7 +110,7 @@ RUN apt-get update && \
 
 
 
-# hadolint ignore=DL3008
+# hadolint ignore=DL3008, SC2012
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
     ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y ${INSTALL_PACKAGES} && \
@@ -119,7 +119,7 @@ RUN apt-get update && \
       apt-get update && \
 	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > all_packages.txt && \
 	  grep -v -f base_packages.txt all_packages.txt | while read line; do \
-	  package=`echo $line`; \
+	  package=$(echo $line); \
 	  name=(${package//:/ }); \
       grep -l GPL /usr/share/doc/${name[0]}/copyright; \
       exit_status=$?; \
@@ -127,7 +127,7 @@ RUN apt-get update && \
 	    apt-get source -q --download-only $package;  \
 	  fi \
       done && \
-      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+      echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -198,7 +198,7 @@ ARG LGPL_DEPS=udev
 
 WORKDIR /thirdparty
 
-# hadolint ignore=DL3008
+# hadolint ignore=DL3008, SC2012
 RUN apt-get update && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > no_vpu_packages.txt && \
     apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
@@ -207,7 +207,7 @@ RUN apt-get update && \
       apt-get update && \
 	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > vpu_packages.txt && \
 	  grep -v -f no_vpu_packages.txt vpu_packages.txt | while read line; do \
-	  package=`echo $line`; \
+	  package=$(echo $line); \
 	  name=(${package//:/ }); \
       grep -l GPL /usr/share/doc/${name[0]}/copyright; \
       exit_status=$?; \
@@ -215,7 +215,7 @@ RUN apt-get update && \
 	    apt-get source -q --download-only $package;  \
 	  fi \
       done && \
-      echo "Download source for `ls | wc -l` third-party packages: `du -sh`"; fi && \
+      echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22

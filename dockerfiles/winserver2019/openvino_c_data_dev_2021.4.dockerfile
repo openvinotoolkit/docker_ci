@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS ov_base
 
-LABEL Description="This is the data_dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
-LABEL Vendor="Intel Corporation"
+LABEL description="This is the data_dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows Server LTSC 2019"
+LABEL vendor="Intel Corporation"
 
 # Restore the default Windows shell for correct batch processing.
 SHELL ["cmd", "/S", "/C"]
@@ -23,15 +23,16 @@ RUN powershell.exe -Command `
 
 
 # setup Python
-ARG PYTHON_VER=python3.7
+ARG PYTHON_VER=python3.8
 
 
 RUN powershell.exe -Command `
-  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe -OutFile %TMP%\\python-3.7.exe ; `
-  Start-Process %TMP%\\python-3.7.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python37' -Wait ; `
-  Remove-Item %TMP%\\python-3.7.exe -Force
+  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.8.9/python-3.8.9-amd64.exe -OutFile %TMP%\\python-3.8.exe ; `
+  Start-Process %TMP%\\python-3.8.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python38' -Wait ; `
+  Remove-Item %TMP%\\python-3.8.exe -Force
 
-RUN python -m pip install --upgrade pip==20.3.3
+# hadolint ignore=DL3013
+RUN python -m pip install --no-cache-dir --upgrade pip
 
 # download package from external URL
 ARG package_url
@@ -105,12 +106,12 @@ RUN powershell.exe -Command `
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\open_model_zoo\tools\accuracy_checker
 RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\accuracy_checker\requirements.in" && `
-    python -m pip install .
+    python -m pip install --no-cache-dir .
 
 
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_toolkit
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\requirements.txt" && `
-    python -m pip install .
+    python -m pip install --no-cache-dir .
 
 
 

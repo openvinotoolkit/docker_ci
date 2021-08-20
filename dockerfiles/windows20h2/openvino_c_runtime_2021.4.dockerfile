@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 FROM mcr.microsoft.com/windows:20H2 AS ov_base
 
-LABEL Description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows OS 20H2"
-LABEL Vendor="Intel Corporation"
+LABEL description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows OS 20H2"
+LABEL vendor="Intel Corporation"
 
 # Restore the default Windows shell for correct batch processing.
 SHELL ["cmd", "/S", "/C"]
@@ -31,7 +31,8 @@ RUN powershell.exe -Command `
   Start-Process %TMP%\\python-3.8.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python38' -Wait ; `
   Remove-Item %TMP%\\python-3.8.exe -Force
 
-RUN python -m pip install --upgrade pip
+# hadolint ignore=DL3013
+RUN python -m pip install --no-cache-dir --upgrade pip
 
 # download package from external URL
 ARG package_url
