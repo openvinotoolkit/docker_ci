@@ -46,13 +46,14 @@ class TestLicenseLinux:
         )
 
 
-@pytest.mark.usefixtures('_is_image_os')
+@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 @pytest.mark.parametrize('_is_image_os', [('winserver2019', 'windows20h2')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('runtime')], indirect=True)
 class TestLicenseWindows:
-    def test_3d_party_win(self, tester, image):
+    def test_3d_party_runtime_win(self, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
             ['cmd /S /C type C:\\\\intel\\\\openvino\\\\licensing\\\\third-party-programs-docker-runtime.txt'],
-            self.test_3d_party_win.__name__, **kwargs,
+            self.test_3d_party_runtime_win.__name__, **kwargs,
         )
