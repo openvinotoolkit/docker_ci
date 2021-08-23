@@ -7,7 +7,7 @@ import pathlib
 import pytest
 
 
-@pytest.mark.usefixtures('_is_not_image_os', '_is_distribution')
+@pytest.mark.usefixtures('_is_not_image_os', '_is_image_os', '_is_distribution')
 @pytest.mark.parametrize('_is_not_image_os', [('winserver2019', 'windows20h2')], indirect=True)
 class TestLicenseLinux:
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
