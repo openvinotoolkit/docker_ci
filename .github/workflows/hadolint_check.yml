@@ -27,6 +27,7 @@ jobs:
               --ignore DL3006 \
               --ignore DL3008 \
               - < "$dockerfile" | tee "${dockerfile}".log || has_issues=1
+            grep -in proxy "$dockerfile" | tee -a "${dockerfile}".log && has_issues=1 || true
             echo
             name=$(echo "$dockerfile" | grep -oP '(?<=dockerfiles/).*' | tr / _)
             cp "$dockerfile" "$name"
