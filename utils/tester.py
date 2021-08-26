@@ -6,7 +6,7 @@ import logging
 import pathlib
 import typing
 
-from docker.errors import APIError
+from docker.errors import APIError, ImageNotFound
 from docker.models.containers import Container
 from docker.models.images import Image
 
@@ -21,9 +21,10 @@ log = logging.getLogger('docker_ci')
 class DockerImageTester(DockerAPI):
     """Wrapper for docker.api.client implementing custom docker.image.run execution and logging"""
 
-    def __init__(self):
+    def __init__(self, registry=''):
         super().__init__()
         self.container: typing.Optional[Container] = None
+        self.registry = registry
         log.setLevel(logging.DEBUG)
 
     def test_docker_image(self,
@@ -32,8 +33,10 @@ class DockerImageTester(DockerAPI):
                           is_cached: bool = False, **kwargs: typing.Optional[typing.Dict]):
         """Running list of commands inside the container, logging the output and handling possible exceptions"""
         if isinstance(image, Image):
+            image_tag = image.tags[0]
             file_tag = image.tags[0].replace('/', '_').replace(':', '_')
         elif isinstance(image, str):
+            image_tag = image
             file_tag = image.replace('/', '_').replace(':', '_')
         else:
             raise FailedTestError(f'{image} is not a proper image, must be of "str" or "docker.models.images.Image"')
@@ -56,6 +59,13 @@ class DockerImageTester(DockerAPI):
             if self.container and not is_cached:
                 self.container.stop()
             if not self.container or not is_cached:
+                try:
+                    self.client.images.get(image_tag)
+                except ImageNotFound:
+                    log.warning(f'Image {image_tag} not found. Trying to pull it...')
+                    image_tag_full = f'{self.registry}{"/" if self.registry else ""}{image_tag}'
+                    self.client.images.pull(image_tag_full)
+                    self.client.images.get(image_tag_full).tag(image_tag)
                 self.container = self.client.containers.run(image=image, **run_kwargs)
         except APIError as err:
             raise FailedTestError(f'Docker daemon API error while starting the container: {err}')
