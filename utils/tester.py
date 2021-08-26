@@ -34,12 +34,11 @@ class DockerImageTester(DockerAPI):
         """Running list of commands inside the container, logging the output and handling possible exceptions"""
         if isinstance(image, Image):
             image_tag = image.tags[0]
-            file_tag = image_tag.replace('/', '_').replace(':', '_')
         elif isinstance(image, str):
             image_tag = image
-            file_tag = image.replace('/', '_').replace(':', '_')
         else:
             raise FailedTestError(f'{image} is not a proper image, must be of "str" or "docker.models.images.Image"')
+        file_tag = image_tag.replace('/', '_').replace(':', '_')
         log_filename = f'{test_name}.log'
         logfile = pathlib.Path(self.location) / 'logs' / file_tag / log_filename
         run_kwargs = {'auto_remove': True,
