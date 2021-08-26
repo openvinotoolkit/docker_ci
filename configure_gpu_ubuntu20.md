@@ -13,7 +13,7 @@ group_name=render group_id=134
 OpenVINO™ Docker images do not contain a render group for openvino non-root user because the render group does not have a strict group ID, unlike the video group.
 Choose one of the options below to set up access to a GPU device from a container.
 
-## 1. Configure a Host Non-Root User to Use a GPU Device from a OpenVINO Container on Ubuntu 20 Host [RECOMMENDED]
+## 1. Configure a Host Non-Root User to Use a GPU Device from an OpenVINO Container on Ubuntu 20 Host [RECOMMENDED]
 
 To run an OpenVINO container with default non-root user (openvino) with access to a GPU device, you need to have non-root user with the same id like `openvino` user inside container:
 By deafult `openvino` user has #1000 user ID.
