@@ -290,7 +290,7 @@ def parse_args(name: str, description: str):  # noqa
         '--registry',
         metavar='URL:PORT',
         help='Registry host and optionally a port in the "host:port" format. '
-             'Will be used to pull the image if it is not exists',
+             'Will be used to pull the image if it does not exist',
     )
 
     deploy_subparser = subparsers.add_parser('deploy', help='Deploy a docker image')
