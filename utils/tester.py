@@ -34,7 +34,7 @@ class DockerImageTester(DockerAPI):
         """Running list of commands inside the container, logging the output and handling possible exceptions"""
         if isinstance(image, Image):
             image_tag = image.tags[0]
-            file_tag = image.tags[0].replace('/', '_').replace(':', '_')
+            file_tag = image_tag.replace('/', '_').replace(':', '_')
         elif isinstance(image, str):
             image_tag = image
             file_tag = image.replace('/', '_').replace(':', '_')
