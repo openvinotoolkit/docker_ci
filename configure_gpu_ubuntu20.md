@@ -23,7 +23,7 @@ Create a non-root user, for example, host_openvino, on the host with the same us
 $ useradd -u 1000 -G users,video,render,docker host_openvino
 ```
 
-Now you can use OpenVINO container with GPU access under the non-root user.
+Now you can use the OpenVINO container with GPU access under the non-root user.
 
 ```bash
 $ docker run -it --rm --device /dev/dri  <image_name>
