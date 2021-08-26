@@ -6,6 +6,14 @@
 Supports released/supported versions of product/its dependencies
 """
 INTEL_OCL_RELEASE = {
+    '21.29.20389': {
+        'GMMLIB': '21.2.1',
+        'IGC_CORE': '1.0.7862',
+        'IGC_OPENCL': '1.0.7862',
+        'INTEL_OPENCL': '21.29.20389',
+        'INTEL_OCLOC': '21.29.20389',
+        'INTEL_ZERO': '1.1.20389',
+    },
     '20.35.17767': {
         'GMMLIB': '20.2.4',
         'IGC_CORE': '1.0.4756',

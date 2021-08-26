@@ -107,8 +107,8 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
 
         parser.add_argument(
             '--ocl_release',
-            choices=['20.35.17767', '20.03.15346', '19.41.14441', '19.04.12237'],
-            default='19.41.14441',
+            choices=['21.29.20389', '20.35.17767', '20.03.15346', '19.41.14441', '19.04.12237'],
+            default='21.29.20389',
             help='Release of Intel(R) Graphics Compute Runtime for OpenCL(TM) needed for GPU inference. '
                  'You may find needed OpenCL library on Github https://github.com/intel/compute-runtime/releases',
         )
@@ -470,18 +470,18 @@ def parse_args(name: str, description: str):  # noqa
 
     if not hasattr(args, 'tags') or not args.tags:
         layers = '_'.join(args.layers)
-        tgl_postfix = ''
+        platform_postfix = ''
 
         if args.ocl_release == '20.35.17767':
-            tgl_postfix = '_tgl'
+            platform_postfix = '_tgl'
 
         if layers:
             args.tags = [f'{args.os}_{layers}:'
-                         f'{args.build_id if args.build_id else args.product_version}{tgl_postfix}',
+                         f'{args.build_id if args.build_id else args.product_version}{platform_postfix}',
                          f'{args.os}_{layers}:latest']
             if hasattr(args, 'tag_postfix') and args.tag_postfix:
                 args.tags.append(f'{args.os}_{layers}:{args.build_id if args.build_id else args.product_version}'
-                                 f'{tgl_postfix}{args.tag_postfix}')
+                                 f'{platform_postfix}{args.tag_postfix}')
         elif args.distribution == 'base':
             args.tags = [f'{args.os}_{args.distribution}_cpu:'
                          f'{args.product_version}',
@@ -491,12 +491,12 @@ def parse_args(name: str, description: str):  # noqa
                                  f'{args.product_version}{args.tag_postfix}')
         else:
             args.tags = [f'{args.os}_{args.distribution}:'
-                         f'{args.build_id if args.build_id else args.product_version}{tgl_postfix}',
+                         f'{args.build_id if args.build_id else args.product_version}{platform_postfix}',
                          f'{args.os}_{args.distribution}:latest']
             if hasattr(args, 'tag_postfix') and args.tag_postfix:
                 args.tags.append(f'{args.os}_{args.distribution}:'
                                  f'{args.build_id if args.build_id else args.product_version}'
-                                 f'{tgl_postfix}{args.tag_postfix}')
+                                 f'{platform_postfix}{args.tag_postfix}')
 
     if args.mode not in ('test', 'deploy'):
         args.year = args.build_id[:4] if args.build_id else args.product_version[:4]
