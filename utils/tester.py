@@ -61,8 +61,8 @@ class DockerImageTester(DockerAPI):
                 try:
                     self.client.images.get(image_tag)
                 except ImageNotFound:
-                    log.warning(f'Image {image_tag} not found. Trying to pull it...')
                     image_tag_full = f'{self.registry}{"/" if self.registry else ""}{image_tag}'
+                    log.warning(f'Image {image_tag_full} not found. Trying to pull it...')
                     self.client.images.pull(image_tag_full)
                     self.client.images.get(image_tag_full).tag(image_tag)
                 self.container = self.client.containers.run(image=image, **run_kwargs)
