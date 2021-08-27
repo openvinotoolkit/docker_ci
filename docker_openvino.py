@@ -276,7 +276,7 @@ class Launcher:
             '--product_version', self.args.product_version,
             '--mount_root', str(self.mount_root),
             '--package_url', self.args.package_url,
-            '--registry', self.args.registry if self.args.registry else '',
+            '--registry', getattr(self.args, 'registry', ''),
             f"--junitxml={self.logdir / 'tests.xml'}",
             f'--html={test_report}',
             '--self-contained-html',
