@@ -16,6 +16,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 {% else %}
 WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
-RUN ./install_NEO_OCL_driver.sh --no_numa -y -d ${INTEL_OPENCL} && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends software-properties-common && \
+    ./install_NEO_OCL_driver.sh --no_numa -y -d ${INTEL_OPENCL} && \
+    apt-get autoremove -y software-properties-common && \
     rm -rf /var/lib/apt/lists/*
 {% endif %}
