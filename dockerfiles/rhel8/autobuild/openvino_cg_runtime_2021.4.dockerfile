@@ -20,13 +20,12 @@ ARG package_url=https://storage.openvinotoolkit.org/repositories/openvino/packag
 ARG TEMP_DIR=/tmp/openvino_installer
 
 WORKDIR ${TEMP_DIR}
-# hadolint ignore=DL3020
-ADD ${package_url} ${TEMP_DIR}
 
 # install product by copying archive content
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
+RUN curl -OL ${package_url} && \
+    tar -xzf "${TEMP_DIR}"/*.tgz && \
     OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
     OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
     OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
