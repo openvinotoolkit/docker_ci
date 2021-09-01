@@ -26,7 +26,7 @@ class TestSDLImage:
                     '-e', f'SNYK_TOKEN={SNYK_TOKEN}', '-e', 'MONITOR=true',
                     '-v', f'{str(pathlib.Path(__file__).parent.parent.parent)}:/project',
                     '-v', '/var/run/docker.sock:/var/run/docker.sock',
-                    'snyk/snyk-cli:1.374.0-docker', 'test', '--docker', image, *dockerfile_args]
+                    'snyk/snyk-cli:1.658.0-docker', 'test', '--docker', image, *dockerfile_args]
         process = subprocess.run(cmd_line, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)  # nosec
         process_out = process.stdout.decode().replace(SNYK_TOKEN, '*' * 6)
         cmd_line[6] = 'SNYK_TOKEN=******'
@@ -66,7 +66,7 @@ class TestSDLImage:
     @pytest.mark.skipif(not sys.platform.startswith('linux'), reason="Windows doesn't support linux images")
     @pytest.fixture(scope='module')
     def _snyk_pull(self, docker_api):
-        image_name = 'snyk/snyk-cli:1.413.4-docker'
+        image_name = 'snyk/snyk-cli:1.658.0-docker'
         docker_api.client.images.pull(image_name)
         yield
         docker_api.client.images.remove(image_name, force=True)
