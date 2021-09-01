@@ -19,6 +19,7 @@ log = logging.getLogger('docker_ci')
 
 
 def pytest_addoption(parser):
+    parser.addoption('--registry', action='store', help='Setup a registry to pull the image from (optional)')
     parser.addoption('--dockerfile', action='store', help='Setup a dockerfile for check')
     parser.addoption('--image', action='store', help='Setup an image name for check')
     parser.addoption('--distribution', action='store', help='Setup an product distribution for check')
@@ -127,8 +128,8 @@ def pytest_xdist_make_scheduler(log, config):
 
 
 @pytest.fixture(scope='session')
-def tester():
-    return DockerImageTester()
+def tester(request):
+    return DockerImageTester(request.config.getoption('--registry', default=''))
 
 
 @pytest.fixture(scope='session')

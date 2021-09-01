@@ -285,6 +285,14 @@ def parse_args(name: str, description: str):  # noqa
     parser.add_dist_args(test_subparser)
     parser.add_image_args(test_subparser)
     parser.add_test_args(test_subparser)
+    test_subparser.add_argument(
+        '-r',
+        '--registry',
+        metavar='URL:PORT',
+        default='',
+        help='Registry host and optionally a port in the "host:port" format. '
+             'Will be used to pull the image if it does not exist',
+    )
 
     deploy_subparser = subparsers.add_parser('deploy', help='Deploy a docker image')
     parser.add_image_args(deploy_subparser)
