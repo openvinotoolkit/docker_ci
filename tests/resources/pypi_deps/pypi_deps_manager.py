@@ -38,7 +38,7 @@ def get_all_requirements(src: str) -> typing.List[str]:
     return requirements
 
 
-def get_pkgs_from_requirement(requirement: str) -> typing.List[str]:
+def get_pkgs_from_requirement(requirement: typing.Union[str, pathlib.Path]) -> typing.List[str]:
     """Get list of packages in the requirement file"""
     with open(requirement, mode='r') as requirement_file:
         packages = requirement_file.readlines()
@@ -59,7 +59,8 @@ def get_pot_dependencies(src: str) -> dict:
         process = subprocess.run(cmd_line, cwd=pot_path.parent,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, check=False)  # nosec
         if process.returncode == 0:
-            pot_content['content'] = get_pkgs_from_requirement('pot.egg-info/requires.txt')  # type: ignore
+            pot_content['content'] = get_pkgs_from_requirement(pot_path.parent / 'pot.egg-info/requires.txt'
+                                                                                 '')  # type: ignore
         else:
             pot_content = {}
 
