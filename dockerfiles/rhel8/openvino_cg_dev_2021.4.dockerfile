@@ -160,9 +160,8 @@ RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deploym
 RUN pip uninstall -y opencv-python
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
-# Please use `third-party-programs-docker-dev.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
-RUN curl -L https://raw.githubusercontent.com/openvinotoolkit/docker_ci/releases/2021/4/dockerfiles/rhel8/third-party-programs-docker-dev.txt --output third-party-programs-docker-dev.txt
-
+RUN curl -L https://raw.githubusercontent.com/openvinotoolkit/docker_ci/releases/2021/4/dockerfiles/rhel8/third-party-programs-docker-runtime.txt --output third-party-programs-docker-runtime.txt && \
+    curl -L https://raw.githubusercontent.com/openvinotoolkit/docker_ci/releases/2021/4/dockerfiles/rhel8/third-party-programs-docker-dev.txt --output third-party-programs-docker-dev.txt
 # for CPU
 
 # for GPU
