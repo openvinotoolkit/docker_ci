@@ -247,6 +247,15 @@ def switch_container_engine(engine):
         pytest.fail(f'Can not switch docker to: {engine}, error: {process.stdout.decode()}')
 
 
+@pytest.mark.skipif(not sys.platform.startswith('linux'), reason="Windows doesn't support linux images")
+@pytest.fixture(scope='module')
+def snyk_image(docker_api):
+    image_name = 'snyk/snyk-cli:1.658.0-docker'
+    docker_api.client.images.pull(image_name)
+    yield image_name
+    docker_api.client.images.remove(image_name, force=True)
+
+
 @pytest.fixture(scope='session')
 def _is_distribution(request):
     settings = [request.param] if isinstance(request.param, str) else request.param
