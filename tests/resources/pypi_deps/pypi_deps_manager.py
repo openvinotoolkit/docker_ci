@@ -56,7 +56,7 @@ def get_pot_dependencies(src: str) -> dict:
         pot_path_str = str(pot_path)
         pot_content['name'] = pot_path_str
         cmd_line = ['python3', pot_path_str, 'egg_info']
-        process = subprocess.run(cmd_line,
+        process = subprocess.run(cmd_line, cwd=pot_path.parent,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, check=False)  # nosec
         if process.returncode == 0:
             pot_content['content'] = get_pkgs_from_requirement('pot.egg-info/requires.txt')  # type: ignore

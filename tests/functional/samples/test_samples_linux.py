@@ -7,7 +7,7 @@ from utils.exceptions import FailedTestError
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
-@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary', 'custom-full')], indirect=True)
 class TestSamplesLinux:
     @pytest.mark.xfail_log(pattern='Error: Download',

@@ -33,13 +33,13 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 FROM registry.access.redhat.com/ubi8 AS ov_base
 {% endif %}
 
-LABEL name="rhel8_runtime" \
+LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
       vendor="Intel Corporation" \
       version="{{ product_version }}" \
       release="{{ product_version }}" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
-      description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
+      description="This is the {{ distribution }} image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
 USER root
 WORKDIR /
@@ -66,9 +66,16 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 COPY --from=base /opt/intel /opt/intel
 {% endif %}
 
+{% if 'runtime' == distribution %}
 ARG LGPL_DEPS="gcc-c++"
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt"
-
+{% else %}
+ARG LGPL_DEPS="gcc-c++ \
+               glibc \
+               libstdc++ \
+               libgcc"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt"
+{% endif %}
 ARG INSTALL_SOURCES="no"
 
 WORKDIR /thirdparty

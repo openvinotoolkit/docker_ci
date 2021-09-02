@@ -61,7 +61,7 @@ def pytest_configure(config):
         mount_root.mkdir(parents=True, exist_ok=True)
         dev_package_url = package_url.replace('_runtime_', '_dev_')
         # Temporarily, until there is no dev package for these distros
-        if image_os in ('ubuntu20', 'centos7', 'centos8', 'rhel8'):
+        if image_os in ('centos7', 'centos8', 'rhel8'):
             dev_package_url = dev_package_url.replace(image_os, 'ubuntu18')
         if package_url.startswith(('http://', 'https://', 'ftp://')):
             if 'win' in image_os:
@@ -200,7 +200,7 @@ def install_openvino_dependencies(request):
         if 'ubuntu' in image_os:
             return '/bin/bash -ac "apt update && apt install -y build-essential sudo curl cmake"'
         elif any(x in image_os for x in ('centos', 'rhel')):
-            return '/bin/bash -ac "yum update -y && yum install -y make"'
+            return '/bin/bash -ac "yum update -y && yum install -y make sudo"'
     return ''
 
 
