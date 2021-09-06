@@ -120,7 +120,7 @@ class TestSpeechDemoLinux:
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary', 'custom-full')], indirect=True)
-class TestDemosLinux:
+class TestScriptDemosLinux:
     def test_security_cpu(self, tester, image, install_openvino_dependencies):
         tester.test_docker_image(
             image,
@@ -211,7 +211,12 @@ class TestDemosLinux:
              ], self.test_squeezenet_hddl.__name__, **kwargs,
         )
 
-    def test_crossroad_cpp_cpu(self, tester, image, install_openvino_dependencies):
+
+@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary', 'custom-full')], indirect=True)
+class TestDemosLinux:
+    def test_crossroad_cpp_cpu(self, tester, image, install_openvino_dependencies, download_picture):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -221,7 +226,7 @@ class TestDemosLinux:
              '/bin/bash -ac "source /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name person-vehicle-bike-detection-crossroad-0078 --precisions FP16 '
-             '-o /root/omz_demos_build/intel64/Release/"',
+             '-o /root/omz_demos_build/intel64/Release/"', download_picture('car_1.bmp'),
              '/bin/bash -ac "source /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/crossroad_camera_demo '
              '-m /root/omz_demos_build/intel64/Release/intel/person-vehicle-bike-detection-crossroad-0078/'
@@ -232,7 +237,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
-    def test_crossroad_cpp_gpu(self, tester, image, install_openvino_dependencies):
+    def test_crossroad_cpp_gpu(self, tester, image, install_openvino_dependencies, download_picture):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -242,7 +247,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name person-vehicle-bike-detection-crossroad-0078 '
-             '--precisions FP16 -o /root/omz_demos_build/intel64/Release/"',
+             '--precisions FP16 -o /root/omz_demos_build/intel64/Release/"', download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/crossroad_camera_demo '
              '-m /root/omz_demos_build/intel64/Release/intel/person-vehicle-bike-detection-crossroad-0078/FP16/'
@@ -298,7 +303,7 @@ class TestDemosLinux:
             self.test_crossroad_cpp_hddl.__name__, **kwargs,
         )
 
-    def test_text_cpp_cpu(self, tester, image, product_version, install_openvino_dependencies):
+    def test_text_cpp_cpu(self, tester, image, product_version, install_openvino_dependencies, download_picture):
         kwargs = {'mem_limit': '3g'}
         options = '-dt image' if '2021' not in product_version else ''  # legacy option, removed in 2021R
         tester.test_docker_image(
@@ -309,6 +314,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
@@ -318,7 +324,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
-    def test_text_cpp_gpu(self, tester, image, product_version, install_openvino_dependencies):
+    def test_text_cpp_gpu(self, tester, image, product_version, install_openvino_dependencies, download_picture):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         options = '-dt image' if '2021' not in product_version else ''
         tester.test_docker_image(
@@ -329,6 +335,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name text-detection-0004 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/text_detection_demo '
              '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
@@ -384,16 +391,17 @@ class TestDemosLinux:
 
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
-    def test_detection_ssd_python_cpu(self, tester, image, omz_python_demo_path):
+    def test_detection_ssd_python_cpu(self, tester, image, omz_python_demo_path, download_picture):
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show -r"',
              ],
             self.test_detection_ssd_python_cpu.__name__,
         )
@@ -401,17 +409,18 @@ class TestDemosLinux:
     @pytest.mark.gpu
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
-    def test_detection_ssd_python_gpu(self, tester, image, omz_python_demo_path):
+    def test_detection_ssd_python_gpu(self, tester, image, omz_python_demo_path, download_picture):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show -r"',
              ],
             self.test_detection_ssd_python_gpu.__name__, **kwargs,
         )
@@ -432,7 +441,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show -r"',
              ],
             self.test_detection_ssd_python_vpu.__name__, **kwargs,
         )
@@ -451,12 +460,12 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show && rm -f /dev/shm/hddl_*"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show -r && rm -f /dev/shm/hddl_*"',
              ],
             self.test_detection_ssd_python_hddl.__name__, **kwargs,
         )
 
-    def test_segmentation_cpp_cpu(self, tester, image, install_openvino_dependencies):
+    def test_segmentation_cpp_cpu(self, tester, image, install_openvino_dependencies, download_picture):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -466,6 +475,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/segmentation_demo '
              '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/'
@@ -476,7 +486,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
-    def test_segmentation_cpp_gpu(self, tester, image, install_openvino_dependencies):
+    def test_segmentation_cpp_gpu(self, tester, image, install_openvino_dependencies, download_picture):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -486,6 +496,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16 -o /root/omz_demos_build/intel64/Release/"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/omz_demos_build/intel64/Release/segmentation_demo '
              '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/'
@@ -496,7 +507,7 @@ class TestDemosLinux:
         )
 
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
-    def test_segmentation_python_cpu(self, tester, image, omz_python_demo_path):
+    def test_segmentation_python_cpu(self, tester, image, omz_python_demo_path, download_picture):
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -512,13 +523,14 @@ class TestDemosLinux:
 
     @pytest.mark.gpu
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
-    def test_segmentation_python_gpu(self, tester, image, omz_python_demo_path):
+    def test_segmentation_python_gpu(self, tester, image, omz_python_demo_path, download_picture):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/semantic-segmentation-adas-0001.xml '
@@ -566,7 +578,7 @@ class TestDemosLinux:
 
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
-    def test_object_detection_centernet_python_cpu(self, tester, image, omz_python_demo_path):
+    def test_object_detection_centernet_python_cpu(self, tester, image, omz_python_demo_path, download_picture):
         tester.test_docker_image(
             image,
             ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
@@ -575,10 +587,11 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/converter.py '
              '--name ctdet_coco_dlav0_384 --precision FP16"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show -r"',
              ],
             self.test_object_detection_centernet_python_cpu.__name__,
         )
@@ -586,7 +599,7 @@ class TestDemosLinux:
     @pytest.mark.gpu
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
-    def test_object_detection_centernet_python_gpu(self, tester, image, omz_python_demo_path):
+    def test_object_detection_centernet_python_gpu(self, tester, image, omz_python_demo_path, download_picture):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -596,10 +609,11 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/converter.py '
              '--name ctdet_coco_dlav0_384 --precision FP16"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show -r"',
              ],
             self.test_object_detection_centernet_python_gpu.__name__, **kwargs,
         )
@@ -623,7 +637,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show -r"',
              ],
             self.test_object_detection_centernet_python_vpu.__name__, **kwargs,
         )
@@ -645,7 +659,7 @@ class TestDemosLinux:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show && rm -f /dev/shm/hddl_*"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show -r && rm -f /dev/shm/hddl_*"',
              ],
             self.test_object_detection_centernet_python_hddl.__name__, **kwargs,
         )

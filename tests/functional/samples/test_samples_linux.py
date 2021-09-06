@@ -12,7 +12,7 @@ from utils.exceptions import FailedTestError
 class TestSamplesLinux:
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_hello_classification_cpp_cpu(self, tester, image, install_openvino_dependencies):
+    def test_hello_classification_cpp_cpu(self, tester, image, install_openvino_dependencies, download_picture):
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -26,7 +26,7 @@ class TestSamplesLinux:
              'cd /opt/intel/openvino/deployment_tools/model_optimizer && '
              'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
              '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
-             'alexnet.caffemodel"',
+             'alexnet.caffemodel"', download_picture('car.png'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
              '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
@@ -37,7 +37,7 @@ class TestSamplesLinux:
     @pytest.mark.gpu
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_hello_classification_cpp_gpu(self, tester, image, install_openvino_dependencies):
+    def test_hello_classification_cpp_gpu(self, tester, image, install_openvino_dependencies, download_picture):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -52,7 +52,7 @@ class TestSamplesLinux:
              'cd /opt/intel/openvino/deployment_tools/model_optimizer && '
              'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
              '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
-             'alexnet.caffemodel"',
+             'alexnet.caffemodel"', download_picture('car.png'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
              '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
@@ -117,7 +117,8 @@ class TestSamplesLinux:
 
     @pytest.mark.usefixtures('_min_product_version')
     @pytest.mark.parametrize('_min_product_version', ['2021.2'], indirect=True)
-    def test_hello_classification_cpp_fail(self, tester, image, caplog, install_openvino_dependencies):
+    def test_hello_classification_cpp_fail(self, tester, image, caplog,
+                                           install_openvino_dependencies, download_picture):
         with pytest.raises(FailedTestError):
             tester.test_docker_image(
                 image,
@@ -132,6 +133,7 @@ class TestSamplesLinux:
                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
                  '--name vehicle-attributes-recognition-barrier-0039 --precisions FP32 '
                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+                 download_picture('car.png'),
                  '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
                  '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
                  '/root/inference_engine_cpp_samples_build/intel64/Release/intel/'
@@ -143,7 +145,7 @@ class TestSamplesLinux:
         if 'Sample supports topologies with 1 output only' not in caplog.text:
             pytest.fail('Sample supports topologies with 1 output only')
 
-    def test_hello_reshape_cpp_cpu(self, tester, image, install_openvino_dependencies):
+    def test_hello_reshape_cpp_cpu(self, tester, image, install_openvino_dependencies, download_picture):
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -154,6 +156,7 @@ class TestSamplesLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precisions FP16 '
              '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
              '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
@@ -163,7 +166,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.gpu
-    def test_hello_reshape_cpp_gpu(self, tester, image, install_openvino_dependencies):
+    def test_hello_reshape_cpp_gpu(self, tester, image, install_openvino_dependencies, download_picture):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -175,6 +178,7 @@ class TestSamplesLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precisions FP16 '
              '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
              '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
@@ -228,7 +232,7 @@ class TestSamplesLinux:
              ], self.test_hello_reshape_cpp_hddl.__name__, **kwargs,
         )
 
-    def test_object_detection_cpp_cpu(self, tester, image, install_openvino_dependencies):
+    def test_object_detection_cpp_cpu(self, tester, image, install_openvino_dependencies, download_picture):
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -239,6 +243,7 @@ class TestSamplesLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precisions FP16 '
              '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/object_detection_sample_ssd '
              '-m /root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
@@ -248,7 +253,7 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.gpu
-    def test_object_detection_cpp_gpu(self, tester, image, install_openvino_dependencies):
+    def test_object_detection_cpp_gpu(self, tester, image, install_openvino_dependencies, download_picture):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -260,6 +265,7 @@ class TestSamplesLinux:
              'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
              '--name vehicle-detection-adas-0002 --precisions FP16 '
              '-o /root/inference_engine_cpp_samples_build/intel64/Release/"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/object_detection_sample_ssd '
              '-m /root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
@@ -315,7 +321,7 @@ class TestSamplesLinux:
 
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_classification_async_cpp_cpu(self, tester, image, install_openvino_dependencies):
+    def test_classification_async_cpp_cpu(self, tester, image, install_openvino_dependencies, download_picture):
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -330,6 +336,7 @@ class TestSamplesLinux:
              'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
              '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
              'alexnet.caffemodel"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
              '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
@@ -340,7 +347,7 @@ class TestSamplesLinux:
     @pytest.mark.gpu
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_classification_async_cpp_gpu(self, tester, image, install_openvino_dependencies):
+    def test_classification_async_cpp_gpu(self, tester, image, install_openvino_dependencies, download_picture):
         kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -356,6 +363,7 @@ class TestSamplesLinux:
              'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
              '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
              'alexnet.caffemodel"',
+             download_picture('car_1.bmp'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
              '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
@@ -420,7 +428,7 @@ class TestSamplesLinux:
 
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading googlenet-v1 files')
-    def test_benchmark_app_cpp_cpu(self, tester, image, install_openvino_dependencies):
+    def test_benchmark_app_cpp_cpu(self, tester, image, install_openvino_dependencies, download_picture):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
@@ -436,6 +444,7 @@ class TestSamplesLinux:
              'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
              '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/googlenet-v1/'
              'googlenet-v1.caffemodel"',
+             download_picture('car.png'),
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              '/root/inference_engine_cpp_samples_build/intel64/Release/benchmark_app '
              '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/googlenet-v1.xml '

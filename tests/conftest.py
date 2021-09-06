@@ -205,6 +205,22 @@ def install_openvino_dependencies(request):
 
 
 @pytest.fixture(scope='session')
+def download_picture(request):
+    image_os = request.config.getoption('--image_os')
+
+    def _download_picture(picture, location='/opt/intel/openvino/deployment_tools/demo/'):
+        """Download a picture if it does not exist on Unix system only"""
+        picture_from_share = f'https://storage.openvinotoolkit.org/data/test_data/images/{picture}'
+        cmd = (f'if [ ! -f {location}{picture} ]; '
+               f'then curl -L {picture_from_share} --output {location}{picture} --create-dirs && ls -la {location}; fi')
+        if 'win' not in image_os:
+            return f'/bin/bash -ac "{cmd}"'
+        else:
+            return ''
+    return _download_picture
+
+
+@pytest.fixture(scope='session')
 def bash(request):
     def _bash(command):
         return f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && {command}"'
