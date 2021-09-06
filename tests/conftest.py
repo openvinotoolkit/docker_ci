@@ -198,9 +198,9 @@ def install_openvino_dependencies(request):
         return install_deps
     else:
         if 'ubuntu' in image_os:
-            return '/bin/bash -ac "apt update && apt install -y build-essential sudo curl cmake"'
+            return '/bin/bash -ac "apt update && apt install -y build-essential sudo curl cmake file"'
         elif any(x in image_os for x in ('centos', 'rhel')):
-            return '/bin/bash -ac "yum update -y && yum install -y make sudo"'
+            return '/bin/bash -ac "yum update -y && yum install -y make sudo file"'
     return ''
 
 
@@ -212,7 +212,8 @@ def download_picture(request):
         """Download a picture if it does not exist on Unix system only"""
         picture_from_share = f'https://storage.openvinotoolkit.org/data/test_data/images/{picture}'
         cmd = (f'if [ ! -f {location}{picture} ]; '
-               f'then curl -L {picture_from_share} --output {location}{picture} --create-dirs && ls -la {location}; fi')
+               f'then curl -vL {picture_from_share} --output {location}{picture} --create-dirs && ls -la {location}'
+               f' && file  {location}{picture} | egrep "PNG image data|bitmap|data"; fi')
         if 'win' not in image_os:
             return f'/bin/bash -ac "{cmd}"'
         else:
