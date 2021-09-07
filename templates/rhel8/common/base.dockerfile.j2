@@ -41,12 +41,12 @@ LABEL name="rhel8_{{ distribution }}" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
       description="This is the {{ distribution }} image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
-USER root
 WORKDIR /
+{% if not openshift %}
+USER root
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-{% if not openshift %}
 ARG SUBSCRIPTION_ORG=
 ARG SUBSCRIPTION_KEY=
 
