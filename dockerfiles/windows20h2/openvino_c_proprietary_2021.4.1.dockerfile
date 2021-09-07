@@ -85,12 +85,12 @@ RUN powershell.exe -Command `
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\open_model_zoo\tools\accuracy_checker
 RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\accuracy_checker\requirements.in" && `
-    python -m pip install .
+    python -m pip install --no-cache-dir .
 
 
 WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_toolkit
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\requirements.txt" && `
-    python -m pip install .
+    python -m pip install --no-cache-dir .
 
 
 
