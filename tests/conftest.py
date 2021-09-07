@@ -210,10 +210,11 @@ def download_picture(request):
 
     def _download_picture(picture, location='/opt/intel/openvino/deployment_tools/demo/'):
         """Download a picture if it does not exist on Unix system only"""
-        picture_from_share = f'https://storage.openvinotoolkit.org/data/test_data/images/{picture}'
-        cmd = (f'if [ ! -f {location}{picture} ]; '
-               f'then curl -vL {picture_from_share} --output {location}{picture} --create-dirs && ls -la {location}'
-               f' && file {location}{picture} && file {location}{picture} | egrep \'PNG image data|bitmap|data\'; fi')
+        picture_on_share = f'https://storage.openvinotoolkit.org/data/test_data/images/{picture}'
+        cmd = (f'if [ ! -f {location}{picture} ];'
+               f' then curl -vL {picture_on_share} --output {location}{picture} --create-dirs && ls -la {location} &&'
+               f' file {location}{picture} &&'
+               f' file {location}{picture} | egrep \'PNG image data|bitmap|data\'; fi')  # noqa: Q003
         if 'win' not in image_os:
             return f'/bin/bash -ac "{cmd}"'
         else:
