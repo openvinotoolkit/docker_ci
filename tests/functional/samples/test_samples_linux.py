@@ -64,6 +64,8 @@ class TestSamplesLinux:
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_hello_classification_cpp_vpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -91,6 +93,8 @@ class TestSamplesLinux:
     @pytest.mark.hddl
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_hello_classification_cpp_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -189,6 +193,8 @@ class TestSamplesLinux:
 
     @pytest.mark.vpu
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_hello_reshape_cpp_vpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -211,6 +217,8 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_hello_reshape_cpp_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -276,6 +284,8 @@ class TestSamplesLinux:
 
     @pytest.mark.vpu
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_object_detection_cpp_vpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -298,6 +308,8 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.hddl
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_object_detection_cpp_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -375,6 +387,8 @@ class TestSamplesLinux:
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_classification_async_cpp_vpu(self, tester, image, install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
@@ -402,6 +416,8 @@ class TestSamplesLinux:
     @pytest.mark.hddl
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
+    @pytest.mark.usefixtures('_is_not_image_os')
+    @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     def test_classification_async_cpp_hddl(self, tester, image, install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
