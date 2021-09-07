@@ -413,9 +413,9 @@ INTEL_OPENVINO_VERSION = {
                 'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
                            'l_openvino_toolkit_runtime_rhel8_p_2021.4.684.tgz',
                 'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                           'l_openvino_toolkit_dev_rhel8_p_2021.4.684.tgz',                           
+                           'l_openvino_toolkit_dev_rhel8_p_2021.4.684.tgz',                         
             },
-    },    
+    },
 }
 DIVE_URL = {
     'windows': 'https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_windows_amd64.zip',
