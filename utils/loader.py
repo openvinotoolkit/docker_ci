@@ -378,7 +378,7 @@ INTEL_OPENVINO_VERSION = {
                        'w_openvino_toolkit_dev_p_2021.4.684.zip',
                 'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
                            'w_openvino_toolkit_runtime_p_2021.4.684.zip',
-                'proprietary': 'https://registrationcenter-download.intel.com/akdlm/irc_nas/17987/'
+                'proprietary': 'https://registrationcenter-download.intel.com/akdlm/irc_nas/18084/'
                                'w_openvino_toolkit_p_2021.4.684.exe',
                 'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
                             'w_openvino_toolkit_data_dev_p_2021.4.684.zip',
