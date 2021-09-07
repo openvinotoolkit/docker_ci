@@ -61,7 +61,7 @@ def pytest_configure(config):
         mount_root.mkdir(parents=True, exist_ok=True)
         dev_package_url = package_url.replace('_runtime_', '_dev_')
         # Temporarily, until there is no dev package for these distros
-        if image_os in ('ubuntu20', 'centos7', 'centos8', 'rhel8'):
+        if image_os in ('centos7', 'centos8', 'rhel8'):
             dev_package_url = dev_package_url.replace(image_os, 'ubuntu18')
         if package_url.startswith(('http://', 'https://', 'ftp://')):
             if 'win' in image_os:
@@ -198,10 +198,28 @@ def install_openvino_dependencies(request):
         return install_deps
     else:
         if 'ubuntu' in image_os:
-            return '/bin/bash -ac "apt update && apt install -y build-essential sudo curl cmake"'
+            return '/bin/bash -ac "apt update && apt install -y build-essential sudo curl cmake file"'
         elif any(x in image_os for x in ('centos', 'rhel')):
-            return '/bin/bash -ac "yum update -y && yum install -y make"'
+            return '/bin/bash -ac "yum update -y && yum install -y make sudo file"'
     return ''
+
+
+@pytest.fixture(scope='session')
+def download_picture(request):
+    image_os = request.config.getoption('--image_os')
+
+    def _download_picture(picture, location='/opt/intel/openvino/deployment_tools/demo/'):
+        """Download a picture if it does not exist on Unix system only"""
+        picture_on_share = f'https://storage.openvinotoolkit.org/data/test_data/images/{picture}'
+        cmd = (f'if [ ! -f {location}{picture} ];'
+               f' then curl -vL {picture_on_share} --output {location}{picture} --create-dirs && ls -la {location} &&'
+               f' file {location}{picture} &&'
+               f' file {location}{picture} | egrep \'PNG image data|bitmap|data\'; fi')  # noqa: Q003
+        if 'win' not in image_os:
+            return f'/bin/bash -ac "{cmd}"'
+        else:
+            return ''
+    return _download_picture
 
 
 @pytest.fixture(scope='session')
@@ -348,7 +366,8 @@ def _max_product_version(request):
 
 @pytest.fixture(scope='session')
 def _python_ngraph_required(request):
-    image = request.config.getoption('--image')
+    registry = request.config.getoption('--registry')
+    image = f'{registry}{"/" if registry else ""}{request.config.getoption("--image")}'
     if 'win' in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'cmd', '/c', 'dir /b/s python | findstr pyngraph']
     else:
@@ -360,7 +379,8 @@ def _python_ngraph_required(request):
 
 @pytest.fixture(scope='session')
 def _python_vpu_plugin_required(request):
-    image = request.config.getoption('--image')
+    registry = request.config.getoption('--registry')
+    image = f'{registry}{"/" if registry else ""}{request.config.getoption("--image")}'
     if 'win' not in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'bash', '-c',
                    'find deployment_tools/inference_engine/lib/intel64 | grep libmyriadPlugin.so']

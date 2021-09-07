@@ -6,7 +6,7 @@ import pytest
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 class TestToolsLinux:
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_accuracy_checker(self, tester, image):
         kwargs = {'mem_limit': '3g'}
@@ -17,7 +17,7 @@ class TestToolsLinux:
             self.test_accuracy_checker.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_benchmark(self, tester, image):
         kwargs = {'mem_limit': '3g'}
@@ -55,7 +55,7 @@ class TestToolsLinux:
             self.test_compile_tool.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_cross_check_tool(self, tester, image):
         kwargs = {'mem_limit': '3g'}
@@ -67,7 +67,7 @@ class TestToolsLinux:
             self.test_cross_check_tool.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_deployment_manager(self, tester, image):
         kwargs = {'mem_limit': '3g'}
@@ -79,7 +79,7 @@ class TestToolsLinux:
             self.test_deployment_manager.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_pot(self, tester, image):
         kwargs = {'mem_limit': '3g'}

@@ -18,14 +18,11 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
-
 COPY ${package_url} ${TEMP_DIR}/
-
 
 # install product by copying archive content
 ARG TEMP_DIR=/tmp/openvino_installer
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
-
 
 WORKDIR ${TEMP_DIR}
 
@@ -44,13 +41,13 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 
-LABEL name="rhel8_runtime" \
+LABEL name="rhel8_dev" \
       maintainer="openvino_docker@intel.com" \
       vendor="Intel Corporation" \
       version="2021.4" \
       release="2021.4" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
-      description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
+      description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
 WORKDIR /
 
@@ -58,7 +55,11 @@ WORKDIR /
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
-ARG LGPL_DEPS="gcc-c++"
+
+ARG LGPL_DEPS="gcc-c++ \
+               glibc \
+               libstdc++ \
+               libgcc"
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt"
 
 ARG INSTALL_SOURCES="no"
@@ -96,27 +97,44 @@ ENV PYTHON_VER python3.6
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip
 
-# runtime package
+# dev package
+WORKDIR /tmp
+
+RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
+    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
+    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o \( -name "*requirements*.in" -and -not -name "*requirements-tensorflow.in" \) \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print0 | xargs -t -0 -n1 ${PYTHON_VER} -m pip install --no-cache-dir -r
+
+WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker
+RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
+    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements.in && \
+    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
 
 # download source for PyPi LGPL packages
 WORKDIR /thirdparty
 RUN if [ "$INSTALL_SOURCES" = "yes" ]; then \
+        curl -L https://files.pythonhosted.org/packages/ee/2d/9cdc2b527e127b4c9db64b86647d567985940ac3698eeabc7ffaccb4ea61/chardet-4.0.0.tar.gz --output chardet-4.0.0.tar.gz; \
+        curl -L https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz --output lake8-import-order-0.18.1.tar.gz; \
         curl -L https://files.pythonhosted.org/packages/81/41/e6cb9026374771e3bdb4c0fe8ac0c51c693a14b4f72f26275da15f7a4d8b/ethtool-0.14.tar.gz --output ethtool-0.14.tar.gz; \
         curl -L https://files.pythonhosted.org/packages/ef/86/c5a34243a932346c59cb25eb49a4d1dec227974209eb9b618d0ed57ea5be/gpg-1.10.0.tar.gz --output gpg-1.10.0.tar.gz; \
         curl -L https://files.pythonhosted.org/packages/e0/e8/1e4f21800015a9ca153969e85fc29f7962f8f82fc5dbc1ecbdeb9dc54c75/PyGObject-3.28.3.tar.gz --output PyGObject-3.28.3.tar.gz; \
     fi
 
-WORKDIR /tmp
+WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
+RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
+    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/setup.py install --install-extras && \
+    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/build
 
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt
+RUN pip uninstall -y opencv-python
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
-RUN curl -L https://raw.githubusercontent.com/openvinotoolkit/docker_ci/master/dockerfiles/rhel8/third-party-programs-docker-runtime.txt --output third-party-programs-docker-runtime.txt
+# Please use `third-party-programs-docker-dev.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
+RUN curl -L https://raw.githubusercontent.com/openvinotoolkit/docker_ci/releases/2021/4/dockerfiles/rhel8/third-party-programs-docker-dev.txt --output third-party-programs-docker-dev.txt
 
 # for CPU
 
 # for GPU
-ARG INTEL_OPENCL=19.41.14441
+ARG INTEL_OPENCL=21.29.20389
 
 RUN groupmod -g 44 video
 

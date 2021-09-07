@@ -27,6 +27,7 @@ As well you can use available dockerfiles from `<root_project>/dockerfiles/<imag
  - CentOS 8
  - RHEL 8
  - Windows Server Core base OS LTSC 2019
+ - Windows base OS 20H2 
 
 ## Prebuilt images
 
@@ -57,6 +58,7 @@ Components:
 - CentOS: https://hub.docker.com/_/centos
 - Red Hat: https://catalog.redhat.com/software/containers/ubi8/ubi/5c359854d70cc534b3a3784e
 - Windows Server Core base OS: https://hub.docker.com/_/microsoft-windows-servercore
+- Windows base OS: https://hub.docker.com/_/microsoft-windows
 - Intel® Distribution of OpenVINO™ toolkit: https://software.intel.com/en-us/license/eula-for-intel-software-development-products
 
 ## Security guideline

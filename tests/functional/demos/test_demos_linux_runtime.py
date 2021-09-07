@@ -34,7 +34,7 @@ class TestDemosLinuxDataRuntime:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show -r"',
              ], self.test_detection_ssd_python_cpu.__name__, **kwargs,
         )
 
@@ -66,7 +66,7 @@ class TestDemosLinuxDataRuntime:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show -r"',
              ], self.test_detection_ssd_python_gpu.__name__, **kwargs,
         )
 
@@ -102,7 +102,7 @@ class TestDemosLinuxDataRuntime:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show -r"',
              ], self.test_detection_ssd_python_vpu.__name__, **kwargs,
         )
 
@@ -137,7 +137,7 @@ class TestDemosLinuxDataRuntime:
              '/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && umask 0000 && '
              f'python3 {omz_python_demo_path} '
              '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show && rm -f /dev/shm/hddl_*"',
+             '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show -r && rm -f /dev/shm/hddl_*"',
              ], self.test_detection_ssd_python_hddl.__name__, **kwargs,
         )
 
