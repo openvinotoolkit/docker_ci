@@ -187,10 +187,28 @@ def dev_root(request):
 def install_openvino_dependencies(request):
     image_os = request.config.getoption('--image_os')
     if 'ubuntu' in image_os:
-        return '/bin/bash -ac "apt update && apt install -y build-essential curl cmake"'
+        return '/bin/bash -ac "apt update && apt install -y build-essential curl cmake file"'
     elif any(x in image_os for x in ('centos', 'rhel')):
-        return '/bin/bash -ac "yum update -y && yum install -y make"'
+        return '/bin/bash -ac "yum update -y && yum install -y make file"'
     return ''
+
+
+@pytest.fixture(scope='session')
+def download_picture(request):
+    image_os = request.config.getoption('--image_os')
+
+    def _download_picture(picture, location='/opt/intel/openvino/deployment_tools/demo/'):
+        """Download a picture if it does not exist on Unix system only"""
+        picture_on_share = f'https://storage.openvinotoolkit.org/data/test_data/images/{picture}'
+        cmd = (f'if [ ! -f {location}{picture} ];'
+               f' then curl -vL {picture_on_share} --output {location}{picture} --create-dirs && ls -la {location} &&'
+               f' file {location}{picture} &&'
+               f' file {location}{picture} | egrep \'PNG image data|bitmap|data\'; fi')  # noqa: Q003
+        if 'win' not in image_os:
+            return f'/bin/bash -ac "{cmd}"'
+        else:
+            return ''
+    return _download_picture
 
 
 @pytest.fixture(scope='session')
@@ -312,7 +330,8 @@ def _max_product_version(request):
 
 @pytest.fixture(scope='session')
 def _python_ngraph_required(request):
-    image = request.config.getoption('--image')
+    registry = request.config.getoption('--registry')
+    image = f'{registry}{"/" if registry else ""}{request.config.getoption("--image")}'
     if 'win' in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'cmd', '/c', 'dir /b/s python | findstr pyngraph']
     else:
@@ -324,7 +343,8 @@ def _python_ngraph_required(request):
 
 @pytest.fixture(scope='session')
 def _python_vpu_plugin_required(request):
-    image = request.config.getoption('--image')
+    registry = request.config.getoption('--registry')
+    image = f'{registry}{"/" if registry else ""}{request.config.getoption("--image")}'
     if 'win' not in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'bash', '-c',
                    'find deployment_tools/inference_engine/lib/intel64 | grep libmyriadPlugin.so']

@@ -105,7 +105,7 @@ def compare_packages_settings(before: typing.List[str], after: typing.List[str],
         html_log.write(difflib.HtmlDiff().make_file(before, after, 'origin', context))
 
 
-def main() -> int:
+def main() -> typing.Union[int, ExitCode]:
     """PyPi dependencies manager to get PyPi dependencies and compare with original"""
     parser = argparse.ArgumentParser(prog=os.path.basename(__file__),
                                      description='This is PyPi dependencies manager to get PyPi dependencies and '
@@ -169,19 +169,24 @@ def main() -> int:
         image_name = args.image.split('/')[-1].replace(':', '_')
         args.image_json = pathlib.Path(args.logs) / f'{image_name}.json'
 
+    def add_pot_requirements(path: str, image_content: dict):
+        """Search POT requirements from setup.py and add them to image content dict"""
+        log.info(f'Search POT dependencies in {path} ...')
+        pot_content = get_pot_dependencies(path)
+        if pot_content:
+            log.info('POT dependencies were found')
+            image_content['requirements'].append(pot_content['name'])
+            image_content[pot_content['name']] = pot_content['content']
+        else:
+            log.warning('POT dependencies were not found')
+        return image_content
+
     exit_code = ExitCode.success
     if args.save:
         log.info(f'Save PyPi dependencies in {args.image_json} file')
         image_content = get_image_requirements(args.path)
         if 'runtime' not in args.image:
-            log.info('Try to get POT dependencies ...')
-            pot_content = get_pot_dependencies(args.path)
-            if pot_content:
-                log.info('POT dependencies were found')
-                image_content['requirements'].append(pot_content['name'])
-                image_content[pot_content['name']] = pot_content['content']
-            else:
-                log.warning('POT dependencies were not found')
+            add_pot_requirements(args.path, image_content)
         save_dict_to_json(image_content, file=args.image_json)
     else:
         if not pathlib.Path(args.image_json).exists():
@@ -192,6 +197,8 @@ def main() -> int:
         image_content_original = load_dict_from_json(args.image_json)
         image_content_original_reqs = sorted(image_content_original['requirements'])
         image_content = get_image_requirements(args.path)
+        if 'runtime' not in args.image:
+            add_pot_requirements(args.path, image_content)
         image_content_reqs = sorted(image_content['requirements'])
         log.info('Compare requirements files by count:')
         if image_content_original_reqs != image_content_reqs:
