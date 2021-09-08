@@ -129,7 +129,8 @@ class TestDemosLinuxDataRuntime:
                   '--name vehicle-detection-adas-0002 --precision FP16'),
              bash(f'umask 0000 && python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show -r && rm -f /dev/shm/hddl_*'),
+                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show -r && '
+                  'rm -f /dev/shm/hddl_*'),
              ], self.test_detection_ssd_python_hddl.__name__, **kwargs,
         )
 
