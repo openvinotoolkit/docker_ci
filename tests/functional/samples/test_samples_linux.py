@@ -387,7 +387,6 @@ class TestSamplesLinux:
 
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading googlenet-v1 files')
-
     def test_benchmark_app_cpp_cpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
