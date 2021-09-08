@@ -28,6 +28,9 @@ Available releases for Ubuntu* 18.04:
 *  [2021.4](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.4/hddl_ubuntu18_1701.tgz)
 *  [2021.4.1](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.4.1/hddl_ubuntu18_1701.tgz)
 
+Available releases for Ubuntu* 20.04:
+*  [2021.4.1](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.4.1/hddl_ubuntu20_1701.tgz)
+
 # Troubleshooting:
 
 Please follow the [configuration guide for HDDL device](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_linux_ivad_vpu.html).
