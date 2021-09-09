@@ -364,56 +364,56 @@ INTEL_OPENVINO_VERSION = {
         'winserver2019':
             {
                 'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                       'w_openvino_toolkit_dev_p_2021.4.684.zip',
+                       'w_openvino_toolkit_dev_p_2021.4.689.zip',
                 'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                           'w_openvino_toolkit_runtime_p_2021.4.684.zip',
-                'proprietary': 'https://registrationcenter-download.intel.com/akdlm/irc_nas/18084/'
-                               'w_openvino_toolkit_p_2021.4.684.exe',
+                           'w_openvino_toolkit_runtime_p_2021.4.689.zip',
+                'proprietary': 'https://registrationcenter-download.intel.com/akdlm/irc_nas/18097/'
+                               'w_openvino_toolkit_p_2021.4.689.exe',
                 'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                            'w_openvino_toolkit_data_dev_p_2021.4.684.zip',
+                            'w_openvino_toolkit_data_dev_p_2021.4.689.zip',
             },
         'windows20h2':
             {
                 'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                       'w_openvino_toolkit_dev_p_2021.4.684.zip',
+                       'w_openvino_toolkit_dev_p_2021.4.689.zip',
                 'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                           'w_openvino_toolkit_runtime_p_2021.4.684.zip',
-                'proprietary': 'https://registrationcenter-download.intel.com/akdlm/irc_nas/18084/'
-                               'w_openvino_toolkit_p_2021.4.684.exe',
+                           'w_openvino_toolkit_runtime_p_2021.4.689.zip',
+                'proprietary': 'https://registrationcenter-download.intel.com/akdlm/irc_nas/18097/'
+                               'w_openvino_toolkit_p_2021.4.689.exe',
                 'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                            'w_openvino_toolkit_data_dev_p_2021.4.684.zip',
+                            'w_openvino_toolkit_data_dev_p_2021.4.689.zip',
             },
         'ubuntu18':
             {
                 'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                       'l_openvino_toolkit_dev_ubuntu18_p_2021.4.684.tgz',
+                       'l_openvino_toolkit_dev_ubuntu18_p_2021.4.689.tgz',
                 'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                           'l_openvino_toolkit_runtime_ubuntu18_p_2021.4.684.tgz',
-                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/18085/'
-                               'l_openvino_toolkit_p_2021.4.684.tgz',
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2021.4.689.tgz',
+                'proprietary': 'http://registrationcenter-download.intel.com/akdlm/irc_nas/18096/'
+                               'l_openvino_toolkit_p_2021.4.689.tgz',
                 'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                            'l_openvino_toolkit_data_dev_ubuntu18_p_2021.4.684.tgz',
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2021.4.689.tgz',
             },
         'ubuntu20':
             {
                 'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                       'l_openvino_toolkit_dev_ubuntu20_p_2021.4.684.tgz',
+                       'l_openvino_toolkit_dev_ubuntu20_p_2021.4.689.tgz',
                 'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                           'l_openvino_toolkit_runtime_ubuntu20_p_2021.4.684.tgz',
+                           'l_openvino_toolkit_runtime_ubuntu20_p_2021.4.689.tgz',
                 'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                            'l_openvino_toolkit_data_dev_ubuntu20_p_2021.4.684.tgz',
+                            'l_openvino_toolkit_data_dev_ubuntu20_p_2021.4.689.tgz',
             },
         'centos7':
             {
                 'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                           'l_openvino_toolkit_runtime_centos7_p_2021.4.684.tgz',
+                           'l_openvino_toolkit_runtime_centos7_p_2021.4.689.tgz',
             },
         'rhel8':
             {
                 'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                           'l_openvino_toolkit_runtime_rhel8_p_2021.4.684.tgz',
+                           'l_openvino_toolkit_runtime_rhel8_p_2021.4.689.tgz',
                 'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4.1/'
-                           'l_openvino_toolkit_dev_rhel8_p_2021.4.684.tgz',
+                           'l_openvino_toolkit_dev_rhel8_p_2021.4.689.tgz',
             },
     },
 }
