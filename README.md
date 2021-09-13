@@ -23,7 +23,6 @@ As well you can use available dockerfiles from `<root_project>/dockerfiles/<imag
 
  - Ubuntu 18.04 LTS
  - Ubuntu 20.04 LTS
- - CentOS 7
  - RHEL 8
  - Windows Server Core base OS LTSC 2019
  - Windows base OS 20H2
@@ -54,7 +53,6 @@ We will have no indemnity or warranty coverage from suppliers.
 Components:
 
 - Ubuntu: https://hub.docker.com/_/ubuntu
-- CentOS: https://hub.docker.com/_/centos
 - Red Hat: https://catalog.redhat.com/software/containers/ubi8/ubi/5c359854d70cc534b3a3784e
 - Windows Server Core base OS: https://hub.docker.com/_/microsoft-windows-servercore
 - Windows base OS: https://hub.docker.com/_/microsoft-windows
