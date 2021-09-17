@@ -12,7 +12,7 @@ on:
         required: true
         default: 'dev'
       os:
-        description: 'OS for Docker image: ubuntu18, ubuntu20, centos7, winserver2019'
+        description: 'OS for Docker image: ubuntu18, ubuntu20, winserver2019'
         required: true
         default: ''
       host_os:
@@ -74,7 +74,7 @@ jobs:
           AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
           AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
       - name: Publish image on Azure
-        if: ${{ matrix.os == github.event.inputs.host_os && ! contains(github.event.inputs.os, 'centos') }}
+        if: ${{ matrix.os == github.event.inputs.host_os }}
         run: python docker_openvino.py deploy -r openvino.azurecr.io ${{ github.event.inputs.tags }}
       - name: Docker logout Azure
         run: docker logout openvino.azurecr.io

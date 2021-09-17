@@ -25,7 +25,6 @@ jobs:
         run: |
           declare -A IMAGES=( ['ubuntu18']='runtime data_runtime dev data_dev proprietary'
                               ['ubuntu20']='runtime data_runtime dev data_dev'
-                              ['centos7']='runtime'
                               ['rhel8']='runtime'
                               ['winserver2019']='runtime dev data_dev proprietary'
                               ['windows20h2']='runtime dev data_dev proprietary' )

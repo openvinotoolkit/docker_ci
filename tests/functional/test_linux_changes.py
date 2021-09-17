@@ -13,7 +13,7 @@ import pytest
                                                    'custom-no-omz', 'custom-no-cv', 'custom-full')], indirect=True)
 class TestLinuxChanges:
     @pytest.mark.usefixtures('_is_image_os')
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
     def test_linux_deps_change(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')
@@ -43,7 +43,7 @@ class TestLinuxChanges:
 
     @pytest.mark.save_deps
     @pytest.mark.usefixtures('_is_image_os')
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
     def test_save_linux_deps(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')

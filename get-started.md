@@ -78,7 +78,7 @@ Specify the product package source:
 
 Select an image operation system:
 ```cmd
-  -os {ubuntu18,ubuntu20,centos7,rhel8,winserver2019,windows20h2} Operation System for docker image. By default: ubuntu18
+  -os {ubuntu18,ubuntu20,rhel8,winserver2019,windows20h2} Operation System for docker image. By default: ubuntu18
 ```
 
 You can customize platform targets and minimize image size:

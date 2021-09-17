@@ -8,7 +8,7 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_not_distribution')
-@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
 @pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-omz', 'custom-no-cv',
                                                    'custom-full')], indirect=True)
 class TestSetupvarsChanges:

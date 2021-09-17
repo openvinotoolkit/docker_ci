@@ -38,7 +38,7 @@ class TestToolsLinux:
             self.test_cl_compiler.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev', 'proprietary')], indirect=True)
     def test_compile_tool(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}

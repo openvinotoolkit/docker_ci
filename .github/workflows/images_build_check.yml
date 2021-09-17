@@ -12,13 +12,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-18.04, windows-2019]
-        image_os: [centos7, ubuntu18, ubuntu20, winserver2019]
+        image_os: [ubuntu18, ubuntu20, winserver2019]
         image_distribution: [runtime]
         exclude:
           - os: ubuntu-18.04
             image_os: winserver2019
-          - os: windows-2019
-            image_os: centos7
           - os: windows-2019
             image_os: ubuntu18
           - os: windows-2019

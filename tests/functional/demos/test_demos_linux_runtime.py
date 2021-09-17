@@ -5,7 +5,7 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution', '_is_package_url_specified')
-@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('data_runtime', 'custom-no-omz', 'custom-no-cv')], indirect=True)
 class TestDemosLinuxDataRuntime:
     @pytest.mark.usefixtures('_python_ngraph_required')
@@ -136,7 +136,7 @@ class TestDemosLinuxDataRuntime:
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution', '_is_package_url_specified')
-@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'centos7', 'rhel8')], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('runtime', 'custom-no-omz', 'custom-no-cv')], indirect=True)
 class TestDemosLinuxRuntime:
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
