@@ -22,7 +22,7 @@ class TestPythonBindingsWindows:
     def test_opencv_bindings(self, tester, image):
         tester.test_docker_image(
             image,
-            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\tmp\\\\python_bindings\\\\opencv_bindings.py',
              ],
             self.test_opencv_bindings.__name__, **kwargs,
@@ -31,7 +31,7 @@ class TestPythonBindingsWindows:
     def test_openvino_bindings(self, tester, image):
         tester.test_docker_image(
             image,
-            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\tmp\\\\python_bindings\\\\openvino_bindings.py',
              ],
             self.test_openvino_bindings.__name__, **kwargs,
@@ -41,7 +41,7 @@ class TestPythonBindingsWindows:
     def test_ngraph_bindings(self, tester, image):
         tester.test_docker_image(
             image,
-            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\tmp\\\\python_bindings\\\\ngraph_bindings.py',
              ],
             self.test_ngraph_bindings.__name__, **kwargs,

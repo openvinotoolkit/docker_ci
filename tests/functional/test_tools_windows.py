@@ -23,7 +23,7 @@ class TestToolsWindows:
         tester.test_docker_image(
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\tools\\\\benchmark_tool\\\\ && '
+             'cd C:\\\\intel\\\\openvino\\\\tools\\\\benchmark_tool\\\\ && '
              'python benchmark_app.py -h'],
             self.test_benchmark.__name__, **kwargs,
         )
@@ -34,7 +34,7 @@ class TestToolsWindows:
         tester.test_docker_image(
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\tools\\\\compile_tool\\\\ && '
+             'cd C:\\\\intel\\\\openvino\\\\tools\\\\compile_tool\\\\ && '
              'compile_tool -h'],
             self.test_compile_tool.__name__, **kwargs,
         )
@@ -45,7 +45,7 @@ class TestToolsWindows:
         tester.test_docker_image(
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\tools\\\\cross_check_tool\\\\ && '
+             'cd C:\\\\intel\\\\openvino\\\\tools\\\\cross_check_tool\\\\ && '
              'python cross_check_tool.py -h'],
             self.test_cross_check_tool.__name__, **kwargs,
         )
@@ -56,7 +56,7 @@ class TestToolsWindows:
         tester.test_docker_image(
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\tools\\\\deployment_manager\\\\ && '
+             'cd C:\\\\intel\\\\openvino\\\\tools\\\\deployment_manager\\\\ && '
              'python deployment_manager.py -h'],
             self.test_deployment_manager.__name__, **kwargs,
         )
