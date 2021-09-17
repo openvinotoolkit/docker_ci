@@ -15,24 +15,24 @@ class TestDemosLinuxDataRuntime:
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
-                dev_root / 'deployment_tools' / 'demo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/demo',
+                dev_root / 'samples' / 'scripts': {
+                    'bind': '/opt/intel/openvino/samples/scripts',
                 },
-                dev_root / 'deployment_tools' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/open_model_zoo',
+                dev_root / 'extras' / 'open_model_zoo': {
+                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
                 },
             },
         }
         tester.test_docker_image(
             image,
             [bash(f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
-                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in '
                   f'-r {omz_python_demos_requirements_file} && '
-                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
                   '--name vehicle-detection-adas-0002 --precision FP16'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU --no_show -r'),
+                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d CPU --no_show -r'),
              ], self.test_detection_ssd_python_cpu.__name__, **kwargs,
         )
 
@@ -45,24 +45,24 @@ class TestDemosLinuxDataRuntime:
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
             'volumes': {
-                dev_root / 'deployment_tools' / 'demo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/demo',
+                dev_root / 'samples' / 'scripts': {
+                    'bind': '/opt/intel/openvino/samples/scripts',
                 },
-                dev_root / 'deployment_tools' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/open_model_zoo',
+                dev_root / 'extras' / 'open_model_zoo': {
+                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
                 },
             },
         }
         tester.test_docker_image(
             image,
             [bash(f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
-                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in '
                   f'-r {omz_python_demos_requirements_file} && '
-                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
                   '--name vehicle-detection-adas-0002 --precision FP16'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU --no_show -r'),
+                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d GPU --no_show -r'),
              ], self.test_detection_ssd_python_gpu.__name__, **kwargs,
         )
 
@@ -79,24 +79,24 @@ class TestDemosLinuxDataRuntime:
                 '/dev/bus/usb': {
                     'bind': '/dev/bus/usb',
                 },
-                dev_root / 'deployment_tools' / 'demo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/demo',
+                dev_root / 'samples' / 'scripts': {
+                    'bind': '/opt/intel/openvino/samples/scripts',
                 },
-                dev_root / 'deployment_tools' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/open_model_zoo',
+                dev_root / 'extras' / 'open_model_zoo': {
+                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
                 },
             },
         }
         tester.test_docker_image(
             image,
             [bash(f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
-                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in '
                   f'-r {omz_python_demos_requirements_file} && '
-                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
                   '--name vehicle-detection-adas-0002 --precision FP16'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD --no_show -r'),
+                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d MYRIAD --no_show -r'),
              ], self.test_detection_ssd_python_vpu.__name__, **kwargs,
         )
 
@@ -112,24 +112,24 @@ class TestDemosLinuxDataRuntime:
             'volumes': {
                 '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
                 '/dev/shm': {'bind': '/dev/shm'},  # nosec # noqa: S108
-                dev_root / 'deployment_tools' / 'demo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/demo',
+                dev_root / 'samples' / 'scripts': {
+                    'bind': '/opt/intel/openvino/samples/scripts',
                 },
-                dev_root / 'deployment_tools' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/open_model_zoo',
+                dev_root / 'extras' / 'open_model_zoo': {
+                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
                 },
             },
         }
         tester.test_docker_image(
             image,
             [bash(f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
-                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in '
                   f'-r {omz_python_demos_requirements_file} && '
-                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
                   '--name vehicle-detection-adas-0002 --precision FP16'),
              bash(f'umask 0000 && python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL --no_show -r && '
+                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d HDDL --no_show -r && '
                   'rm -f /dev/shm/hddl_*'),
              ], self.test_detection_ssd_python_hddl.__name__, **kwargs,
         )
@@ -145,11 +145,11 @@ class TestDemosLinuxRuntime:
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
-                dev_root / 'deployment_tools' / 'demo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/demo',
+                dev_root / 'samples' / 'scripts': {
+                    'bind': '/opt/intel/openvino/samples/scripts',
                 },
-                dev_root / 'deployment_tools' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/open_model_zoo',
+                dev_root / 'extras' / 'open_model_zoo': {
+                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
                 },
             },
         }
@@ -157,14 +157,14 @@ class TestDemosLinuxRuntime:
             image,
             [bash('python3 -m pip install setuptools && '
                   f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
-                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in '
                   f'-r {omz_python_demos_requirements_file} && '
-                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
                   '--name semantic-segmentation-adas-0001 --precision FP16'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
                   'semantic-segmentation-adas-0001.xml '
-                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d CPU -at segmentation --no_show'),
+                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d CPU -at segmentation --no_show'),
              ],
             self.test_segmentation_python_cpu.__name__, **kwargs,
         )
@@ -177,11 +177,11 @@ class TestDemosLinuxRuntime:
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
             'volumes': {
-                dev_root / 'deployment_tools' / 'demo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/demo',
+                dev_root / 'samples' / 'scripts': {
+                    'bind': '/opt/intel/openvino/samples/scripts',
                 },
-                dev_root / 'deployment_tools' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/open_model_zoo',
+                dev_root / 'extras' / 'open_model_zoo': {
+                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
                 },
             },
         }
@@ -189,14 +189,14 @@ class TestDemosLinuxRuntime:
             image,
             [bash('python3 -m pip install setuptools && '
                   f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
-                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in '
                   f'-r {omz_python_demos_requirements_file} && '
-                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
                   '--name semantic-segmentation-adas-0001 --precision FP16'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
                   'semantic-segmentation-adas-0001.xml '
-                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d GPU -at segmentation --no_show'),
+                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d GPU -at segmentation --no_show'),
              ],
             self.test_segmentation_python_gpu.__name__, **kwargs,
         )
@@ -214,11 +214,11 @@ class TestDemosLinuxRuntime:
                 '/dev/bus/usb': {
                     'bind': '/dev/bus/usb',
                 },
-                dev_root / 'deployment_tools' / 'demo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/demo',
+                dev_root / 'samples' / 'scripts': {
+                    'bind': '/opt/intel/openvino/samples/scripts',
                 },
-                dev_root / 'deployment_tools' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/open_model_zoo',
+                dev_root / 'extras' / 'open_model_zoo': {
+                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
                 },
             },
         }
@@ -226,14 +226,14 @@ class TestDemosLinuxRuntime:
             image,
             [bash('python3 -m pip install setuptools && '
                   f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
-                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in '
                   f'-r {omz_python_demos_requirements_file} && '
-                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
                   '--name semantic-segmentation-adas-0001 --precision FP16'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
                   'semantic-segmentation-adas-0001.xml '
-                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d MYRIAD -at segmentation --no_show'),
+                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d MYRIAD -at segmentation --no_show'),
              ],
             self.test_segmentation_python_vpu.__name__, **kwargs,
         )
@@ -250,11 +250,11 @@ class TestDemosLinuxRuntime:
             'volumes': {
                 '/var/tmp': {'bind': '/var/tmp'},  # nosec # noqa: S108
                 '/dev/shm': {'bind': '/dev/shm'},  # nosec # noqa: S108
-                dev_root / 'deployment_tools' / 'demo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/demo',
+                dev_root / 'samples' / 'scripts': {
+                    'bind': '/opt/intel/openvino/samples/scripts',
                 },
-                dev_root / 'deployment_tools' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/deployment_tools/open_model_zoo',
+                dev_root / 'extras' / 'open_model_zoo': {
+                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
                 },
             },
         }
@@ -262,14 +262,14 @@ class TestDemosLinuxRuntime:
             image,
             [bash('python3 -m pip install setuptools && '
                   f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
-                  '-r /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/requirements.in '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in '
                   f'-r {omz_python_demos_requirements_file} && '
-                  'python3 /opt/intel/openvino/deployment_tools/open_model_zoo/tools/downloader/downloader.py '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
                   '--name semantic-segmentation-adas-0001 --precision FP16'),
              bash(f'umask 0000 && python3 {omz_python_demo_path} -at segmentation --no_show '
                   '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
                   'semantic-segmentation-adas-0001.xml '
-                  '-i /opt/intel/openvino/deployment_tools/demo/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*'),
+                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*'),
              ],
             self.test_segmentation_python_hddl.__name__, **kwargs,
         )

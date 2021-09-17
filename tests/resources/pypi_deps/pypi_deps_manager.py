@@ -51,7 +51,7 @@ def get_pot_dependencies(src: str) -> dict:
             name: path to POT setup.py
             content: list packages"""
     pot_content = {}
-    pot_path = pathlib.Path(src) / 'deployment_tools/tools/post_training_optimization_toolkit/setup.py'
+    pot_path = pathlib.Path(src) / 'tools/post_training_optimization_toolkit/setup.py'
     if pot_path.exists():
         pot_path_str = str(pot_path)
         pot_content['name'] = pot_path_str

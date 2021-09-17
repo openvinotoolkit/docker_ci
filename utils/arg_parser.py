@@ -528,10 +528,10 @@ def parse_args(name: str, description: str):  # noqa
         args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]['dev']
 
     if hasattr(args, 'distribution') and args.distribution == 'custom':
-        if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'opencv'],  # nosec
+        if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'extras/opencv'],  # nosec
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
             args.distribution = 'custom-no-cv'
-        elif subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'deployment_tools/open_model_zoo'],  # nosec
+        elif subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'extras/open_model_zoo'],  # nosec
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
             args.distribution = 'custom-no-omz'
         else:
