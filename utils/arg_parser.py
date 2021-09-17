@@ -457,12 +457,12 @@ def parse_args(name: str, description: str):  # noqa
                                  f'and {args.distribution} distribution. Please specify --package_url directly.')
 
         if args.package_url and not args.build_id:
-            build_id = re.search(r'p_(\d{4}\.\d\.\d{3})', args.package_url)
+            build_id = re.search(r'p_(\d{4}\.\d)\.(?:\d_)?(\d{3})', args.package_url)
             if build_id:
                 # save product version YYYY.U.BBB
-                args.build_id = build_id.group(1)
+                args.build_id = '.'.join(build_id.groups())
                 # save product version YYYY.U
-                args.product_version = args.build_id[:6]
+                args.product_version = build_id.group(1)
             else:
                 parser.error(f'Cannot get build number from the package URL provided: {args.package_url}. '
                              f'Please specify --product_version directly.')
