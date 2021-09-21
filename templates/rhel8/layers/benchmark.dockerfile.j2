@@ -17,4 +17,4 @@ RUN sed -i 's+$HOME/inference_engine_${samples_type}_samples_build+/opt/intel/op
 RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
 
 USER openvino
-WORKDIR /opt/intel/openvino/deployment_tools/inference_engine/samples/cpp/samples_build/intel64/Release
+WORKDIR /opt/intel/openvino/runtime/samples/cpp/samples_build/intel64/Release
