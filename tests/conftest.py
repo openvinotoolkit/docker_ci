@@ -331,7 +331,7 @@ def _max_product_version(request):
 @pytest.fixture(scope='session')
 def _python_ngraph_required(request):
     registry = request.config.getoption('--registry')
-    image = f'{registry}{"/" if registry else ""}{request.config.getoption("--image")}'
+    image = f'{f"{registry}/" if registry else ""}{request.config.getoption("--image")}'
     if 'win' in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'cmd', '/c', 'dir /b/s python | findstr pyngraph']
     else:
@@ -344,7 +344,7 @@ def _python_ngraph_required(request):
 @pytest.fixture(scope='session')
 def _python_vpu_plugin_required(request):
     registry = request.config.getoption('--registry')
-    image = f'{registry}{"/" if registry else ""}{request.config.getoption("--image")}'
+    image = f'{f"{registry}/" if registry else ""}{request.config.getoption("--image")}'
     if 'win' not in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'bash', '-c',
                    'find runtime/lib/intel64 | grep libmyriadPlugin.so']
