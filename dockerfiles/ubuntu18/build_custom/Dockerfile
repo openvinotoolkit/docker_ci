@@ -187,10 +187,10 @@ ARG OMZ_BRANCH="master"
 
 WORKDIR ${INTEL_OPENVINO_DIR}/extras
 RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git --depth 1 -b ${OMZ_BRANCH}; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/downloader/requirements.in; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/downloader/requirements-caffe2.in; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/downloader/requirements-pytorch.in; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/downloader/requirements-tensorflow.in
+    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements.in; \
+    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-caffe2.in; \
+    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-pytorch.in; \
+    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-tensorflow.in
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
