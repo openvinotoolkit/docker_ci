@@ -31,17 +31,17 @@ class TestDemosWindows:
              'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py --name vehicle-license-plate-detection-barrier-0106 '
+             'model_tools\\\\downloader.py --name vehicle-license-plate-detection-barrier-0106 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py --name license-plate-recognition-barrier-0001 '
+             'model_tools\\\\downloader.py --name license-plate-recognition-barrier-0001 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py --name vehicle-attributes-recognition-barrier-0039 '
+             'model_tools\\\\downloader.py --name vehicle-attributes-recognition-barrier-0039 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
@@ -78,7 +78,7 @@ class TestDemosWindows:
              'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+             'model_tools\\\\downloader.py '
              '--name person-vehicle-bike-detection-crossroad-0078 --precisions FP16 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
@@ -101,7 +101,7 @@ class TestDemosWindows:
              'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+             'model_tools\\\\downloader.py '
              '--name text-detection-0004 --precision FP16 -o C:\\\\Users\\\\ContainerAdministrator\\\\'
              'Documents\\\\Intel\\\\OpenVINO\\\\omz_demos_build\\\\intel64\\\\Release\\\\',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
@@ -122,7 +122,7 @@ class TestDemosWindows:
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+             'model_tools\\\\downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              f'python {omz_python_demo_path} '
@@ -141,7 +141,7 @@ class TestDemosWindows:
              'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+             'model_tools\\\\downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16 -o C:\\\\Users\\\\'
              'ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
@@ -163,7 +163,7 @@ class TestDemosWindows:
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+             'model_tools\\\\downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              f'python {omz_python_demo_path} '
@@ -181,11 +181,11 @@ class TestDemosWindows:
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+             'model_tools\\\\downloader.py '
              '--name ctdet_coco_dlav0_384 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\converter.py '
+             'model_tools\\\\converter.py '
              '--name ctdet_coco_dlav0_384 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              f'python {omz_python_demo_path} '

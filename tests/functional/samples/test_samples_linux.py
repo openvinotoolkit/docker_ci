@@ -18,7 +18,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
@@ -41,7 +41,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
@@ -68,7 +68,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
@@ -93,7 +93,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
@@ -117,8 +117,8 @@ class TestSamplesLinux:
                       'cd /opt/intel/openvino/samples/cpp && '
                       '/opt/intel/openvino/samples/cpp/build_samples.sh'),
                  bash('python3 -m pip install --no-cache-dir '
-                      '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                      'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                      '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                      'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                       '--name vehicle-attributes-recognition-barrier-0039 --precisions FP32 '
                       '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
                  download_picture('car.png'),
@@ -138,7 +138,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -157,7 +157,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -180,7 +180,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
@@ -201,7 +201,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('umask 0000 && /root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
@@ -217,7 +217,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -236,7 +236,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -259,7 +259,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/object_detection_sample_ssd '
@@ -280,7 +280,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('umask 0000 && /root/inference_engine_cpp_samples_build/intel64/Release/object_detection_sample_ssd '
@@ -298,7 +298,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
@@ -321,7 +321,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
@@ -348,7 +348,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
@@ -373,7 +373,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
@@ -394,7 +394,7 @@ class TestSamplesLinux:
             [install_openvino_dependencies,
              bash('cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+             bash('python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name googlenet-v1 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '

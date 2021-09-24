@@ -19,9 +19,9 @@ RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
                         New-Item -Path %INTEL_OPENVINO_DIR%\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\extras\open_model_zoo\models\intel ;`
                         New-Item -Path %INTEL_OPENVINO_DIR%\extras\open_model_zoo\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\extras\open_model_zoo\models\intel`
                     }`
-                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\downloader)`
+                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\model_tools)`
                     {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\tools\model_downloader -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\downloader`
+                        New-Item -Path %INTEL_OPENVINO_DIR%\tools\model_downloader -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\model_tools`
                     }`
                     if (Test-Path -Path %INTEL_OPENVINO_DIR%\extras\open_model_zoo\demos)`
                     {`

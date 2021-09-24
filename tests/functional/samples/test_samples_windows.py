@@ -21,7 +21,7 @@ class TestSamplesWindows:
              'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+             'model_tools\\\\downloader.py '
              '--name alexnet --precisions FP16 -o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\'
              'Intel\\\\OpenVINO\\\\inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
@@ -49,7 +49,7 @@ class TestSamplesWindows:
                  'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
                  'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
                  'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-                 'downloader\\\\downloader.py '
+                 'model_tools\\\\downloader.py '
                  '--name vehicle-attributes-recognition-barrier-0039 --precisions FP16 '
                  '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
                  'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
@@ -75,7 +75,7 @@ class TestSamplesWindows:
              'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+             'model_tools\\\\downloader.py '
              '--name vehicle-detection-adas-0002 --precisions FP16 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
@@ -100,7 +100,7 @@ class TestSamplesWindows:
              'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+             'model_tools\\\\downloader.py '
              '--name alexnet --precisions FP16 -o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\'
              'Intel\\\\OpenVINO\\\\inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '

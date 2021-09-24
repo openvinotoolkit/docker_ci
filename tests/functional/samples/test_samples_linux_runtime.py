@@ -37,8 +37,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir -r '
-                  '/opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
@@ -80,8 +80,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir -r '
-                  '/opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
@@ -128,8 +128,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir -r '
-                  '/opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
@@ -175,8 +175,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir -r '
-                  '/opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
@@ -216,8 +216,8 @@ class TestSamplesLinuxRuntime:
                       'cd /opt/intel/openvino/samples/cpp && '
                       '/opt/intel/openvino/samples/cpp/build_samples.sh'),
                  bash('python3 -m pip install --no-cache-dir -r '
-                      '/opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                      'python3 /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                      '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                      'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                       '--name vehicle-attributes-recognition-barrier-0039 --precisions FP32 '
                       '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
                  bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
@@ -255,8 +255,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
@@ -293,8 +293,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
@@ -336,8 +336,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
@@ -378,8 +378,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('umask 0000 && '
@@ -412,8 +412,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/object_detection_sample_ssd '
@@ -447,8 +447,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/object_detection_sample_ssd '
@@ -487,8 +487,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/object_detection_sample_ssd '
@@ -526,8 +526,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('umask 0000 && '
@@ -565,8 +565,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
@@ -608,8 +608,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
@@ -656,8 +656,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir -r '
-                  '/opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
@@ -703,8 +703,8 @@ class TestSamplesLinuxRuntime:
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/downloader/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/downloader/downloader.py '
+                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
+                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
                   '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
              bash('cd /opt/intel/openvino/tools/model_optimizer && '
                   'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
