@@ -1,13 +1,7 @@
 # dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
-{% if build_id < '2021.4' %}
-RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt" && `
-    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\openvino\tools\benchmark\requirements.txt" && `
-    python -m pip install --no-cache-dir torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
-{% else %}
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt" && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\openvino\tools\benchmark\requirements.txt"
-{% endif %}
 
 RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter *requirements*.* | ForEach-Object { `
        if (($_.Fullname -like '*post_training_optimization_toolkit*') -or ($_.Fullname -like '*accuracy_checker*') -or ($_.Fullname -like '*python3*') -or ($_.Fullname -like '*python2*') -or ($_.Fullname -like '*requirements_ubuntu*')) `
@@ -28,25 +22,9 @@ RUN powershell.exe -Command `
 WORKDIR ${INTEL_OPENVINO_DIR}\extras\open_model_zoo\tools\accuracy_checker
 RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\accuracy_checker\requirements.in" && `
-    python -m pip install .
+    python -m pip install --no-cache-dir .
 
-{% if '2021.2' not in build_id %}
 WORKDIR ${INTEL_OPENVINO_DIR}\tools\post_training_optimization_toolkit
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\tools\post_training_optimization_toolkit\requirements.txt" && `
-    python -m pip install .
-{% else %}
-WORKDIR ${INTEL_OPENVINO_DIR}\tools\post_training_optimization_toolkit
-RUN python -m pip install --no-cache-dir scipy==1.2.1 jstyleson==0.0.2 pandas==0.24.2 hyperopt==0.1.2 addict==2.2.1 chainer==7.7.0 && `
-    python -m pip install . --no-deps
-{% endif %}
-
-{% if '2020' in build_id and build_id < '2020.3.2' %}
-RUN python -m pip uninstall -y opencv-python && `
-    python -m pip install --no-cache-dir opencv-python-headless
-WORKDIR ${INTEL_OPENVINO_DIR}/bin
-RUN powershell -Command "(Get-Content setupvars.bat) -replace '^set PYTHONPATH=.*python.*PYTHONPATH.*$', 'set PYTHONPATH=%INTEL_OPENVINO_DIR%\python\python%Major%.%Minor%;%PYTHONPATH%' | Out-File -encoding default setupvars.bat"
-{% endif %}
-
-{% if build_id >= '2021.4' %}
-RUN pip uninstall -y opencv-python
-{% endif %}
+    python -m pip install --no-cache-dir . && `
+    python -m pip uninstall -y opencv-python
