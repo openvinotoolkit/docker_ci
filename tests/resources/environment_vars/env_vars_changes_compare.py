@@ -128,7 +128,10 @@ def main() -> int:
         log.error('FAILED: changes detected')
         log.error(f'    after script launch {vars_changed_script}')
         log.error(f'    with expected {vars_changed}')
-        compare_templates(args.expected, output_path, args.image, args.logs)
+
+        expected_vars_sorted_path = pathlib.Path(args.logs) / f'sorted_{os.path.basename(args.expected)}'
+        save_env_template(expected_vars_sorted_path, vars_expected)
+        compare_templates(expected_vars_sorted_path, output_path, args.image, args.logs)
     else:
         exit_code = 0
         log.info('PASSED')
