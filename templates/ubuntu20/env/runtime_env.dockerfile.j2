@@ -1,10 +1,10 @@
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
-ENV INTEL_CVSDK_DIR=/opt/intel/openvino
-ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/share
-ENV LD_LIBRARY_PATH=/opt/intel/openvino/opencv/lib:/opt/intel/openvino/runtime/lib:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/runtime/3rdparty/tbb/lib::/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/omp/lib:/opt/intel/openvino/runtime/3rdparty/gna/lib:/opt/intel/openvino/runtime/3rdparty/mkltiny_lnx/lib:/opt/intel/openvino/runtime/lib/intel64
-ENV OpenCV_DIR=/opt/intel/openvino/opencv/cmake
+ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/extras/opencv/lib:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/runtime/3rdparty/tbb/lib::/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/lib/intel64
+ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/opt/intel/openvino/tools/model_optimizer:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/tools/model_optimizer
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
-ENV OV_FRONTEND_PATH=/opt/intel/openvino/runtime/lib
+ENV OV_FRONTEND_PATH=/opt/intel/openvino/runtime/lib/intel64
+ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
