@@ -3,7 +3,7 @@ WORKDIR /tmp
 
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu20.*" -o -name "*requirements*.in" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print0 | xargs -t -0 -n1 ${PYTHON_VER} -m pip install --no-cache-dir -r
+    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu20.*" -o -name "*requirements*.in" \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_tool/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print0 | xargs -t -0 -n1 ${PYTHON_VER} -m pip install --no-cache-dir -r
 WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/requirements.in && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/setup.py install && \
@@ -16,10 +16,10 @@ RUN if [ "$INSTALL_SOURCES" = "yes" ]; then \
         curl -L https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz --output lake8-import-order-0.18.1.tar.gz; \
     fi
 
-WORKDIR ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_toolkit
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_toolkit/requirements.txt && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_toolkit/setup.py install --install-extras && \
-    rm -rf ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_toolkit/build && \
+WORKDIR ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool
+RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/requirements.txt && \
+    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/setup.py install --install-extras && \
+    rm -rf ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/build && \
     ${PYTHON_VER} -m pip uninstall -y opencv-python
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
