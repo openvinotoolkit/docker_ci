@@ -175,7 +175,7 @@ def docker_api():
 @pytest.fixture(scope='session')
 def dev_root(request):
     openvino_dev_path = pathlib.Path(request.config.getoption('--mount_root')) / 'openvino_dev'
-    dev_root_path = (f for f in openvino_dev_path.iterdir() if not f.name.startswith('.')).__next__()
+    dev_root_path = openvino_dev_path.iterdir().__next__()
     if dev_root_path.exists() and sum(f.stat().st_size if not f.is_symlink() else 0
                                       for f in openvino_dev_path.rglob('*')) < 10000000:
         pytest.skip(f'The test was skipped because the mount dependencies folder was not removed completely. '
