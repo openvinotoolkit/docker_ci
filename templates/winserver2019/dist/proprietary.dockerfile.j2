@@ -1,7 +1,6 @@
 # proprietary package
 WORKDIR ${INTEL_OPENVINO_DIR}
-RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt" && `
-    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\openvino\tools\benchmark_tool\requirements.txt"
+RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt"
 
 RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter *requirements*.* | ForEach-Object { `
        if (($_.Fullname -like '*post_training_optimization_tool*') -or ($_.Fullname -like '*accuracy_checker*') -or ($_.Fullname -like '*python3*') -or ($_.Fullname -like '*python2*') -or ($_.Fullname -like '*requirements_ubuntu*')) `
@@ -20,7 +19,7 @@ RUN powershell.exe -Command `
 {% endif %}
 
 WORKDIR ${INTEL_OPENVINO_DIR}\extras\open_model_zoo\tools\accuracy_checker
-RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
+RUN %INTEL_OPENVINO_DIR%\setupvars.bat && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\accuracy_checker\requirements.in" && `
     python -m pip install --no-cache-dir .
 

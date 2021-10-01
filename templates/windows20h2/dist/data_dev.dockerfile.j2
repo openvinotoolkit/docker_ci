@@ -19,7 +19,7 @@ RUN powershell.exe -Command `
 {% endif %}
 
 WORKDIR ${INTEL_OPENVINO_DIR}\extras\open_model_zoo\tools\accuracy_checker
-RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
+RUN %INTEL_OPENVINO_DIR%\setupvars.bat && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\accuracy_checker\requirements.in" && `
     python -m pip install --no-cache-dir .
 
