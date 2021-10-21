@@ -387,8 +387,8 @@ def parse_args(name: str, description: str):  # noqa
             parser.error(f'Cannot find specified Dockerfile: {str(args.file)}.')
 
     if args.rhel_platform != 'docker' and args.os != 'rhel8':
-            parser.error('Dockerfile generation intended for non-Docker platforms '
-                         'is supported only for RHEL-based images')
+        parser.error('Dockerfile generation intended for non-Docker platforms '
+                     'is supported only for RHEL-based images')
 
     if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all'):
         if args.ocl_release not in INTEL_OCL_RELEASE:
@@ -446,23 +446,21 @@ def parse_args(name: str, description: str):  # noqa
             if not args.distribution or not args.product_version:
                 parser.error('Insufficient arguments. Provide --package_url '
                              'or --distribution (with optional --product_version) arguments')
-            if args.mode != 'gen_dockerfile':
-                args.build_id = args.product_version  # save product version YYY.U.[BBB]
-                lts_version = re.search(r'^\d{4}\.\d.\d$', args.product_version)
-                if lts_version:
-                    args.product_version = lts_version.group()  # save product version YYY.U.V
+            lts_version = re.search(r'^\d{4}\.\d.\d$', args.product_version)
+            if lts_version:
+                args.product_version = lts_version.group()  # save product version YYY.U.V
+            else:
+                product_version = re.search(r'(\d{4}\.\d)', args.product_version)
+                if product_version:
+                    args.product_version = product_version.group()  # save product version YYY.U
                 else:
-                    product_version = re.search(r'(\d{4}\.\d)', args.product_version)
-                    if product_version:
-                        args.product_version = product_version.group()  # save product version YYY.U
-                    else:
-                        parser.error(f'Cannot find package url for {args.product_version} version')
-                distribution = 'runtime' if args.distribution == 'data_runtime' else args.distribution
-                with contextlib.suppress(KeyError):
-                    args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][distribution]
-                if not args.package_url:
-                    parser.error(f'Cannot find package url for {args.product_version} version '
-                                 f'and {args.distribution} distribution. Please specify --package_url directly.')
+                    parser.error(f'Cannot find package url for {args.product_version} version')
+            distribution = 'runtime' if args.distribution == 'data_runtime' else args.distribution
+            with contextlib.suppress(KeyError):
+                args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][distribution]
+            if not args.package_url:
+                parser.error(f'Cannot find package url for {args.product_version} version '
+                             f'and {args.distribution} distribution. Please specify --package_url directly.')
 
         if args.package_url and not args.build_id:
             build_id = re.search(r'p_(\d{4}\.\d\.\d{3})', args.package_url)

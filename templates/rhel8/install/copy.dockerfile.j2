@@ -1,5 +1,7 @@
 # install product by copying archive content
+{% if 'autobuild' != rhel_platform %}
 ARG TEMP_DIR=/tmp/openvino_installer
+{% endif -%}
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 {% if 'openshift' == rhel_platform %}

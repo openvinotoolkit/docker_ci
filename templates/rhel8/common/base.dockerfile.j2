@@ -1,6 +1,10 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+{%- if 'docker' == rhel_platform %}
 FROM registry.access.redhat.com/ubi8 AS base
+{% else %}
+FROM registry.access.redhat.com/ubi8
+{% endif -%}
 
 # hadolint ignore=DL3002
 USER root
@@ -14,7 +18,7 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-{% if 'openshift' != rhel_platform %}
+{% if 'docker' == rhel_platform %}
 ARG SUBSCRIPTION_ORG=
 ARG SUBSCRIPTION_KEY=
 
@@ -28,7 +32,7 @@ RUN subscription-manager register --org=$SUBSCRIPTION_ORG --activationkey=$SUBSC
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 
-{% if 'openshift' != rhel_platform %}
+{% if 'docker' == rhel_platform %}
 # -----------------
 FROM registry.access.redhat.com/ubi8 AS ov_base
 {% endif %}
@@ -41,8 +45,8 @@ LABEL name="rhel8_{{ distribution }}" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
       description="This is the {{ distribution }} image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
+{% if 'docker' == rhel_platform %}
 WORKDIR /
-{% if 'openshift' != rhel_platform %}
 USER root
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
@@ -58,7 +62,7 @@ RUN subscription-manager register --org=$SUBSCRIPTION_ORG --activationkey=$SUBSC
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
-{% if 'openshift' != rhel_platform %}
+{% if 'docker' == rhel_platform %}
 RUN mkdir /opt/intel
 
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
@@ -115,10 +119,12 @@ RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
 {% endfor %}
 
 # Post-installation cleanup and setting up OpenVINO environment variables
-{% if 'openshift' == rhel_platform %}
+{% if 'docker' == rhel_platform  %}
+RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
+{% elif 'openshift' == rhel_platform %}
 RUN rm -rf /tmp && mkdir /tmp && rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 {% else %}
-RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
+RUN rm -rf /tmp && mkdir /tmp
 {% endif %}
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
