@@ -2,7 +2,7 @@
 ARG TEMP_DIR=/tmp/openvino_installer
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-{% if openshift %}
+{% if 'openshift' == rhel_platform %}
 WORKDIR ${TEMP_DIR}
 {% endif %}
 RUN tar -xzf "${TEMP_DIR}"/*.tgz && \

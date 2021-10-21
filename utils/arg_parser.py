@@ -241,13 +241,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             help='Name of the Dockerfile, that uses to build an image.',
         )
 
-        parser.add_argument(
-            '--openshift',
-            action='store_true',
-            default=False,
-            help='Create a dockerfile intended to build on Red Hat OpenShift (RHEL images only)',
-        )
-
     @staticmethod
     def set_default_subparser(name: str):
         """Set default subparser"""
@@ -266,6 +259,23 @@ def parse_args(name: str, description: str):  # noqa
     parser.add_build_args(gen_dockerfile_subparser)
     parser.add_linter_check_args(gen_dockerfile_subparser)
     parser.add_dist_args(gen_dockerfile_subparser)
+    rhel_platform_group = gen_dockerfile_subparser.add_mutually_exclusive_group()
+    rhel_platform_group.add_argument(
+        '--rhel_platform',
+        choices=['docker', 'openshift', 'autobuild'],
+        default='docker',
+        help='Specify target platform to generate RHEL dockerfiles (default is docker). '
+             'Choose autobuild option for Red Hat portal Build System.',
+    )
+    rhel_platform_group.add_argument(
+        '--openshift',
+        action='store_const',
+        dest='rhel_platform',
+        const='openshift',
+        default=False,
+        help='Create a dockerfile intended to build on Red Hat OpenShift Container Platform (RHEL images only). '
+             'Alias for --rhel_platform=openshift',
+    )
 
     build_subparser = subparsers.add_parser('build', help='Build a docker image')
     parser.add_build_args(build_subparser)
@@ -376,11 +386,9 @@ def parse_args(name: str, description: str):  # noqa
         if not args.file.exists():
             parser.error(f'Cannot find specified Dockerfile: {str(args.file)}.')
 
-    if hasattr(args, 'openshift') and args.openshift:
-        if args.mode != 'gen_dockerfile':
-            parser.error('Only dockerfile generation is supported for OpenShift')
-        elif args.os != 'rhel8':
-            parser.error('Dockerfile generation intended for OpenShift is supported only for RHEL-based images')
+    if args.rhel_platform != 'docker' and args.os != 'rhel8':
+            parser.error('Dockerfile generation intended for non-Docker platforms '
+                         'is supported only for RHEL-based images')
 
     if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all'):
         if args.ocl_release not in INTEL_OCL_RELEASE:
@@ -470,7 +478,7 @@ def parse_args(name: str, description: str):  # noqa
         if not args.dockerfile_name:
             devices = ''.join([d[0] for d in args.device])
             layers = '_'.join(args.layers)
-            openshift = 'openshift_' if args.openshift else ''
+            openshift = 'openshift_' if args.rhel_platform == 'openshift' else ''
             version = args.product_version
             if layers:
                 args.dockerfile_name = f'openvino_{openshift}{layers}_{version}.dockerfile'

@@ -2,7 +2,7 @@
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
-{% if openshift %}
+{% if 'openshift' == rhel_platform %}
 COPY ${package_url} ${TEMP_DIR}/
 {% else %}
 WORKDIR ${TEMP_DIR}
