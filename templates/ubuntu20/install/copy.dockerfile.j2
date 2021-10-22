@@ -3,7 +3,7 @@ ARG TEMP_DIR=/tmp/openvino_installer
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
-    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
+    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d.\d+')" && \
     OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
     OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
     mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
