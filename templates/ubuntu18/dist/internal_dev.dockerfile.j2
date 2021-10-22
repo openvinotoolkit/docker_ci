@@ -12,6 +12,12 @@ RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/extras/
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/setup.py install && \
     rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/build
 
+WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools
+RUN source ${INTEL_OPENVINO_DIR}/setupvars.sh && \
+    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/requirements.in && \
+    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/setup.py install && \
+    rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/build
+
 WORKDIR ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool
 RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/requirements.txt && \
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/setup.py install --install-extras && \

@@ -23,6 +23,12 @@ RUN %INTEL_OPENVINO_DIR%\setupvars.bat && `
     python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\accuracy_checker\requirements.in" && `
     python -m pip install --no-cache-dir .
 
+WORKDIR ${INTEL_OPENVINO_DIR}\extras\open_model_zoo\tools\model_tools
+RUN %INTEL_OPENVINO_DIR%\setupvars.bat && `
+    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\model_tools\requirements.in" && `
+    python setup.py install && `
+    rmdir /S /Q "%INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\model_tools\build"
+
 WORKDIR ${INTEL_OPENVINO_DIR}\tools\post_training_optimization_tool
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\tools\post_training_optimization_tool\requirements.txt" && `
     python -m pip install --no-cache-dir . && `
