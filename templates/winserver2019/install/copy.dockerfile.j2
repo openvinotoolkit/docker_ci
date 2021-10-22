@@ -5,9 +5,9 @@ ENV INTEL_OPENVINO_DIR C:\intel\openvino_${build_id}
 RUN powershell.exe -Command `
     Expand-Archive -Path "./*.zip" -DestinationPath . -Force ; `
     $OV_FOLDER=(Get-ChildItem -Filter "*openvino*" -Directory).FullName ; `
-    New-Item -Path C:\intel\ -ItemType Directory -Name openvino_${build_id} ; `
-    Move-Item -Path $OV_FOLDER\* -Destination $INTEL_OPENVINO_DIR ; `
-    Remove-Item @("./*.zip",$OV_FOLDER) -Force
+    New-Item -Path C:\intel\ -ItemType Directory -Name openvino_%build_id% ; `
+    Move-Item -Path $OV_FOLDER\* -Destination %INTEL_OPENVINO_DIR% ; `
+    Remove-Item @("""./*.zip""",$OV_FOLDER) -Force -Recurse
 
 RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
                     {`
