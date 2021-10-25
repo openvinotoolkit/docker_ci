@@ -176,7 +176,8 @@ def docker_api():
 def dev_root(request):
     openvino_dev_path = pathlib.Path(request.config.getoption('--mount_root')) / 'openvino_dev'
     dev_root_path = openvino_dev_path.iterdir().__next__()
-    if dev_root_path.exists() and sum(f.stat().st_size for f in openvino_dev_path.rglob('*')) < 10000000:
+    if dev_root_path.exists() and sum(f.stat().st_size if f.exists() else 0
+                                      for f in openvino_dev_path.rglob('*')) < 10000000:
         pytest.skip(f'The test was skipped because the mount dependencies folder was not removed completely. '
                     f'Try to remove it manually via "sudo rm -r {openvino_dev_path}"')
 
@@ -197,7 +198,7 @@ def install_openvino_dependencies(request):
 def download_picture(request):
     image_os = request.config.getoption('--image_os')
 
-    def _download_picture(picture, location='/opt/intel/openvino/deployment_tools/demo/'):
+    def _download_picture(picture, location='/opt/intel/openvino/samples/scripts/'):
         """Download a picture if it does not exist on Unix system only"""
         picture_on_share = f'https://storage.openvinotoolkit.org/data/test_data/images/{picture}'
         cmd = (f'if [ ! -f {location}{picture} ];'
@@ -217,7 +218,7 @@ def bash(request):
 
     def _bash(command):
         if distribution in ('base', 'custom-no-omz', 'custom-no-cv', 'custom-full'):
-            return f'/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && {command}"'
+            return f'/bin/bash -ac ". /opt/intel/openvino/setupvars.sh && {command}"'
         else:
             return f'/bin/bash -c "{command}"'
     return _bash
@@ -236,16 +237,16 @@ def omz_python_demo_path(request):
             parameters = ' -at centernet'
 
     if 'win' in request.config.getoption('--image_os'):
-        base_path = 'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos'
+        base_path = 'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos'
         return f'{base_path}\\\\{demo_name}_demo\\\\python\\\\{demo_name}_demo.py{parameters}'
     else:
-        base_path = '/opt/intel/openvino/deployment_tools/open_model_zoo/demos'
+        base_path = '/opt/intel/openvino/extras/open_model_zoo/demos'
         return f'{base_path}/{demo_name}_demo/python/{demo_name}_demo.py{parameters}'
 
 
 @pytest.fixture(scope='session')
 def omz_python_demos_requirements_file(request):
-    base_path = '/opt/intel/openvino/deployment_tools/open_model_zoo/demos'
+    base_path = '/opt/intel/openvino/extras/open_model_zoo/demos'
     return f'{base_path}/requirements.txt'
 
 
@@ -331,7 +332,7 @@ def _max_product_version(request):
 @pytest.fixture(scope='session')
 def _python_ngraph_required(request):
     registry = request.config.getoption('--registry')
-    image = f'{registry}{"/" if registry else ""}{request.config.getoption("--image")}'
+    image = f'{f"{registry}/" if registry else ""}{request.config.getoption("--image")}'
     if 'win' in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'cmd', '/c', 'dir /b/s python | findstr pyngraph']
     else:
@@ -344,10 +345,10 @@ def _python_ngraph_required(request):
 @pytest.fixture(scope='session')
 def _python_vpu_plugin_required(request):
     registry = request.config.getoption('--registry')
-    image = f'{registry}{"/" if registry else ""}{request.config.getoption("--image")}'
+    image = f'{f"{registry}/" if registry else ""}{request.config.getoption("--image")}'
     if 'win' not in request.config.getoption('--image_os'):
         command = ['docker', 'run', '--rm', image, 'bash', '-c',
-                   'find deployment_tools/inference_engine/lib/intel64 | grep libmyriadPlugin.so']
+                   'find runtime/lib/intel64 | grep libmyriadPlugin.so']
         process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)  # nosec
         if process.returncode != 0:
             pytest.skip('Test requires VPU plugin.')

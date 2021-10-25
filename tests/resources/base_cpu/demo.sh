@@ -2,7 +2,7 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
-export TBB_DIR=${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake
+export TBB_DIR=${INTEL_OPENVINO_DIR}/runtime/3rdparty/tbb/cmake
 
 apt update
 apt install -y --no-install-recommends make ca-certificates

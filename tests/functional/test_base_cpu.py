@@ -20,6 +20,6 @@ def test_base_cpp(tester, image):
     }
     tester.test_docker_image(
         image,
-        ['/bin/bash -ac ". /opt/intel/openvino/bin/setupvars.sh && . /opt/intel/openvino/base_cpu/demo.sh"'],
+        ['/bin/bash -ac ". /opt/intel/openvino/setupvars.sh && . /opt/intel/openvino/base_cpu/demo.sh"'],
         test_base_cpp.__name__, **kwargs,
     )

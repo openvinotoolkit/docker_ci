@@ -6,7 +6,7 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 WORKDIR ${TEMP_DIR}
 {% endif %}
 RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
-    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
+    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d.\d+')" && \
     OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
     OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
     mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
@@ -14,10 +14,8 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
+    rm -rf ${INTEL_OPENVINO_DIR}/tools/workbench && rm -rf ${TEMP_DIR}
 {% if no_samples is defined %}
-RUN rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/demos && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/demo && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/samples && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/demos
+RUN rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/demos && \
+    rm -rf ${INTEL_OPENVINO_DIR}/samples
 {% endif %}

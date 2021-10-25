@@ -122,10 +122,9 @@ RUN chmod +x install_dependencies/install_NCS_udev_rules.sh; \
 # hadolint ignore=DL3013
 RUN python3 -m pip install --no-cache-dir --upgrade pip; \
     python3 -m pip install --no-cache-dir -r python/python3.6/requirements.txt; \
-    python3 -m pip install --no-cache-dir -r deployment_tools/model_optimizer/requirements.txt
+    python3 -m pip install --no-cache-dir -r tools/model_optimizer/requirements.txt
 
-RUN ln -s deployment_tools/inference_engine/ inference_engine
-RUN printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc
+RUN printf "\nsource \${INTEL_OPENVINO_DIR}/setupvars.sh\n" >> /root/.bashrc
 
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
@@ -162,17 +161,18 @@ COPY opencv_cmake.txt /opt/intel/repo
 
 WORKDIR /opt/intel/repo/opencv/build
 # hadolint ignore=SC2046
-RUN . "${INTEL_OPENVINO_DIR}/bin/setupvars.sh"; \
+RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh"; \
     cmake $(cat /opt/intel/repo/opencv_cmake.txt) /opt/intel/repo/opencv; \
     make "-j$(nproc)"; \
     make install
 
 WORKDIR /opt/intel/repo/opencv/build/install
-RUN cp -r . "${INTEL_OPENVINO_DIR}/opencv"; \
-    cp -r "${INTEL_OPENVINO_DIR}/opencv/python/python3" "${INTEL_OPENVINO_DIR}/python"; \
-    rm -r "${INTEL_OPENVINO_DIR}/opencv/python"; \
-    echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/opencv/setupvars.sh"; \
-    echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/opencv/setupvars.sh"; \
+RUN mkdir "${INTEL_OPENVINO_DIR}/extras"; \
+    cp -r . "${INTEL_OPENVINO_DIR}/extras/opencv"; \
+    cp -r "${INTEL_OPENVINO_DIR}/extras/opencv/python/python3" "${INTEL_OPENVINO_DIR}/python"; \
+    rm -r "${INTEL_OPENVINO_DIR}/extras/opencv/python"; \
+    echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
+    echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
     rm -rf /opt/intel/repo/opencv/build/install
 
 WORKDIR ${INTEL_OPENVINO_DIR}
@@ -185,13 +185,12 @@ LABEL vendor="Intel Corporation"
 
 ARG OMZ_BRANCH="master"
 
-WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools
+WORKDIR ${INTEL_OPENVINO_DIR}/extras
 RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git --depth 1 -b ${OMZ_BRANCH}; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/downloader/requirements.in; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/downloader/requirements-caffe2.in; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/downloader/requirements-pytorch.in; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/downloader/requirements-tensorflow.in; \
-    ln -s ../open_model_zoo/demos inference_engine/demos
+    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements.in; \
+    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-caffe2.in; \
+    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-pytorch.in; \
+    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-tensorflow.in
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]

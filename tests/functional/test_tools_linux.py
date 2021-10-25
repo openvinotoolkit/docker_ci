@@ -22,7 +22,7 @@ class TestToolsLinux:
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            [bash('cd /opt/intel/openvino/deployment_tools/tools/benchmark_tool && '
+            [bash('cd /opt/intel/openvino/tools/benchmark_tool && '
                   'python3 benchmark_app.py -h')],
             self.test_benchmark.__name__, **kwargs,
         )
@@ -33,7 +33,7 @@ class TestToolsLinux:
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            [bash('cd /opt/intel/openvino/deployment_tools/tools/cl_compiler/bin && '
+            [bash('cd /opt/intel/openvino/tools/cl_compiler/bin && '
                   './clc -h')],
             self.test_cl_compiler.__name__, **kwargs,
         )
@@ -44,20 +44,9 @@ class TestToolsLinux:
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            [bash('cd /opt/intel/openvino/deployment_tools/tools/compile_tool && '
+            [bash('cd /opt/intel/openvino/tools/compile_tool && '
                   './compile_tool -h')],
             self.test_compile_tool.__name__, **kwargs,
-        )
-
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
-    def test_cross_check_tool(self, tester, image, bash):
-        kwargs = {'mem_limit': '3g'}
-        tester.test_docker_image(
-            image,
-            [bash('cd /opt/intel/openvino/deployment_tools/tools/cross_check_tool && '
-                  'python3 cross_check_tool.py -h')],
-            self.test_cross_check_tool.__name__, **kwargs,
         )
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
@@ -66,7 +55,7 @@ class TestToolsLinux:
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            [bash('cd /opt/intel/openvino/deployment_tools/tools/deployment_manager && '
+            [bash('cd /opt/intel/openvino/tools/deployment_manager && '
                   'python3 deployment_manager.py -h')],
             self.test_deployment_manager.__name__, **kwargs,
         )

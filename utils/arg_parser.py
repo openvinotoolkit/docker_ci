@@ -457,12 +457,12 @@ def parse_args(name: str, description: str):  # noqa
                                  f'and {args.distribution} distribution. Please specify --package_url directly.')
 
         if args.package_url and not args.build_id:
-            build_id = re.search(r'p_(\d{4}\.\d\.\d{3})', args.package_url)
+            build_id = re.search(r'p_(\d{4}\.\d)\.(\d)_(\d{3})', args.package_url)
             if build_id:
-                # save product version YYYY.U.BBB
-                args.build_id = build_id.group(1)
+                # save product version YYYY.U.P.BBB
+                args.build_id = '.'.join(build_id.groups())
                 # save product version YYYY.U
-                args.product_version = args.build_id[:6]
+                args.product_version = build_id.group(1)
             else:
                 parser.error(f'Cannot get build number from the package URL provided: {args.package_url}. '
                              f'Please specify --product_version directly.')
@@ -528,10 +528,10 @@ def parse_args(name: str, description: str):  # noqa
         args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]['dev']
 
     if hasattr(args, 'distribution') and args.distribution == 'custom':
-        if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'opencv'],  # nosec
+        if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'extras/opencv'],  # nosec
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
             args.distribution = 'custom-no-cv'
-        elif subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'deployment_tools/open_model_zoo'],  # nosec
+        elif subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'extras/open_model_zoo'],  # nosec
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
             args.distribution = 'custom-no-omz'
         else:

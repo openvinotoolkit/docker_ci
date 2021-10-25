@@ -12,8 +12,8 @@ class TestSpeechDemoWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\ && '
+            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'cd C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\ && '
              'demo_speech_recognition.bat --no-show'],
             self.test_speech_recognition_cpu.__name__, **kwargs,
         )
@@ -27,8 +27,37 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\ && '
-             'demo_security_barrier_camera.bat -d CPU -sample-options -no_show'],
+            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
+             'model_tools\\\\downloader.py --name vehicle-license-plate-detection-barrier-0106 '
+             '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'omz_demos_build\\\\intel64\\\\Release\\\\',
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
+             'model_tools\\\\downloader.py --name license-plate-recognition-barrier-0001 '
+             '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'omz_demos_build\\\\intel64\\\\Release\\\\',
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
+             'model_tools\\\\downloader.py --name vehicle-attributes-recognition-barrier-0039 '
+             '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'omz_demos_build\\\\intel64\\\\Release\\\\',
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'omz_demos_build\\\\intel64\\\\Release\\\\security_barrier_camera_demo '
+             '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'omz_demos_build\\\\intel64\\\\Release\\\\intel\\\\'
+             'vehicle-license-plate-detection-barrier-0106\\\\FP16\\\\vehicle-license-plate-detection-barrier-0106.xml '
+             '-m_lpr C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'omz_demos_build\\\\intel64\\\\Release\\\\intel\\\\'
+             'license-plate-recognition-barrier-0001\\\\FP16\\\\license-plate-recognition-barrier-0001.xml '
+             '-m_va C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
+             'omz_demos_build\\\\intel64\\\\Release\\\\intel\\\\'
+             'vehicle-attributes-recognition-barrier-0039\\\\FP16\\\\vehicle-attributes-recognition-barrier-0039.xml '
+             '-i C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp '
+             '-d CPU -d_va CPU -d_lpr CPU -no_show'],
             self.test_security_cpu.__name__, **kwargs,
         )
 
@@ -36,8 +65,8 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C cd C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\ && '
-             'demo_squeezenet_download_convert_run.bat -d CPU'],
+            ['cmd /S /C cd C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\ && '
+             'run_sample_squeezenet.bat -d CPU'],
             self.test_squeezenet_cpu.__name__, **kwargs,
         )
 
@@ -45,21 +74,21 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator', 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
+             'model_tools\\\\downloader.py '
              '--name person-vehicle-bike-detection-crossroad-0078 --precisions FP16 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\crossroad_camera_demo '
              '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\intel\\\\'
              'person-vehicle-bike-detection-crossroad-0078\\\\FP16\\\\person-vehicle-bike-detection-crossroad-0078.xml '
-             '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU -no_show',
+             '-i C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp -d CPU -no_show',
              ],
             self.test_crossroad_cpp_cpu.__name__, **kwargs,
         )
@@ -68,20 +97,20 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator', 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
+             'model_tools\\\\downloader.py '
              '--name text-detection-0004 --precision FP16 -o C:\\\\Users\\\\ContainerAdministrator\\\\'
              'Documents\\\\Intel\\\\OpenVINO\\\\omz_demos_build\\\\intel64\\\\Release\\\\',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\text_detection_demo '
              '-m_td C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\intel\\\\'
              'text-detection-0004\\\\FP16\\\\text-detection-0004.xml '
-             '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d_td CPU -no_show',
+             '-i C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp -d_td CPU -no_show',
              ],
             self.test_text_cpp_cpu.__name__, **kwargs,
         )
@@ -91,15 +120,15 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
+             'model_tools\\\\downloader.py '
              '--name vehicle-detection-adas-0002 --precision FP16',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              f'python {omz_python_demo_path} '
              '-m C:\\\\intel\\\\openvino\\\\intel\\\\vehicle-detection-adas-0002\\\\FP16\\\\'
              'vehicle-detection-adas-0002.xml '
-             '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU --no_show',
+             '-i C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp -d CPU --no_show',
              ],
             self.test_detection_ssd_python_cpu.__name__, **kwargs,
         )
@@ -108,21 +137,21 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator', 'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
+             'model_tools\\\\downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16 -o C:\\\\Users\\\\'
              'ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\segmentation_demo '
              '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\intel\\\\semantic-segmentation-adas-0001\\\\'
              'FP16\\\\semantic-segmentation-adas-0001.xml '
-             '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU -no_show',
+             '-i C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp -d CPU -no_show',
              ],
             self.test_segmentation_cpp_cpu.__name__, **kwargs,
         )
@@ -132,15 +161,15 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
+             'model_tools\\\\downloader.py '
              '--name semantic-segmentation-adas-0001 --precision FP16',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              f'python {omz_python_demo_path} '
              '-m C:\\\\intel\\\\openvino\\\\intel\\\\semantic-segmentation-adas-0001\\\\FP16\\\\'
              'semantic-segmentation-adas-0001.xml '
-             '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU -at segmentation --no_show',
+             '-i C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp -d CPU -at segmentation --no_show',
              ],
             self.test_segmentation_python_cpu.__name__, **kwargs,
         )
@@ -150,18 +179,18 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\downloader.py '
+            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
+             'model_tools\\\\downloader.py '
              '--name ctdet_coco_dlav0_384 --precision FP16',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\deployment_tools\\\\open_model_zoo\\\\tools\\\\'
-             'downloader\\\\converter.py '
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
+             'model_tools\\\\converter.py '
              '--name ctdet_coco_dlav0_384 --precision FP16',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\bin\\\\setupvars.bat && '
+             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              f'python {omz_python_demo_path} '
              '-m C:\\\\intel\\\\openvino\\\\public\\\\ctdet_coco_dlav0_384\\\\FP16\\\\ctdet_coco_dlav0_384.xml '
-             '-i C:\\\\intel\\\\openvino\\\\deployment_tools\\\\demo\\\\car_1.bmp -d CPU --no_show',
+             '-i C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp -d CPU --no_show',
              ],
             self.test_object_detection_centernet_python_cpu.__name__, **kwargs,
         )

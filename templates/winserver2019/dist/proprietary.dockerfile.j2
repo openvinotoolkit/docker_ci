@@ -1,30 +1,35 @@
 # proprietary package
 WORKDIR ${INTEL_OPENVINO_DIR}
-RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt" && `
-    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\openvino\tools\benchmark\requirements.txt"
+RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\python\%PYTHON_VER%\requirements.txt"
 
 RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter *requirements*.* | ForEach-Object { `
-       if (($_.Fullname -like '*post_training_optimization_toolkit*') -or ($_.Fullname -like '*accuracy_checker*') -or ($_.Fullname -like '*python3*') -or ($_.Fullname -like '*python2*') -or ($_.Fullname -like '*requirements_ubuntu*')) `
+       if (($_.Fullname -like '*post_training_optimization_tool*') -or ($_.Fullname -like '*accuracy_checker*') -or ($_.Fullname -like '*python3*') -or ($_.Fullname -like '*python2*') -or ($_.Fullname -like '*requirements_ubuntu*')) `
        {echo 'skipping dependency'} else {echo 'installing dependency'; python -m pip install --no-cache-dir -r $_.FullName} `
    }"
 
 # download source for LGPL packages
 {% if HTTPS_PROXY is defined %}
 RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/ee/2d/9cdc2b527e127b4c9db64b86647d567985940ac3698eeabc7ffaccb4ea61/chardet-4.0.0.tar.gz -Proxy %HTTPS_PROXY% -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\open_model_zoo\\chardet-4.0.0.tar.gz ; `
-    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz -Proxy %HTTPS_PROXY% -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\open_model_zoo\\flake8-import-order-0.18.1.tar.gz
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/ee/2d/9cdc2b527e127b4c9db64b86647d567985940ac3698eeabc7ffaccb4ea61/chardet-4.0.0.tar.gz -Proxy %HTTPS_PROXY% -OutFile %INTEL_OPENVINO_DIR%\\extras\\open_model_zoo\\chardet-4.0.0.tar.gz ; `
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz -Proxy %HTTPS_PROXY% -OutFile %INTEL_OPENVINO_DIR%\\extras\\open_model_zoo\\flake8-import-order-0.18.1.tar.gz
 {% else %}
 RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/ee/2d/9cdc2b527e127b4c9db64b86647d567985940ac3698eeabc7ffaccb4ea61/chardet-4.0.0.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\open_model_zoo\\chardet-4.0.0.tar.gz ; `
-    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\deployment_tools\\open_model_zoo\\flake8-import-order-0.18.1.tar.gz
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/ee/2d/9cdc2b527e127b4c9db64b86647d567985940ac3698eeabc7ffaccb4ea61/chardet-4.0.0.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\extras\\open_model_zoo\\chardet-4.0.0.tar.gz ; `
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\extras\\open_model_zoo\\flake8-import-order-0.18.1.tar.gz
 {% endif %}
 
-WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\open_model_zoo\tools\accuracy_checker
-RUN %INTEL_OPENVINO_DIR%\bin\setupvars.bat && `
-    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\open_model_zoo\tools\accuracy_checker\requirements.in" && `
+WORKDIR ${INTEL_OPENVINO_DIR}\extras\open_model_zoo\tools\accuracy_checker
+RUN %INTEL_OPENVINO_DIR%\setupvars.bat && `
+    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\accuracy_checker\requirements.in" && `
     python -m pip install --no-cache-dir .
 
-WORKDIR ${INTEL_OPENVINO_DIR}\deployment_tools\tools\post_training_optimization_toolkit
-RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\deployment_tools\tools\post_training_optimization_toolkit\requirements.txt" && `
+WORKDIR ${INTEL_OPENVINO_DIR}\extras\open_model_zoo\tools\model_tools
+RUN %INTEL_OPENVINO_DIR%\setupvars.bat && `
+    python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\model_tools\requirements.in" && `
+    python setup.py install && `
+    rmdir /S /Q "%INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\model_tools\build"
+
+WORKDIR ${INTEL_OPENVINO_DIR}\tools\post_training_optimization_tool
+RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\tools\post_training_optimization_tool\requirements.txt" && `
     python -m pip install --no-cache-dir . && `
     python -m pip uninstall -y opencv-python

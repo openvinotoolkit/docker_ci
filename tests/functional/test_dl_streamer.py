@@ -13,7 +13,7 @@ class TestDLStreamerLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
+             bash('cd /opt/intel/openvino/extras/dl_streamer/samples && '
                   './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
                   'cd build && cmake ../ && make && '
                   'curl -O https://storage.openvinotoolkit.org/data/test_data/videos/face-demographics-walking.mp4 && '
@@ -27,7 +27,7 @@ class TestDLStreamerLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
+             bash('cd /opt/intel/openvino/extras/dl_streamer/samples && '
                   './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
                   'cd build && cmake ../ && make && '
                   'curl -O https://storage.openvinotoolkit.org/data/test_data/videos/face-demographics-walking.mp4 && '
@@ -43,7 +43,7 @@ class TestDLStreamerLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
+             bash('cd /opt/intel/openvino/extras/dl_streamer/samples && '
                   './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
                   'cd build && cmake ../ && make && '
                   'curl -O https://storage.openvinotoolkit.org/data/test_data/videos/face-demographics-walking.mp4 && '
@@ -58,7 +58,7 @@ class TestDLStreamerLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
+             bash('cd /opt/intel/openvino/extras/dl_streamer/samples && '
                   './download_models.sh && cd cpp/draw_face_attributes && mkdir build && '
                   'cd build && cmake ../ && make && '
                   'curl -O https://storage.openvinotoolkit.org/data/test_data/videos/face-demographics-walking.mp4 && '
@@ -72,7 +72,7 @@ class TestDLStreamerLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('cd /opt/intel/openvino/data_processing/dl_streamer/samples/gst_launch/audio_detect && '
+             bash('cd /opt/intel/openvino/extras/dl_streamer/samples/gst_launch/audio_detect && '
                   '../../download_models.sh && ./audio_event_detection.sh')],
             self.test_gst_launch_audio_detect.__name__, **kwargs,
         )
@@ -82,7 +82,7 @@ class TestDLStreamerLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('cd /opt/intel/openvino/data_processing/dl_streamer/samples && '
+             bash('cd /opt/intel/openvino/extras/dl_streamer/samples && '
                   './download_models.sh && cd gst_launch/metapublish && ./metapublish.sh')],
             self.test_gst_launch_metapublish.__name__, **kwargs,
         )
