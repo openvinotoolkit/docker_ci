@@ -51,17 +51,6 @@ class TestToolsLinux:
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
-    def test_cross_check_tool(self, tester, image, bash):
-        kwargs = {'mem_limit': '3g'}
-        tester.test_docker_image(
-            image,
-            [bash('cd /opt/intel/openvino/tools/cross_check_tool && '
-                  'python3 cross_check_tool.py -h')],
-            self.test_cross_check_tool.__name__, **kwargs,
-        )
-
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_deployment_manager(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(

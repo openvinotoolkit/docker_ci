@@ -40,17 +40,6 @@ class TestToolsWindows:
         )
 
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
-    def test_cross_check_tool(self, tester, image):
-        kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'cd C:\\\\intel\\\\openvino\\\\tools\\\\cross_check_tool\\\\ && '
-             'python cross_check_tool.py -h'],
-            self.test_cross_check_tool.__name__, **kwargs,
-        )
-
-    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_deployment_manager(self, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(

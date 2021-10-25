@@ -10,13 +10,9 @@
     "/opt/intel/openvino/python/python3.7/requirements.txt": [
         "numpy>=1.16.6,<1.20"
     ],
-    "/opt/intel/openvino/python/requirements.txt": [
-        "numpy>=1.16.6,<1.20"
-    ],
     "requirements": [
-        "/opt/intel/openvino/python/requirements.txt",
-        "/opt/intel/openvino/python/python3.6/requirements.txt",
         "/opt/intel/openvino/python/python3.7/requirements.txt",
+        "/opt/intel/openvino/python/python3.6/requirements.txt",
         "/opt/intel/openvino/extras/dl_streamer/requirements.txt"
     ]
 }
