@@ -4,6 +4,14 @@
 FROM registry.access.redhat.com/ubi8 AS base
 {% else %}
 FROM registry.access.redhat.com/ubi8
+
+LABEL name="rhel8_{{ distribution }}" \
+      maintainer="openvino_docker@intel.com" \
+      vendor="Intel Corporation" \
+      version="{{ product_version }}" \
+      release="{{ product_version }}" \
+      summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
+      description="This is the {{ distribution }} image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 {% endif -%}
 
 # hadolint ignore=DL3002
@@ -35,7 +43,6 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 {% if 'docker' == rhel_platform %}
 # -----------------
 FROM registry.access.redhat.com/ubi8 AS ov_base
-{% endif %}
 
 LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
@@ -45,7 +52,6 @@ LABEL name="rhel8_{{ distribution }}" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
       description="This is the {{ distribution }} image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
-{% if 'docker' == rhel_platform %}
 WORKDIR /
 USER root
 

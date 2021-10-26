@@ -1,6 +1,14 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 FROM registry.access.redhat.com/ubi8
+
+LABEL name="rhel8_runtime" \
+      maintainer="openvino_docker@intel.com" \
+      vendor="Intel Corporation" \
+      version="2021.4.1" \
+      release="2021.4.1" \
+      summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
+      description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 # hadolint ignore=DL3002
 USER root
 
@@ -39,16 +47,6 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
 
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
-
-
-
-LABEL name="rhel8_runtime" \
-      maintainer="openvino_docker@intel.com" \
-      vendor="Intel Corporation" \
-      version="2021.4.1" \
-      release="2021.4.1" \
-      summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
-      description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
 
 
