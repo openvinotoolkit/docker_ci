@@ -386,6 +386,8 @@ def parse_args(name: str, description: str):  # noqa
         if not args.file.exists():
             parser.error(f'Cannot find specified Dockerfile: {str(args.file)}.')
 
+    if not hasattr(args, 'rhel_platform'):
+        args.rhel_platform = 'docker'
     if args.rhel_platform != 'docker' and args.os != 'rhel8':
         parser.error('Dockerfile generation intended for non-Docker platforms '
                      'is supported only for RHEL-based images')
