@@ -227,8 +227,8 @@ class TestSamplesLinuxRuntime:
                       '/opt/intel/openvino/samples/scripts/car.png CPU'),
                  ], self.test_hello_classification_cpp_fail.__name__, **kwargs,
             )
-        if 'Sample supports topologies with 1 output only' not in caplog.text:
-            pytest.fail('Sample supports topologies with 1 output only')
+        if 'Sample supports models with 1 output only' not in caplog.text:
+            pytest.fail('Sample supports models with 1 output only')
 
     def test_hello_reshape_cpp_cpu(self, tester, image, dev_root, install_openvino_dependencies, bash):
         kwargs = {
