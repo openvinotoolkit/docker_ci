@@ -56,7 +56,7 @@ default_args = {
     pytest.param(
         {
             'mode': 'build',
-            'package_url': 'openvino_dev_p_2022.1.0_320.zip',
+            'package_url': 'openvino_dev_p_2022.1.0.320.zip',
             'source': 'local',
         },
         {
@@ -73,7 +73,7 @@ default_args = {
     pytest.param(
         {
             'mode': 'build',
-            'package_url': 'openvino_dev_p_2022.1.0_320.zip',
+            'package_url': 'openvino_dev_p_2022.1.0.320.zip',
             'source': 'local',
             'tag_postfix': '_qqq',
         },
@@ -91,7 +91,7 @@ default_args = {
     pytest.param(
         {
             'mode': 'build',
-            'package_url': 'openvino_dev_p_2022.1.0_320.zip',
+            'package_url': 'openvino_dev_p_2022.1.0.320.zip',
             'source': 'local',
             'ocl_release': '20.35.17767',
         },
@@ -109,7 +109,7 @@ default_args = {
     pytest.param(
         {
             'mode': 'build',
-            'package_url': 'openvino_dev_p_2022.1.0_320.zip',
+            'package_url': 'openvino_dev_p_2022.1.0.320.zip',
             'source': 'local',
             'os': 'winserver2019',
         },
@@ -126,7 +126,7 @@ default_args = {
     pytest.param(
         {
             'mode': 'build',
-            'package_url': 'openvino_dev_p_2022.1.0_320.zip',
+            'package_url': 'openvino_dev_p_2022.1.0.320.zip',
             'distribution': 'base',
             'file': 'openvino_c_base_2022.1.dockerfile',
             'source': 'local',
@@ -161,7 +161,7 @@ default_args = {
     pytest.param(
         {
             'mode': 'build',
-            'package_url': 'openvino_dev_p_2022.1.0_320.zip',
+            'package_url': 'openvino_dev_p_2022.1.0.320.zip',
             'source': 'local',
             'tags': ['my_tag:latest'],
             'device': ['cpu', 'hddl'],
@@ -216,7 +216,7 @@ default_args = {
     pytest.param(
         {
             'mode': 'all',
-            'package_url': 'openvino_dev_p_2022.1.0_320.zip',
+            'package_url': 'openvino_dev_p_2022.1.0.320.zip',
             'source': 'local',
             'registry': 'https://deploy',
         },
