@@ -65,8 +65,8 @@ class DockerFileRender:
         pre_commands = [self.get_template(arg, kwargs).render() for arg in settings]
         commands = [self.get_template(arg, kwargs).render() for arg in content]
         layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
-        if args.openshift:
-            save_to_dir /= 'openshift'
+        if args.rhel_platform != 'docker':
+            save_to_dir /= args.rhel_platform
         if not save_to_dir.exists():
             save_to_dir.mkdir()
         save_to = save_to_dir / args.dockerfile_name
