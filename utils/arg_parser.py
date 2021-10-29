@@ -457,7 +457,7 @@ def parse_args(name: str, description: str):  # noqa
                                  f'and {args.distribution} distribution. Please specify --package_url directly.')
 
         if args.package_url and not args.build_id:
-            build_id = re.search(r'p_(\d{4}\.\d)\.(\d)_(\d{3})', args.package_url)
+            build_id = re.search(r'p_(\d{4}\.\d)\.(\d)\.(\d{3})', args.package_url)
             if build_id:
                 # save product version YYYY.U.P.BBB
                 args.build_id = '.'.join(build_id.groups())
