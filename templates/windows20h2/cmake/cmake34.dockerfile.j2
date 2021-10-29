@@ -1,12 +1,12 @@
 # setup CMake
 {% if HTTPS_PROXY is defined %}
 RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://cmake.org/files/v3.4/cmake-3.4.3-win32-x86.exe -Proxy %HTTPS_PROXY% -OutFile %TMP%\\cmake-3.4.3-win32-x86.exe ; `
+    Invoke-WebRequest -URI https://github.com/Kitware/CMake/releases/download/v3.4.3/cmake-3.4.3-win32-x86.exe -Proxy %HTTPS_PROXY% -OutFile %TMP%\\cmake-3.4.3-win32-x86.exe ; `
     Start-Process %TMP%\\cmake-3.4.3-win32-x86.exe -ArgumentList '/quiet /norestart' -Wait ; `
     Remove-Item %TMP%\\cmake-3.4.3-win32-x86.exe -Force
 {% else %}
 RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://cmake.org/files/v3.4/cmake-3.4.3-win32-x86.exe -OutFile %TMP%\\cmake-3.4.3-win32-x86.exe ; `
+    Invoke-WebRequest -URI https://github.com/Kitware/CMake/releases/download/v3.4.3/cmake-3.4.3-win32-x86.exe -OutFile %TMP%\\cmake-3.4.3-win32-x86.exe ; `
     Start-Process %TMP%\\cmake-3.4.3-win32-x86.exe -ArgumentList '/quiet /norestart' -Wait ; `
     Remove-Item %TMP%\\cmake-3.4.3-win32-x86.exe -Force
 {% endif %}
