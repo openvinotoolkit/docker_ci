@@ -1,10 +1,22 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+{%- if 'docker' == rhel_platform %}
 FROM registry.access.redhat.com/ubi8 AS base
+{% else %}
+FROM registry.access.redhat.com/ubi8
+
+LABEL name="rhel8_{{ distribution }}" \
+      maintainer="openvino_docker@intel.com" \
+      vendor="Intel Corporation" \
+      version="{{ product_version }}" \
+      release="{{ product_version }}" \
+      summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
+      description="This is the {{ distribution }} image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
+{% endif -%}
 
 # hadolint ignore=DL3002
 USER root
-{% if openshift %}
+{% if 'openshift' == rhel_platform %}
 COPY entitlement.pem /etc/pki/entitlement
 COPY entitlement-key.pem /etc/pki/entitlement
 COPY ./rhsm-conf /etc/rhsm
@@ -14,7 +26,7 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-{% if not openshift %}
+{% if 'docker' == rhel_platform %}
 ARG SUBSCRIPTION_ORG=
 ARG SUBSCRIPTION_KEY=
 
@@ -28,10 +40,9 @@ RUN subscription-manager register --org=$SUBSCRIPTION_ORG --activationkey=$SUBSC
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 
-{% if not openshift %}
+{% if 'docker' == rhel_platform %}
 # -----------------
 FROM registry.access.redhat.com/ubi8 AS ov_base
-{% endif %}
 
 LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
@@ -42,7 +53,6 @@ LABEL name="rhel8_{{ distribution }}" \
       description="This is the {{ distribution }} image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
 WORKDIR /
-{% if not openshift %}
 USER root
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
@@ -58,7 +68,7 @@ RUN subscription-manager register --org=$SUBSCRIPTION_ORG --activationkey=$SUBSC
 RUN useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
-{% if not openshift %}
+{% if 'docker' == rhel_platform %}
 RUN mkdir /opt/intel
 
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
@@ -80,7 +90,7 @@ ARG INSTALL_SOURCES="no"
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
-{% if openshift -%}
+{% if 'openshift' == rhel_platform -%}
 RUN rm /etc/rhsm-host && yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
 {%- else -%}
 RUN yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
@@ -115,10 +125,12 @@ RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
 {% endfor %}
 
 # Post-installation cleanup and setting up OpenVINO environment variables
-{% if openshift %}
+{% if 'docker' == rhel_platform  %}
+RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
+{% elif 'openshift' == rhel_platform %}
 RUN rm -rf /tmp && mkdir /tmp && rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 {% else %}
-RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
+RUN rm -rf /tmp && mkdir /tmp
 {% endif %}
 RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
         printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \

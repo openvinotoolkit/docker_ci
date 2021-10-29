@@ -107,7 +107,7 @@ class Launcher:
             'build_id': self.args.build_id,
             'year': self.args.year,
             'distribution': self.args.distribution,
-            'openshift': self.args.openshift,
+            'rhel_platform': self.args.rhel_platform,
             'os': self.args.os,
         })
         self.kwargs.update(get_system_proxy())
@@ -168,8 +168,6 @@ class Launcher:
             self.args.file = pathlib.Path(self.args.file).relative_to(self.location)
         self.builder = DockerImageBuilder()
         curr_time = timeit.default_timer()
-        if not self.args.openshift:
-            self.kwargs.pop('openshift')
         log.info(f"Build log location: {self.logdir / 'image_build.log'}")
         self.image = self.builder.build_docker_image(dockerfile=self.args.file,
                                                      directory=str(self.location),

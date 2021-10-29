@@ -1,8 +1,12 @@
 # get product from URL
+{%- if 'autobuild' == rhel_platform %}
+ARG package_url={{ package_url }}
+{% else %}
 ARG package_url
+{% endif -%}
 ARG TEMP_DIR=/tmp/openvino_installer
 
-{% if openshift %}
+{% if 'openshift' == rhel_platform %}
 COPY ${package_url} ${TEMP_DIR}/
 {% else %}
 WORKDIR ${TEMP_DIR}
