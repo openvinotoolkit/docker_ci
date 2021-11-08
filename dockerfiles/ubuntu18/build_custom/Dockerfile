@@ -186,11 +186,21 @@ LABEL vendor="Intel Corporation"
 ARG OMZ_BRANCH="master"
 
 WORKDIR ${INTEL_OPENVINO_DIR}/extras
-RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git --depth 1 -b ${OMZ_BRANCH}; \
+RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git --recurse-submodules --shallow-submodules --depth 1 -b ${OMZ_BRANCH}; \
+    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/accuracy_checker/requirements.in; \
     python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements.in; \
     python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-caffe2.in; \
     python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-pytorch.in; \
     python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-tensorflow.in
+
+WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker
+RUN python3 ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/setup.py install && \
+    rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/build
+
+WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools
+RUN source ${INTEL_OPENVINO_DIR}/setupvars.sh && \
+    python3 ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/setup.py install && \
+    rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/build
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
