@@ -194,13 +194,13 @@ RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git --recurse-su
     python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-tensorflow.in
 
 WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker
-RUN python3 ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/build
+RUN python3 "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/accuracy_checker/setup.py install && \
+    rm -rf "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/accuracy_checker/build
 
 WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools
-RUN source ${INTEL_OPENVINO_DIR}/setupvars.sh && \
-    python3 ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/build
+RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh" && \
+    python3 "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/model_tools/setup.py install && \
+    rm -rf "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/model_tools/build
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
