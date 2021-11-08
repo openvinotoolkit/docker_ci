@@ -207,7 +207,7 @@ class TestScriptDemosLinux:
                   '-m_lpr /root/omz_demos_build/intel64/Release/intel/license-plate-recognition-barrier-0001/'
                   'FP16/license-plate-recognition-barrier-0001.xml '
                   '-m_va /root/omz_demos_build/intel64/Release/intel/vehicle-attributes-recognition-barrier-0039/'
-                  'FP16/vehicle-attributes-recognition-barrier-0039.xml -no_show -d HDDL -d_va HDDL -d_lpr HDDL',
+                  'FP16/vehicle-attributes-recognition-barrier-0039.xml -no_show -d HDDL -d_va HDDL -d_lpr HDDL '
                   '-d HDDL -sample-options -no_show && rm -f /dev/shm/hddl_*"'),
              ], self.test_security_hddl.__name__, **kwargs,
         )
