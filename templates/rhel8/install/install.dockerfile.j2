@@ -2,7 +2,7 @@
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 # hadolint ignore=DL3031, DL3033
-RUN yum update -y && yum install -y cpio && \
+RUN yum update -y --excludepkgs redhat-release && yum install -y cpio && \
     yum clean all && rm -rf /var/cache/yum && \
     tar -xzf ${TEMP_DIR}/*.tgz --strip 1 && \
     sed -i 's/decline/accept/g' silent.cfg && \
