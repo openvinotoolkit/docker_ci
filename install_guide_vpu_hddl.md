@@ -27,9 +27,11 @@ Available releases for Ubuntu* 18.04:
 *  [2021.3](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.3/hddl_ubuntu18_1636.tgz)
 *  [2021.4](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.4/hddl_ubuntu18_1701.tgz)
 *  [2021.4.1](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.4.1/hddl_ubuntu18_1701.tgz)
+*  [2021.4.2](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.4.2/hddl_ubuntu18_1886.tgz)
 
 Available releases for Ubuntu* 20.04:
 *  [2021.4.1](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.4.1/hddl_ubuntu20_1701.tgz)
+*  [2021.4.2](https://storage.openvinotoolkit.org/drivers/vpu/hddl/2021.4.2/hddl_ubuntu20_1886.tgz)
 
 # Troubleshooting:
 
