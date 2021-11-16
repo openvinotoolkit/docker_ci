@@ -26,14 +26,20 @@ jobs:
           declare -A IMAGES=( ['ubuntu18']='runtime data_runtime dev data_dev proprietary'
                               ['ubuntu20']='runtime data_runtime dev data_dev'
                               ['centos7']='runtime'
-                              ['rhel8']='runtime'
+                              ['rhel8']='runtime dev'
                               ['winserver2019']='runtime dev data_dev proprietary'
                               ['windows20h2']='runtime dev data_dev proprietary' )
           for image_os in "${!IMAGES[@]}"
           do
             for distr in ${IMAGES[$image_os]}
             do
-              python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }}
+              if [[ "$image_os" == "winserver2019" || "$image_os" == "windows20h2" ]]
+              then
+                python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }} --msbuild msbuild2019_online
+              else
+                python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }}
+              fi
+
               if [ "$image_os" == "rhel8" ]
               then
                 python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }} --rhel_platform=openshift
