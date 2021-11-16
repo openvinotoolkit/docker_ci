@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 {%- if 'docker' == rhel_platform %}
-FROM registry.access.redhat.com/ubi8 AS base
+FROM registry.access.redhat.com/ubi8:8.4 AS base
 {% else %}
-FROM registry.access.redhat.com/ubi8
+FROM registry.access.redhat.com/ubi8:8.4
 
 LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
@@ -42,7 +42,7 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 
 {% if 'docker' == rhel_platform %}
 # -----------------
-FROM registry.access.redhat.com/ubi8 AS ov_base
+FROM registry.access.redhat.com/ubi8:8.4 AS ov_base
 
 LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
@@ -91,9 +91,9 @@ ARG INSTALL_SOURCES="no"
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
 {% if 'openshift' == rhel_platform -%}
-RUN rm /etc/rhsm-host && yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
+RUN rm /etc/rhsm-host && yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > base_packages.txt && \
 {%- else -%}
-RUN yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
+RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > base_packages.txt && \
 {%- endif %}
 	yum install -y ${LGPL_DEPS} && \
 	${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
