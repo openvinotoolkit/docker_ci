@@ -33,7 +33,7 @@ jobs:
           do
             for distr in ${IMAGES[$image_os]}
             do
-              if [[ "$image_os" == "winserver2019" || "$image_os" == "windows20h2" ]]
+              if [[ ("$image_os" == "winserver2019" || "$image_os" == "windows20h2") && "$distr" != "runtime" ]]
               then
                 python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }} --msbuild msbuild2019_online
               else
