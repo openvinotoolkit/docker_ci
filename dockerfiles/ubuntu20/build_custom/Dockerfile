@@ -202,7 +202,8 @@ RUN python3 "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/accuracy_checker
 WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools
 RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh" && \
     python3 "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/model_tools/setup.py install && \
-    rm -rf "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/model_tools/build
+    rm -rf "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/model_tools/build && \
+    if [ -d "${INTEL_OPENVINO_DIR}/extras/opencv" ]; then python3 -m pip uninstall -y opencv-python; fi
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]
