@@ -48,7 +48,7 @@ The docker image is built using a multi-step build:
     Build OpenVINO™ (CPU, iGPU, VPU support) with the parameters specified in openvino_cmake.txt.  
     It does not include OpenCV and Open Model Zoo.
 3. **copy_openvino**  
-    Copy OpenVINO™ build to clear Ubuntu:18.04 image.
+    Copy OpenVINO™ build to clear Ubuntu:20.04 image.
 4. **openvino**  
     Install OpenVINO™ dependencies. Now you can use it.
 5. **opencv**  

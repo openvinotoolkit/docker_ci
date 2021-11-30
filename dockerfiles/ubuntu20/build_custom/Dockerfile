@@ -1,8 +1,8 @@
 # Copyright (C) 2020-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:18.04 AS setup_openvino
+FROM ubuntu:20.04 AS setup_openvino
 
-LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
 LABEL vendor="Intel Corporation"
 
 # hadolint ignore=DL3008
@@ -44,7 +44,7 @@ CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM setup_openvino AS build_openvino
 
-LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
 LABEL vendor="Intel Corporation"
 
 COPY openvino_cmake.txt /opt/intel/repo
@@ -68,9 +68,9 @@ RUN ./bootstrap.sh; \
 WORKDIR /opt/intel/repo
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
-FROM ubuntu:18.04 AS copy_openvino
+FROM ubuntu:20.04 AS copy_openvino
 
-LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
 LABEL vendor="Intel Corporation"
 
 ENV INTEL_OPENVINO_DIR="/opt/intel/openvino"
@@ -85,7 +85,7 @@ CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM copy_openvino AS openvino
 
-LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
 LABEL vendor="Intel Corporation"
 
 # hadolint ignore=DL3008
@@ -100,6 +100,7 @@ RUN apt-get update; \
         tzdata; \
     rm -rf /var/lib/apt/lists/*
 
+WORKDIR ${INTEL_OPENVINO_DIR}
 WORKDIR ${INTEL_OPENVINO_DIR}
 RUN chmod +x install_dependencies/install_openvino_dependencies.sh; \
     ./install_dependencies/install_openvino_dependencies.sh -y -c=python -c=dev
@@ -122,7 +123,7 @@ RUN chmod +x install_dependencies/install_NCS_udev_rules.sh; \
 
 # hadolint ignore=DL3013
 RUN python3 -m pip install --no-cache-dir --upgrade pip; \
-    python3 -m pip install --no-cache-dir -r python/python3.6/requirements.txt; \
+    python3 -m pip install --no-cache-dir -r python/python3.8/requirements.txt; \
     python3 -m pip install --no-cache-dir -r tools/model_optimizer/requirements.txt
 
 RUN printf "\nsource \${INTEL_OPENVINO_DIR}/setupvars.sh\n" >> /root/.bashrc
@@ -131,7 +132,7 @@ CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM openvino AS opencv
 
-LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
 LABEL vendor="Intel Corporation"
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
@@ -181,7 +182,7 @@ CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 FROM opencv AS open_model_zoo
 
-LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
 LABEL vendor="Intel Corporation"
 
 ARG OMZ_BRANCH="master"

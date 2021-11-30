@@ -90,7 +90,9 @@ docker build --build-arg package_url=https://storage.openvinotoolkit.org/reposit
 ----------------
 
 * Custom image with CPU, iGPU, VPU support  
-To learn more, follow [Build custom Intel® Distribution of OpenVINO™ toolkit Docker image](ubuntu18/build_custom/README.md).
+You can use Dockerfiles from the `build_custom` folders to build a custom version of OpenVINO™ from source code for development. To learn more, follow:
+  * [Build custom Intel® Distribution of OpenVINO™ toolkit Docker image on Ubuntu 18](ubuntu18/build_custom/README.md)
+  * [Build custom Intel® Distribution of OpenVINO™ toolkit Docker image on Ubuntu 20](ubuntu20/build_custom/README.md)
 
 ## Prebuilt images
 
