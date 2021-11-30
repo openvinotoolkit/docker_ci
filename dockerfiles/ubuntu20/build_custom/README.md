@@ -22,8 +22,8 @@ docker build --no-cache -t image:tag .
 ```
 
 You can use docker `--build-arg` option to override the following variables:  
-`OPENVINO_FORK` - To specify GitHub fork of OpenVINO repository to use. By default, it is main OpenVINO repository.  
-`OPENVINO_BRANCH`, `OPENCV_BRANCH`, `OMZ_BRANCH` - To specify a branches with source code. By default, they are equal to "master".  
+`OPENVINO_FORK` - To specify a GitHub fork of the OpenVINO repository to use. By default, it is main OpenVINO repository.  
+`OPENVINO_BRANCH`, `OPENCV_BRANCH`, `OMZ_BRANCH` - To specify branches with source code. By default, they are equal to "master".  
 `OCL_VERSION` - To specify the version of Intel® Graphics Compute Runtime for OpenCL™ Driver on Linux. By default, it is equal to "19.41.14441".
 
 **For example**:  

@@ -4,7 +4,7 @@
 
 The purpose of this tutorial is to examine [Intel® Distribution of OpenVINO™ toolkit](https://software.intel.com/openvino-toolkit) development containers.
 
-This tutorial will go step-by-step to demonstrate how to set up an OpenVINO™ custom development container under Visual Studio Code* to use it as your full-time development environment.
+This tutorial provides step-by-step instructions to demonstrate how to set up an OpenVINO™ custom development container under Visual Studio Code* to use it as your full-time development environment.
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ This tutorial requires the following:
 
 Intel® Distribution of OpenVINO™ toolkit is produced from different open source and closed source repositories and components. As well OpenVINO has a couple of dependencies which need to be present on your computer. Additionally, to install some of them, you need to have root/admin rights. This might not be desirable. Using Docker and Visual Studio Code integration represents a much cleaner way of development. 
 
-We prepared Dockerfiles for custom development OpenVINO™ from source based on [Ubuntu 18](https://github.com/openvinotoolkit/docker_ci/tree/master/dockerfiles/ubuntu18/build_custom) and [Ubuntu 20](https://github.com/openvinotoolkit/docker_ci/tree/master/dockerfiles/ubuntu20/build_custom). They include the following components:
+We prepared Dockerfiles for custom development of OpenVINO™ from source based on [Ubuntu 18](https://github.com/openvinotoolkit/docker_ci/tree/master/dockerfiles/ubuntu18/build_custom) and [Ubuntu 20](https://github.com/openvinotoolkit/docker_ci/tree/master/dockerfiles/ubuntu20/build_custom). They include the following components:
  
 * [OpenVINO™ Toolkit - Deep Learning Deployment Toolkit repository](https://github.com/openvinotoolkit/openvino)
 * [OpenCV: Open Source Computer Vision Library](https://github.com/opencv/opencv)
