@@ -31,7 +31,7 @@ You can customize Cmake* build parameters for OpenVINO itself and OpenCV as well
 
 ## Build OpenVINO custom development Docker
 The first step, we need to build a OpenVINO™ Docker image, by default it uses Debug mode and master branch for all repositories.
-Lets go to Docker CI repository local copy and run `docker build` from `docker_ci/dockerfiles/<os>/build_custom` folder:
+Go to the Docker CI repository local copy and run `docker build` from `docker_ci/dockerfiles/<os>/build_custom` folder:
 
 ```sh
 docker build -t openvino-master .
