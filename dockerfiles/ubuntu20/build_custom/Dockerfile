@@ -49,6 +49,8 @@ LABEL vendor="Intel Corporation"
 
 COPY openvino_cmake.txt /opt/intel/repo
 
+RUN python3 -m pip install --no-cache-dir -r /opt/intel/repo/openvino/inference-engine/ie_bridges/python/wheel/requirements-dev.txt
+
 WORKDIR /opt/intel/repo/openvino/build
 # hadolint ignore=SC2046
 RUN cmake $(cat /opt/intel/repo/openvino_cmake.txt) /opt/intel/repo/openvino; \
@@ -124,7 +126,8 @@ RUN chmod +x install_dependencies/install_NCS_udev_rules.sh; \
 # hadolint ignore=DL3013
 RUN python3 -m pip install --no-cache-dir --upgrade pip; \
     python3 -m pip install --no-cache-dir -r python/python3.8/requirements.txt; \
-    python3 -m pip install --no-cache-dir -r tools/model_optimizer/requirements.txt
+    python3 -m pip install --no-cache-dir tools/openvino-*.whl; \
+    python3 -m pip install --no-cache-dir tools/openvino_dev-*.whl
 
 RUN printf "\nsource \${INTEL_OPENVINO_DIR}/setupvars.sh\n" >> /root/.bashrc
 
