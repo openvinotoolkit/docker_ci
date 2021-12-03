@@ -8,7 +8,6 @@ from unittest import mock
 import pytest
 
 from utils.arg_parser import parse_args
-from utils.loader import INTEL_OPENVINO_VERSION
 
 default_args = {
     'build_arg': [],
@@ -40,14 +39,14 @@ default_args = {
             'package_url': 'openvino.zip',
             'distribution': 'proprietary',
             'source': 'local',
-            'product_version': '2020.1',
+            'product_version': '2022.1',
             'image_json_path': 'image_data.json',
         },
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
-            'dockerfile_name': 'openvino_cgvh_proprietary_2020.1.dockerfile',
+            'dockerfile_name': 'openvino_cgvh_proprietary_2022.1.dockerfile',
             'python': 'python36',
-            'tags': ['ubuntu18_proprietary:2020.1', 'ubuntu18_proprietary:latest'],
+            'tags': ['ubuntu18_proprietary:2022.1', 'ubuntu18_proprietary:latest'],
             'image_json_path': pathlib.Path('image_data.json').absolute(),
             'install_type': 'install',
         },
@@ -144,17 +143,17 @@ default_args = {
     pytest.param(
         {
             'mode': 'build',
-            'package_url': 'openvino_dev_p_2020.1.320.zip',
+            'package_url': 'openvino_dev_p_2022.1.320.zip',
             'source': 'local',
-            'product_version': '2020.1',
+            'product_version': '2022.1',
         },
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
             'python': 'python36',
-            'dockerfile_name': 'openvino_cgvh_dev_2020.1.dockerfile',
-            'tags': ['ubuntu18_dev:2020.1', 'ubuntu18_dev:latest'],
+            'dockerfile_name': 'openvino_cgvh_dev_2022.1.dockerfile',
+            'tags': ['ubuntu18_dev:2022.1', 'ubuntu18_dev:latest'],
             'distribution': 'dev',
-            'product_version': '2020.1',
+            'product_version': '2022.1',
         },
         id='build_id = product_version',
     ),
@@ -182,7 +181,7 @@ default_args = {
             'distribution': 'dev',
             'tags': ['my_tag:latest'],
             'test_expression': 'cpu',
-            'product_version': '2020.3',
+            'product_version': '2022.3',
         },
         {
         },
@@ -194,10 +193,10 @@ default_args = {
             'distribution': 'dev',
             'tags': ['my_tag:latest'],
             'test_expression': 'cpu',
-            'package_url': 'p_2020.3.117',
+            'package_url': 'p_2022.3.117',
         },
         {
-            'product_version': '2020.3',
+            'product_version': '2022.3',
         },
         id='(Test) Parse product_version from package_url',
     ),
@@ -205,11 +204,11 @@ default_args = {
         {
             'mode': 'test',
             'distribution': 'dev',
-            'tags': ['my_tag:2020.3.117'],
+            'tags': ['my_tag:2022.3.117'],
             'test_expression': 'cpu',
         },
         {
-            'product_version': '2020.3',
+            'product_version': '2022.3',
         },
         id='(Test) Parse product_version from tags',
     ),
@@ -235,6 +234,7 @@ default_args = {
             'mode': 'deploy',
             'registry': 'https://deploy',
             'tags': ['deploy:latest'],
+            'product_version': '2022.1',
         },
         {
         },
@@ -245,11 +245,15 @@ default_args = {
             'mode': 'test',
             'tags': ['custom:no-cv'],
             'distribution': 'custom',
+            'product_version': '2022.1',
+            'package_url': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/'
+                           'l_openvino_toolkit_dev_ubuntu18_p_2021.4.582.tgz',
         },
         {
             'distribution': 'custom-no-cv',
-            'product_version': list(INTEL_OPENVINO_VERSION.keys())[-1],
-            'package_url': INTEL_OPENVINO_VERSION[list(INTEL_OPENVINO_VERSION.keys())[-1]]['ubuntu18']['dev'],
+            'product_version': '2022.1',
+            'package_url': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/'
+                           'l_openvino_toolkit_dev_ubuntu18_p_2021.4.582.tgz',
         },
         id='Successful test custom image',
     ),
@@ -393,6 +397,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         {
             'mode': 'deploy',
             'tags': ['deploy:latest'],
+            'product_version': '2022.1',
         },
         'Option --registry is mandatory for this mode.',
         id='Deploy without --registry',
@@ -413,6 +418,15 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         },
         'For a custom distribution, only test and deploy modes are available.',
         id='Use custom image in not test or deploy mode',
+    ),
+    pytest.param(
+        {
+            'mode': 'build',
+            'product_version': '2021.4',
+            'distribution': 'dev',
+        },
+        'This version of the DockerHub CI framework does not support OpenVINO releases earlier than 2022.1.',
+        id='Unsupported product_version',
     ),
 ])
 @mock.patch('utils.arg_parser.DockerCIArgumentParser.parse_args')
