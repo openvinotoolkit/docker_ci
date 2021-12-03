@@ -442,7 +442,8 @@ def parse_args(name: str, description: str):  # noqa
             args.device = ['cpu']
 
         if not args.package_url and not args.product_version:
-            args.product_version = max(INTEL_OPENVINO_VERSION.__iter__())
+            latest_public_version = max(INTEL_OPENVINO_VERSION.__iter__())
+            args.product_version = '2022.1' if latest_public_version <= '2022.1' else latest_public_version
         args.build_id = args.product_version
         if not args.package_url and args.distribution not in ('base', 'internal_dev'):
             if not args.distribution or not args.product_version:
@@ -528,13 +529,15 @@ def parse_args(name: str, description: str):  # noqa
             # save product version YYYY.U
             args.product_version = match.group(1)
         elif args.distribution == 'custom':
-            args.product_version = list(INTEL_OPENVINO_VERSION.keys())[-1]
+            latest_public_version = list(INTEL_OPENVINO_VERSION.keys())[-1]
+            args.product_version = '2022.1' if latest_public_version <= '2022.1' else latest_public_version
         else:
             parser.error('Cannot get product_version from the package URL and docker image. '
                          'Please specify --product_version directly.')
 
-    if hasattr(args, 'distribution') and args.distribution == 'custom' and not args.package_url:
-        args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]['dev']
+    if args.product_version < '2022.1':
+        parser.error('This version of the DockerHub CI framework does not support OpenVINO releases earlier than '
+                     '2022.1. Please use previous versions of the DockerHub CI.')
 
     if hasattr(args, 'distribution') and args.distribution == 'custom':
         if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'extras/opencv'],  # nosec
@@ -546,4 +549,11 @@ def parse_args(name: str, description: str):  # noqa
         else:
             args.distribution = 'custom-full'
 
+    is_custom_not_full = args.distribution in ('custom-no-omz', 'custom-no-cv')
+    if hasattr(args, 'distribution') and not args.package_url and args.mode == 'test' and is_custom_not_full:
+        if args.product_version in INTEL_OPENVINO_VERSION:
+            args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]['dev']
+        else:
+            parser.error(f'Cannot find URL to package with test dependencies for {args.product_version} release. '
+                         f'Please specify --package_url directly')
     return args
