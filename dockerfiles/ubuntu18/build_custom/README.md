@@ -24,7 +24,7 @@ docker build --no-cache -t image:tag .
 You can use the docker `--build-arg` option to override the following variables:  
 * `OPENVINO_FORK` - To specify a GitHub fork of the OpenVINO repository to use. By default, it is main OpenVINO repository.  
 * `OPENVINO_BRANCH`, `OPENCV_BRANCH`, `OMZ_BRANCH` - To specify branches with source code. By default, they are equal to "master".  
-* `INSTALL_OPENCV_CONTRIB` - If set to `yes`, OpenCV will be built with extra modules (default is `no`). You can use the `OPENCV_CONTRIB_BRANCH` argument to specify a branch in the `opencv_contrib` repository.  
+* `BUILD_OPENCV_CONTRIB` - If set to `yes`, OpenCV will be built with extra modules (default is `no`). You can use the `OPENCV_CONTRIB_BRANCH` argument to specify a branch in the `opencv_contrib` repository.  
 * `OCL_VERSION` - To specify the version of Intel® Graphics Compute Runtime for OpenCL™ Driver on Linux. By default, it is equal to "19.41.14441".
 
 **For example**:  
@@ -54,7 +54,7 @@ The docker image is built using a multi-step build:
     Install OpenVINO™ dependencies. Now you can use it.
 5. **opencv**  
     Build and setup OpenCV with the parameters specified in opencv_cmake.txt.  
-    OpenCV can be optionally built with extra modules (see the `INSTALL_OPENCV_CONTRIB` argument description above).  
+    OpenCV can be optionally built with extra modules (see the `BUILD_OPENCV_CONTRIB` argument description above).  
 6. **open_model_zoo**  
     Clone and set up Open Model Zoo repository.
 

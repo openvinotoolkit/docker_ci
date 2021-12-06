@@ -158,12 +158,12 @@ RUN apt-get update; \
 
 ARG OPENCV_BRANCH="master"
 
-ARG INSTALL_OPENCV_CONTRIB="no"
+ARG BUILD_OPENCV_CONTRIB="no"
 ARG OPENCV_CONTRIB_BRANCH="master"
 
 WORKDIR /opt/intel/repo
 RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} && \
-    if [ "$INSTALL_OPENCV_CONTRIB" = "yes" ]; then \
+    if [ "$BUILD_OPENCV_CONTRIB" = "yes" ]; then \
     git clone https://github.com/opencv/opencv_contrib.git --depth 1 -b ${OPENCV_CONTRIB_BRANCH}; fi
 
 COPY opencv_cmake.txt /opt/intel/repo
@@ -171,7 +171,7 @@ COPY opencv_cmake.txt /opt/intel/repo
 WORKDIR /opt/intel/repo/opencv/build
 # hadolint ignore=SC2046
 RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh"; \
-    if [ "$INSTALL_OPENCV_CONTRIB" = "yes" ]; then \
+    if [ "$BUILD_OPENCV_CONTRIB" = "yes" ]; then \
       apt-get update && \
       apt-get install -y --no-install-recommends libtesseract-dev && \
       cmake $(cat /opt/intel/repo/opencv_cmake.txt) -D OPENCV_EXTRA_MODULES_PATH=/opt/intel/repo/opencv_contrib/modules /opt/intel/repo/opencv && \
