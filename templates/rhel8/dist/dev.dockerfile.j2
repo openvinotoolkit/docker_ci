@@ -33,8 +33,6 @@ RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/tools/p
     ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/setup.py install --install-extras && \
     rm -rf ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/build
 
-RUN pip uninstall -y opencv-python
-
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN curl -L https://raw.githubusercontent.com/openvinotoolkit/docker_ci/master/dockerfiles/rhel8/third-party-programs-docker-runtime.txt --output third-party-programs-docker-runtime.txt && \
     curl -L https://raw.githubusercontent.com/openvinotoolkit/docker_ci/master/dockerfiles/rhel8/third-party-programs-docker-dev.txt --output third-party-programs-docker-dev.txt

@@ -31,5 +31,4 @@ RUN %INTEL_OPENVINO_DIR%\setupvars.bat && `
 
 WORKDIR ${INTEL_OPENVINO_DIR}\tools\post_training_optimization_tool
 RUN python -m pip install --no-cache-dir -r "%INTEL_OPENVINO_DIR%\tools\post_training_optimization_tool\requirements.txt" && `
-    python -m pip install --no-cache-dir . && `
-    python -m pip uninstall -y opencv-python
+    python -m pip install --no-cache-dir .
