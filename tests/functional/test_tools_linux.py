@@ -22,8 +22,7 @@ class TestToolsLinux:
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
             image,
-            [bash('cd /opt/intel/openvino/tools/benchmark_tool && '
-                  'python3 benchmark_app.py -h')],
+            [bash('benchmark_app -h')],
             self.test_benchmark.__name__, **kwargs,
         )
 
@@ -58,6 +57,31 @@ class TestToolsLinux:
             [bash('cd /opt/intel/openvino/tools/deployment_manager && '
                   'python3 deployment_manager.py -h')],
             self.test_deployment_manager.__name__, **kwargs,
+        )
+
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+    def test_mo(self, tester, image, bash):
+        kwargs = {'mem_limit': '3g'}
+        tester.test_docker_image(
+            image,
+            [bash('mo --help')],
+            self.test_mo.__name__, **kwargs,
+        )
+
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+    def test_omz(self, tester, image, bash):
+        kwargs = {'mem_limit': '3g'}
+        tester.test_docker_image(
+            image,
+            [bash('omz_converter --help'),
+             bash('omz_data_downloader --help'),
+             bash('omz_downloader --help'),
+             bash('omz_info_dumper --help'),
+             bash('omz_quantizer --help'),
+             ],
+            self.test_omz.__name__, **kwargs,
         )
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)

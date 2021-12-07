@@ -49,6 +49,8 @@ LABEL vendor="Intel Corporation"
 
 COPY openvino_cmake.txt /opt/intel/repo
 
+RUN python3 -m pip install --no-cache-dir -r /opt/intel/repo/openvino/inference-engine/ie_bridges/python/wheel/requirements-dev.txt
+
 WORKDIR /opt/intel/repo/openvino/build
 # hadolint ignore=SC2046
 RUN cmake $(cat /opt/intel/repo/openvino_cmake.txt) /opt/intel/repo/openvino; \
@@ -123,7 +125,8 @@ RUN chmod +x install_dependencies/install_NCS_udev_rules.sh; \
 # hadolint ignore=DL3013
 RUN python3 -m pip install --no-cache-dir --upgrade pip; \
     python3 -m pip install --no-cache-dir -r python/python3.6/requirements.txt; \
-    python3 -m pip install --no-cache-dir -r tools/model_optimizer/requirements.txt
+    python3 -m pip install --no-cache-dir tools/openvino-*.whl; \
+    python3 -m pip install --no-cache-dir tools/openvino_dev-*.whl
 
 RUN printf "\nsource \${INTEL_OPENVINO_DIR}/setupvars.sh\n" >> /root/.bashrc
 
@@ -155,15 +158,27 @@ RUN apt-get update; \
 
 ARG OPENCV_BRANCH="master"
 
+ARG BUILD_OPENCV_CONTRIB="no"
+ARG OPENCV_CONTRIB_BRANCH="master"
+
 WORKDIR /opt/intel/repo
-RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
+RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} && \
+    if [ "$BUILD_OPENCV_CONTRIB" = "yes" ]; then \
+    git clone https://github.com/opencv/opencv_contrib.git --depth 1 -b ${OPENCV_CONTRIB_BRANCH}; fi
 
 COPY opencv_cmake.txt /opt/intel/repo
 
 WORKDIR /opt/intel/repo/opencv/build
 # hadolint ignore=SC2046
 RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh"; \
-    cmake $(cat /opt/intel/repo/opencv_cmake.txt) /opt/intel/repo/opencv; \
+    if [ "$BUILD_OPENCV_CONTRIB" = "yes" ]; then \
+      apt-get update && \
+      apt-get install -y --no-install-recommends libtesseract-dev && \
+      cmake $(cat /opt/intel/repo/opencv_cmake.txt) -D OPENCV_EXTRA_MODULES_PATH=/opt/intel/repo/opencv_contrib/modules /opt/intel/repo/opencv && \
+      rm -rf /var/lib/apt/lists/* ; \
+    else \
+      cmake $(cat /opt/intel/repo/opencv_cmake.txt) /opt/intel/repo/opencv; \
+    fi; \
     make "-j$(nproc)"; \
     make install
 
