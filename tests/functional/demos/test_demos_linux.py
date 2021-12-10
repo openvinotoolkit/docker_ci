@@ -92,20 +92,6 @@ class TestDemosLinuxDataDev:
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
-@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
-@pytest.mark.parametrize('_is_distribution', [('data_dev', 'proprietary')], indirect=True)
-class TestSpeechDemoLinux:
-    def test_speech_recognition_cpu(self, tester, image, install_openvino_dependencies, bash):
-        tester.test_docker_image(
-            image,
-            [install_openvino_dependencies,
-             bash('/opt/intel/openvino/samples/scripts/demo_speech_recognition.sh --no-show'),
-             ],
-            self.test_speech_recognition_cpu.__name__,
-        )
-
-
-@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary', 'custom-full')], indirect=True)
 class TestDemosLinux:
