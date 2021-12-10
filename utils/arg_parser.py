@@ -61,6 +61,16 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
     def add_build_args(parser: argparse.ArgumentParser):
         """Adding args needed to build the Docker image"""
         parser.add_argument(
+            '-w',
+            '--wheels_url',
+            metavar='URL',
+            default='',
+            help='URL to HTML page with links or local path relative to openvino folder to search for OpenVINO wheels '
+                 '(will be used in a dockerfile as pip install --find-links value). '
+                 'By default, openvino and openvino_dev will be installed from PyPi',
+        )
+
+        parser.add_argument(
             '--image_json_path',
             help='Provide path to save image data in .json format file. '
                  'By default, it is stored in the logs folder.')

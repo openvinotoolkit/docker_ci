@@ -108,6 +108,7 @@ class Launcher:
             'distribution': self.args.distribution,
             'rhel_platform': self.args.rhel_platform,
             'os': self.args.os,
+            'OPENVINO_WHEELS_URL': self.args.wheels_url,
             'INTEL_OPENCL': self.args.ocl_release,
         })
         self.kwargs.update(get_system_proxy())

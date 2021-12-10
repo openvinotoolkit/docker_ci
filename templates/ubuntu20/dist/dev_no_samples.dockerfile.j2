@@ -1,21 +1,14 @@
 # dev no samples package
-WORKDIR /tmp
-
+WORKDIR ${INTEL_OPENVINO_DIR}
+ARG OPENVINO_WHEELS_URL
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/tools/benchmark_tool/requirements.txt && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/tools/model_optimizer/requirements_onnx.txt
-
-WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/requirements.in && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/build
-
-WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools
-RUN source ${INTEL_OPENVINO_DIR}/setupvars.sh && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/requirements.in && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/build
+    if [ -z "$OPENVINO_WHEELS_URL" ]; then \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=={{ product_version }} && \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=={{ product_version }} ; \
+    else \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino=={{ product_version }} --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=={{ product_version }} --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" ; \
+    fi
 
 # download source for PyPi LGPL packages
 WORKDIR /thirdparty
@@ -24,12 +17,7 @@ RUN if [ "$INSTALL_SOURCES" = "yes" ]; then \
         curl -L https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz --output lake8-import-order-0.18.1.tar.gz; \
     fi
 
-WORKDIR ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/requirements.txt && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/build && \
-    ${PYTHON_VER} -m pip uninstall -y opencv-python
-
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 # Please use `third-party-programs-docker-dev.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
 COPY dockerfiles/{{os}}/third-party-programs-docker-dev.txt ${INTEL_OPENVINO_DIR}/licensing
+COPY dockerfiles/{{os}}/third-party-programs-docker-runtime.txt ${INTEL_OPENVINO_DIR}/licensing

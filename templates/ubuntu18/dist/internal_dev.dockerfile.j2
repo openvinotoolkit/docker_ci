@@ -1,28 +1,17 @@
 # internal package
-WORKDIR /tmp
 
 RUN ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y
 
+WORKDIR ${INTEL_OPENVINO_DIR}
+ARG OPENVINO_WHEELS_URL
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o \( -name "*requirements*.in" -and -not -name "*requirements-tensorflow.in" \) \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_tool/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print0 | xargs -t -0 -n1 ${PYTHON_VER} -m pip install --no-cache-dir -r
-
-WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/requirements.in && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker/build
-
-WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools
-RUN source ${INTEL_OPENVINO_DIR}/setupvars.sh && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/requirements.in && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools/build
-
-WORKDIR ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/requirements.txt && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/setup.py install --install-extras && \
-    rm -rf ${INTEL_OPENVINO_DIR}/tools/post_training_optimization_tool/build && \
-    ${PYTHON_VER} -m pip uninstall -y opencv-python
+    if [ -z "$OPENVINO_WHEELS_URL" ]; then \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=={{ product_version }} && \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=={{ product_version }} ; \
+    else \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino=={{ product_version }} --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=={{ product_version }} --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" ; \
+    fi
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 # Please use `third-party-programs-docker-dev.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
