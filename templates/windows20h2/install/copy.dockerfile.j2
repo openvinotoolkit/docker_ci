@@ -16,21 +16,4 @@ RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
                     if ( -not (Test-Path -Path C:\intel\openvino_{{year}}) ) `
                     {`
                         New-Item -Path C:\intel\openvino_{{year}} -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%`
-                    }`
-                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\extras\open_model_zoo\models\intel)`
-                    {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\extras\open_model_zoo\models\intel ;`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\extras\open_model_zoo\intel_models -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\extras\open_model_zoo\models\intel`
-                    }`
-                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\model_tools)`
-                    {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\tools\model_downloader -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\extras\open_model_zoo\tools\model_tools`
-                    }`
-                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\extras\open_model_zoo\demos)`
-                    {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\runtime\demos -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\extras\open_model_zoo\demos`
-                    }`
-                    if (Test-Path -Path %INTEL_OPENVINO_DIR%\extras\open_model_zoo)`
-                    {`
-                        New-Item -Path %INTEL_OPENVINO_DIR%\tools\post_training_optimization_tool\libs\open_model_zoo -ItemType SymbolicLink -Value %INTEL_OPENVINO_DIR%\extras\open_model_zoo`
                     }
