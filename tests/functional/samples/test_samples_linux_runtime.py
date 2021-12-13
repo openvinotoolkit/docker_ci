@@ -262,7 +262,7 @@ class TestSamplesLinuxRuntime:
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
-                  '/opt/intel/openvino/samples/scripts/car_1.bmp CPU 1'),
+                  '/opt/intel/openvino/samples/scripts/car_1.bmp CPU'),
              ], self.test_hello_reshape_cpp_cpu.__name__, **kwargs,
         )
 
@@ -300,7 +300,7 @@ class TestSamplesLinuxRuntime:
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
-                  '/opt/intel/openvino/samples/scripts/car_1.bmp GPU 1'),
+                  '/opt/intel/openvino/samples/scripts/car_1.bmp GPU'),
              ], self.test_hello_reshape_cpp_gpu.__name__, **kwargs,
         )
 
@@ -343,7 +343,7 @@ class TestSamplesLinuxRuntime:
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
-                  '/opt/intel/openvino/samples/scripts/car_1.bmp MYRIAD 1'),
+                  '/opt/intel/openvino/samples/scripts/car_1.bmp MYRIAD'),
              ], self.test_hello_reshape_cpp_vpu.__name__, **kwargs,
         )
 
@@ -386,7 +386,7 @@ class TestSamplesLinuxRuntime:
                   '/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
-                  '/opt/intel/openvino/samples/scripts/car_1.bmp HDDL 1 && rm -f /dev/shm/hddl_*'),
+                  '/opt/intel/openvino/samples/scripts/car_1.bmp HDDL && rm -f /dev/shm/hddl_*'),
              ], self.test_hello_reshape_cpp_hddl.__name__, **kwargs,
         )
 
