@@ -58,26 +58,6 @@ class TestSamplesWindows:
         if 'Sample supports models with 1 output only' not in caplog.text:
             pytest.fail('Sample supports models with 1 output only')
 
-    def test_object_detection_cpp_cpu(self, tester, image):
-        kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
-            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'cd C:\\\\intel\\\\openvino\\\\samples\\\\cpp && '
-             'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
-             'omz_downloader --name vehicle-detection-adas-0002 --precisions FP16 '
-             '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
-             'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\object_detection_sample_ssd '
-             '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\intel\\\\'
-             'vehicle-detection-adas-0002\\\\FP16\\\\vehicle-detection-adas-0002.xml '
-             '-i C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp -d CPU',
-             ], self.test_object_detection_cpp_cpu.__name__, **kwargs,
-        )
-
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
     def test_classification_async_cpp_cpu(self, tester, image):
