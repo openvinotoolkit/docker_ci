@@ -12,7 +12,7 @@ from utils.exceptions import FailedTestError
 class TestSamplesWindows:
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_hello_classification_cpp_cpu(self, tester, image):
+    def test_hello_classification_cpp_cpu(self, tester, image, download_picture):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
@@ -25,16 +25,17 @@ class TestSamplesWindows:
              'OpenVINO\\\\inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public '
              '--input_model C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet\\\\alexnet.caffemodel',
+             download_picture('car_1.bmp'),
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet.xml '
-             'C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp CPU',
+             'C:\\\\intel\\\\openvino\\\\samples\\\\car_1.bmp CPU',
              ], self.test_hello_classification_cpp_cpu.__name__, **kwargs,
         )
 
-    def test_hello_classification_cpp_fail(self, tester, image, caplog):
+    def test_hello_classification_cpp_fail(self, tester, image, caplog, download_picture):
         kwargs = {'user': 'ContainerAdministrator'}
         with pytest.raises(FailedTestError):
             tester.test_docker_image(
@@ -45,6 +46,7 @@ class TestSamplesWindows:
                  'omz_downloader --name vehicle-attributes-recognition-barrier-0039 --precisions FP16 '
                  '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
                  'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
+                 download_picture('car.png'),
                  'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
                  'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
                  'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
@@ -52,7 +54,7 @@ class TestSamplesWindows:
                  'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\intel\\\\'
                  'vehicle-attributes-recognition-barrier-0039\\\\FP16\\\\'
                  'vehicle-attributes-recognition-barrier-0039.xml '
-                 'C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car.png CPU',
+                 'C:\\\\intel\\\\openvino\\\\samples\\\\car.png CPU',
                  ], self.test_hello_classification_cpp_fail.__name__, **kwargs,
             )
         if 'Sample supports models with 1 output only' not in caplog.text:
@@ -60,7 +62,7 @@ class TestSamplesWindows:
 
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_classification_async_cpp_cpu(self, tester, image):
+    def test_classification_async_cpp_cpu(self, tester, image, download_picture):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
@@ -74,11 +76,12 @@ class TestSamplesWindows:
              'OpenVINO\\\\inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public '
              '--input_model C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet\\\\alexnet.caffemodel',
+             download_picture('car_1.bmp'),
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\classification_sample_async '
              '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet.xml '
-             '-i C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp -d CPU',
+             '-i C:\\\\intel\\\\openvino\\\\samples\\\\car_1.bmp -d CPU',
              ], self.test_classification_async_cpp_cpu.__name__, **kwargs,
         )

@@ -198,17 +198,23 @@ def install_openvino_dependencies(request):
 def download_picture(request):
     image_os = request.config.getoption('--image_os')
 
-    def _download_picture(picture, location='/opt/intel/openvino/samples/scripts/'):
+    def _download_picture(picture, location=None):
         """Download a picture if it does not exist on Unix system only"""
+        if not location:
+            if 'win' in image_os:
+                location = 'C:\\\\intel\\\\openvino\\\\samples\\\\'
+            else:
+                location = '/opt/intel/openvino/samples/'
+
         picture_on_share = f'https://storage.openvinotoolkit.org/data/test_data/images/{picture}'
-        cmd = (f'if [ ! -f {location}{picture} ];'
-               f' then curl -vL {picture_on_share} --output {location}{picture} --create-dirs && ls -la {location} &&'
-               f' file {location}{picture} &&'
-               f' file {location}{picture} | egrep \'PNG image data|bitmap|data\'; fi')  # noqa: Q003
-        if 'win' not in image_os:
-            return f'/bin/bash -ac "{cmd}"'
+        curl_cmd = f'curl -kL {picture_on_share} --output {location}{picture} --create-dirs '
+        linux_cmd = (f'{curl_cmd} && ls -la {location} && '
+                     f'file {location}{picture} &&'
+                     f'file {location}{picture} | egrep \'PNG image data|bitmap|data\'')  # noqa: Q003
+        if 'win' in image_os:
+            return f'{curl_cmd}'
         else:
-            return ''
+            return f'/bin/bash -ac "{linux_cmd}"'
     return _download_picture
 
 
