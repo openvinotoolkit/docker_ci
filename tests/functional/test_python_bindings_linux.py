@@ -19,7 +19,7 @@ kwargs = {
 @pytest.mark.usefixtures('_is_image_os', '_is_not_distribution')
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
 class TestPythonBindingsLinux:
-    @pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-cv')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('custom-no-omz', 'custom-full')], indirect=True)
     def test_opencv_bindings(self, tester, image, bash):
         tester.test_docker_image(
             image,
