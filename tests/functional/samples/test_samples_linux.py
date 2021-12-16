@@ -210,12 +210,9 @@ class TestSamplesLinux:
             tester.test_docker_image(
                 image,
                 [install_openvino_dependencies,
-                 bash('python3 -m pip install --no-cache-dir cmake setuptools && '
-                      'cd /opt/intel/openvino/samples/cpp && '
+                 bash('cd /opt/intel/openvino/samples/cpp && '
                       '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-                 bash('python3 -m pip install --no-cache-dir '
-                      '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                      'omz_downloader --name vehicle-attributes-recognition-barrier-0039 --precisions FP32 '
+                 bash('omz_downloader --name vehicle-attributes-recognition-barrier-0039 --precisions FP32 '
                       '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
                  download_picture('car.png'),
                  bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '

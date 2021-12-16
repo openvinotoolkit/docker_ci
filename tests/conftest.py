@@ -232,6 +232,8 @@ def bash(request):
 
 @pytest.fixture()
 def omz_python_demo_path(request):
+    distribution = request.config.getoption('--distribution')
+
     demo_name = request.param
     is_ssd = 'ssd' in request.node.name
     is_centernet = 'centernet' in request.node.name
@@ -246,7 +248,10 @@ def omz_python_demo_path(request):
         base_path = 'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos'
         return f'{base_path}\\\\{demo_name}_demo\\\\python\\\\{demo_name}_demo.py{parameters}'
     else:
-        base_path = '/opt/intel/openvino/extras/open_model_zoo/demos'
+        if distribution in ('custom-no-cv', 'custom-full'):
+            base_path = '/opt/intel/openvino/tools/pot//open_model_zoo/demos'
+        else:
+            base_path = ''
         return f'{base_path}/{demo_name}_demo/python/{demo_name}_demo.py{parameters}'
 
 
