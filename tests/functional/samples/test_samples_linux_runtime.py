@@ -8,7 +8,7 @@ from utils.exceptions import FailedTestError
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution', '_is_package_url_specified')
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-@pytest.mark.parametrize('_is_distribution', [('runtime', 'custom-no-omz')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('runtime')], indirect=True)
 class TestSamplesLinuxRuntime:
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')

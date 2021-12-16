@@ -553,13 +553,10 @@ def parse_args(name: str, description: str):  # noqa
         if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'extras/opencv'],  # nosec
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
             args.distribution = 'custom-no-cv'
-        elif subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'extras/open_model_zoo'],  # nosec
-                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT) != 0:
-            args.distribution = 'custom-no-omz'
         else:
             args.distribution = 'custom-full'
 
-    is_custom_not_full = args.distribution in ('custom-no-omz', 'custom-no-cv')
+    is_custom_not_full = args.distribution == 'custom-no-cv'
     if hasattr(args, 'distribution') and not args.package_url and args.mode == 'test' and is_custom_not_full:
         if args.product_version in INTEL_OPENVINO_VERSION:
             args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]['dev']
