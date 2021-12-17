@@ -21,6 +21,7 @@ ARG OPENVINO_FORK="openvinotoolkit"
 ARG OPENVINO_BRANCH="master"
 ARG OMZ_BRANCH
 
+# hadolint ignore=DL3003
 RUN git-lfs install; \
     git clone https://github.com/${OPENVINO_FORK}/openvino.git \
     --recurse-submodules --shallow-submodules --depth 1 -b ${OPENVINO_BRANCH} /opt/intel/repo/openvino; \
@@ -87,6 +88,7 @@ ENV INTEL_OPENVINO_DIR="/opt/intel/openvino"
 COPY --from=build_openvino /opt/intel/repo /opt/intel/repo
 RUN rm -rf /opt/intel/repo/openvino/build/install
 COPY --from=build_openvino /opt/intel/repo/openvino/build/install ${INTEL_OPENVINO_DIR}
+COPY --from=build_openvino /opt/intel/repo/openvino/tools/pot/thirdparty/open_model_zoo/demos ${INTEL_OPENVINO_DIR}/demos
 COPY --from=build_openvino /tmp/libusb-1.0.22 /opt/libusb-1.0.22
 
 WORKDIR ${INTEL_OPENVINO_DIR}
