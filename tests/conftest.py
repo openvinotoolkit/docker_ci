@@ -245,13 +245,10 @@ def omz_python_demo_path(request):
             parameters = ' -at centernet'
 
     if 'win' in request.config.getoption('--image_os'):
-        base_path = 'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos'
+        base_path = 'C:\\\\intel\\\\openvino\\\\demos'
         return f'{base_path}\\\\{demo_name}_demo\\\\python\\\\{demo_name}_demo.py{parameters}'
     else:
-        if distribution in ('custom-no-cv', 'custom-full'):
-            base_path = '/opt/intel/openvino/tools/pot//open_model_zoo/demos'
-        else:
-            base_path = ''
+        base_path = '/opt/intel/openvino/demos'
         return f'{base_path}/{demo_name}_demo/python/{demo_name}_demo.py{parameters}'
 
 
