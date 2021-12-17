@@ -12,21 +12,13 @@ from utils.exceptions import FailedTestError
 class TestSamplesLinuxRuntime:
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_hello_classification_cpp_cpu(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_hello_classification_cpp_cpu(self, tester, image, dev_root, install_openvino_dependencies,
+                                          install_openvino_dev_wheel, bash, download_picture):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
-                },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
                 },
             },
         }
@@ -36,25 +28,24 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir -r '
-                  '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('cd /opt/intel/openvino/tools/model_optimizer && '
-                  'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
-                  'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             install_openvino_dev_wheel('[caffe]'),
+             bash('omz_downloader --name alexnet --precisions FP16 '
+                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
+             download_picture('car.png'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '/opt/intel/openvino/samples/scripts/car.png CPU'),
+                  '/opt/intel/openvino/samples/car.png CPU'),
              ], self.test_hello_classification_cpp_cpu.__name__, **kwargs,
         )
 
     @pytest.mark.gpu
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_hello_classification_cpp_gpu(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_hello_classification_cpp_gpu(self, tester, image, dev_root, install_openvino_dependencies,
+                                          install_openvino_dev_wheel, bash, download_picture):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -62,15 +53,6 @@ class TestSamplesLinuxRuntime:
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
                 },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
-                },
             },
         }
         tester.test_docker_image(
@@ -79,18 +61,16 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir -r '
-                  '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('cd /opt/intel/openvino/tools/model_optimizer && '
-                  'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
-                  'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             install_openvino_dev_wheel('[caffe]'),
+             bash('omz_downloader --name alexnet --precisions FP16 '
+                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
+             download_picture('car.png'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '/opt/intel/openvino/samples/scripts/car.png GPU'),
+                  '/opt/intel/openvino/samples/car.png GPU'),
              ], self.test_hello_classification_cpp_gpu.__name__, **kwargs,
         )
 
@@ -99,7 +79,8 @@ class TestSamplesLinuxRuntime:
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
-    def test_hello_classification_cpp_vpu(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_hello_classification_cpp_vpu(self, tester, image, dev_root, install_openvino_dependencies,
+                                          install_openvino_dev_wheel, bash, download_picture):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
             'mem_limit': '3g',
@@ -110,15 +91,6 @@ class TestSamplesLinuxRuntime:
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
                 },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
-                },
             },
         }
         tester.test_docker_image(
@@ -127,18 +99,16 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir -r '
-                  '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('cd /opt/intel/openvino/tools/model_optimizer && '
-                  'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
-                  'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             install_openvino_dev_wheel('[caffe]'),
+             bash('omz_downloader --name alexnet --precisions FP16 '
+                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
+             download_picture('car.png'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '/opt/intel/openvino/samples/scripts/car.png MYRIAD'),
+                  '/opt/intel/openvino/samples/car.png MYRIAD'),
              ], self.test_hello_classification_cpp_vpu.__name__, **kwargs,
         )
 
@@ -147,7 +117,8 @@ class TestSamplesLinuxRuntime:
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_hello_classification_cpp_hddl(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_hello_classification_cpp_hddl(self, tester, image, dev_root, install_openvino_dependencies,
+                                           install_openvino_dev_wheel, bash, download_picture):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
@@ -157,15 +128,6 @@ class TestSamplesLinuxRuntime:
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
                 },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
-                },
             },
         }
         tester.test_docker_image(
@@ -174,37 +136,27 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir -r '
-                  '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('cd /opt/intel/openvino/tools/model_optimizer && '
-                  'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
-                  'python3 mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             install_openvino_dev_wheel('[caffe]'),
+             bash('omz_downloader --name alexnet --precisions FP16 '
+                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
+             download_picture('car.png'),
              bash('umask 0000 && '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '/opt/intel/openvino/samples/scripts/car.png HDDL && rm -f /dev/shm/hddl_*'),
+                  '/opt/intel/openvino/samples/car.png HDDL && rm -f /dev/shm/hddl_*'),
              ], self.test_hello_classification_cpp_hddl.__name__, **kwargs,
         )
 
-    def test_hello_classification_cpp_fail(self, tester, image, dev_root, install_openvino_dependencies, caplog, bash):
+    def test_hello_classification_cpp_fail(self, tester, image, dev_root, install_openvino_dependencies, caplog,
+                                           install_openvino_dev_wheel, bash, download_picture):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
-                },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
                 },
             },
         }
@@ -215,36 +167,27 @@ class TestSamplesLinuxRuntime:
                  bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                       'cd /opt/intel/openvino/samples/cpp && '
                       '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-                 bash('python3 -m pip install --no-cache-dir -r '
-                      '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                      'python3 /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                      '--name vehicle-attributes-recognition-barrier-0039 --precisions FP32 '
+                 install_openvino_dev_wheel('[caffe]'),
+                 bash('omz_downloader --name vehicle-attributes-recognition-barrier-0039 --precisions FP32 '
                       '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+                 download_picture('car.png'),
                  bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
                       '/root/inference_engine_cpp_samples_build/intel64/Release/intel/'
                       'vehicle-attributes-recognition-barrier-0039/FP32/'
                       'vehicle-attributes-recognition-barrier-0039.xml '
-                      '/opt/intel/openvino/samples/scripts/car.png CPU'),
+                      '/opt/intel/openvino/samples/car.png CPU'),
                  ], self.test_hello_classification_cpp_fail.__name__, **kwargs,
             )
         if 'Sample supports models with 1 output only' not in caplog.text:
             pytest.fail('Sample supports models with 1 output only')
 
-    def test_hello_reshape_cpp_cpu(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_hello_reshape_cpp_cpu(self, tester, image, dev_root, install_openvino_dependencies, bash,
+                                   install_openvino_dev_wheel, download_picture):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
-                },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
                 },
             },
         }
@@ -254,20 +197,20 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name vehicle-detection-adas-0002 --precisions FP16 '
+             install_openvino_dev_wheel(),
+             bash('omz_downloader --name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             download_picture('car_1.bmp'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
-                  '/opt/intel/openvino/samples/scripts/car_1.bmp CPU'),
+                  '/opt/intel/openvino/samples/car_1.bmp CPU'),
              ], self.test_hello_reshape_cpp_cpu.__name__, **kwargs,
         )
 
     @pytest.mark.gpu
-    def test_hello_reshape_cpp_gpu(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_hello_reshape_cpp_gpu(self, tester, image, dev_root, install_openvino_dependencies, bash,
+                                   install_openvino_dev_wheel, download_picture):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -275,15 +218,6 @@ class TestSamplesLinuxRuntime:
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
                 },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
-                },
             },
         }
         tester.test_docker_image(
@@ -292,22 +226,22 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name vehicle-detection-adas-0002 --precisions FP16 '
+             install_openvino_dev_wheel(),
+             bash('omz_downloader --name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             download_picture('car_1.bmp'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
-                  '/opt/intel/openvino/samples/scripts/car_1.bmp GPU'),
+                  '/opt/intel/openvino/samples/car_1.bmp GPU'),
              ], self.test_hello_reshape_cpp_gpu.__name__, **kwargs,
         )
 
     @pytest.mark.vpu
     @pytest.mark.usefixtures('_python_vpu_plugin_required')
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
-    def test_hello_reshape_cpp_vpu(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_hello_reshape_cpp_vpu(self, tester, image, dev_root, install_openvino_dependencies, bash,
+                                   install_openvino_dev_wheel, download_picture):
         kwargs = {
             'device_cgroup_rules': ['c 189:* rmw'],
             'mem_limit': '3g',
@@ -318,15 +252,6 @@ class TestSamplesLinuxRuntime:
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
                 },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
-                },
             },
         }
         tester.test_docker_image(
@@ -335,22 +260,22 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name vehicle-detection-adas-0002 --precisions FP16 '
+             install_openvino_dev_wheel(),
+             bash('open_model_zoo --name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             download_picture('car_1.bmp'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
-                  '/opt/intel/openvino/samples/scripts/car_1.bmp MYRIAD'),
+                  '/opt/intel/openvino/samples/car_1.bmp MYRIAD'),
              ], self.test_hello_reshape_cpp_vpu.__name__, **kwargs,
         )
 
     @pytest.mark.hddl
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_hello_reshape_cpp_hddl(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_hello_reshape_cpp_hddl(self, tester, image, dev_root, install_openvino_dependencies, bash,
+                                    install_openvino_dev_wheel, download_picture):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
@@ -360,15 +285,6 @@ class TestSamplesLinuxRuntime:
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
                 },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
-                },
             },
         }
         tester.test_docker_image(
@@ -377,37 +293,28 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name vehicle-detection-adas-0002 --precisions FP16 '
+             install_openvino_dev_wheel(),
+             bash('omz_downloader --name vehicle-detection-adas-0002 --precisions FP16 '
                   '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             download_picture('car_1.bmp'),
              bash('umask 0000 && '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
-                  '/opt/intel/openvino/samples/scripts/car_1.bmp HDDL && rm -f /dev/shm/hddl_*'),
+                  '/opt/intel/openvino/samples/car_1.bmp HDDL && rm -f /dev/shm/hddl_*'),
              ], self.test_hello_reshape_cpp_hddl.__name__, **kwargs,
         )
 
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_classification_async_cpp_cpu(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_classification_async_cpp_cpu(self, tester, image, dev_root, install_openvino_dependencies, bash,
+                                          install_openvino_dev_wheel, download_picture):
         kwargs = {
             'mem_limit': '3g',
             'volumes': {
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
                 },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
-                },
             },
         }
         tester.test_docker_image(
@@ -416,25 +323,24 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('cd /opt/intel/openvino/tools/model_optimizer && '
-                  'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
-                  'python3 -B mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             install_openvino_dev_wheel('[caffe]'),
+             bash('omz_downloader --name alexnet --precisions FP16 '
+                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
+             download_picture('car_1.bmp'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
                   '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d CPU'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d CPU'),
              ], self.test_classification_async_cpp_cpu.__name__, **kwargs,
         )
 
     @pytest.mark.gpu
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_classification_async_cpp_gpu(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_classification_async_cpp_gpu(self, tester, image, dev_root, install_openvino_dependencies, bash,
+                                          install_openvino_dev_wheel, download_picture):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -442,15 +348,6 @@ class TestSamplesLinuxRuntime:
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
                 },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
-                },
             },
         }
         tester.test_docker_image(
@@ -459,18 +356,16 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('cd /opt/intel/openvino/tools/model_optimizer && '
-                  'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
-                  'python3 -B mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             install_openvino_dev_wheel('[caffe]'),
+             bash('omz_downloader --name alexnet --precisions FP16 '
+                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
+             download_picture('car_1.bmp'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
                   '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d GPU'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d GPU'),
              ], self.test_classification_async_cpp_gpu.__name__, **kwargs,
         )
 
@@ -479,7 +374,8 @@ class TestSamplesLinuxRuntime:
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
-    def test_classification_async_cpp_vpu(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_classification_async_cpp_vpu(self, tester, image, dev_root, install_openvino_dependencies, bash,
+                                          install_openvino_dev_wheel, download_picture):
         kwargs = {
             'devices': ['/dev/dri:/dev/dri'],
             'mem_limit': '3g',
@@ -490,15 +386,6 @@ class TestSamplesLinuxRuntime:
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
                 },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
-                },
             },
         }
         tester.test_docker_image(
@@ -507,18 +394,16 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir -r '
-                  '/opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('cd /opt/intel/openvino/tools/model_optimizer && '
-                  'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
-                  'python3 -B mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             install_openvino_dev_wheel('[caffe]'),
+             bash('omz_downloader --name alexnet --precisions FP16 '
+                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel --data_type FP16'),
+             download_picture('car_1.bmp'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
                   '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d MYRIAD'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d MYRIAD'),
              ], self.test_classification_async_cpp_vpu.__name__, **kwargs,
         )
 
@@ -527,7 +412,8 @@ class TestSamplesLinuxRuntime:
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_classification_async_cpp_hddl(self, tester, image, dev_root, install_openvino_dependencies, bash):
+    def test_classification_async_cpp_hddl(self, tester, image, dev_root, install_openvino_dependencies, bash,
+                                           install_openvino_dev_wheel, download_picture):
         kwargs = {
             'devices': ['/dev/ion:/dev/ion'],
             'mem_limit': '3g',
@@ -537,15 +423,6 @@ class TestSamplesLinuxRuntime:
                 dev_root / 'samples' / 'cpp': {
                     'bind': '/opt/intel/openvino/samples/cpp',
                 },
-                dev_root / 'samples' / 'scripts': {
-                    'bind': '/opt/intel/openvino/samples/scripts',
-                },
-                dev_root / 'extras' / 'open_model_zoo': {
-                    'bind': '/opt/intel/openvino/extras/open_model_zoo',
-                },
-                dev_root / 'tools' / 'model_optimizer': {
-                    'bind': '/opt/intel/openvino/tools/model_optimizer',
-                },
             },
         }
         tester.test_docker_image(
@@ -554,18 +431,16 @@ class TestSamplesLinuxRuntime:
              bash('python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
-             bash('python3 -m pip install --no-cache-dir '
-                  '-r /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/requirements.in && '
-                  'python3 -B /opt/intel/openvino/extras/open_model_zoo/tools/model_tools/downloader.py '
-                  '--name alexnet --precisions FP16 -o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('cd /opt/intel/openvino/tools/model_optimizer && '
-                  'python3 -m pip install --no-cache-dir -r requirements_caffe.txt && '
-                  'python3 -B mo.py --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
+             install_openvino_dev_wheel('[caffe]'),
+             bash('omz_downloader --name alexnet --precisions FP16 '
+                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
+             download_picture('car_1.bmp'),
              bash('umask 0000 && '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
                   '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*'),
              ], self.test_classification_async_cpp_hddl.__name__, **kwargs,
         )

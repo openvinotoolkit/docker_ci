@@ -318,7 +318,7 @@ class TestDemosLinux:
                            reason='Sporadic error on MYRIAD device')
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_text_cpp_vpu(self, tester, image, install_openvino_dependencies, bash):
+    def test_text_cpp_vpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
@@ -327,6 +327,7 @@ class TestDemosLinux:
              bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name text-detection-0004 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
+             download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/text_detection_demo '
                   '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
                   '-i /opt/intel/openvino/samples/car_1.bmp -d_td MYRIAD -no_show'),
@@ -337,7 +338,7 @@ class TestDemosLinux:
     @pytest.mark.hddl
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_text_cpp_hddl(self, tester, image, install_openvino_dependencies, bash):
+    def test_text_cpp_hddl(self, tester, image, install_openvino_dependencies, bash, download_picture):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
@@ -346,6 +347,7 @@ class TestDemosLinux:
              bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name text-detection-0004 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
+             download_picture('car_1.bmp'),
              bash('umask 0000 && /root/omz_demos_build/intel64/Release/text_detection_demo '
                   '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
                   '-i /opt/intel/openvino/samples/car_1.bmp -d_td HDDL -no_show && '
@@ -392,12 +394,14 @@ class TestDemosLinux:
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
                            reason='Sporadic error on MYRIAD device')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_detection_ssd_python_vpu(self, tester, image, omz_python_demo_path, bash, download_picture):
+    def test_detection_ssd_python_vpu(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                      install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name vehicle-detection-adas-0002 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name vehicle-detection-adas-0002 --precision FP16'),
              download_picture('car_1.bmp'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
@@ -410,12 +414,14 @@ class TestDemosLinux:
     @pytest.mark.usefixtures('_python_ngraph_required', '_is_not_image_os')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_detection_ssd_python_hddl(self, tester, image, omz_python_demo_path, bash, download_picture):
+    def test_detection_ssd_python_hddl(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                       install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name vehicle-detection-adas-0002 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name vehicle-detection-adas-0002 --precision FP16'),
              download_picture('car_1.bmp'),
              bash(f'umask 0000 && python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
@@ -499,12 +505,14 @@ class TestDemosLinux:
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_segmentation_python_vpu(self, tester, image, omz_python_demo_path, bash, download_picture):
+    def test_segmentation_python_vpu(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                     install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16'),
              download_picture('car_1.bmp'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
@@ -518,12 +526,14 @@ class TestDemosLinux:
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_segmentation_python_hddl(self, tester, image, omz_python_demo_path, bash, download_picture):
+    def test_segmentation_python_hddl(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                      install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16'),
              download_picture('car_1.bmp'),
              bash(f'umask 0000 && python3 {omz_python_demo_path} -at segmentation --no_show '
                   '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
@@ -573,12 +583,14 @@ class TestDemosLinux:
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
                            reason='Sporadic error on MYRIAD device')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_object_detection_centernet_python_vpu(self, tester, image, omz_python_demo_path, bash, download_picture):
+    def test_object_detection_centernet_python_vpu(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                                   install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name ctdet_coco_dlav0_384 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name ctdet_coco_dlav0_384 --precision FP16'),
              bash('omz_converter --name ctdet_coco_dlav0_384 --precision FP16'),
              download_picture('car_1.bmp'),
              bash(f'python3 {omz_python_demo_path} '
@@ -592,12 +604,14 @@ class TestDemosLinux:
     @pytest.mark.usefixtures('_python_ngraph_required', '_is_not_image_os')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_object_detection_centernet_python_hddl(self, tester, image, omz_python_demo_path, bash, download_picture):
+    def test_object_detection_centernet_python_hddl(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                                    install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name ctdet_coco_dlav0_384 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name ctdet_coco_dlav0_384 --precision FP16'),
              bash('omz_converter --name ctdet_coco_dlav0_384 --precision FP16'),
              download_picture('car_1.bmp'),
              bash(f'umask 0000 && python3 {omz_python_demo_path} '

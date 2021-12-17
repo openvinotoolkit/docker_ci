@@ -26,6 +26,8 @@ def pytest_addoption(parser):
     parser.addoption('--image_os', action='store', help='Setup an image os for check')
     parser.addoption('--mount_root', action='store', help='Root folder for directories to mount to container')
     parser.addoption('--package_url', action='store', help='Path to product package')
+    parser.addoption('--wheels_url', action='store', help='URL to HTML page with links or local path relative to '
+                                                          'openvino folder to search for OpenVINO wheels')
     parser.addoption('--product_version', action='store', help='Setup a product_version for check')
 
 
@@ -168,6 +170,11 @@ def package_url(request):
 
 
 @pytest.fixture(scope='session')
+def wheels_url(request):
+    return request.config.getoption('--wheels_url')
+
+
+@pytest.fixture(scope='session')
 def docker_api():
     return DockerAPI()
 
@@ -192,6 +199,21 @@ def install_openvino_dependencies(request):
     elif 'rhel' in image_os:
         return '/bin/bash -ac "yum update -y && yum install -y make file"'
     return ''
+
+
+@pytest.fixture(scope='session')
+def install_openvino_dev_wheel(request):
+    wheels_url = request.config.getoption('--wheels_url')
+    image_os = request.config.getoption('--image_os')
+    product_version = request.config.getoption('--product_version')
+
+    def _install_openvino_dev_wheel(extras=''):
+        python = 'python' if 'win' in image_os else 'python3'
+        pip_install = f'{python} -m pip install --no-cache-dir'
+        if wheels_url:
+            return f'{pip_install} openvino_dev{extras}=={product_version} --trusted-host=* --find-links {wheels_url}'
+        return f'{pip_install} --pre openvino_dev{extras}=={product_version}'
+    return _install_openvino_dev_wheel
 
 
 @pytest.fixture(scope='session')
@@ -232,8 +254,6 @@ def bash(request):
 
 @pytest.fixture()
 def omz_python_demo_path(request):
-    distribution = request.config.getoption('--distribution')
-
     demo_name = request.param
     is_ssd = 'ssd' in request.node.name
     is_centernet = 'centernet' in request.node.name
