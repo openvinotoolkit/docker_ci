@@ -19,10 +19,18 @@ RUN apt-get update; \
 
 ARG OPENVINO_FORK="openvinotoolkit"
 ARG OPENVINO_BRANCH="master"
+ARG OMZ_BRANCH
 
+# hadolint ignore=DL3003
 RUN git-lfs install; \
     git clone https://github.com/${OPENVINO_FORK}/openvino.git \
-    --recurse-submodules --shallow-submodules --depth 1 -b ${OPENVINO_BRANCH} /opt/intel/repo/openvino
+    --recurse-submodules --shallow-submodules --depth 1 -b ${OPENVINO_BRANCH} /opt/intel/repo/openvino; \
+    if [ -n "$OMZ_BRANCH" ]; then  \
+      cd /opt/intel/repo/openvino/tools/pot/thirdparty/open_model_zoo && \
+      git remote set-branches origin '*' && \
+      git fetch --depth 1 origin "$OMZ_BRANCH" && \
+      git checkout "$OMZ_BRANCH"; \
+    fi
 
 WORKDIR /opt/intel/repo/openvino
 RUN chmod +x install_build_dependencies.sh; \
@@ -80,6 +88,7 @@ ENV INTEL_OPENVINO_DIR="/opt/intel/openvino"
 COPY --from=build_openvino /opt/intel/repo /opt/intel/repo
 RUN rm -rf /opt/intel/repo/openvino/build/install
 COPY --from=build_openvino /opt/intel/repo/openvino/build/install ${INTEL_OPENVINO_DIR}
+COPY --from=build_openvino /opt/intel/repo/openvino/tools/pot/thirdparty/open_model_zoo/demos ${INTEL_OPENVINO_DIR}/demos
 COPY --from=build_openvino /tmp/libusb-1.0.22 /opt/libusb-1.0.22
 
 WORKDIR ${INTEL_OPENVINO_DIR}
@@ -125,8 +134,8 @@ RUN chmod +x install_dependencies/install_NCS_udev_rules.sh; \
 # hadolint ignore=DL3013
 RUN python3 -m pip install --no-cache-dir --upgrade pip; \
     python3 -m pip install --no-cache-dir -r python/python3.6/requirements.txt; \
-    python3 -m pip install --no-cache-dir tools/openvino-*.whl; \
-    python3 -m pip install --no-cache-dir tools/openvino_dev-*.whl
+    python3 -m pip install --no-cache-dir openvino --find-links=tools/ ; \
+    python3 -m pip install --no-cache-dir 'openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]' --find-links=tools/
 
 RUN printf "\nsource \${INTEL_OPENVINO_DIR}/setupvars.sh\n" >> /root/.bashrc
 
@@ -189,35 +198,8 @@ RUN mkdir "${INTEL_OPENVINO_DIR}/extras"; \
     rm -r "${INTEL_OPENVINO_DIR}/extras/opencv/python"; \
     echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
     echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
+    python3 -m pip uninstall -y opencv-python; \
     rm -rf /opt/intel/repo/opencv/build/install
-
-WORKDIR ${INTEL_OPENVINO_DIR}
-CMD ["/bin/bash"]
-# -------------------------------------------------------------------------------------------------
-FROM opencv AS open_model_zoo
-
-LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
-LABEL vendor="Intel Corporation"
-
-ARG OMZ_BRANCH="master"
-
-WORKDIR ${INTEL_OPENVINO_DIR}/extras
-RUN git clone https://github.com/openvinotoolkit/open_model_zoo.git --recurse-submodules --shallow-submodules --depth 1 -b ${OMZ_BRANCH}; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/accuracy_checker/requirements.in; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements.in; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-caffe2.in; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-pytorch.in; \
-    python3 -m pip install --no-cache-dir -r open_model_zoo/tools/model_tools/requirements-tensorflow.in
-
-WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/accuracy_checker
-RUN python3 "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/accuracy_checker/setup.py install && \
-    rm -rf "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/accuracy_checker/build
-
-WORKDIR ${INTEL_OPENVINO_DIR}/extras/open_model_zoo/tools/model_tools
-RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh" && \
-    python3 "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/model_tools/setup.py install && \
-    rm -rf "${INTEL_OPENVINO_DIR}"/extras/open_model_zoo/tools/model_tools/build && \
-    if [ -d "${INTEL_OPENVINO_DIR}/extras/opencv" ]; then python3 -m pip uninstall -y opencv-python; fi
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]

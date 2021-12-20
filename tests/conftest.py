@@ -26,6 +26,8 @@ def pytest_addoption(parser):
     parser.addoption('--image_os', action='store', help='Setup an image os for check')
     parser.addoption('--mount_root', action='store', help='Root folder for directories to mount to container')
     parser.addoption('--package_url', action='store', help='Path to product package')
+    parser.addoption('--wheels_url', action='store', help='URL to HTML page with links or local path relative to '
+                                                          'openvino folder to search for OpenVINO wheels')
     parser.addoption('--product_version', action='store', help='Setup a product_version for check')
 
 
@@ -46,7 +48,7 @@ def pytest_configure(config):
         'markers', 'xfail_log: mark test as xfailed if caplog contains the specified pattern',
     )
     dist = config.getoption('--distribution')
-    if dist in ('data_runtime', 'runtime', 'custom-no-omz', 'custom-no-cv'):
+    if dist in ('data_runtime', 'runtime', 'custom-no-cv'):
         log.info('Setting up runtime image dependencies')
         mount_root = pathlib.Path(config.getoption('--mount_root'))
         package_url = config.getoption('--package_url')
@@ -168,6 +170,11 @@ def package_url(request):
 
 
 @pytest.fixture(scope='session')
+def wheels_url(request):
+    return request.config.getoption('--wheels_url')
+
+
+@pytest.fixture(scope='session')
 def docker_api():
     return DockerAPI()
 
@@ -195,20 +202,41 @@ def install_openvino_dependencies(request):
 
 
 @pytest.fixture(scope='session')
+def install_openvino_dev_wheel(request):
+    wheels_url = request.config.getoption('--wheels_url')
+    image_os = request.config.getoption('--image_os')
+    product_version = request.config.getoption('--product_version')
+
+    def _install_openvino_dev_wheel(extras=''):
+        python = 'python' if 'win' in image_os else 'python3'
+        pip_install = f'{python} -m pip install --no-cache-dir'
+        if wheels_url:
+            return f'{pip_install} openvino_dev{extras}=={product_version} --trusted-host=* --find-links {wheels_url}'
+        return f'{pip_install} --pre openvino_dev{extras}=={product_version}'
+    return _install_openvino_dev_wheel
+
+
+@pytest.fixture(scope='session')
 def download_picture(request):
     image_os = request.config.getoption('--image_os')
 
-    def _download_picture(picture, location='/opt/intel/openvino/samples/scripts/'):
+    def _download_picture(picture, location=None):
         """Download a picture if it does not exist on Unix system only"""
+        if not location:
+            if 'win' in image_os:
+                location = 'C:\\\\intel\\\\openvino\\\\samples\\\\'
+            else:
+                location = '/opt/intel/openvino/samples/'
+
         picture_on_share = f'https://storage.openvinotoolkit.org/data/test_data/images/{picture}'
-        cmd = (f'if [ ! -f {location}{picture} ];'
-               f' then curl -vL {picture_on_share} --output {location}{picture} --create-dirs && ls -la {location} &&'
-               f' file {location}{picture} &&'
-               f' file {location}{picture} | egrep \'PNG image data|bitmap|data\'; fi')  # noqa: Q003
-        if 'win' not in image_os:
-            return f'/bin/bash -ac "{cmd}"'
+        curl_cmd = f'curl -kL {picture_on_share} --output {location}{picture} --create-dirs '
+        linux_cmd = (f'{curl_cmd} && ls -la {location} && '
+                     f'file {location}{picture} &&'
+                     f'file {location}{picture} | egrep \'PNG image data|bitmap|data\'')  # noqa: Q003
+        if 'win' in image_os:
+            return f'{curl_cmd}'
         else:
-            return ''
+            return f'/bin/bash -ac "{linux_cmd}"'
     return _download_picture
 
 
@@ -217,7 +245,7 @@ def bash(request):
     distribution = request.config.getoption('--distribution')
 
     def _bash(command):
-        if distribution in ('base', 'custom-no-omz', 'custom-no-cv', 'custom-full'):
+        if distribution in ('base', 'custom-no-cv', 'custom-full'):
             return f'/bin/bash -ac ". /opt/intel/openvino/setupvars.sh && {command}"'
         else:
             return f'/bin/bash -c "{command}"'
@@ -237,10 +265,10 @@ def omz_python_demo_path(request):
             parameters = ' -at centernet'
 
     if 'win' in request.config.getoption('--image_os'):
-        base_path = 'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos'
+        base_path = 'C:\\\\intel\\\\openvino\\\\demos'
         return f'{base_path}\\\\{demo_name}_demo\\\\python\\\\{demo_name}_demo.py{parameters}'
     else:
-        base_path = '/opt/intel/openvino/extras/open_model_zoo/demos'
+        base_path = '/opt/intel/openvino/demos'
         return f'{base_path}/{demo_name}_demo/python/{demo_name}_demo.py{parameters}'
 
 

@@ -44,19 +44,18 @@ Do not override PATH/PREFIX options. This can break a build of package.
 ### Build stages
 The docker image is built using a multi-step build:
 1. **setup_openvino**  
-    Clone OpenVINO™ git repository with submodules and install build dependencies.
+    Clone OpenVINO™ git repository with submodules and install build dependencies.  
+    Open Model Zoo will be included as a submodule of OpenVINO.
 2. **build_openvino**  
     Build OpenVINO™ (CPU, iGPU, VPU support) with the parameters specified in openvino_cmake.txt.  
-    It does not include OpenCV and Open Model Zoo.
+    It does not include OpenCV.  
 3. **copy_openvino**  
     Copy OpenVINO™ build to clear Ubuntu:18.04 image.
 4. **openvino**  
     Install OpenVINO™ dependencies. Now you can use it.
 5. **opencv**  
     Build and setup OpenCV with the parameters specified in opencv_cmake.txt.  
-    OpenCV can be optionally built with extra modules (see the `BUILD_OPENCV_CONTRIB` argument description above).  
-6. **open_model_zoo**  
-    Clone and set up Open Model Zoo repository.
+    OpenCV can be optionally built with extra modules (see the `BUILD_OPENCV_CONTRIB` argument description above).
 
 Use the docker `--target` option to specify a final stage.
 ```
@@ -64,9 +63,9 @@ docker build --target [stage] -t [image:tag] .
 ```
 
 **For example**:  
-This command builds an image without Open Model Zoo.
+This command builds an image without OpenCV.
 ```
-docker build --target opencv -t ie:opencv .
+docker build --target openvino -t ie:latest .
 ```
 
 ## How to test

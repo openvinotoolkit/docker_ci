@@ -33,7 +33,7 @@ def get_all_requirements(src: str) -> typing.List[str]:
     requirements = []
     for root, _, file_names in os.walk(src):
         for file_name in file_names:
-            if re.match('^.*requirement.*(?:in|txt)$', file_name):
+            if re.match('^.*requirement.*(?:in|txt)$', file_name) and 'thirdparty' not in file_name:
                 requirements.append(os.path.join(root, file_name))
     return requirements
 

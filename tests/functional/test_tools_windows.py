@@ -12,8 +12,7 @@ class TestToolsWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'accuracy_check -h'],
+            ['accuracy_check -h'],
             self.test_accuracy_checker.__name__, **kwargs,
         )
 
@@ -22,9 +21,7 @@ class TestToolsWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'cd C:\\\\intel\\\\openvino\\\\tools\\\\benchmark_tool\\\\ && '
-             'python benchmark_app.py -h'],
+            ['benchmark_app -h'],
             self.test_benchmark.__name__, **kwargs,
         )
 
@@ -51,11 +48,33 @@ class TestToolsWindows:
         )
 
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+    def test_mo(self, tester, image, bash):
+        kwargs = {'mem_limit': '3g'}
+        tester.test_docker_image(
+            image,
+            ['mo --help'],
+            self.test_mo.__name__, **kwargs,
+        )
+
+    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+    def test_omz(self, tester, image, bash):
+        kwargs = {'mem_limit': '3g'}
+        tester.test_docker_image(
+            image,
+            ['omz_converter --help',
+             'omz_data_downloader --help',
+             'omz_downloader --help',
+             'omz_info_dumper --help',
+             'omz_quantizer --help',
+             ],
+            self.test_omz.__name__, **kwargs,
+        )
+
+    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_pot(self, tester, image):
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'pot --help'],
+            ['pot --help'],
             self.test_pot.__name__, **kwargs,
         )

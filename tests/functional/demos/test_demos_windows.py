@@ -5,21 +5,6 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
-@pytest.mark.parametrize('_is_image_os', [('winserver2019')], indirect=True)
-@pytest.mark.parametrize('_is_distribution', [('data_dev', 'proprietary')], indirect=True)
-class TestSpeechDemoWindows:
-    def test_speech_recognition_cpu(self, tester, image):
-        kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'cd C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\ && '
-             'demo_speech_recognition.bat --no-show'],
-            self.test_speech_recognition_cpu.__name__, **kwargs,
-        )
-
-
-@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 @pytest.mark.parametrize('_is_image_os', [('winserver2019', 'windows20h2')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
 class TestDemosWindows:
@@ -29,19 +14,13 @@ class TestDemosWindows:
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'model_tools\\\\downloader.py --name vehicle-license-plate-detection-barrier-0106 '
+             'omz_downloader --name vehicle-license-plate-detection-barrier-0106 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'model_tools\\\\downloader.py --name license-plate-recognition-barrier-0001 '
+             'omz_downloader --name license-plate-recognition-barrier-0001 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'model_tools\\\\downloader.py --name vehicle-attributes-recognition-barrier-0039 '
+             'omz_downloader --name vehicle-attributes-recognition-barrier-0039 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
@@ -76,10 +55,7 @@ class TestDemosWindows:
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'model_tools\\\\downloader.py '
-             '--name person-vehicle-bike-detection-crossroad-0078 --precisions FP16 '
+             'omz_downloader --name person-vehicle-bike-detection-crossroad-0078 --precisions FP16 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
@@ -99,10 +75,7 @@ class TestDemosWindows:
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'model_tools\\\\downloader.py '
-             '--name text-detection-0004 --precision FP16 -o C:\\\\Users\\\\ContainerAdministrator\\\\'
+             'omz_downloader --name text-detection-0004 --precision FP16 -o C:\\\\Users\\\\ContainerAdministrator\\\\'
              'Documents\\\\Intel\\\\OpenVINO\\\\omz_demos_build\\\\intel64\\\\Release\\\\',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
@@ -120,10 +93,7 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'model_tools\\\\downloader.py '
-             '--name vehicle-detection-adas-0002 --precision FP16',
+            ['omz_downloader --name vehicle-detection-adas-0002 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              f'python {omz_python_demo_path} '
              '-m C:\\\\intel\\\\openvino\\\\intel\\\\vehicle-detection-adas-0002\\\\FP16\\\\'
@@ -139,10 +109,7 @@ class TestDemosWindows:
             image,
             ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'model_tools\\\\downloader.py '
-             '--name semantic-segmentation-adas-0001 --precision FP16 -o C:\\\\Users\\\\'
+             'omz_downloader --name semantic-segmentation-adas-0001 --precision FP16 -o C:\\\\Users\\\\'
              'ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
@@ -161,10 +128,7 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'model_tools\\\\downloader.py '
-             '--name semantic-segmentation-adas-0001 --precision FP16',
+            ['omz_downloader --name semantic-segmentation-adas-0001 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              f'python {omz_python_demo_path} '
              '-m C:\\\\intel\\\\openvino\\\\intel\\\\semantic-segmentation-adas-0001\\\\FP16\\\\'
@@ -179,14 +143,8 @@ class TestDemosWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'model_tools\\\\downloader.py '
-             '--name ctdet_coco_dlav0_384 --precision FP16',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             'python C:\\\\intel\\\\openvino\\\\extras\\\\open_model_zoo\\\\tools\\\\'
-             'model_tools\\\\converter.py '
-             '--name ctdet_coco_dlav0_384 --precision FP16',
+            ['omz_downloader --name ctdet_coco_dlav0_384 --precision FP16',
+             'omz_converter --name ctdet_coco_dlav0_384 --precision FP16',
              'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              f'python {omz_python_demo_path} '
              '-m C:\\\\intel\\\\openvino\\\\public\\\\ctdet_coco_dlav0_384\\\\FP16\\\\ctdet_coco_dlav0_384.xml '

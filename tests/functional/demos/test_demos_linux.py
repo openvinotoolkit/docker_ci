@@ -92,20 +92,6 @@ class TestDemosLinuxDataDev:
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
-@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
-@pytest.mark.parametrize('_is_distribution', [('data_dev', 'proprietary')], indirect=True)
-class TestSpeechDemoLinux:
-    def test_speech_recognition_cpu(self, tester, image, install_openvino_dependencies, bash):
-        tester.test_docker_image(
-            image,
-            [install_openvino_dependencies,
-             bash('/opt/intel/openvino/samples/scripts/demo_speech_recognition.sh --no-show'),
-             ],
-            self.test_speech_recognition_cpu.__name__,
-        )
-
-
-@pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary', 'custom-full')], indirect=True)
 class TestDemosLinux:
@@ -114,14 +100,14 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name person-vehicle-bike-detection-crossroad-0078 '
                   '--precisions FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'), download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/crossroad_camera_demo '
                   '-m /root/omz_demos_build/intel64/Release/intel/person-vehicle-bike-detection-crossroad-0078/'
                   'FP16/person-vehicle-bike-detection-crossroad-0078.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d CPU -no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d CPU -no_show'),
              ],
             self.test_crossroad_cpp_cpu.__name__, **kwargs,
         )
@@ -132,13 +118,13 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name person-vehicle-bike-detection-crossroad-0078 '
                   '--precisions FP16 -o /root/omz_demos_build/intel64/Release/'), download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/crossroad_camera_demo '
                   '-m /root/omz_demos_build/intel64/Release/intel/person-vehicle-bike-detection-crossroad-0078/FP16/'
                   'person-vehicle-bike-detection-crossroad-0078.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d GPU -no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d GPU -no_show'),
              ],
             self.test_crossroad_cpp_gpu.__name__, **kwargs,
         )
@@ -148,19 +134,20 @@ class TestDemosLinux:
                            reason='Sporadic error on MYRIAD device')
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_crossroad_cpp_vpu(self, tester, image, install_openvino_dependencies, bash):
+    def test_crossroad_cpp_vpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name person-vehicle-bike-detection-crossroad-0078 '
                   '--precisions FP16 -o /root/omz_demos_build/intel64/Release/'),
+             download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/crossroad_camera_demo '
                   '-m /root/omz_demos_build/intel64/Release/intel/person-vehicle-bike-detection-crossroad-0078/FP16/'
                   'person-vehicle-bike-detection-crossroad-0078.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d MYRIAD -no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d MYRIAD -no_show'),
              ],
             self.test_crossroad_cpp_vpu.__name__, **kwargs,
         )
@@ -168,19 +155,20 @@ class TestDemosLinux:
     @pytest.mark.hddl
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_crossroad_cpp_hddl(self, tester, image, install_openvino_dependencies, bash):
+    def test_crossroad_cpp_hddl(self, tester, image, install_openvino_dependencies, bash, download_picture):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name person-vehicle-bike-detection-crossroad-0078 '
                   '--precisions FP16 -o /root/omz_demos_build/intel64/Release/'),
+             download_picture('car_1.bmp'),
              bash('umask 0000 && /root/omz_demos_build/intel64/Release/crossroad_camera_demo '
                   '-m /root/omz_demos_build/intel64/Release/intel/person-vehicle-bike-detection-crossroad-0078/FP16/'
                   'person-vehicle-bike-detection-crossroad-0078.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d HDDL -no_show && rm -f /dev/shm/hddl_*'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d HDDL -no_show && rm -f /dev/shm/hddl_*'),
              ],
             self.test_crossroad_cpp_hddl.__name__, **kwargs,
         )
@@ -189,7 +177,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name vehicle-license-plate-detection-barrier-0106 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              bash('omz_downloader --name license-plate-recognition-barrier-0001 '
@@ -198,7 +186,7 @@ class TestDemosLinux:
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/security_barrier_camera_demo '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp '
+                  '-i /opt/intel/openvino/samples/car_1.bmp '
                   '-m /root/omz_demos_build/intel64/Release/intel/vehicle-license-plate-detection-barrier-0106/'
                   'FP16/vehicle-license-plate-detection-barrier-0106.xml '
                   '-m_lpr /root/omz_demos_build/intel64/Release/intel/license-plate-recognition-barrier-0001/'
@@ -214,7 +202,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name vehicle-license-plate-detection-barrier-0106 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              bash('omz_downloader --name license-plate-recognition-barrier-0001 '
@@ -223,7 +211,7 @@ class TestDemosLinux:
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/security_barrier_camera_demo '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp '
+                  '-i /opt/intel/openvino/samples/car_1.bmp '
                   '-m /root/omz_demos_build/intel64/Release/intel/vehicle-license-plate-detection-barrier-0106/'
                   'FP16/vehicle-license-plate-detection-barrier-0106.xml '
                   '-m_lpr /root/omz_demos_build/intel64/Release/intel/license-plate-recognition-barrier-0001/'
@@ -244,7 +232,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name vehicle-license-plate-detection-barrier-0106 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              bash('omz_downloader --name license-plate-recognition-barrier-0001 '
@@ -253,7 +241,7 @@ class TestDemosLinux:
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/security_barrier_camera_demo '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp '
+                  '-i /opt/intel/openvino/samples/car_1.bmp '
                   '-m /root/omz_demos_build/intel64/Release/intel/vehicle-license-plate-detection-barrier-0106/'
                   'FP16/vehicle-license-plate-detection-barrier-0106.xml '
                   '-m_lpr /root/omz_demos_build/intel64/Release/intel/license-plate-recognition-barrier-0001/'
@@ -272,7 +260,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name vehicle-license-plate-detection-barrier-0106 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              bash('omz_downloader --name license-plate-recognition-barrier-0001 '
@@ -281,7 +269,7 @@ class TestDemosLinux:
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
              bash('umask 0000 && /root/omz_demos_build/intel64/Release/security_barrier_camera_demo '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp '
+                  '-i /opt/intel/openvino/samples/car_1.bmp '
                   '-m /root/omz_demos_build/intel64/Release/intel/vehicle-license-plate-detection-barrier-0106/'
                   'FP16/vehicle-license-plate-detection-barrier-0106.xml '
                   '-m_lpr /root/omz_demos_build/intel64/Release/intel/license-plate-recognition-barrier-0001/'
@@ -297,13 +285,13 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name text-detection-0004 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/text_detection_demo '
                   '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d_td CPU -no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d_td CPU -no_show'),
              ],
             self.test_text_cpp_cpu.__name__, **kwargs,
         )
@@ -314,13 +302,13 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name text-detection-0004 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/text_detection_demo '
                   '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d_td GPU -no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d_td GPU -no_show'),
              ],
             self.test_text_cpp_gpu.__name__, **kwargs,
         )
@@ -330,18 +318,19 @@ class TestDemosLinux:
                            reason='Sporadic error on MYRIAD device')
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_text_cpp_vpu(self, tester, image, install_openvino_dependencies, bash):
+    def test_text_cpp_vpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name text-detection-0004 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
+             download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/text_detection_demo '
                   '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d_td MYRIAD -no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d_td MYRIAD -no_show'),
              ],
             self.test_text_cpp_vpu.__name__, **kwargs,
         )
@@ -349,18 +338,19 @@ class TestDemosLinux:
     @pytest.mark.hddl
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_text_cpp_hddl(self, tester, image, install_openvino_dependencies, bash):
+    def test_text_cpp_hddl(self, tester, image, install_openvino_dependencies, bash, download_picture):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name text-detection-0004 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
+             download_picture('car_1.bmp'),
              bash('umask 0000 && /root/omz_demos_build/intel64/Release/text_detection_demo '
                   '-m_td /root/omz_demos_build/intel64/Release/intel/text-detection-0004/FP16/text-detection-0004.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d_td HDDL -no_show && '
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d_td HDDL -no_show && '
                   'rm -f /dev/shm/hddl_*'),
              ],
             self.test_text_cpp_hddl.__name__, **kwargs,
@@ -376,7 +366,7 @@ class TestDemosLinux:
              download_picture('car_1.bmp'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d CPU --no_show -r'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d CPU --no_show -r'),
              ],
             self.test_detection_ssd_python_cpu.__name__,
         )
@@ -393,7 +383,7 @@ class TestDemosLinux:
              download_picture('car_1.bmp'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d GPU --no_show -r'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d GPU --no_show -r'),
              ],
             self.test_detection_ssd_python_gpu.__name__, **kwargs,
         )
@@ -404,15 +394,18 @@ class TestDemosLinux:
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
                            reason='Sporadic error on MYRIAD device')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_detection_ssd_python_vpu(self, tester, image, omz_python_demo_path, bash):
+    def test_detection_ssd_python_vpu(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                      install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name vehicle-detection-adas-0002 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name vehicle-detection-adas-0002 --precision FP16'),
+             download_picture('car_1.bmp'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d MYRIAD --no_show -r'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d MYRIAD --no_show -r'),
              ],
             self.test_detection_ssd_python_vpu.__name__, **kwargs,
         )
@@ -421,15 +414,18 @@ class TestDemosLinux:
     @pytest.mark.usefixtures('_python_ngraph_required', '_is_not_image_os')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_detection_ssd_python_hddl(self, tester, image, omz_python_demo_path, bash):
+    def test_detection_ssd_python_hddl(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                       install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name vehicle-detection-adas-0002 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name vehicle-detection-adas-0002 --precision FP16'),
+             download_picture('car_1.bmp'),
              bash(f'umask 0000 && python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/vehicle-detection-adas-0002/FP16/vehicle-detection-adas-0002.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d HDDL --no_show -r && '
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d HDDL --no_show -r && '
                   'rm -f /dev/shm/hddl_*'),
              ],
             self.test_detection_ssd_python_hddl.__name__, **kwargs,
@@ -440,14 +436,14 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/segmentation_demo '
                   '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/'
                   'semantic-segmentation-adas-0001.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d CPU -no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d CPU -no_show'),
              ],
             self.test_segmentation_cpp_cpu.__name__, **kwargs,
         )
@@ -458,14 +454,14 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/extras/open_model_zoo/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh'),
              bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/segmentation_demo '
                   '-m /root/omz_demos_build/intel64/Release/intel/semantic-segmentation-adas-0001/FP16/'
                   'semantic-segmentation-adas-0001.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d GPU -no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d GPU -no_show'),
              ],
             self.test_segmentation_cpp_gpu.__name__, **kwargs,
         )
@@ -481,7 +477,7 @@ class TestDemosLinux:
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
                   'semantic-segmentation-adas-0001.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d CPU -at segmentation --no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d CPU -at segmentation --no_show'),
              ],
             self.test_segmentation_python_cpu.__name__,
         )
@@ -499,7 +495,7 @@ class TestDemosLinux:
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
                   'semantic-segmentation-adas-0001.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d GPU -at segmentation --no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d GPU -at segmentation --no_show'),
              ],
             self.test_segmentation_python_gpu.__name__, **kwargs,
         )
@@ -509,16 +505,19 @@ class TestDemosLinux:
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR', reason='Sporadic error on MYRIAD device')
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_segmentation_python_vpu(self, tester, image, omz_python_demo_path, bash):
+    def test_segmentation_python_vpu(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                     install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16'),
+             download_picture('car_1.bmp'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
                   'semantic-segmentation-adas-0001.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d MYRIAD -at segmentation --no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d MYRIAD -at segmentation --no_show'),
              ],
             self.test_segmentation_python_vpu.__name__, **kwargs,
         )
@@ -527,16 +526,19 @@ class TestDemosLinux:
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
     @pytest.mark.usefixtures('_is_not_image_os')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_segmentation_python_hddl(self, tester, image, omz_python_demo_path, bash):
+    def test_segmentation_python_hddl(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                      install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16'),
+             download_picture('car_1.bmp'),
              bash(f'umask 0000 && python3 {omz_python_demo_path} -at segmentation --no_show '
                   '-m /opt/intel/openvino/intel/semantic-segmentation-adas-0001/FP16/'
                   'semantic-segmentation-adas-0001.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*'),
              ],
             self.test_segmentation_python_hddl.__name__, **kwargs,
         )
@@ -552,7 +554,7 @@ class TestDemosLinux:
              download_picture('car_1.bmp'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d CPU --no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d CPU --no_show'),
              ],
             self.test_object_detection_centernet_python_cpu.__name__,
         )
@@ -570,7 +572,7 @@ class TestDemosLinux:
              download_picture('car_1.bmp'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d GPU --no_show'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d GPU --no_show'),
              ],
             self.test_object_detection_centernet_python_gpu.__name__, **kwargs,
         )
@@ -581,16 +583,19 @@ class TestDemosLinux:
     @pytest.mark.xfail_log(pattern='Can not init Myriad device: NC_ERROR',
                            reason='Sporadic error on MYRIAD device')
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_object_detection_centernet_python_vpu(self, tester, image, omz_python_demo_path, bash):
+    def test_object_detection_centernet_python_vpu(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                                   install_openvino_dependencies):
         kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
                   'volumes': ['/dev/bus/usb:/dev/bus/usb'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name ctdet_coco_dlav0_384 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name ctdet_coco_dlav0_384 --precision FP16'),
              bash('omz_converter --name ctdet_coco_dlav0_384 --precision FP16'),
+             download_picture('car_1.bmp'),
              bash(f'python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d MYRIAD --no_show -r'),
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d MYRIAD --no_show -r'),
              ],
             self.test_object_detection_centernet_python_vpu.__name__, **kwargs,
         )
@@ -599,16 +604,19 @@ class TestDemosLinux:
     @pytest.mark.usefixtures('_python_ngraph_required', '_is_not_image_os')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
     @pytest.mark.parametrize('_is_not_image_os', [('rhel8')], indirect=True)
-    def test_object_detection_centernet_python_hddl(self, tester, image, omz_python_demo_path, bash):
+    def test_object_detection_centernet_python_hddl(self, tester, image, omz_python_demo_path, bash, download_picture,
+                                                    install_openvino_dependencies):
         kwargs = {'devices': ['/dev/ion:/dev/ion'],
                   'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'], 'mem_limit': '3g'}  # nosec # noqa: S108
         tester.test_docker_image(
             image,
-            [bash('omz_downloader --name ctdet_coco_dlav0_384 --precision FP16'),
+            [install_openvino_dependencies,
+             bash('omz_downloader --name ctdet_coco_dlav0_384 --precision FP16'),
              bash('omz_converter --name ctdet_coco_dlav0_384 --precision FP16'),
+             download_picture('car_1.bmp'),
              bash(f'umask 0000 && python3 {omz_python_demo_path} '
                   '-m /opt/intel/openvino/public/ctdet_coco_dlav0_384/FP16/ctdet_coco_dlav0_384.xml '
-                  '-i /opt/intel/openvino/samples/scripts/car_1.bmp -d HDDL --no_show -r && '
+                  '-i /opt/intel/openvino/samples/car_1.bmp -d HDDL --no_show -r && '
                   'rm -f /dev/shm/hddl_*'),
              ],
             self.test_object_detection_centernet_python_hddl.__name__, **kwargs,
