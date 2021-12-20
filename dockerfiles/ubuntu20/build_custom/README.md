@@ -45,7 +45,7 @@ Do not override PATH/PREFIX options. This can break a build of package.
 The docker image is built using a multi-step build:
 1. **setup_openvino**  
     Clone OpenVINO™ git repository with submodules and install build dependencies.  
-    Open Model Zoo will be included as submodule.
+    Open Model Zoo will be included as a submodule of OpenVINO.
 2. **build_openvino**  
     Build OpenVINO™ (CPU, iGPU, VPU support) with the parameters specified in openvino_cmake.txt.  
     It does not include OpenCV.  
