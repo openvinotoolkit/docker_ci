@@ -5,6 +5,6 @@ RUN IF not defined OPENVINO_WHEELS_URL ( `
         python -m pip install --no-cache-dir --pre openvino=={{ product_version }} && `
         python -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=={{ product_version }} `
     ) ELSE ( `
-        python -m pip install --no-cache-dir openvino=={{ product_version }} --trusted-host=* --find-links %OPENVINO_WHEELS_URL% && `
-        python -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=={{ product_version }} --trusted-host=* --find-links %OPENVINO_WHEELS_URL% `
+        python -m pip install --no-cache-dir --pre openvino>={{ product_version }} --trusted-host=* --find-links %OPENVINO_WHEELS_URL% && `
+        python -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]>={{ product_version }} --trusted-host=* --find-links %OPENVINO_WHEELS_URL% `
     )
