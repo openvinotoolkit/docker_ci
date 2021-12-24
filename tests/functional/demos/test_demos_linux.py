@@ -100,7 +100,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=crossroad_camera_demo'),
              bash('omz_downloader --name person-vehicle-bike-detection-crossroad-0078 '
                   '--precisions FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'), download_picture('car_1.bmp'),
@@ -118,7 +118,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=crossroad_camera_demo'),
              bash('omz_downloader --name person-vehicle-bike-detection-crossroad-0078 '
                   '--precisions FP16 -o /root/omz_demos_build/intel64/Release/'), download_picture('car_1.bmp'),
              bash('/root/omz_demos_build/intel64/Release/crossroad_camera_demo '
@@ -140,7 +140,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=crossroad_camera_demo'),
              bash('omz_downloader --name person-vehicle-bike-detection-crossroad-0078 '
                   '--precisions FP16 -o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -161,7 +161,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=crossroad_camera_demo'),
              bash('omz_downloader --name person-vehicle-bike-detection-crossroad-0078 '
                   '--precisions FP16 -o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -177,7 +177,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=security_barrier_camera_demo'),
              bash('omz_downloader --name vehicle-license-plate-detection-barrier-0106 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              bash('omz_downloader --name license-plate-recognition-barrier-0001 '
@@ -202,7 +202,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=security_barrier_camera_demo'),
              bash('omz_downloader --name vehicle-license-plate-detection-barrier-0106 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              bash('omz_downloader --name license-plate-recognition-barrier-0001 '
@@ -232,7 +232,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=security_barrier_camera_demo'),
              bash('omz_downloader --name vehicle-license-plate-detection-barrier-0106 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              bash('omz_downloader --name license-plate-recognition-barrier-0001 '
@@ -260,7 +260,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=security_barrier_camera_demo'),
              bash('omz_downloader --name vehicle-license-plate-detection-barrier-0106 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              bash('omz_downloader --name license-plate-recognition-barrier-0001 '
@@ -285,7 +285,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=text_detection_demo'),
              bash('omz_downloader --name text-detection-0004 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -302,7 +302,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=text_detection_demo'),
              bash('omz_downloader --name text-detection-0004 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -324,7 +324,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=text_detection_demo'),
              bash('omz_downloader --name text-detection-0004 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -344,7 +344,7 @@ class TestDemosLinux:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=text_detection_demo'),
              bash('omz_downloader --name text-detection-0004 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -432,11 +432,11 @@ class TestDemosLinux:
         )
 
     def test_segmentation_cpp_cpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
-        kwargs = {'mem_limit': '3g'}
+        kwargs = {'mem_limit': '4g'}
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=segmentation_demo'),
              bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
@@ -450,11 +450,11 @@ class TestDemosLinux:
 
     @pytest.mark.gpu
     def test_segmentation_cpp_gpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '4g'}
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('/opt/intel/openvino/demos/build_demos.sh'),
+             bash('/opt/intel/openvino/demos/build_demos.sh --target=segmentation_demo'),
              bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16 '
                   '-o /root/omz_demos_build/intel64/Release/'),
              download_picture('car_1.bmp'),
