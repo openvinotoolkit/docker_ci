@@ -106,10 +106,10 @@ class TestSamplesLinux:
              bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
-             download_picture('car.png'),
+             download_picture('car_1.bmp'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '/opt/intel/openvino/samples/car.png CPU'),
+                  '/opt/intel/openvino/samples/car_1.bmp CPU'),
              ], self.test_hello_classification_cpp_cpu.__name__,
         )
 
@@ -128,10 +128,10 @@ class TestSamplesLinux:
              bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
-             download_picture('car.png'),
+             download_picture('car_1.bmp'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '/opt/intel/openvino/samples/car.png GPU'),
+                  '/opt/intel/openvino/samples/car_1.bmp GPU'),
              ], self.test_hello_classification_cpp_gpu.__name__, **kwargs,
         )
 
@@ -154,10 +154,10 @@ class TestSamplesLinux:
              bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
-             download_picture('car.png'),
+             download_picture('car_1.bmp'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '/opt/intel/openvino/samples/car.png MYRIAD'),
+                  '/opt/intel/openvino/samples/car_1.bmp MYRIAD'),
              ], self.test_hello_classification_cpp_vpu.__name__, **kwargs,
         )
 
@@ -179,10 +179,10 @@ class TestSamplesLinux:
              bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
-             download_picture('car.png'),
+             download_picture('car_1.bmp'),
              bash('umask 0000 && /root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '/opt/intel/openvino/samples/car.png HDDL && rm -f /dev/shm/hddl_*'),
+                  '/opt/intel/openvino/samples/car_1.bmp HDDL && rm -f /dev/shm/hddl_*'),
              ], self.test_hello_classification_cpp_hddl.__name__, **kwargs,
         )
 
