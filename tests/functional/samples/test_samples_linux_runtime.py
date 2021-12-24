@@ -330,9 +330,12 @@ class TestSamplesLinuxRuntime:
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
              download_picture('car_1.bmp'),
+             'python3 -c "import cv2; '
+             "img = cv2.imread('/opt/intel/openvino/samples/car_1.bmp', cv2.IMREAD_UNCHANGED); "
+             'res = cv2.resize(img, (227,227)); cv2.imwrite(\'/opt/intel/openvino/samples/car_1_227.bmp\', res)"',
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
                   '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '-i /opt/intel/openvino/samples/car_1.bmp -d CPU'),
+                  '-i /opt/intel/openvino/samples/car_1_227.bmp -d CPU'),
              ], self.test_classification_async_cpp_cpu.__name__, **kwargs,
         )
 
@@ -362,10 +365,13 @@ class TestSamplesLinuxRuntime:
              bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
-             download_picture('car_1.bmp'),
+             download_picture('car_1_227.bmp'),
+             'python3 -c "import cv2; '
+             "img = cv2.imread('/opt/intel/openvino/samples/car_1.bmp', cv2.IMREAD_UNCHANGED); "
+             'res = cv2.resize(img, (227,227)); cv2.imwrite(\'/opt/intel/openvino/samples/car_1_227.bmp\', res)"',
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
                   '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '-i /opt/intel/openvino/samples/car_1.bmp -d GPU'),
+                  '-i /opt/intel/openvino/samples/car_1_227.bmp -d GPU'),
              ], self.test_classification_async_cpp_gpu.__name__, **kwargs,
         )
 
@@ -401,9 +407,12 @@ class TestSamplesLinuxRuntime:
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel --data_type FP16'),
              download_picture('car_1.bmp'),
+             'python3 -c "import cv2; '
+             "img = cv2.imread('/opt/intel/openvino/samples/car_1.bmp', cv2.IMREAD_UNCHANGED); "
+             'res = cv2.resize(img, (227,227)); cv2.imwrite(\'/opt/intel/openvino/samples/car_1_227.bmp\', res)"',
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
                   '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '-i /opt/intel/openvino/samples/car_1.bmp -d MYRIAD'),
+                  '-i /opt/intel/openvino/samples/car_1_227.bmp -d MYRIAD'),
              ], self.test_classification_async_cpp_vpu.__name__, **kwargs,
         )
 
@@ -438,9 +447,12 @@ class TestSamplesLinuxRuntime:
                   '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
              download_picture('car_1.bmp'),
+             'python3 -c "import cv2; '
+             "img = cv2.imread('/opt/intel/openvino/samples/car_1.bmp', cv2.IMREAD_UNCHANGED); "
+             'res = cv2.resize(img, (227,227)); cv2.imwrite(\'/opt/intel/openvino/samples/car_1_227.bmp\', res)"',
              bash('umask 0000 && '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
                   '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
-                  '-i /opt/intel/openvino/samples/car_1.bmp -d HDDL && rm -f /dev/shm/hddl_*'),
+                  '-i /opt/intel/openvino/samples/car_1_227.bmp -d HDDL && rm -f /dev/shm/hddl_*'),
              ], self.test_classification_async_cpp_hddl.__name__, **kwargs,
         )
