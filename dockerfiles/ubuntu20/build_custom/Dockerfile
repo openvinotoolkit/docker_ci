@@ -26,7 +26,7 @@ RUN git-lfs install; \
     git clone https://github.com/${OPENVINO_FORK}/openvino.git \
     --recurse-submodules --shallow-submodules --depth 1 -b ${OPENVINO_BRANCH} /opt/intel/repo/openvino; \
     if [ -n "$OMZ_BRANCH" ]; then  \
-      cd /opt/intel/repo/openvino/tools/pot/thirdparty/open_model_zoo && \
+      cd /opt/intel/repo/openvino/thirdparty/open_model_zoo && \
       git remote set-branches origin '*' && \
       git fetch --depth 1 origin "$OMZ_BRANCH" && \
       git checkout "$OMZ_BRANCH"; \
@@ -88,7 +88,7 @@ ENV INTEL_OPENVINO_DIR="/opt/intel/openvino"
 COPY --from=build_openvino /opt/intel/repo /opt/intel/repo
 RUN rm -rf /opt/intel/repo/openvino/build/install
 COPY --from=build_openvino /opt/intel/repo/openvino/build/install ${INTEL_OPENVINO_DIR}
-COPY --from=build_openvino /opt/intel/repo/openvino/tools/pot/thirdparty/open_model_zoo/demos ${INTEL_OPENVINO_DIR}/demos
+COPY --from=build_openvino /opt/intel/repo/openvino/thirdparty/open_model_zoo/demos ${INTEL_OPENVINO_DIR}/demos
 COPY --from=build_openvino /tmp/libusb-1.0.22 /opt/libusb-1.0.22
 
 WORKDIR ${INTEL_OPENVINO_DIR}
