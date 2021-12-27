@@ -33,7 +33,7 @@ def get_all_requirements(src: str) -> typing.List[str]:
     requirements = []
     for root, _, file_names in os.walk(src):
         for file_name in file_names:
-            if re.match('^.*requirement.*(?:in|txt)$', file_name) and 'thirdparty' not in file_name:
+            if re.match('^.*requirement.*(?:in|txt)$', file_name) and 'thirdparty' not in root:
                 requirements.append(os.path.join(root, file_name))
     return requirements
 
@@ -45,26 +45,21 @@ def get_pkgs_from_requirement(requirement: typing.Union[str, pathlib.Path]) -> t
     return packages
 
 
-def get_pot_dependencies(src: str) -> dict:
-    """Get POT dependencies from setup.py
-            Return: dictionary
-            name: path to POT setup.py
-            content: list packages"""
-    pot_content = {}
-    pot_path = pathlib.Path(src) / 'tools/post_training_optimization_tool/setup.py'
-    if pot_path.exists():
-        pot_path_str = str(pot_path)
-        pot_content['name'] = pot_path_str
-        cmd_line = ['python3', pot_path_str, 'egg_info']
-        process = subprocess.run(cmd_line, cwd=pot_path.parent,
-                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False, check=False)  # nosec
-        pot_requirements = pot_path.parent / 'pot.egg-info/requires.txt'
-        if process.returncode == 0:
-            pot_content['content'] = get_pkgs_from_requirement(pot_requirements)  # type: ignore
-        else:
-            pot_content = {}
+def get_package_dependencies(name: str) -> dict:
+    """Extract dependencies from metadata of installed package"""
+    try:
+        output = subprocess.check_output('python3 -c "from importlib import metadata; '  # nosec
+                                         f'print(metadata.metadata(\'{name}\'))" | '
+                                         'grep "Requires-Dist:\\|Provides-Extra:"',
+                                         shell=True, encoding=sys.stdout.encoding)
+    except subprocess.CalledProcessError:
+        output = ''
 
-    return pot_content
+    requirements: typing.Dict[str, typing.Union[str, typing.List[str]]] = {}
+    if output:
+        requirements['name'] = name
+        requirements['content'] = output.splitlines()
+    return requirements
 
 
 def get_image_requirements(src: str) -> dict:
@@ -169,24 +164,25 @@ def main() -> typing.Union[int, ExitCode]:
         image_name = args.image.split('/')[-1].replace(':', '_')
         args.image_json = pathlib.Path(args.logs) / f'{image_name}.json'
 
-    def add_pot_requirements(path: str, image_content: dict):
-        """Search POT requirements from setup.py and add them to image content dict"""
-        log.info(f'Search POT dependencies in {path} ...')
-        pot_content = get_pot_dependencies(path)
-        if pot_content:
-            log.info('POT dependencies were found')
-            image_content['requirements'].append(pot_content['name'])
-            image_content[pot_content['name']] = pot_content['content']
+    def add_package_requirements(package: str, image_content: dict):
+        """Search OpenVINO wheel requirements and add them to image content dict"""
+        log.info(f'Getting dependencies of {package} ...')
+        deps = get_package_dependencies(package)
+        if deps:
+            log.info(f'{package} dependencies were found')
+            image_content['requirements'].append(deps['name'])
+            image_content[deps['name']] = deps['content']
         else:
-            log.warning('POT dependencies were not found')
+            log.warning(f'{package} dependencies were not found')
         return image_content
 
     exit_code = ExitCode.success
     if args.save:
         log.info(f'Save PyPi dependencies in {args.image_json} file')
         image_content = get_image_requirements(args.path)
+        add_package_requirements('openvino', image_content)
         if 'runtime' not in args.image:
-            add_pot_requirements(args.path, image_content)
+            add_package_requirements('openvino_dev', image_content)
         save_dict_to_json(image_content, file=args.image_json)
     else:
         if not pathlib.Path(args.image_json).exists():
@@ -197,8 +193,9 @@ def main() -> typing.Union[int, ExitCode]:
         image_content_original = load_dict_from_json(args.image_json)
         image_content_original_reqs = sorted(image_content_original['requirements'])
         image_content = get_image_requirements(args.path)
+        add_package_requirements('openvino', image_content)
         if 'runtime' not in args.image:
-            add_pot_requirements(args.path, image_content)
+            add_package_requirements('openvino_dev', image_content)
         image_content_reqs = sorted(image_content['requirements'])
         log.info('Compare requirements files by count:')
         if image_content_original_reqs != image_content_reqs:
