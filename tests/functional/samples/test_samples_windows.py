@@ -77,11 +77,14 @@ class TestSamplesWindows:
              '--input_model C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet\\\\alexnet.caffemodel',
              download_picture('car_1.bmp'),
+             'cmd /S /C python -c "import cv2; img = cv2.imread(\'C:\\\\intel\\\\openvino\\\\samples\\\\car_1.bmp\', '
+             'cv2.IMREAD_UNCHANGED); res = cv2.resize(img, (227,227)); '
+             'cv2.imwrite(\'C:\\\\intel\\\\openvino\\\\samples\\\\car_1_227.bmp\', res)"',
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\classification_sample_async '
              '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet.xml '
-             '-i C:\\\\intel\\\\openvino\\\\samples\\\\car_1.bmp -d CPU',
+             '-i C:\\\\intel\\\\openvino\\\\samples\\\\car_1_227.bmp -d CPU',
              ], self.test_classification_async_cpp_cpu.__name__, **kwargs,
         )

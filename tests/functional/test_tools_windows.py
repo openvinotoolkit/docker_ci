@@ -49,7 +49,7 @@ class TestToolsWindows:
 
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_mo(self, tester, image, bash):
-        kwargs = {'mem_limit': '3g'}
+        kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
             ['mo --help'],
@@ -58,7 +58,7 @@ class TestToolsWindows:
 
     @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
     def test_omz(self, tester, image, bash):
-        kwargs = {'mem_limit': '3g'}
+        kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
             ['omz_converter --help',
