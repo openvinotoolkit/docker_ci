@@ -137,18 +137,3 @@ class TestDemosWindows:
              ],
             self.test_segmentation_python_cpu.__name__, **kwargs,
         )
-
-    @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
-    def test_object_detection_centernet_python_cpu(self, tester, image, omz_python_demo_path):
-        kwargs = {'user': 'ContainerAdministrator'}
-        tester.test_docker_image(
-            image,
-            ['omz_downloader --name ctdet_coco_dlav0_384 --precision FP16',
-             'omz_converter --name ctdet_coco_dlav0_384 --precision FP16',
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
-             f'python {omz_python_demo_path} '
-             '-m C:\\\\intel\\\\openvino\\\\public\\\\ctdet_coco_dlav0_384\\\\FP16\\\\ctdet_coco_dlav0_384.xml '
-             '-i C:\\\\intel\\\\openvino\\\\samples\\\\scripts\\\\car_1.bmp -d CPU --no_show',
-             ],
-            self.test_object_detection_centernet_python_cpu.__name__, **kwargs,
-        )
