@@ -11,6 +11,9 @@
     "/opt/intel/openvino/python/python3.9/requirements.txt": [
         "numpy>=1.16.6,<1.20"
     ],
+    "/opt/intel/openvino/python/requirements.txt": [
+        "numpy>=1.16.6,<1.20"
+    ],
     "/opt/intel/openvino/tools/requirements.txt": [
         "openvino-dev==2022.1.0\n"
     ],
@@ -35,18 +38,23 @@
     "/opt/intel/openvino/tools/requirements_tensorflow2.txt": [
         "openvino-dev[tensorflow2]==2022.1.0\n"
     ],
+    "openvino": [
+        "Requires-Dist: numpy (<1.20,>=1.16.6)"
+    ],
     "requirements": [
+        "/opt/intel/openvino/python/requirements.txt",
+        "/opt/intel/openvino/python/python3.7/requirements.txt",
+        "/opt/intel/openvino/python/python3.6/requirements.txt",
+        "/opt/intel/openvino/python/python3.9/requirements.txt",
+        "/opt/intel/openvino/python/python3.8/requirements.txt",
+        "/opt/intel/openvino/tools/requirements_mxnet.txt",
+        "/opt/intel/openvino/tools/requirements_caffe.txt",
+        "/opt/intel/openvino/tools/requirements_pytorch.txt",
+        "/opt/intel/openvino/tools/requirements_tensorflow2.txt",
         "/opt/intel/openvino/tools/requirements.txt",
         "/opt/intel/openvino/tools/requirements_tensorflow.txt",
-        "/opt/intel/openvino/tools/requirements_tensorflow2.txt",
         "/opt/intel/openvino/tools/requirements_kaldi.txt",
-        "/opt/intel/openvino/tools/requirements_mxnet.txt",
-        "/opt/intel/openvino/tools/requirements_pytorch.txt",
-        "/opt/intel/openvino/tools/requirements_caffe.txt",
         "/opt/intel/openvino/tools/requirements_onnx.txt",
-        "/opt/intel/openvino/python/python3.6/requirements.txt",
-        "/opt/intel/openvino/python/python3.8/requirements.txt",
-        "/opt/intel/openvino/python/python3.9/requirements.txt",
-        "/opt/intel/openvino/python/python3.7/requirements.txt"
+        "openvino"
     ]
 }
