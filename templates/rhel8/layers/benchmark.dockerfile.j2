@@ -10,11 +10,11 @@ RUN yum -y update && \
 	${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y dev && \
 	yum clean all && rm -rf /var/cache/yum
 
-RUN sed -i 's+$HOME/inference_engine_${samples_type}_samples_build+/opt/intel/openvino/inference_engine/samples/cpp/samples_build+g' /opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh && \
-    /opt/intel/openvino/inference_engine/samples/cpp/build_samples.sh
+RUN sed -i 's+$HOME/inference_engine_${samples_type}_samples_build+/opt/intel/openvino/samples/cpp/samples_build+g' /opt/intel/openvino/samples/cpp/build_samples.sh && \
+    /opt/intel/openvino/samples/cpp/build_samples.sh
 
 # Post-installation cleanup
 RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
 
 USER openvino
-WORKDIR /opt/intel/openvino/runtime/samples/cpp/samples_build/intel64/Release
+WORKDIR /opt/intel/openvino/samples/cpp/samples_build/intel64/Release
