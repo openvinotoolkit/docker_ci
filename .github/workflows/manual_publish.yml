@@ -12,11 +12,11 @@ on:
         required: true
         default: 'dev'
       os:
-        description: 'OS for Docker image: ubuntu18, ubuntu20, winserver2019'
+        description: 'OS for Docker image: ubuntu18, ubuntu20, winserver2019, windows20h2'
         required: true
         default: ''
       host_os:
-        description: 'OS for Host machine: ubuntu-18.04, windows-2019'
+        description: 'OS for Host machine: ubuntu-18.04, windows-docker'
         required: true
         default: ''
       tags:
@@ -32,7 +32,7 @@ jobs:
   manual_publish:
     strategy:
       matrix:
-        os: [ ubuntu-18.04, windows-2019 ]
+        os: [ ubuntu-18.04, windows-docker ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Code checkout
@@ -51,7 +51,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker login to registry (Windows)
-        if: ${{ matrix.os == 'windows-2019' }}
+        if: ${{ matrix.os == 'windows-docker' }}
         run: echo $Env:DOCKER_PASSWORD | docker login --username $Env:DOCKER_USERNAME --password-stdin
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -68,7 +68,7 @@ jobs:
           AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
           AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
       - name: Docker login to Azure registry (Windows)
-        if: ${{ matrix.os == 'windows-2019' && contains(github.event.inputs.os, 'win') }}
+        if: ${{ matrix.os == 'windows-docker' && contains(github.event.inputs.os, 'win') }}
         run: echo $Env:AZURE_PASSWORD | docker login --username $Env:AZURE_USERNAME --password-stdin openvino.azurecr.io
         env:
           AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
