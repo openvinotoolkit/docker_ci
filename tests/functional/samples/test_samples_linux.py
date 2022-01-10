@@ -23,7 +23,7 @@ class TestSamplesLinux:
              download_picture('car.png'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/benchmark_app -pc -niter 1000 -m '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/squeezenet1.1/FP16/squeezenet1.1.xml'
-                  ' -i /opt/intel/openvino/samples/scripts/car.png -d CPU'),
+                  ' -i /opt/intel/openvino/samples/car.png -d CPU'),
              ], self.test_benchmark_app_cpp_cpu.__name__,
         )
 
@@ -42,7 +42,7 @@ class TestSamplesLinux:
              download_picture('car.png'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/benchmark_app -pc -niter 1000 -m '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/squeezenet1.1/FP16/squeezenet1.1.xml'
-                  ' -i /opt/intel/openvino/samples/scripts/car.png -d GPU'),
+                  ' -i /opt/intel/openvino/samples/car.png -d GPU'),
              ], self.test_benchmark_app_cpp_gpu.__name__, **kwargs,
         )
 
@@ -66,7 +66,7 @@ class TestSamplesLinux:
              download_picture('car.png'),
              bash('/root/inference_engine_cpp_samples_build/intel64/Release/benchmark_app -pc -niter 1000 -m '
                   '/root/inference_engine_cpp_samples_build/intel64/Release/public/squeezenet1.1/FP16/squeezenet1.1.xml'
-                  ' -i /opt/intel/openvino/samples/scripts/car.png -d MYRIAD'),
+                  ' -i /opt/intel/openvino/samples/car.png -d MYRIAD'),
              ], self.test_benchmark_app_cpp_vpu.__name__, **kwargs,
         )
 
@@ -88,7 +88,7 @@ class TestSamplesLinux:
              download_picture('car.png'),
              bash('umask 0000 && /root/inference_engine_cpp_samples_build/intel64/Release/benchmark_app '
                   '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/'
-                  'squeezenet1.1/FP16/squeezenet1.1.xml -i /opt/intel/openvino/samples/scripts/car.png -pc -niter 1000 '
+                  'squeezenet1.1/FP16/squeezenet1.1.xml -i /opt/intel/openvino/samples/car.png -pc -niter 1000 '
                   '-d HDDL && rm -f /dev/shm/hddl_*'),
              ], self.test_benchmark_app_cpp_hddl.__name__, **kwargs,
         )
