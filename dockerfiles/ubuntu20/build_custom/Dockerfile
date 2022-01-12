@@ -57,7 +57,7 @@ LABEL vendor="Intel Corporation"
 
 COPY openvino_cmake.txt /opt/intel/repo
 
-RUN python3 -m pip install --no-cache-dir -r /opt/intel/repo/openvino/inference-engine/ie_bridges/python/wheel/requirements-dev.txt
+RUN python3 -m pip install --no-cache-dir -r /opt/intel/repo/openvino/src/bindings/python/wheel/requirements-dev.txt
 
 WORKDIR /opt/intel/repo/openvino/build
 # hadolint ignore=SC2046
