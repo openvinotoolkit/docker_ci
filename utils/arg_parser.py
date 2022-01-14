@@ -62,6 +62,13 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         """Adding args needed to build the Docker image"""
         parser.add_argument(
             '-w',
+            '--wheels_version',
+            default='',
+            help='Version specifier of OpenVINO wheels to install (will be passed to pip install). '
+                 'Will be equal to product version by default.',
+        )
+
+        parser.add_argument(
             '--wheels_url',
             metavar='URL',
             default='',
@@ -515,6 +522,10 @@ def parse_args(name: str, description: str):  # noqa
                 args.dockerfile_name = f'openvino_{openshift}{layers}_{version}.dockerfile'
             else:
                 args.dockerfile_name = f'openvino_{devices}_{openshift}{args.distribution}_{version}.dockerfile'
+
+        if not hasattr(args, 'wheels_version') or not args.wheels_version:
+            args.wheels_version = (args.product_version if args.build_id == args.product_version
+                                   else f'{args.product_version}.*')
 
     if not hasattr(args, 'tags') or not args.tags:
         layers = '_'.join(args.layers)
