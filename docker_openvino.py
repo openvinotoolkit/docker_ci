@@ -99,6 +99,8 @@ class Launcher:
 
     def setup_build_args(self):
         """Setting up arguments passed to a template engine and `docker build` command"""
+        ov_wheels_version = (self.args.product_version if self.args.build_id == self.args.product_version
+                             else f'{self.args.product_version}.*')
         self.kwargs.update({
             'product_name': self.product_name,
             'product_version': self.args.product_version,
@@ -109,6 +111,7 @@ class Launcher:
             'rhel_platform': self.args.rhel_platform,
             'os': self.args.os,
             'OPENVINO_WHEELS_URL': self.args.wheels_url,
+            'OPENVINO_WHEELS_VERSION': ov_wheels_version,
             'INTEL_OPENCL': self.args.ocl_release,
         })
         self.kwargs.update(get_system_proxy())

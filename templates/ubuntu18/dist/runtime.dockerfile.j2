@@ -1,11 +1,12 @@
 # runtime package
 WORKDIR ${INTEL_OPENVINO_DIR}
+ARG OPENVINO_WHEELS_VERSION={{ product_version }}
 ARG OPENVINO_WHEELS_URL
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
-        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=={{ product_version }} ; \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=="$OPENVINO_WHEELS_VERSION" ; \
     else \
-        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino>={{ product_version }} --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" ; \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" ; \
     fi
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
