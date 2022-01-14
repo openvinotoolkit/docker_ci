@@ -210,10 +210,10 @@ def install_openvino_dev_wheel(request):
 
     def _install_openvino_dev_wheel(extras=''):
         python = 'python' if 'win' in image_os else 'python3'
-        pip_install = f'{python} -m pip install --no-cache-dir'
+        pip_install = f'{python} -m pip install --no-cache-dir --pre'
         if wheels_url:
             return f'{pip_install} openvino_dev{extras}=={wheels_version} --trusted-host=* --find-links {wheels_url}'
-        return f'{pip_install} --pre openvino_dev{extras}=={wheels_version}'
+        return f'{pip_install} openvino_dev{extras}=={wheels_version}'
     return _install_openvino_dev_wheel
 
 
