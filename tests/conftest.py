@@ -205,8 +205,8 @@ def install_openvino_dependencies(request):
 @pytest.fixture(scope='session')
 def install_openvino_dev_wheel(request):
     wheels_url = request.config.getoption('--wheels_url')
-    image_os = request.config.getoption('--image_os')
     wheels_version = request.config.getoption('--wheels_version')
+    image_os = request.config.getoption('--image_os')
 
     def _install_openvino_dev_wheel(extras=''):
         python = 'python' if 'win' in image_os else 'python3'
