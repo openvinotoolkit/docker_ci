@@ -258,6 +258,11 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             sys.argv.insert(1, name)
 
 
+def fail_if_product_version_not_supported(product_version: str, parser: DockerCIArgumentParser):
+    if product_version < '2022.1':
+        parser.error('This version of the DockerHub CI framework does not support OpenVINO releases earlier than '
+                     '2022.1.0. Please use previous versions of the DockerHub CI.')
+
 def parse_args(name: str, description: str):  # noqa
     """Parse all the args set up above"""
     parser = DockerCIArgumentParser(name, description)
@@ -402,6 +407,13 @@ def parse_args(name: str, description: str):  # noqa
         parser.error('Dockerfile generation intended for non-Docker platforms '
                      'is supported only for RHEL-based images')
 
+    if args.product_version:
+        fail_if_product_version_not_supported(args.product_version, parser)
+        product_version = re.search(r'^\d{4}\.\d$', args.product_version)
+        if product_version:
+            # save product version YYYY.U as YYYY.U.0
+            args.product_version = f'{product_version.group()}.0'
+
     if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all'):
         if args.ocl_release not in INTEL_OCL_RELEASE:
             parser.error('Provided Intel(R) Graphics Compute Runtime for OpenCL(TM) release is not acceptable.')
@@ -453,20 +465,21 @@ def parse_args(name: str, description: str):  # noqa
 
         if not args.package_url and not args.product_version:
             latest_public_version = max(INTEL_OPENVINO_VERSION.__iter__())
-            args.product_version = '2022.1' if latest_public_version <= '2022.1' else latest_public_version
+            args.product_version = '2022.1.0' if latest_public_version <= '2022.1.0' else latest_public_version
         args.build_id = args.product_version
+
         if not args.package_url and args.distribution not in ('base', 'internal_dev'):
             if not args.distribution or not args.product_version:
                 parser.error('Insufficient arguments. Provide --package_url '
                              'or --distribution (with optional --product_version) arguments')
             if args.mode != 'gen_dockerfile' or args.rhel_platform == 'autobuild':
-                lts_version = re.search(r'^\d{4}\.\d.\d$', args.product_version)
-                if lts_version:
-                    args.product_version = lts_version.group()  # save product version YYY.U.V
+                dev_version = re.search(r'^\d{4}\.\d\.\d\.dev\d{8}$', args.product_version)
+                if dev_version:
+                    args.product_version = dev_version.group()
                 else:
-                    product_version = re.search(r'(\d{4}\.\d)', args.product_version)
-                    if product_version:
-                        args.product_version = product_version.group()  # save product version YYY.U
+                    lts_version = re.search(r'(\d{4}\.\d\.\d)', args.product_version)
+                    if lts_version:
+                        args.product_version = lts_version.group()  # save product version YYYY.U.V
                     else:
                         parser.error(f'Cannot find package url for {args.product_version} version')
                 distribution = 'runtime' if args.distribution == 'data_runtime' else args.distribution
@@ -477,15 +490,21 @@ def parse_args(name: str, description: str):  # noqa
                                  f'and {args.distribution} distribution. Please specify --package_url directly.')
 
         if args.package_url and not args.build_id:
-            build_id = re.search(r'p_(\d{4}\.\d)\.(\d)\.(\d{3})', args.package_url)
-            if build_id:
-                # save product version YYYY.U.P.BBB
-                args.build_id = '.'.join(build_id.groups())
-                # save product version YYYY.U
-                args.product_version = build_id.group(1)
+            dev_version = re.search(r'p_(\d{4}\.\d\.\d\.dev\d{8})', args.package_url)
+            if dev_version:
+                # save product version and build version as YYYY.U.V.devYYYYMMDD
+                args.product_version = dev_version.group(1)
+                args.build_id = args.product_version
             else:
-                parser.error(f'Cannot get build number from the package URL provided: {args.package_url}. '
-                             f'Please specify --product_version directly.')
+                build_id = re.search(r'p_(\d{4}\.\d\.\d)\.(\d{3})', args.package_url)
+                if build_id:
+                    # save product version YYYY.U.V.BBB
+                    args.build_id = '.'.join(build_id.groups())
+                    # save product version YYYY.U.V
+                    args.product_version = build_id.group(1)
+                else:
+                    parser.error(f'Cannot get build number from the package URL provided: {args.package_url}. '
+                                 f'Please specify --product_version directly.')
 
         if not args.dockerfile_name:
             devices = ''.join([d[0] for d in args.device])
@@ -531,23 +550,20 @@ def parse_args(name: str, description: str):  # noqa
         args.year = args.build_id[:4] if args.build_id else args.product_version[:4]
 
     if args.mode == 'test' and not args.product_version:
-        match = re.search(r':(\d{4}\.\d)', str(args.tags))
+        match = re.search(r':(\d{4}\.\d\.\d)', str(args.tags))
         if not match and args.package_url:
-            match = re.search(r'p_(\d{4}\.\d)', args.package_url)
-
+            match = re.search(r'p_(\d{4}\.\d\.\d)', args.package_url)
         if match:
-            # save product version YYYY.U
+            # save product version YYYY.U.V
             args.product_version = match.group(1)
         elif args.distribution == 'custom':
             latest_public_version = list(INTEL_OPENVINO_VERSION.keys())[-1]
-            args.product_version = '2022.1' if latest_public_version <= '2022.1' else latest_public_version
+            args.product_version = '2022.1.0' if latest_public_version <= '2022.1.0' else latest_public_version
         else:
             parser.error('Cannot get product_version from the package URL and docker image. '
                          'Please specify --product_version directly.')
 
-    if args.product_version < '2022.1':
-        parser.error('This version of the DockerHub CI framework does not support OpenVINO releases earlier than '
-                     '2022.1. Please use previous versions of the DockerHub CI.')
+    fail_if_product_version_not_supported(args.product_version, parser)
 
     if hasattr(args, 'distribution') and args.distribution == 'custom':
         if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'extras/opencv'],  # nosec
