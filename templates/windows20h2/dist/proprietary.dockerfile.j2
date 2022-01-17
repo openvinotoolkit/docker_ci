@@ -9,3 +9,12 @@ RUN IF not defined OPENVINO_WHEELS_URL ( `
         python -m pip install --no-cache-dir --pre openvino==%OPENVINO_WHEELS_VERSION% --trusted-host=* --find-links %OPENVINO_WHEELS_URL% && `
         python -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]==%OPENVINO_WHEELS_VERSION% --trusted-host=* --find-links %OPENVINO_WHEELS_URL% `
     )
+
+# download source for LGPL packages
+{% if HTTPS_PROXY is defined %}
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/36/92/eb6a52b80b230d8ce2965e50e9cc67086a728ac5ab3f83d4d6de64e6f63c/PyRx-0.3.0.tar.gz -Proxy %HTTPS_PROXY% -OutFile %INTEL_OPENVINO_DIR%\\PyRx-0.3.0.tar.gz
+{% else %}
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/36/92/eb6a52b80b230d8ce2965e50e9cc67086a728ac5ab3f83d4d6de64e6f63c/PyRx-0.3.0.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\PyRx-0.3.0.tar.gz
+{% endif %}

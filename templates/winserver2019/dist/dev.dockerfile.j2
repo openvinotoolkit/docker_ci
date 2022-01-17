@@ -11,3 +11,12 @@ RUN IF not defined OPENVINO_WHEELS_URL ( `
     ) && `
     python -m pip uninstall -y opencv-python && `
     python -m pip install --no-cache-dir opencv-python-headless
+
+# download source for LGPL packages
+{% if HTTPS_PROXY is defined %}
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/36/92/eb6a52b80b230d8ce2965e50e9cc67086a728ac5ab3f83d4d6de64e6f63c/PyRx-0.3.0.tar.gz -Proxy %HTTPS_PROXY% -OutFile %INTEL_OPENVINO_DIR%\\PyRx-0.3.0.tar.gz
+{% else %}
+RUN powershell.exe -Command `
+    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/36/92/eb6a52b80b230d8ce2965e50e9cc67086a728ac5ab3f83d4d6de64e6f63c/PyRx-0.3.0.tar.gz -OutFile %INTEL_OPENVINO_DIR%\\PyRx-0.3.0.tar.gz
+{% endif %}
