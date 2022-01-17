@@ -1,16 +1,12 @@
 # runtime package
 WORKDIR ${INTEL_OPENVINO_DIR}
+ARG OPENVINO_WHEELS_VERSION={{ product_version }}
 ARG OPENVINO_WHEELS_URL
 RUN IF not defined OPENVINO_WHEELS_URL ( `
-        python -m pip install --no-cache-dir --pre openvino=={{ product_version }} `
+        python -m pip install --no-cache-dir --pre openvino==%OPENVINO_WHEELS_VERSION% `
     ) ELSE ( `
-        python -m pip install --no-cache-dir --pre openvino>={{ product_version }} --trusted-host=* --find-links %OPENVINO_WHEELS_URL% `
+        python -m pip install --no-cache-dir --pre openvino==%OPENVINO_WHEELS_VERSION% --trusted-host=* --find-links %OPENVINO_WHEELS_URL% `
     )
-
-RUN powershell.exe -Command "Get-ChildItem %INTEL_OPENVINO_DIR% -Recurse -Filter *requirements*.* | ForEach-Object { `
-       if (($_.Fullname -like '*post_training_optimization_tool*') -or ($_.Fullname -like '*accuracy_checker*') -or ($_.Fullname -like '*python3*') -or ($_.Fullname -like '*python2*') -or ($_.Fullname -like '*requirements_ubuntu*')) `
-       {echo 'skipping dependency'} else {echo 'installing dependency'; python -m pip install --no-cache-dir -r $_.FullName} `
-   }"
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 # Please use `third-party-programs-docker-runtime.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder

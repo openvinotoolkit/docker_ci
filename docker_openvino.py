@@ -109,6 +109,7 @@ class Launcher:
             'rhel_platform': self.args.rhel_platform,
             'os': self.args.os,
             'OPENVINO_WHEELS_URL': self.args.wheels_url,
+            'OPENVINO_WHEELS_VERSION': self.args.wheels_version,
             'INTEL_OPENCL': self.args.ocl_release,
         })
         self.kwargs.update(get_system_proxy())
@@ -185,6 +186,7 @@ class Launcher:
             with self.args.image_json_path.open(mode='w', encoding='utf-8') as f:
                 json.dump({'image_name': self.image_name,
                            'product_version': self.args.product_version,
+                           'wheels_version': self.args.wheels_version,
                            'distribution': self.args.distribution,
                            'os': self.args.os}, f, ensure_ascii=False, indent=4)
         except Exception:
@@ -272,6 +274,7 @@ class Launcher:
             '--distribution', self.args.distribution,
             '--image_os', self.args.os,
             '--product_version', self.args.product_version,
+            '--wheels_version', self.args.wheels_version,
             '--mount_root', str(self.mount_root),
             '--package_url', self.args.package_url,
             '--wheels_url', getattr(self.args, 'wheels_url', ''),
