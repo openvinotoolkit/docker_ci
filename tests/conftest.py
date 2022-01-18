@@ -49,7 +49,7 @@ def pytest_configure(config):
         'markers', 'xfail_log: mark test as xfailed if caplog contains the specified pattern',
     )
     dist = config.getoption('--distribution')
-    if dist in ('data_runtime', 'runtime', 'custom-no-cv'):
+    if dist in ('runtime', 'custom-no-cv'):
         log.info('Setting up runtime image dependencies')
         mount_root = pathlib.Path(config.getoption('--mount_root'))
         package_url = config.getoption('--package_url')
