@@ -34,24 +34,21 @@ You can use Docker CI framework to build an image, please follow [Get Started wi
 
  **Distributions:**
 
- - **runtime**: IE core, nGraph, OpenCV, plugins
- - **data_runtime**: runtime image content + DL Streamer runtimes
- - **dev**: IE core, nGraph, OpenCV, plugins, samples, demos, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Open Model Zoo tools (downloader, converter) 
- - **data_dev**: data_runtime image + dev image + Media SDK, Speech Libraries and End-to-End Speech Demos
+ - **runtime**: IE core, nGraph, plugins
+ - **dev**: IE core, nGraph, plugins, samples, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Open Model Zoo tools (downloader, converter)
  - **base** (only for CPU): IE core, nGraph
- - **proprietary**: data_dev + installer
+ - **proprietary**: dev image content + installer
 
 You can generate Dockerfile with your settings, please follow the [DockerHub CI documentation](../get-started.md).
- * _runtime, data_runtime, dev, data_dev_ distributions based on archive package of OpenVINO product. You can just remove unnecessary parts.
+ * _runtime, dev, distributions based on archive package of OpenVINO product. You can just remove unnecessary parts.
  * _base_ distribution is created by [OpenVINO™ Deployment Manager](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_deployment_manager_tool.html).
  * _proprietary_ distribution based on installer package of OpenVINO product. You can configure installation `COMPONENTS`, follow [Command-Line Silent Instructions](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_linux.html)
 
 ## Where to get OpenVINO package
 
-You can get OpenVINO distribution packages (runtime, dev, data_dev) directly from [public storage](https://storage.openvinotoolkit.org/repositories/openvino/packages/) and proprietary package with registration [here](https://software.intel.com/content/www/us/en/develop/tools/openvino-toolkit/download.html).
+You can get OpenVINO distribution packages (runtime, dev) directly from [public storage](https://storage.openvinotoolkit.org/repositories/openvino/packages/) and proprietary package with registration [here](https://software.intel.com/content/www/us/en/develop/tools/openvino-toolkit/download.html).
 For example: 
-* take data_dev `l_openvino_toolkit_data_dev_ubuntu18_p_2021.2.185.tgz` package and specify `-dist data_dev` option for Docker CI `docker_openvino.py` or take a Dockerfile with `data_dev` suffix.
-* take runtime `l_openvino_toolkit_runtime_ubuntu18_p_2021.2.185.tgz` package and specify `-dist runtime` or `-dist data_runtime` option for Docker CI `docker_openvino.py` or take a Dockerfile with `runtime`/`data_runtime` suffix.
+* take runtime `l_openvino_toolkit_runtime_ubuntu18_p_2021.2.185.tgz` package and specify `-dist runtime` option for Docker CI `docker_openvino.py` or take a Dockerfile with `runtime` suffix.
 * take proprietary `l_openvino_toolkit_p_2021.3.249.tgz` package and specify `-dist proprietary` option for Docker CI `docker_openvino.py`  or take a Dockerfile with `proprietary` suffix.
 
 ## How to build
@@ -71,14 +68,14 @@ docker build --build-arg BUILD_ID=2020.3.341 -t ubuntu18_base_cpu:2020.3.341 - <
 ```
 ----------------
 
-* Dev/data_dev/runtime/data_runtime/proprietary image:
+* Dev/runtime/proprietary image:
 
 You can use Docker CI framework to build an image, please follow [Get Started with DockerHub CI for Intel® Distribution of OpenVINO™ toolkit](../get-started.md).
 
 ```bash
 python3 docker_openvino.py build --file "dockerfiles/ubuntu18/openvino_cgvh_dev_2021.dockerfile" -os ubuntu18 -dist dev -p 2021.1
 ```
-For data_dev/runtime/data_runtime/proprietary distributions, please set appropriate `-dist` and `--file` options.
+For runtime/proprietary distributions, please set appropriate `-dist` and `--file` options.
 
 Or via Docker Engine directly, but you need specify `package_url` argument (see [Where to get OpenVINO package section](#where-to-get-openvino-package)) and OpenCL* version with `INTEL_OPENCL` argument to support GPU.
 Use the `20.35.17767` version of OpenCL* runtime to natively support inference on 11th Generation Intel® Core™ Processor Family for Internet of Things (IoT) Applications (formerly codenamed Tiger Lake) from OpenVINO Docker container:
