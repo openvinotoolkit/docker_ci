@@ -14,6 +14,3 @@ RUN apt-get update && \
 {% if no_samples is defined or 'dev_no_samples' == distribution %}
 RUN rm -rf ${INTEL_OPENVINO_DIR}/samples
 {% endif %}
-{% if 'runtime' == distribution %}
-RUN rm -rf ${INTEL_OPENVINO_DIR}/data_processing
-{% endif %}

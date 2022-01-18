@@ -59,14 +59,6 @@ ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
-{% elif 'data_runtime' == distribution %}
-ARG DEPS="${DEPS} \
-           intel-media-va-driver-non-free \
-           libva-dev"
-ARG LGPL_DEPS="g++ \
-               gcc \
-               libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=opencv_opt -c=dlstreamer"
 {% else %}
 ARG LGPL_DEPS="g++ \
                gcc \
@@ -112,7 +104,7 @@ RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
 # Post-installation cleanup and setting up OpenVINO environment variables
 ENV LIBVA_DRIVER_NAME=iHD
 ENV GST_VAAPI_ALL_DRIVERS=1
-{% if 'data_dev' == distribution or 'proprietary' == distribution %}
+{% if 'proprietary' == distribution %}
 RUN ln --symbolic "${INTEL_OPENVINO_DIR}"/opt/intel/mediasdk/ /opt/intel/mediasdk || true
 ENV LIBVA_DRIVERS_PATH=${INTEL_OPENVINO_DIR}/opt/intel/mediasdk/lib64/
 {% else %}
