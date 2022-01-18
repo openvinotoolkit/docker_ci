@@ -2,14 +2,11 @@
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 # hadolint ignore=DL3031, DL3033
-RUN yum update -y && yum install -y cpio && \
-    yum clean all && rm -rf /var/cache/yum && \
-    tar -xzf ${TEMP_DIR}/*.tgz --strip 1 && \
-    sed -i 's/decline/accept/g' silent.cfg && \
-    ${TEMP_DIR}/install.sh -s silent.cfg && \
-    OV_BUILD="$(find /opt/intel -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
-    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && rm -rf ${TEMP_DIR} && \
-    rm -rf ${INTEL_OPENVINO_DIR}/tools/workbench
+RUN chmod +x l_openvino*.sh && \
+    ./l_openvino*.sh -a -s --eula accept && \
+    mv /opt/intel/openvino/installer /opt/intel/openvino_installer && rmdir /opt/intel/openvino && \
+    OV_BUILD="$(find /opt/intel -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+.\d+')" && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD" /opt/intel/openvino && rm -rf ${TEMP_DIR}
 {% if no_samples is defined %}
 RUN rm -rf ${INTEL_OPENVINO_DIR}/samples
 {% endif %}
