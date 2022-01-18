@@ -61,14 +61,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
     def add_build_args(parser: argparse.ArgumentParser):
         """Adding args needed to build the Docker image"""
         parser.add_argument(
-            '-w',
-            '--wheels_version',
-            default='',
-            help='Version specifier of OpenVINO wheels to install (will be passed to pip install). '
-                 'Will be equal to product version by default.',
-        )
-
-        parser.add_argument(
             '--wheels_url',
             metavar='URL',
             default='',
@@ -233,6 +225,14 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
                             '--product_version',
                             default='',
                             help='Product version in format: YYYY.U[.BBB], where BBB - build number is optional.')
+
+        parser.add_argument(
+            '-w',
+            '--wheels_version',
+            default='',
+            help='Version specifier of OpenVINO wheels to install (will be passed to pip install). '
+                 'Will be equal to product version by default.',
+        )
 
         parser.add_argument(
             '-s',
