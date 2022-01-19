@@ -28,7 +28,7 @@ class TestLicenseLinux:
         )
 
     @pytest.mark.usefixtures('_is_distribution')
-    @pytest.mark.parametrize('_is_distribution', [('dev', 'data_dev', 'dev_no_samples', 'proprietary')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('dev', 'dev_no_samples', 'proprietary')], indirect=True)
     def test_3d_party_dev_lin(self, tester, image):
         tester.test_docker_image(
             image,
@@ -37,7 +37,7 @@ class TestLicenseLinux:
         )
 
     @pytest.mark.usefixtures('_is_distribution')
-    @pytest.mark.parametrize('_is_distribution', [('runtime', 'data_runtime')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('runtime')], indirect=True)
     def test_3d_party_runtime_lin(self, tester, image):
         tester.test_docker_image(
             image,

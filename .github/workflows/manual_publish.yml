@@ -8,7 +8,7 @@ on:
         required: true
         default: ''
       distribution:
-        description: 'Distribution of OpenVINO package: dev, data_runtime, runtime, data_dev'
+        description: 'Distribution of OpenVINO package: dev, runtime'
         required: true
         default: 'dev'
       os:

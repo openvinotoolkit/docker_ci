@@ -61,14 +61,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
     def add_build_args(parser: argparse.ArgumentParser):
         """Adding args needed to build the Docker image"""
         parser.add_argument(
-            '-w',
-            '--wheels_version',
-            default='',
-            help='Version specifier of OpenVINO wheels to install (will be passed to pip install). '
-                 'Will be equal to product version by default.',
-        )
-
-        parser.add_argument(
             '--wheels_url',
             metavar='URL',
             default='',
@@ -218,10 +210,10 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-dist',
             '--distribution',
-            choices=['base', 'runtime', 'data_runtime', 'dev', 'dev_no_samples',
-                     'data_dev', 'internal_dev', 'proprietary', 'custom'],
+            choices=['base', 'runtime', 'dev', 'dev_no_samples',
+                     'proprietary', 'custom'],
             required=' test' in parser.prog,
-            help='Distribution type: dev, dev_no_samples, data_dev, runtime, data_runtime, internal_dev, '
+            help='Distribution type: dev, dev_no_samples, runtime, '
                  'proprietary (product pkg with an installer) or '
                  'base (with CPU only and without installing dependencies). '
                  'Using key --file <path_to_dockerfile> and '
@@ -233,6 +225,14 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
                             '--product_version',
                             default='',
                             help='Product version in format: YYYY.U[.BBB], where BBB - build number is optional.')
+
+        parser.add_argument(
+            '-w',
+            '--wheels_version',
+            default='',
+            help='Version specifier of OpenVINO wheels to install (will be passed to pip install). '
+                 'Will be equal to product version by default.',
+        )
 
         parser.add_argument(
             '-s',
@@ -442,12 +442,8 @@ def parse_args(name: str, description: str):  # noqa
                 args.python = 'python38'
 
         if not args.distribution and args.package_url:
-            if '_internal_' in args.package_url:
-                args.distribution = 'internal_dev'
-            elif '_runtime_' in args.package_url:
+            if '_runtime_' in args.package_url:
                 args.distribution = 'runtime'
-            elif '_data_dev_' in args.package_url:
-                args.distribution = 'data_dev'
             elif '_dev_' in args.package_url:
                 args.distribution = 'dev'
             else:
@@ -475,7 +471,7 @@ def parse_args(name: str, description: str):  # noqa
             args.product_version = '2022.1.0' if latest_public_version <= '2022.1.0' else latest_public_version
         args.build_id = args.product_version
 
-        if not args.package_url and args.distribution not in ('base', 'internal_dev'):
+        if not args.package_url and args.distribution not in ('base',):
             if not args.distribution or not args.product_version:
                 parser.error('Insufficient arguments. Provide --package_url '
                              'or --distribution (with optional --product_version) arguments')
@@ -489,9 +485,8 @@ def parse_args(name: str, description: str):  # noqa
                         args.product_version = lts_version.group()  # save product version YYYY.U.V
                     else:
                         parser.error(f'Cannot find package url for {args.product_version} version')
-                distribution = 'runtime' if args.distribution == 'data_runtime' else args.distribution
                 with contextlib.suppress(KeyError):
-                    args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][distribution]
+                    args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os][args.distribution]
                 if not args.package_url:
                     parser.error(f'Cannot find package url for {args.product_version} version '
                                  f'and {args.distribution} distribution. Please specify --package_url directly.')

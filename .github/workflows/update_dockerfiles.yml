@@ -23,11 +23,11 @@ jobs:
       - name: Generate dockerfiles for release
         shell: bash
         run: |
-          declare -A IMAGES=( ['ubuntu18']='runtime data_runtime dev data_dev proprietary'
-                              ['ubuntu20']='runtime data_runtime dev data_dev'
-                              ['rhel8']='runtime'
-                              ['winserver2019']='runtime dev data_dev proprietary'
-                              ['windows20h2']='runtime dev data_dev proprietary' )
+          declare -A IMAGES=( ['ubuntu18']='runtime dev proprietary'
+                              ['ubuntu20']='runtime dev'
+                              ['rhel8']='runtime dev'
+                              ['winserver2019']='runtime dev proprietary'
+                              ['windows20h2']='runtime dev proprietary' )
           for image_os in "${!IMAGES[@]}"
           do
             for distr in ${IMAGES[$image_os]}
