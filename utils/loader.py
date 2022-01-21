@@ -5,37 +5,6 @@
 
 Supports released/supported versions of product/its dependencies
 """
-INTEL_OCL_RELEASE = {
-    '20.35.17767': {
-        'GMMLIB': '20.2.4',
-        'IGC_CORE': '1.0.4756',
-        'IGC_OPENCL': '1.0.4756',
-        'INTEL_OPENCL': '20.35.17767',
-        'INTEL_OCLOC': '20.35.17767',
-        'INTEL_ZERO': '1.0.17767',
-    },
-    '20.03.15346': {
-        'GMMLIB': '19.4.1',
-        'IGC_CORE': '1.0.3151',
-        'IGC_OPENCL': '1.0.3151',
-        'INTEL_OPENCL': '20.03.15346',
-        'INTEL_OCLOC': '20.03.15346',
-    },
-    '19.41.14441': {
-        'GMMLIB': '19.3.2',
-        'IGC_CORE': '1.0.2597',
-        'IGC_OPENCL': '1.0.2597',
-        'INTEL_OPENCL': '19.41.14441',
-        'INTEL_OCLOC': '19.41.14441',
-    },
-    '19.04.12237': {
-        'GMMLIB': '18.4.1',
-        'IGC_CORE': '18.50.1270',
-        'IGC_OPENCL': '18.50.1270',
-        'INTEL_OPENCL': '19.04.12237',
-        'INTEL_OCLOC': '19.04.12237',
-    },
-}
 INTEL_OPENVINO_VERSION = {
     '2020.1': {
         'winserver2019':

@@ -77,11 +77,9 @@ python3 docker_openvino.py build --file "dockerfiles/ubuntu18/openvino_cgvh_dev_
 ```
 For runtime/proprietary distributions, please set appropriate `-dist` and `--file` options.
 
-Or via Docker Engine directly, but you need specify `package_url` argument (see [Where to get OpenVINO package section](#where-to-get-openvino-package)) and OpenCL* version with `INTEL_OPENCL` argument to support GPU.
-Use the `20.35.17767` version of OpenCL* runtime to natively support inference on 11th Generation Intel® Core™ Processor Family for Internet of Things (IoT) Applications (formerly codenamed Tiger Lake) from OpenVINO Docker container:
+Or via Docker Engine directly, but you need specify `package_url` argument (see [Where to get OpenVINO package section](#where-to-get-openvino-package)):
 ```bash
 docker build --build-arg package_url=https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/l_openvino_toolkit_dev_ubuntu18_p_2021.4.582.tgz \
-             --build-arg INTEL_OPENCL=20.35.17767 \
              -t ubuntu18_dev:2021.4 -f dockerfiles/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile .
 ```
 ----------------

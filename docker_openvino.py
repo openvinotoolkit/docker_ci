@@ -110,7 +110,6 @@ class Launcher:
             'os': self.args.os,
             'OPENVINO_WHEELS_URL': self.args.wheels_url,
             'OPENVINO_WHEELS_VERSION': self.args.wheels_version,
-            'INTEL_OPENCL': self.args.ocl_release,
         })
         self.kwargs.update(get_system_proxy())
 
@@ -149,6 +148,9 @@ class Launcher:
         log.info(logger.LINE_DOUBLE)
         log.info('Preparing to build Docker image...')
         tmp_folder, self.args.old_package_url = '', ''
+
+        if self.args.ocl_release:
+            log.warning('The --ocl_release argument is deprecated since 2022.1.0 and no longer used.')
 
         if self.args.source == 'local' and self.args.package_url.startswith(('http://', 'https://', 'ftp://')):
             log.info('Downloading needed files...')
