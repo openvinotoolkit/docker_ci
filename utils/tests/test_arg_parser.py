@@ -20,7 +20,7 @@ default_args = {
     'linter_check': [],
     # 'mode':'build',
     'msbuild': None,
-    'ocl_release': '19.41.14441',
+    'ocl_release': '',
     'rhel_platform': 'docker',
     'os': 'ubuntu18',
     'package_url': None,
@@ -86,24 +86,6 @@ default_args = {
             'product_version': '2022.1.0',
         },
         id='check tag postfix',
-    ),
-    pytest.param(
-        {
-            'mode': 'build',
-            'package_url': 'openvino_dev_p_2022.1.0.320.zip',
-            'source': 'local',
-            'ocl_release': '20.35.17767',
-        },
-        {
-            'device': ['cpu', 'gpu', 'vpu', 'hddl'],
-            'dockerfile_name': 'openvino_cgvh_dev_2022.1.0.dockerfile',
-            'python': 'python36',
-            'tags': ['ubuntu18_dev:2022.1.0.320_tgl', 'ubuntu18_dev:latest'],
-            'distribution': 'dev',
-            'install_type': 'copy',
-            'product_version': '2022.1.0',
-        },
-        id='check tgl tag',
     ),
     pytest.param(
         {
@@ -356,15 +338,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         },
         'Cannot get distribution type from the package URL provided',
         id='distribution error',
-    ),
-    pytest.param(
-        {
-            'mode': 'build',
-            'package_url': 'https://openvino_p_2020.1.314_dev_pack.zip',
-            'ocl_release': '1234',
-        },
-        'Provided Intel(R) Graphics Compute Runtime for OpenCL(TM) release is not acceptable',
-        id='ocl_release error',
     ),
     pytest.param(
         {

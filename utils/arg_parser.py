@@ -10,7 +10,7 @@ import subprocess  # nosec
 import sys
 import typing
 
-from utils.loader import INTEL_OCL_RELEASE, INTEL_OPENVINO_VERSION
+from utils.loader import INTEL_OPENVINO_VERSION
 from utils.utilities import (check_internal_local_path,
                              check_printable_utf8_chars)
 
@@ -116,10 +116,10 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
 
         parser.add_argument(
             '--ocl_release',
-            choices=['20.35.17767', '20.03.15346', '19.41.14441', '19.04.12237'],
-            default='19.41.14441',
-            help='Release of Intel(R) Graphics Compute Runtime for OpenCL(TM) needed for GPU inference. '
-                 'You may find needed OpenCL library on Github https://github.com/intel/compute-runtime/releases',
+            default='',
+            help='Deprecated option since 2022.1.0. '
+                 'The recommended version of Intel(R) Graphics Compute Runtime for OpenCL(TM) '
+                 '(needed for GPU inference) will be installed in the Docker image.',
         )
 
         parser.add_argument(
@@ -422,8 +422,8 @@ def parse_args(name: str, description: str):  # noqa
             args.product_version = f'{product_version.group()}.0'
 
     if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all'):
-        if args.ocl_release not in INTEL_OCL_RELEASE:
-            parser.error('Provided Intel(R) Graphics Compute Runtime for OpenCL(TM) release is not acceptable.')
+        if args.ocl_release:
+            print('\nWarning: the --ocl_release argument is deprecated since 2022.1.0 and no longer used.\n')
 
         if args.package_url and not args.package_url.startswith(('http://', 'https://', 'ftp://')):
             if args.source == 'local' and not pathlib.Path(args.package_url).exists():
@@ -525,9 +525,6 @@ def parse_args(name: str, description: str):  # noqa
     if not hasattr(args, 'tags') or not args.tags:
         layers = '_'.join(args.layers)
         tgl_postfix = ''
-
-        if args.ocl_release == '20.35.17767':
-            tgl_postfix = '_tgl'
 
         if layers:
             args.tags = [f'{args.os}_{layers}:'

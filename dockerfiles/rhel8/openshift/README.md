@@ -37,11 +37,8 @@ oc create configmap rhsm-ca --from-file redhat-uep.pem
 ```shell
  cat openvino_cg_openshift_runtime_2021.3.dockerfile | oc new-build --name <build-name> --dockerfile='-' --build-secret entitlement \
                                                           --build-config-map rhsm-conf:rhsm-conf --build-config-map rhsm-ca:rhsm-ca \
-                                                          --build-arg INTEL_OPENCL=<intel-opencl-version> \ 
                                                           --build-arg package_url=<openvino-tgz-package-name>
 ```
-You can use `--build-arg` option to override the `INTEL_OPENCL` variable to specify the version of Intel® Graphics Compute Runtime 
-for OpenCL™ Driver on Linux. It is equal to "19.41.14441" by default.
 
 >**Note**:  
 > Read specified RedHat documentation pages for more info:

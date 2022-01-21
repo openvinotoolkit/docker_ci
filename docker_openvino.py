@@ -110,7 +110,6 @@ class Launcher:
             'os': self.args.os,
             'OPENVINO_WHEELS_URL': self.args.wheels_url,
             'OPENVINO_WHEELS_VERSION': self.args.wheels_version,
-            'INTEL_OPENCL': self.args.ocl_release,
         })
         self.kwargs.update(get_system_proxy())
 
