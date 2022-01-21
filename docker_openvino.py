@@ -149,6 +149,9 @@ class Launcher:
         log.info('Preparing to build Docker image...')
         tmp_folder, self.args.old_package_url = '', ''
 
+        if self.args.ocl_release:
+            log.warning('The --ocl_release argument is deprecated since 2022.1.0 and no longer used.')
+
         if self.args.source == 'local' and self.args.package_url.startswith(('http://', 'https://', 'ftp://')):
             log.info('Downloading needed files...')
             self.args.old_package_url = self.args.package_url

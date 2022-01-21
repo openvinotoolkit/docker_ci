@@ -119,7 +119,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             default='',
             help='Deprecated option since 2022.1.0. '
                  'The recommended version of Intel(R) Graphics Compute Runtime for OpenCL(TM) '
-                 '(needed for GPU inference) will be installed in the Docker image.',
+                 '(need for GPU inference) for specified OS will be installed in the Docker image.',
         )
 
         parser.add_argument(
@@ -422,9 +422,6 @@ def parse_args(name: str, description: str):  # noqa
             args.product_version = f'{product_version.group()}.0'
 
     if args.mode in ('gen_dockerfile', 'build', 'build_test', 'all'):
-        if args.ocl_release:
-            print('\nWarning: the --ocl_release argument is deprecated since 2022.1.0 and no longer used.\n')
-
         if args.package_url and not args.package_url.startswith(('http://', 'https://', 'ftp://')):
             if args.source == 'local' and not pathlib.Path(args.package_url).exists():
                 parser.error('Provided local path of the package should be relative to <root_project> folder '
