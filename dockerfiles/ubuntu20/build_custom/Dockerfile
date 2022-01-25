@@ -36,16 +36,14 @@ WORKDIR /opt/intel/repo/openvino
 RUN chmod +x install_build_dependencies.sh; \
     ./install_build_dependencies.sh
 
-ARG OCL_VERSION="19.41.14441"
-
 RUN chmod +x scripts/install_dependencies/install_NEO_OCL_driver.sh; \
-    ./scripts/install_dependencies/install_NEO_OCL_driver.sh -y --no_numa -d ${OCL_VERSION}
+    ./scripts/install_dependencies/install_NEO_OCL_driver.sh -y --no_numa
 
 # hadolint ignore=DL3013
 RUN chmod +x scripts/install_dependencies/install_openvino_dependencies.sh; \
     ./scripts/install_dependencies/install_openvino_dependencies.sh -y -c=python; \
     python3 -m pip install --no-cache-dir --upgrade pip; \
-    python3 -m pip install --no-cache-dir -r inference-engine/ie_bridges/python/src/requirements-dev.txt
+    python3 -m pip install --no-cache-dir -r src/bindings/python/src/compatibility/openvino/requirements-dev.txt
 
 WORKDIR /opt/intel/repo
 CMD ["/bin/bash"]
@@ -115,10 +113,8 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 RUN chmod +x install_dependencies/install_openvino_dependencies.sh; \
     ./install_dependencies/install_openvino_dependencies.sh -y -c=python -c=dev
 
-ARG OCL_VERSION="19.41.14441"
-
 RUN chmod +x install_dependencies/install_NEO_OCL_driver.sh; \
-    ./install_dependencies/install_NEO_OCL_driver.sh -y --no_numa -d ${OCL_VERSION}
+    ./install_dependencies/install_NEO_OCL_driver.sh -y --no_numa
 
 WORKDIR /opt/libusb-1.0.22
 RUN ./libtool --mode=install install -c libusb/libusb-1.0.la /usr/local/lib/; \
