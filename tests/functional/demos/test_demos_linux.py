@@ -28,8 +28,8 @@ class TestDemosLinuxDataDev:
 
     @pytest.mark.gpu
     @pytest.mark.parametrize('omz_python_demo_path', ['action_recognition'], indirect=True)
-    def test_action_recognition_python_gpu(self, tester, image, omz_python_demo_path, bash):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+    def test_action_recognition_python_gpu(self, tester, image, gpu_kwargs, omz_python_demo_path, bash):
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             ['curl -LJo /root/action_recognition.mp4 https://github.com/intel-iot-devkit/sample-videos/blob/master/'
@@ -113,8 +113,8 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
-    def test_crossroad_cpp_gpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+    def test_crossroad_cpp_gpu(self, tester, image, gpu_kwargs, install_openvino_dependencies, bash, download_picture):
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -197,8 +197,8 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
-    def test_security_gpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+    def test_security_gpu(self, tester, image, gpu_kwargs, install_openvino_dependencies, bash, download_picture):
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -297,8 +297,8 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
-    def test_text_cpp_gpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+    def test_text_cpp_gpu(self, tester, image, gpu_kwargs, install_openvino_dependencies, bash, download_picture):
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -374,9 +374,9 @@ class TestDemosLinux:
     @pytest.mark.gpu
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
-    def test_detection_ssd_python_gpu(self, tester, image, omz_python_demo_path, bash,
+    def test_detection_ssd_python_gpu(self, tester, image, gpu_kwargs, omz_python_demo_path, bash,
                                       install_openvino_dependencies, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             [bash('omz_downloader --name vehicle-detection-adas-0002 --precision FP16'), install_openvino_dependencies,
@@ -449,8 +449,9 @@ class TestDemosLinux:
         )
 
     @pytest.mark.gpu
-    def test_segmentation_cpp_gpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '4g'}
+    def test_segmentation_cpp_gpu(self, tester, image, gpu_kwargs, install_openvino_dependencies, bash,
+                                  download_picture):
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -484,9 +485,9 @@ class TestDemosLinux:
 
     @pytest.mark.gpu
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
-    def test_segmentation_python_gpu(self, tester, image, omz_python_demo_path, bash,
+    def test_segmentation_python_gpu(self, tester, image, omz_python_demo_path, bash, gpu_kwargs,
                                      install_openvino_dependencies, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             [bash('omz_downloader --name semantic-segmentation-adas-0001 --precision FP16'),
