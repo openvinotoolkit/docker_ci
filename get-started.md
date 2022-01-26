@@ -226,7 +226,7 @@ If your host machine is MacOS* then inference run inside the docker Linux image 
 docker run -it --rm <image_name>:latest
 ```
 
-If you want to try some samples then run image with the command below:
+If you want to try some samples, then run the image with the command below:
 
 **Linux image:** 
 ```bash
@@ -251,7 +251,7 @@ If your host system is Windows with WSL2, use the following command to start the
 docker run -it --rm --device /dev/dxg --volume /usr/lib/wsl:/usr/lib/wsl <image_name>:latest
 ```
 
-> **Note:** 
+> **Note**:
 > You need to meet the following prerequisites to use a GPU device inside WSL2:
 > * Windows 10 with 21H2 update or Windows 11
 > * [Intel iGPU drivers](https://www.intel.com/content/www/us/en/download/19344/30579/intel-graphics-windows-dch-drivers.html) should be installed on the host (version 30.0.100.9684 or newer)  
@@ -285,7 +285,7 @@ And to run inference on all hardware targets supported, make sure you've built t
 docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp --device /dev/dri:/dev/dri --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb <image_name>:latest
 ```
 
-If you want to try some samples then run the following commands:
+If you want to try some samples, then run the following commands:
 ```bash
 docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp --device /dev/dri:/dev/dri --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb <image_name>:latest
 /bin/bash -c "omz_downloader --name googlenet-v1 --precisions FP16 && omz_converter --name googlenet-v1 --precision FP16 && curl -O https://storage.openvinotoolkit.org/data/test_data/images/car_1.bmp && python3 samples/python/hello_classification/hello_classification.py public/googlenet-v1/FP16/googlenet-v1.xml car_1.bmp CPU"
