@@ -12,7 +12,7 @@ import pytest
 from xdist.scheduler import LoadScopeScheduling
 from utils.docker_api import DockerAPI
 from utils.exceptions import FailedTestError
-from utils.tester import DockerImageTester
+from utils.tester import DockerImageTester, DockerImageTesterSharedContainer
 from utils.utilities import download_file, unzip_file
 
 log = logging.getLogger('docker_ci')
@@ -30,6 +30,7 @@ def pytest_addoption(parser):
                                                           'openvino folder to search for OpenVINO wheels')
     parser.addoption('--product_version', action='store', help='Setup a product_version for check')
     parser.addoption('--wheels_version', action='store', help='Setup a version specifier for OpenVINO wheels')
+    parser.addoption('--opencv_download_server', action='store', help='Setup an URL of OpenCV download server')
 
 
 def pytest_configure(config):
@@ -136,6 +137,37 @@ def tester(request):
 
 
 @pytest.fixture(scope='session')
+def omz_demos_lin_cpu_tester(request, image, install_omz_commands):
+    registry = request.config.getoption('--registry', default='')
+    return DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_cpu_tester', install_omz_commands, registry)
+
+
+@pytest.fixture(scope='session')
+def omz_demos_lin_gpu_tester(request, image, install_omz_commands, gpu_kwargs):
+    registry = request.config.getoption('--registry', default='')
+    return DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_gpu_tester', install_omz_commands, registry,
+                                            **gpu_kwargs)
+
+
+@pytest.fixture(scope='session')
+def omz_demos_lin_vpu_tester(request, image, install_omz_commands, gpu_kwargs):
+    registry = request.config.getoption('--registry', default='')
+    kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
+              'volumes': ['/dev/bus/usb:/dev/bus/usb']}  # nosec # noqa: S108
+    return DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_vpu_tester', install_omz_commands, registry,
+                                            **kwargs)
+
+
+@pytest.fixture(scope='session')
+def omz_demos_lin_hddl_tester(request, image, install_omz_commands, gpu_kwargs):
+    registry = request.config.getoption('--registry', default='')
+    kwargs = {'devices': ['/dev/ion:/dev/ion'],
+              'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm']}  # nosec # noqa: S108
+    return DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_hddl_tester', install_omz_commands, registry,
+                                            **kwargs)
+
+
+@pytest.fixture(scope='session')
 def image(request):
     return request.config.getoption('--image')
 
@@ -190,6 +222,31 @@ def dev_root(request):
                     f'Try to remove it manually via "sudo rm -r {openvino_dev_path}"')
 
     return dev_root_path
+
+
+@pytest.fixture(scope='session')
+def install_omz_commands(request, bash, image_os, distribution, opencv_download_server_var, install_openvino_dev_wheel):
+    if 'custom' not in distribution:
+        install_dependencies = ''
+        if 'ubuntu' in image_os:
+            install_dependencies = 'apt update && apt install -y git build-essential'
+        elif 'rhel' in image_os:
+            install_dependencies = 'yum update -y && yum install -y git make'
+
+        install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
+
+        commands = [bash(f'{install_dependencies} && '
+                         f'{opencv_download_server_var} extras/scripts/download_opencv.sh && '
+                         f'{install_dev_wheel} && '
+                         'git clone --depth 1 --recurse-submodules --shallow-submodules '
+                         'https://github.com/openvinotoolkit/open_model_zoo.git && '
+                         'python3 -m pip install --no-deps open_model_zoo/demos/common/python && '
+                         'ln -s open_model_zoo/demos demos'),
+                    bash('open_model_zoo/demos/build_demos.sh || true')]
+    else:
+        commands = [bash('python3 -m pip install --no-deps demos/common/python'),
+                    bash('demos/build_demos.sh || true')]
+    return commands
 
 
 @pytest.fixture(scope='session')
@@ -253,6 +310,12 @@ def bash(request):
     return _bash
 
 
+@pytest.fixture(scope='session')
+def opencv_download_server_var(request):
+    opencv_server_url = request.config.getoption('--opencv_download_server')
+    return f'OPENVINO_OPENCV_DOWNLOAD_SERVER={opencv_server_url}' if opencv_server_url else ''
+
+
 @pytest.fixture()
 def omz_python_demo_path(request):
     demo_name = request.param
@@ -271,12 +334,6 @@ def omz_python_demo_path(request):
     else:
         base_path = '/opt/intel/openvino/demos'
         return f'{base_path}/{demo_name}_demo/python/{demo_name}_demo.py{parameters}'
-
-
-@pytest.fixture(scope='session')
-def omz_python_demos_requirements_file(request):
-    base_path = '/opt/intel/openvino/extras/open_model_zoo/demos'
-    return f'{base_path}/requirements.txt'
 
 
 @pytest.fixture(scope='session')

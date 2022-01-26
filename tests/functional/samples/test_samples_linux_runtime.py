@@ -55,7 +55,7 @@ class TestSamplesLinuxRuntime:
                 },
             },
         }
-        kwargs['volumes'].update(gpu_kwargs['volumes'])
+        kwargs['volumes'].update(gpu_kwargs.get('volumes', {}))
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -221,7 +221,7 @@ class TestSamplesLinuxRuntime:
                 },
             },
         }
-        kwargs['volumes'].update(gpu_kwargs['volumes'])
+        kwargs['volumes'].update(gpu_kwargs.get('volumes', {}))
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -356,7 +356,7 @@ class TestSamplesLinuxRuntime:
                 },
             },
         }
-        kwargs['volumes'].update(gpu_kwargs['volumes'])
+        kwargs['volumes'].update(gpu_kwargs.get('volumes', {}))
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
