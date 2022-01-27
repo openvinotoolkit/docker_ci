@@ -28,8 +28,9 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.gpu
-    def test_benchmark_app_cpp_gpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+    def test_benchmark_app_cpp_gpu(self, tester, image, gpu_kwargs, install_openvino_dependencies, bash,
+                                   download_picture):
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -116,8 +117,9 @@ class TestSamplesLinux:
     @pytest.mark.gpu
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_hello_classification_cpp_gpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+    def test_hello_classification_cpp_gpu(self, tester, image, gpu_kwargs, install_openvino_dependencies, bash,
+                                          download_picture):
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -226,8 +228,9 @@ class TestSamplesLinux:
         )
 
     @pytest.mark.gpu
-    def test_hello_reshape_cpp_gpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+    def test_hello_reshape_cpp_gpu(self, tester, image, gpu_kwargs, install_openvino_dependencies, bash,
+                                   download_picture):
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -313,8 +316,9 @@ class TestSamplesLinux:
     @pytest.mark.gpu
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_classification_async_cpp_gpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
-        kwargs = {'devices': ['/dev/dri:/dev/dri'], 'mem_limit': '3g'}
+    def test_classification_async_cpp_gpu(self, tester, image, gpu_kwargs, install_openvino_dependencies, bash,
+                                          download_picture):
+        kwargs = dict(mem_limit='3g', **gpu_kwargs)
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,

@@ -226,15 +226,15 @@ If your host machine is MacOS* then inference run inside the docker Linux image 
 docker run -it --rm <image_name>:latest
 ```
 
-If you want to try some demos then run image with the root privileges (some additional 3-rd party dependencies will be installed):
+If you want to try some samples, then run the image with the command below:
 
 **Linux image:** 
 ```bash
-docker run -itu root:root --rm <image_name>:latest /bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d CPU -sample-options -no_show"
+docker run -it --rm <image_name>:latest /bin/bash -c "python3 samples/python/hello_query_device/hello_query_device.py"
 ```
 **Windows image:**
 ```cmd
-docker run -itu ContainerAdministrator --rm <image_name>:latest cmd /S /C "cd deployment_tools\demo && demo_security_barrier_camera.bat -d CPU -sample-options -no_show"
+docker run -it --rm <image_name>:latest cmd /S /C "python samples\python\hello_query_device\hello_query_device.py"
 ```
 Please follow [Build and Run the Docker* Image for GPU](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html) instruction to get **GPU** access from Windows container. 
 
@@ -245,6 +245,20 @@ To enable **GPU** access, make sure you've built the image with support for GPU 
 docker run -itu root:root --rm --device /dev/dri:/dev/dri <image_name>:latest
 ```
 If your host system is Ubuntu 20, follow the [Configuration Guide for the Intel® Graphics Compute Runtime for OpenCL™ on Ubuntu* 20.04](./configure_gpu_ubuntu20.md). 
+
+If your host system is Windows with WSL2, use the following command to start the container:
+```cmd
+docker run -it --rm --device /dev/dxg --volume /usr/lib/wsl:/usr/lib/wsl <image_name>:latest
+```
+
+> **Note**:
+> You need to meet the following prerequisites to use a GPU device inside WSL2:
+> * Windows 10 with 21H2 update or Windows 11
+> * [Intel iGPU drivers](https://www.intel.com/content/www/us/en/download/19344/30579/intel-graphics-windows-dch-drivers.html) should be installed on the host (version 30.0.100.9684 or newer)  
+> 
+> Read more:
+> * [Harness the power of Intel iGPU on your machine](https://www.intel.com/content/www/us/en/artificial-intelligence/harness-the-power-of-intel-igpu-on-your-machine.html)
+> * [OneAPI/L0, OpenVINO and OpenCL coming to the Windows Subsystem for Linux for Intel GPUs](https://devblogs.microsoft.com/commandline/oneapi-l0-openvino-and-opencl-coming-to-the-windows-subsystem-for-linux-for-intel-gpus/)
 
 To run inference on the **VPU**, make sure you've built the image with support for VPU and run:
 ```bash
@@ -271,13 +285,13 @@ And to run inference on all hardware targets supported, make sure you've built t
 docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp --device /dev/dri:/dev/dri --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb <image_name>:latest
 ```
 
-If you want to try some demos then run image with the root privileges (some additional 3-rd party dependencies will be installed):
+If you want to try some samples, then run the following commands:
 ```bash
 docker run -itu root:root --rm --device=/dev/ion:/dev/ion -v /var/tmp:/var/tmp --device /dev/dri:/dev/dri --device-cgroup-rule='c 189:* rmw' -v /dev/bus/usb:/dev/bus/usb <image_name>:latest
-/bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d CPU -sample-options -no_show"
-/bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d GPU -sample-options -no_show"
-/bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d MYRIAD -sample-options -no_show"
-/bin/bash -c "apt update && apt install sudo && deployment_tools/demo/demo_security_barrier_camera.sh -d HDDL -sample-options -no_show"
+/bin/bash -c "omz_downloader --name googlenet-v1 --precisions FP16 && omz_converter --name googlenet-v1 --precision FP16 && curl -O https://storage.openvinotoolkit.org/data/test_data/images/car_1.bmp && python3 samples/python/hello_classification/hello_classification.py public/googlenet-v1/FP16/googlenet-v1.xml car_1.bmp CPU"
+/bin/bash -c "omz_downloader --name googlenet-v1 --precisions FP16 && omz_converter --name googlenet-v1 --precision FP16 && curl -O https://storage.openvinotoolkit.org/data/test_data/images/car_1.bmp && python3 samples/python/hello_classification/hello_classification.py public/googlenet-v1/FP16/googlenet-v1.xml car_1.bmp GPU"
+/bin/bash -c "omz_downloader --name googlenet-v1 --precisions FP16 && omz_converter --name googlenet-v1 --precision FP16 && curl -O https://storage.openvinotoolkit.org/data/test_data/images/car_1.bmp && python3 samples/python/hello_classification/hello_classification.py public/googlenet-v1/FP16/googlenet-v1.xml car_1.bmp MYRIAD"
+/bin/bash -c "omz_downloader --name googlenet-v1 --precisions FP16 && omz_converter --name googlenet-v1 --precision FP16 && curl -O https://storage.openvinotoolkit.org/data/test_data/images/car_1.bmp && python3 samples/python/hello_classification/hello_classification.py public/googlenet-v1/FP16/googlenet-v1.xml car_1.bmp HDDL"
 ```
 ## Troubleshooting
 

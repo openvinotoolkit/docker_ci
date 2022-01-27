@@ -39,10 +39,10 @@ class TestDemosLinuxDataRuntime:
     @pytest.mark.gpu
     @pytest.mark.usefixtures('_python_ngraph_required')
     @pytest.mark.parametrize('omz_python_demo_path', ['object_detection'], indirect=True)
-    def test_detection_ssd_python_gpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
+    def test_detection_ssd_python_gpu(self, tester, image, gpu_kwargs, distribution, dev_root, omz_python_demo_path,
                                       omz_python_demos_requirements_file, bash):
         kwargs = {
-            'devices': ['/dev/dri:/dev/dri'],
+            'devices': gpu_kwargs['devices'],
             'mem_limit': '3g',
             'volumes': {
                 dev_root / 'samples' / 'scripts': {
@@ -53,6 +53,7 @@ class TestDemosLinuxDataRuntime:
                 },
             },
         }
+        kwargs['volumes'].update(gpu_kwargs['volumes'])
         tester.test_docker_image(
             image,
             [bash(f'python3 -m pip install --no-cache-dir {"opencv-python" if distribution == "custom-no-cv" else ""} '
@@ -171,10 +172,10 @@ class TestDemosLinuxRuntime:
 
     @pytest.mark.gpu
     @pytest.mark.parametrize('omz_python_demo_path', ['segmentation'], indirect=True)
-    def test_segmentation_python_gpu(self, tester, image, distribution, dev_root, omz_python_demo_path,
+    def test_segmentation_python_gpu(self, tester, image, gpu_kwargs, distribution, dev_root, omz_python_demo_path,
                                      omz_python_demos_requirements_file, bash):
         kwargs = {
-            'devices': ['/dev/dri:/dev/dri'],
+            'devices': gpu_kwargs['devices'],
             'mem_limit': '3g',
             'volumes': {
                 dev_root / 'samples' / 'scripts': {
@@ -185,6 +186,7 @@ class TestDemosLinuxRuntime:
                 },
             },
         }
+        kwargs['volumes'].update(gpu_kwargs['volumes'])
         tester.test_docker_image(
             image,
             [bash('python3 -m pip install setuptools && '

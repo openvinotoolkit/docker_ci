@@ -279,6 +279,14 @@ def omz_python_demos_requirements_file(request):
     return f'{base_path}/requirements.txt'
 
 
+@pytest.fixture(scope='session')
+def gpu_kwargs(request):
+    if sys.platform.startswith('linux'):
+        return {'devices': ['/dev/dri:/dev/dri']}
+    else:
+        return {'devices': ['/dev/dxg:/dev/dxg'], 'volumes': {'/usr/lib/wsl': {'bind': '/usr/lib/wsl'}}}
+
+
 def switch_container_engine(engine):
     """Switch Windows docker Engine to -SwitchLinuxEngine or -SwitchWindowsEngine"""
     cmd_line = ['cmd', '/c', 'where', 'docker']
@@ -400,12 +408,17 @@ def pytest_runtest_setup(item):
             if process.returncode != 0:
                 pytest.skip('Test requires connected VPU device on the host machine')
 
-        if 'gpu' in mark.name and sys.platform.startswith('linux'):
-            process = subprocess.run(['/bin/bash', '-c', 'lspci | grep -E "VGA|3D"'],
-                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                     shell=False)  # nosec
-            if process.returncode != 0:
-                pytest.skip('Test requires Intel GPU device on the host machine')
+        if 'gpu' in mark.name:
+            if sys.platform.startswith('linux'):
+                process = subprocess.run(['/bin/bash', '-c', 'lspci | grep -E "VGA|3D"'],
+                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                         shell=False)  # nosec
+                if process.returncode != 0:
+                    pytest.skip('Test requires Intel GPU device on the host machine')
+            elif sys.platform.startswith('win') and 'win' not in item.config.getoption('--image_os'):
+                wsl = shutil.which('wsl')
+                if not wsl:
+                    pytest.skip('Test requires Intel GPU device and configured WSL2 on the host machine')
 
         is_save_key = 'save' in item.config.known_args_namespace.keyword
         is_deps_key = 'deps' in item.config.known_args_namespace.keyword

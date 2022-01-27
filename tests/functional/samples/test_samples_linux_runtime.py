@@ -44,10 +44,10 @@ class TestSamplesLinuxRuntime:
     @pytest.mark.gpu
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_hello_classification_cpp_gpu(self, tester, image, dev_root, install_openvino_dependencies,
+    def test_hello_classification_cpp_gpu(self, tester, image, gpu_kwargs, dev_root, install_openvino_dependencies,
                                           install_openvino_dev_wheel, bash, download_picture):
         kwargs = {
-            'devices': ['/dev/dri:/dev/dri'],
+            'devices': gpu_kwargs['devices'],
             'mem_limit': '3g',
             'volumes': {
                 dev_root / 'samples' / 'cpp': {
@@ -55,6 +55,7 @@ class TestSamplesLinuxRuntime:
                 },
             },
         }
+        kwargs['volumes'].update(gpu_kwargs['volumes'])
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -209,10 +210,10 @@ class TestSamplesLinuxRuntime:
         )
 
     @pytest.mark.gpu
-    def test_hello_reshape_cpp_gpu(self, tester, image, dev_root, install_openvino_dependencies, bash,
+    def test_hello_reshape_cpp_gpu(self, tester, image, gpu_kwargs, dev_root, install_openvino_dependencies, bash,
                                    install_openvino_dev_wheel, download_picture):
         kwargs = {
-            'devices': ['/dev/dri:/dev/dri'],
+            'devices': gpu_kwargs['devices'],
             'mem_limit': '3g',
             'volumes': {
                 dev_root / 'samples' / 'cpp': {
@@ -220,6 +221,7 @@ class TestSamplesLinuxRuntime:
                 },
             },
         }
+        kwargs['volumes'].update(gpu_kwargs['volumes'])
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
@@ -343,10 +345,10 @@ class TestSamplesLinuxRuntime:
     @pytest.mark.gpu
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')
-    def test_classification_async_cpp_gpu(self, tester, image, dev_root, install_openvino_dependencies, bash,
-                                          install_openvino_dev_wheel, download_picture):
+    def test_classification_async_cpp_gpu(self, tester, image, gpu_kwargs, dev_root, install_openvino_dependencies,
+                                          bash, install_openvino_dev_wheel, download_picture):
         kwargs = {
-            'devices': ['/dev/dri:/dev/dri'],
+            'devices': gpu_kwargs['devices'],
             'mem_limit': '3g',
             'volumes': {
                 dev_root / 'samples' / 'cpp': {
@@ -354,6 +356,7 @@ class TestSamplesLinuxRuntime:
                 },
             },
         }
+        kwargs['volumes'].update(gpu_kwargs['volumes'])
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
