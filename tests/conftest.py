@@ -143,6 +143,14 @@ def omz_demos_lin_cpu_tester(request, image, install_omz_commands):
 
 
 @pytest.fixture(scope='session')
+def omz_demos_win_cpu_tester(request, image, install_omz_commands, gpu_kwargs):
+    registry = request.config.getoption('--registry', default='')
+    kwargs = {'user': 'ContainerAdministrator'}
+    return DockerImageTesterSharedContainer(image, 'init_omz_demos_win_cpu_tester', install_omz_commands, registry,
+                                            **kwargs)
+
+
+@pytest.fixture(scope='session')
 def omz_demos_lin_gpu_tester(request, image, install_omz_commands, gpu_kwargs):
     registry = request.config.getoption('--registry', default='')
     return DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_gpu_tester', install_omz_commands, registry,
@@ -226,26 +234,40 @@ def dev_root(request):
 
 @pytest.fixture(scope='session')
 def install_omz_commands(request, bash, image_os, distribution, opencv_download_server_var, install_openvino_dev_wheel):
-    if 'custom' not in distribution:
-        install_dependencies = ''
-        if 'ubuntu' in image_os:
-            install_dependencies = 'apt update && apt install -y git build-essential'
-        elif 'rhel' in image_os:
-            install_dependencies = 'yum update -y && yum install -y git make'
-
-        install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
-
-        commands = [bash(f'{install_dependencies} && '
-                         f'{opencv_download_server_var} extras/scripts/download_opencv.sh && '
-                         f'{install_dev_wheel} && '
-                         'git clone --depth 1 --recurse-submodules --shallow-submodules '
-                         'https://github.com/openvinotoolkit/open_model_zoo.git && '
-                         'python3 -m pip install --no-deps open_model_zoo/demos/common/python && '
-                         'ln -s open_model_zoo/demos demos'),
-                    bash('open_model_zoo/demos/build_demos.sh || true')]
+    if 'win' in image_os:
+        commands = [
+            f'cmd /V /C "set {opencv_download_server_var}&& '
+            f'powershell -file %INTEL_OPENVINO_DIR%\\\\extras\\\\scripts\\\\download_opencv.ps1 -batch"',
+            'cmd /S /C curl -kL --output MinGit.zip '
+            'https://github.com/git-for-windows/git/releases/download/v2.35.1.windows.1/MinGit-2.35.1-64-bit.zip && '
+            'powershell -Command Expand-Archive MinGit.zip -DestinationPath c:\\\\MinGit &&'
+            'c:\\\\MinGit\\\\cmd\\\\git.exe clone --recurse-submodules --shallow-submodules '
+            'https://github.com/openvinotoolkit/open_model_zoo.git C:\\\\intel\\\\openvino\\\\open_model_zoo',
+            'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+            'C:\\\\intel\\\\openvino\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
+            'python -m pip install --no-deps C:\\\\intel\\\\openvino\\\\open_model_zoo\\\\demos\\\\common\\\\python',
+        ]
     else:
-        commands = [bash('python3 -m pip install --no-deps demos/common/python'),
-                    bash('demos/build_demos.sh || true')]
+        if 'custom' not in distribution:
+            install_dependencies = ''
+            if 'ubuntu' in image_os:
+                install_dependencies = 'apt update && apt install -y git build-essential'
+            elif 'rhel' in image_os:
+                install_dependencies = 'yum update -y && yum install -y git make'
+
+            install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
+
+            commands = [bash(f'{install_dependencies} && '
+                             f'{opencv_download_server_var} extras/scripts/download_opencv.sh && '
+                             f'{install_dev_wheel} && '
+                             f'git clone --recurse-submodules --shallow-submodules '
+                             'https://github.com/openvinotoolkit/open_model_zoo.git && '
+                             'python3 -m pip install --no-deps open_model_zoo/demos/common/python && '
+                             'ln -s open_model_zoo/demos demos'),
+                        bash('open_model_zoo/demos/build_demos.sh || true')]
+        else:
+            commands = [bash('python3 -m pip install --no-deps demos/common/python'),
+                        bash('demos/build_demos.sh || true')]
     return commands
 
 
@@ -329,7 +351,7 @@ def omz_python_demo_path(request):
             parameters = ' -at centernet'
 
     if 'win' in request.config.getoption('--image_os'):
-        base_path = 'C:\\\\intel\\\\openvino\\\\demos'
+        base_path = 'C:\\\\intel\\\\openvino\\\\open_model_zoo\\\\demos'
         return f'{base_path}\\\\{demo_name}_demo\\\\python\\\\{demo_name}_demo.py{parameters}'
     else:
         base_path = '/opt/intel/openvino/demos'
