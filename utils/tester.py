@@ -27,6 +27,11 @@ class DockerImageTesterBase(DockerAPI):
         self.registry = registry
         log.setLevel(logging.DEBUG)
 
+    def stop(self):
+        """Stop the container"""
+        if self.container:
+            self.container.stop()
+
     def _get_logfile_path(self, image_tag, name):
         """Get path to logfile for specified test name"""
         file_tag = image_tag.replace('/', '_').replace(':', '_')
@@ -61,8 +66,7 @@ class DockerImageTesterBase(DockerAPI):
 
     def __del__(self):
         """Custom __del__ to manually stop (but not remove) testing container"""
-        if self.container:
-            self.container.stop()
+        self.stop()
         super().__del__()
 
 

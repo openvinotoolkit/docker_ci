@@ -144,40 +144,50 @@ def tester(request):
 @pytest.fixture(scope='session')
 def omz_demos_lin_cpu_tester(request, image, install_omz_commands):
     registry = request.config.getoption('--registry', default='')
-    return DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_cpu_tester', install_omz_commands, registry)
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_cpu_tester', install_omz_commands, registry)
+    yield tester
+    tester.stop()
 
 
 @pytest.fixture(scope='session')
 def omz_demos_win_cpu_tester(request, image, install_omz_commands, gpu_kwargs):
     registry = request.config.getoption('--registry', default='')
     kwargs = {'user': 'ContainerAdministrator'}
-    return DockerImageTesterSharedContainer(image, 'init_omz_demos_win_cpu_tester', install_omz_commands, registry,
-                                            **kwargs)
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_win_cpu_tester', install_omz_commands, registry,
+                                              **kwargs)
+    yield tester
+    tester.stop()
 
 
 @pytest.fixture(scope='session')
 def omz_demos_lin_gpu_tester(request, image, install_omz_commands, gpu_kwargs):
     registry = request.config.getoption('--registry', default='')
-    return DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_gpu_tester', install_omz_commands, registry,
-                                            **gpu_kwargs)
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_gpu_tester', install_omz_commands, registry,
+                                              **gpu_kwargs)
+    yield tester
+    tester.stop()
 
 
 @pytest.fixture(scope='session')
-def omz_demos_lin_vpu_tester(request, image, install_omz_commands, gpu_kwargs):
+def omz_demos_lin_vpu_tester(request, image, install_omz_commands):
     registry = request.config.getoption('--registry', default='')
     kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
               'volumes': ['/dev/bus/usb:/dev/bus/usb']}  # nosec # noqa: S108
-    return DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_vpu_tester', install_omz_commands, registry,
-                                            **kwargs)
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_vpu_tester', install_omz_commands, registry,
+                                              **kwargs)
+    yield tester
+    tester.stop()
 
 
 @pytest.fixture(scope='session')
-def omz_demos_lin_hddl_tester(request, image, install_omz_commands, gpu_kwargs):
+def omz_demos_lin_hddl_tester(request, image, install_omz_commands):
     registry = request.config.getoption('--registry', default='')
     kwargs = {'devices': ['/dev/ion:/dev/ion'],
               'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm']}  # nosec # noqa: S108
-    return DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_hddl_tester', install_omz_commands, registry,
-                                            **kwargs)
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_hddl_tester', install_omz_commands, registry,
+                                              **kwargs)
+    yield tester
+    tester.stop()
 
 
 @pytest.fixture(scope='session')
