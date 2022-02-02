@@ -4,6 +4,8 @@
 import logging
 import os
 import pathlib
+import re
+import requests
 import shutil
 import subprocess  # nosec
 import sys
@@ -31,6 +33,9 @@ def pytest_addoption(parser):
     parser.addoption('--product_version', action='store', help='Setup a product_version for check')
     parser.addoption('--wheels_version', action='store', help='Setup a version specifier for OpenVINO wheels')
     parser.addoption('--opencv_download_server', action='store', help='Setup an URL of OpenCV download server')
+    parser.addoption('--omz_rev', action='store', help='Setup a branch or commit hash in the Open Model Zoo repository '
+                                                       'to download demos (default is the release branch corresponding '
+                                                       'to product_version or master)')
 
 
 def pytest_configure(config):
@@ -216,6 +221,20 @@ def wheels_url(request):
 
 
 @pytest.fixture(scope='session')
+def omz_rev(request):
+    omz_revision = request.config.getoption('--omz_rev', default='')
+    product_version = re.search(r'^(\d{4})\.(\d)', request.config.getoption('--product_version'))
+    if not omz_revision:
+        omz_revision = 'master'
+        if product_version:
+            release_branch = f'releases/{"/".join(product_version.groups())}'
+            url = f'https://github.com/openvinotoolkit/open_model_zoo/tree/{release_branch}'
+            if requests.get(url).status_code != 404:
+                omz_revision = release_branch
+    return omz_revision
+
+
+@pytest.fixture(scope='session')
 def docker_api():
     return DockerAPI()
 
@@ -233,7 +252,8 @@ def dev_root(request):
 
 
 @pytest.fixture(scope='session')
-def install_omz_commands(request, bash, image_os, distribution, opencv_download_server_var, install_openvino_dev_wheel):
+def install_omz_commands(request, bash, image_os, distribution, opencv_download_server_var, install_openvino_dev_wheel,
+                         omz_rev):
     if 'win' in image_os:
         commands = [
             f'cmd /V /C "set {opencv_download_server_var}&& '
@@ -243,6 +263,8 @@ def install_omz_commands(request, bash, image_os, distribution, opencv_download_
             'powershell -Command Expand-Archive MinGit.zip -DestinationPath c:\\\\MinGit &&'
             'c:\\\\MinGit\\\\cmd\\\\git.exe clone --recurse-submodules --shallow-submodules '
             'https://github.com/openvinotoolkit/open_model_zoo.git C:\\\\intel\\\\openvino\\\\open_model_zoo',
+            f'cmd /S /C cd C:\\\\intel\\\\openvino\\\\open_model_zoo && '
+            f'c:\\\\MinGit\\\\cmd\\\\git.exe checkout {omz_rev}',
             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
             'C:\\\\intel\\\\openvino\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
             'python -m pip install --no-deps C:\\\\intel\\\\openvino\\\\open_model_zoo\\\\demos\\\\common\\\\python',
@@ -262,8 +284,10 @@ def install_omz_commands(request, bash, image_os, distribution, opencv_download_
                              f'{install_dev_wheel} && '
                              f'git clone --recurse-submodules --shallow-submodules '
                              'https://github.com/openvinotoolkit/open_model_zoo.git && '
-                             'python3 -m pip install --no-deps open_model_zoo/demos/common/python && '
-                             'ln -s open_model_zoo/demos demos'),
+                             f'cd open_model_zoo && git checkout {omz_rev} && cd .. && '
+                             'ln -s open_model_zoo/demos demos',
+                             ),
+                        bash('python3 -m pip install --no-deps open_model_zoo/demos/common/python'),
                         bash('open_model_zoo/demos/build_demos.sh || true')]
         else:
             commands = [bash('python3 -m pip install --no-deps demos/common/python'),
