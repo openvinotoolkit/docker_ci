@@ -145,7 +145,6 @@ class DockerImageTesterSharedContainer(DockerImageTesterBase):
                       'detach': True,
                       'use_config_proxy': True,
                       'environment': get_system_proxy(),
-                      'mem_limit': '4g',
                       'stdin_open': True,
                       'tty': True,
                       'user': 'root'}

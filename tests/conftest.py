@@ -144,7 +144,9 @@ def tester(request):
 @pytest.fixture(scope='session')
 def omz_demos_lin_cpu_tester(request, image, install_omz_commands):
     registry = request.config.getoption('--registry', default='')
-    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_cpu_tester', install_omz_commands, registry)
+    kwargs = {'mem_limit': '4g'}
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_cpu_tester', install_omz_commands, registry,
+                                              **kwargs)
     yield tester
     tester.stop()
 
@@ -162,8 +164,9 @@ def omz_demos_win_cpu_tester(request, image, install_omz_commands, gpu_kwargs):
 @pytest.fixture(scope='session')
 def omz_demos_lin_gpu_tester(request, image, install_omz_commands, gpu_kwargs):
     registry = request.config.getoption('--registry', default='')
+    kwargs = dict(mem_limit='4g', **gpu_kwargs)
     tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_gpu_tester', install_omz_commands, registry,
-                                              **gpu_kwargs)
+                                              **kwargs)
     yield tester
     tester.stop()
 
@@ -172,7 +175,8 @@ def omz_demos_lin_gpu_tester(request, image, install_omz_commands, gpu_kwargs):
 def omz_demos_lin_vpu_tester(request, image, install_omz_commands):
     registry = request.config.getoption('--registry', default='')
     kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
-              'volumes': ['/dev/bus/usb:/dev/bus/usb']}  # nosec # noqa: S108
+              'volumes': ['/dev/bus/usb:/dev/bus/usb'],
+              'mem_limit': '4g'}  # nosec # noqa: S108
     tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_vpu_tester', install_omz_commands, registry,
                                               **kwargs)
     yield tester
@@ -183,7 +187,8 @@ def omz_demos_lin_vpu_tester(request, image, install_omz_commands):
 def omz_demos_lin_hddl_tester(request, image, install_omz_commands):
     registry = request.config.getoption('--registry', default='')
     kwargs = {'devices': ['/dev/ion:/dev/ion'],
-              'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm']}  # nosec # noqa: S108
+              'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'],  # nosec # noqa: S108
+              'mem_limit': '4g'}
     tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_hddl_tester', install_omz_commands, registry,
                                               **kwargs)
     yield tester
