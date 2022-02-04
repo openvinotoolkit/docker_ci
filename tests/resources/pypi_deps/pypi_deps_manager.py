@@ -6,6 +6,7 @@
 import argparse
 import difflib
 import enum
+import importlib_metadata
 import json
 import logging
 import os
@@ -47,18 +48,12 @@ def get_pkgs_from_requirement(requirement: typing.Union[str, pathlib.Path]) -> t
 
 def get_package_dependencies(name: str) -> dict:
     """Extract dependencies from metadata of installed package"""
-    try:
-        output = subprocess.check_output('python3 -c "from importlib import metadata; '  # nosec
-                                         f'print(metadata.metadata(\'{name}\'))" | '
-                                         'grep "Requires-Dist:\\|Provides-Extra:"',
-                                         shell=True, encoding=sys.stdout.encoding)
-    except subprocess.CalledProcessError:
-        output = ''
 
-    requirements: typing.Dict[str, typing.Union[str, typing.List[str]]] = {}
-    if output:
-        requirements['name'] = name
-        requirements['content'] = output.splitlines()
+    requirements: typing.Dict[str, typing.Union[str, typing.List[str]]] = {
+        'name': name,
+        'content': [f'{i[0]}: {i[1]}' for i in importlib_metadata.metadata(name).items()
+                    if i[0] in ('Requires-Dist', 'Provides-Extra')],
+    }
     return requirements
 
 
