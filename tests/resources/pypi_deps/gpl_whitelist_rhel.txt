@@ -2,3 +2,4 @@ ethtool
 python-dmidecode
 subscription-manager
 syspurpose
+libcomps
