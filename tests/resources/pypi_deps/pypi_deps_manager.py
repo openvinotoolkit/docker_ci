@@ -209,7 +209,9 @@ def main() -> typing.Union[int, ExitCode]:
             if content_original is None or content_image is None:
                 log.error('FAILED: Can not find the requirement file content!')
                 exit_code = ExitCode.missing_req
-            if content_original != content_image:
+            if content_original != content_image and (len(content_original) == 1 and len(content_image) == 1 and
+                                                      content_original[0].startswith('openvino') and
+                                                      content_image[0].startswith('openvino')):
                 log.error('FAILED')
                 compare_packages_settings(image_content_original[original_requirement],
                                           image_content[requirement], requirement, args.logs)
