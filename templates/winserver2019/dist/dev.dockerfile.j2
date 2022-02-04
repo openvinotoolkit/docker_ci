@@ -3,22 +3,11 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 ARG OPENVINO_WHEELS_VERSION={{ product_version }}
 ARG OPENVINO_WHEELS_URL
 RUN IF not defined OPENVINO_WHEELS_URL ( `
-        python -m pip install --no-cache-dir --pre openvino==%OPENVINO_WHEELS_VERSION% && `
-        python -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]==%OPENVINO_WHEELS_VERSION% `
+        python -m pip install --no-cache-dir openvino==%OPENVINO_WHEELS_VERSION% && `
+        python -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]==%OPENVINO_WHEELS_VERSION% `
     ) ELSE ( `
         python -m pip install --no-cache-dir --pre openvino==%OPENVINO_WHEELS_VERSION% --trusted-host=* --find-links %OPENVINO_WHEELS_URL% && `
         python -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]==%OPENVINO_WHEELS_VERSION% --trusted-host=* --find-links %OPENVINO_WHEELS_URL% `
     ) && `
     python -m pip uninstall -y opencv-python && `
     python -m pip install --no-cache-dir opencv-python-headless
-
-# download source for LGPL packages
-{% if HTTPS_PROXY is defined %}
-RUN powershell.exe -Command `
-    New-Item -Path "C:\\" -Name "thirdparty" -ItemType "directory" ; `
-    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/36/92/eb6a52b80b230d8ce2965e50e9cc67086a728ac5ab3f83d4d6de64e6f63c/PyRx-0.3.0.tar.gz -Proxy %HTTPS_PROXY% -OutFile C:\\thirdparty\\PyRx-0.3.0.tar.gz
-{% else %}
-RUN powershell.exe -Command `
-    New-Item -Path "C:\\" -Name "thirdparty" -ItemType "directory" ; `
-    Invoke-WebRequest -URI https://files.pythonhosted.org/packages/36/92/eb6a52b80b230d8ce2965e50e9cc67086a728ac5ab3f83d4d6de64e6f63c/PyRx-0.3.0.tar.gz -OutFile C:\\thirdparty\\PyRx-0.3.0.tar.gz
-{% endif %}
