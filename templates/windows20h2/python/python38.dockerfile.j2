@@ -13,4 +13,4 @@ RUN powershell.exe -Command `
   Remove-Item %TMP%\\python-3.8.exe -Force
 {% endif %}
 # hadolint ignore=DL3013
-RUN python -m pip install --no-cache-dir --upgrade pip
+RUN python -m pip install --no-cache-dir --upgrade pip==22.0.2
