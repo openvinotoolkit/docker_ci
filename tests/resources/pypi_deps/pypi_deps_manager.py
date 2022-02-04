@@ -51,7 +51,7 @@ def get_package_dependencies(name: str) -> dict:
 
     requirements: typing.Dict[str, typing.Union[str, typing.List[str]]] = {
         'name': name,
-        'content': [f'{i[0]}: {i[1]}' for i in importlib_metadata.metadata(name).items()
+        'content': [f'{i[0]}: {i[1]}' for i in importlib_metadata.metadata(name).items()  # type: ignore[attr-defined]
                     if i[0] in ('Requires-Dist', 'Provides-Extra')],
     }
     return requirements

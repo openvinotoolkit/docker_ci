@@ -31,7 +31,7 @@ class TestPyPiChanges:
         }
         tester.test_docker_image(
             image,
-            [f'python3 -m pip install importlib-metadata',
+            ['python3 -m pip install importlib-metadata',
              'python3 /tmp/pypi_deps/pypi_deps_manager.py '
              f'--check -i {image} -l /tmp/logs --image_json /tmp/pypi_deps/{pypi_deps_origin_file_name}'],
             self.test_pypi_changes_linux.__name__, **kwargs,
