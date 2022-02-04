@@ -18,9 +18,17 @@ from utils.utilities import (check_internal_local_path,
 class DockerCIArgumentParser(argparse.ArgumentParser):
     """CLI argument parser for this framework"""
 
+    SUPPORTED_OS: typing.List = ['ubuntu18', 'ubuntu20', 'winserver2019', 'windows20h2', 'rhel8']
+
     def __init__(self, prog: typing.Optional[str] = None, description: typing.Optional[str] = None):
         super().__init__(prog=prog, description=description,
                          formatter_class=argparse.RawTextHelpFormatter, add_help=True)
+
+    @staticmethod
+    def set_default_subparser(name: str):
+        """Set default subparser"""
+        if not sys.argv[1:]:
+            sys.argv.insert(1, name)
 
     @staticmethod
     def add_image_args(parser: argparse.ArgumentParser):
@@ -197,14 +205,14 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             help=argparse.SUPPRESS,  # Setup saving docker image as a binary file
         )
 
-    @staticmethod
-    def add_dist_args(parser: argparse.ArgumentParser):
+    @classmethod
+    def add_dist_args(cls, parser: argparse.ArgumentParser):
         """Adding arg needed to customize the generated dockerfile"""
         parser.add_argument(
             '-os',
-            choices=['ubuntu18', 'ubuntu20', 'winserver2019', 'windows20h2', 'rhel8'],
-            default='ubuntu18',
-            help='Operation System for docker image. By default: ubuntu18',
+            choices=cls.SUPPORTED_OS,
+            default='',
+            help='Operation System for docker image.',
         )
 
         parser.add_argument(
@@ -257,12 +265,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             metavar='NAME',
             help='Name of the Dockerfile, that uses to build an image.',
         )
-
-    @staticmethod
-    def set_default_subparser(name: str):
-        """Set default subparser"""
-        if not sys.argv[1:]:
-            sys.argv.insert(1, name)
 
 
 def fail_if_product_version_not_supported(product_version: str, parser: DockerCIArgumentParser):
@@ -374,6 +376,19 @@ def parse_args(name: str, description: str):  # noqa
 
     if args.mode == 'deploy' and not args.tags:
         parser.error('The following argument is required: -t/--tags')
+
+    if not args.os:
+        possible_os: typing.Set[str] = set()
+        if args.package_url:
+            possible_os.update(filter(lambda os: os in args.package_url, parser.SUPPORTED_OS))
+        if hasattr(args, 'tags') and args.tags:
+            for tag in args.tags:
+                possible_os.update(filter(lambda os: os in tag, parser.SUPPORTED_OS))
+        if len(possible_os) == 1:
+            args.os = possible_os.pop()
+        else:
+            parser.error('Can not get image OS from package URL or tags. '
+                         'Please specify -os directly')
 
     if args.mode in ('gen_dockerfile', 'build', 'build_test',
                      'all') and args.distribution == 'dev_no_samples' and 'ubuntu' not in args.os:
