@@ -4,6 +4,8 @@
 import logging
 import os
 import pathlib
+import re
+import requests
 import shutil
 import subprocess  # nosec
 import sys
@@ -12,7 +14,7 @@ import pytest
 from xdist.scheduler import LoadScopeScheduling
 from utils.docker_api import DockerAPI
 from utils.exceptions import FailedTestError
-from utils.tester import DockerImageTester
+from utils.tester import DockerImageTester, DockerImageTesterSharedContainer
 from utils.utilities import download_file, unzip_file
 
 log = logging.getLogger('docker_ci')
@@ -30,6 +32,10 @@ def pytest_addoption(parser):
                                                           'openvino folder to search for OpenVINO wheels')
     parser.addoption('--product_version', action='store', help='Setup a product_version for check')
     parser.addoption('--wheels_version', action='store', help='Setup a version specifier for OpenVINO wheels')
+    parser.addoption('--opencv_download_server', action='store', help='Setup an URL of OpenCV download server')
+    parser.addoption('--omz_rev', action='store', help='Setup a branch or commit hash in the Open Model Zoo repository '
+                                                       'to download demos (default is the release branch corresponding '
+                                                       'to product_version or master)')
 
 
 def pytest_configure(config):
@@ -136,6 +142,60 @@ def tester(request):
 
 
 @pytest.fixture(scope='session')
+def omz_demos_lin_cpu_tester(request, image, install_omz_commands):
+    registry = request.config.getoption('--registry', default='')
+    kwargs = {'mem_limit': '4g'}
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_cpu_tester', install_omz_commands, registry,
+                                              **kwargs)
+    yield tester
+    tester.stop()
+
+
+@pytest.fixture(scope='session')
+def omz_demos_win_cpu_tester(request, image, install_omz_commands, gpu_kwargs):
+    registry = request.config.getoption('--registry', default='')
+    kwargs = {'user': 'ContainerAdministrator'}
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_win_cpu_tester', install_omz_commands, registry,
+                                              **kwargs)
+    yield tester
+    tester.stop()
+
+
+@pytest.fixture(scope='session')
+def omz_demos_lin_gpu_tester(request, image, install_omz_commands, gpu_kwargs):
+    registry = request.config.getoption('--registry', default='')
+    kwargs = dict(mem_limit='4g', **gpu_kwargs)
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_gpu_tester', install_omz_commands, registry,
+                                              **kwargs)
+    yield tester
+    tester.stop()
+
+
+@pytest.fixture(scope='session')
+def omz_demos_lin_vpu_tester(request, image, install_omz_commands):
+    registry = request.config.getoption('--registry', default='')
+    kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
+              'volumes': ['/dev/bus/usb:/dev/bus/usb'],
+              'mem_limit': '4g'}  # nosec # noqa: S108
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_vpu_tester', install_omz_commands, registry,
+                                              **kwargs)
+    yield tester
+    tester.stop()
+
+
+@pytest.fixture(scope='session')
+def omz_demos_lin_hddl_tester(request, image, install_omz_commands):
+    registry = request.config.getoption('--registry', default='')
+    kwargs = {'devices': ['/dev/ion:/dev/ion'],
+              'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'],  # nosec # noqa: S108
+              'mem_limit': '4g'}
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_hddl_tester', install_omz_commands, registry,
+                                              **kwargs)
+    yield tester
+    tester.stop()
+
+
+@pytest.fixture(scope='session')
 def image(request):
     return request.config.getoption('--image')
 
@@ -176,6 +236,20 @@ def wheels_url(request):
 
 
 @pytest.fixture(scope='session')
+def omz_rev(request):
+    omz_revision = request.config.getoption('--omz_rev', default='')
+    product_version = re.search(r'^(\d{4})\.(\d)', request.config.getoption('--product_version'))
+    if not omz_revision:
+        omz_revision = 'master'
+        if product_version:
+            release_branch = f'releases/{"/".join(product_version.groups())}'
+            url = f'https://github.com/openvinotoolkit/open_model_zoo/tree/{release_branch}'
+            if requests.get(url).status_code != 404:
+                omz_revision = release_branch
+    return omz_revision
+
+
+@pytest.fixture(scope='session')
 def docker_api():
     return DockerAPI()
 
@@ -190,6 +264,50 @@ def dev_root(request):
                     f'Try to remove it manually via "sudo rm -r {openvino_dev_path}"')
 
     return dev_root_path
+
+
+@pytest.fixture(scope='session')
+def install_omz_commands(request, bash, image_os, distribution, opencv_download_server_var, install_openvino_dev_wheel,
+                         omz_rev):
+    if 'win' in image_os:
+        commands = [
+            f'cmd /V /C "set {opencv_download_server_var}&& '
+            f'powershell -file %INTEL_OPENVINO_DIR%\\\\extras\\\\scripts\\\\download_opencv.ps1 -batch"',
+            'cmd /S /C curl -kL --output MinGit.zip '
+            'https://github.com/git-for-windows/git/releases/download/v2.35.1.windows.1/MinGit-2.35.1-64-bit.zip && '
+            'powershell -Command Expand-Archive MinGit.zip -DestinationPath c:\\\\MinGit &&'
+            'c:\\\\MinGit\\\\cmd\\\\git.exe clone --recurse-submodules --shallow-submodules '
+            'https://github.com/openvinotoolkit/open_model_zoo.git C:\\\\intel\\\\openvino\\\\open_model_zoo',
+            f'cmd /S /C cd C:\\\\intel\\\\openvino\\\\open_model_zoo && '
+            f'c:\\\\MinGit\\\\cmd\\\\git.exe checkout {omz_rev}',
+            'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+            'C:\\\\intel\\\\openvino\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
+            'python -m pip install --no-deps C:\\\\intel\\\\openvino\\\\open_model_zoo\\\\demos\\\\common\\\\python',
+        ]
+    else:
+        if 'custom' not in distribution:
+            install_dependencies = ''
+            if 'ubuntu' in image_os:
+                install_dependencies = 'apt update && apt install -y git build-essential'
+            elif 'rhel' in image_os:
+                install_dependencies = 'yum update -y && yum install -y git make'
+
+            install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
+
+            commands = [bash(f'{install_dependencies} && '
+                             f'{opencv_download_server_var} extras/scripts/download_opencv.sh && '
+                             f'{install_dev_wheel} && '
+                             f'git clone --recurse-submodules --shallow-submodules '
+                             'https://github.com/openvinotoolkit/open_model_zoo.git && '
+                             f'cd open_model_zoo && git checkout {omz_rev} && cd .. && '
+                             'ln -s open_model_zoo/demos demos',
+                             ),
+                        bash('python3 -m pip install --no-deps open_model_zoo/demos/common/python'),
+                        bash('open_model_zoo/demos/build_demos.sh || true')]
+        else:
+            commands = [bash('python3 -m pip install --no-deps demos/common/python'),
+                        bash('demos/build_demos.sh || true')]
+    return commands
 
 
 @pytest.fixture(scope='session')
@@ -253,6 +371,12 @@ def bash(request):
     return _bash
 
 
+@pytest.fixture(scope='session')
+def opencv_download_server_var(request):
+    opencv_server_url = request.config.getoption('--opencv_download_server')
+    return f'OPENVINO_OPENCV_DOWNLOAD_SERVER={opencv_server_url}' if opencv_server_url else ''
+
+
 @pytest.fixture()
 def omz_python_demo_path(request):
     demo_name = request.param
@@ -266,17 +390,11 @@ def omz_python_demo_path(request):
             parameters = ' -at centernet'
 
     if 'win' in request.config.getoption('--image_os'):
-        base_path = 'C:\\\\intel\\\\openvino\\\\demos'
+        base_path = 'C:\\\\intel\\\\openvino\\\\open_model_zoo\\\\demos'
         return f'{base_path}\\\\{demo_name}_demo\\\\python\\\\{demo_name}_demo.py{parameters}'
     else:
         base_path = '/opt/intel/openvino/demos'
         return f'{base_path}/{demo_name}_demo/python/{demo_name}_demo.py{parameters}'
-
-
-@pytest.fixture(scope='session')
-def omz_python_demos_requirements_file(request):
-    base_path = '/opt/intel/openvino/extras/open_model_zoo/demos'
-    return f'{base_path}/requirements.txt'
 
 
 @pytest.fixture(scope='session')

@@ -18,7 +18,7 @@ from utils.utilities import get_system_proxy
 log = logging.getLogger('docker_ci')
 
 
-class DockerImageTester(DockerAPI):
+class DockerImageTesterBase(DockerAPI):
     """Wrapper for docker.api.client implementing custom docker.image.run execution and logging"""
 
     def __init__(self, registry=''):
@@ -26,6 +26,53 @@ class DockerImageTester(DockerAPI):
         self.container: typing.Optional[Container] = None
         self.registry = registry
         log.setLevel(logging.DEBUG)
+
+    def stop(self):
+        """Stop the container"""
+        if self.container:
+            self.container.stop()
+
+    def _get_logfile_path(self, image_tag, name):
+        """Get path to logfile for specified test name"""
+        file_tag = image_tag.replace('/', '_').replace(':', '_')
+        return pathlib.Path(self.location) / 'logs' / file_tag / f'{name}.log'
+
+    def _exec_and_log_output(self, commands: typing.List[str], logfile: pathlib.Path, prefix: str):
+        """Run specified commands in the container and write output to the log"""
+        if not self.container:
+            raise FailedTestError(f'{prefix}: container is not running before commands execution')
+        output_total = []
+        for command in commands:
+            output_total.append(f'    === executing command: {command} ===')
+            exit_code, output = self.container.exec_run(cmd=command)
+            output_total.append(output.decode('utf-8'))
+            if exit_code != 0:
+                log.error(f'- {prefix}: command {command} have returned non-zero exit code {exit_code}')
+                log.error(f'Failed command stdout: {output_total[-1]}')
+                logger.switch_to_custom(logfile, str(logfile.parent))
+                for output in output_total:
+                    log.error(str(output))
+                logger.switch_to_summary()
+                raise FailedTestError(f'{prefix}: command {command} '
+                                      f'have returned non-zero exit code {exit_code}')
+            self.container.reload()
+            if self.container.status != 'running':
+                raise FailedTestError(f'{prefix}: command exit code is 0, '
+                                      'but container status != "running" after this command')
+        logger.switch_to_custom(logfile, str(logfile.parent))
+        for output in output_total:
+            log.info(str(output))
+        logger.switch_to_summary()
+
+    def __del__(self):
+        """Custom __del__ to manually stop (but not remove) testing container"""
+        self.stop()
+        super().__del__()
+
+
+class DockerImageTester(DockerImageTesterBase):
+    def __init__(self, registry=''):
+        super().__init__(registry)
 
     def test_docker_image(self,
                           image: typing.Tuple[Image, str],
@@ -38,9 +85,8 @@ class DockerImageTester(DockerAPI):
             image_tag = image
         else:
             raise FailedTestError(f'{image} is not a proper image, must be of "str" or "docker.models.images.Image"')
-        file_tag = image_tag.replace('/', '_').replace(':', '_')
-        log_filename = f'{test_name}.log'
-        logfile = pathlib.Path(self.location) / 'logs' / file_tag / log_filename
+        logfile = self._get_logfile_path(image_tag, test_name)
+
         run_kwargs = {'auto_remove': True,
                       'detach': True,
                       'use_config_proxy': True,
@@ -73,34 +119,59 @@ class DockerImageTester(DockerAPI):
             raise FailedTestError('Cannot create/start the container')
 
         try:
-            output_total = []
-            for command in commands:
-                output_total.append(f'    === executing command: {command} ===')
-                exit_code, output = self.container.exec_run(cmd=command)
-                output_total.append(output.decode('utf-8'))
-                if exit_code != 0:
-                    log.error(f'- Test {test_name}: command {command} have returned non-zero exit code {exit_code}')
-                    log.error(f'Failed command stdout: {output_total[-1]}')
-                    logger.switch_to_custom(logfile, str(logfile.parent))
-                    for output in output_total:
-                        log.error(str(output))
-                    logger.switch_to_summary()
-                    raise FailedTestError(f'Test {test_name}: command {command} '
-                                          f'have returned non-zero exit code {exit_code}')
-                self.container.reload()
-                if self.container.status != 'running':
-                    raise FailedTestError(f'Test {test_name}: command exit code is 0, '
-                                          'but container status != "running" after this command')
-            logger.switch_to_custom(logfile, str(logfile.parent))
-            for output in output_total:
-                log.info(str(output))
-            logger.switch_to_summary()
-
+            self._exec_and_log_output(commands, logfile, f'Test {test_name}')
         except APIError as err:
             raise FailedTestError(f'Docker daemon API error while executing test {test_name}: {err}')
 
-    def __del__(self):
-        """Custom __del__ to manually stop (but not remove) testing container"""
-        if self.container:
-            self.container.stop()
-        super().__del__()
+
+class DockerImageTesterSharedContainer(DockerImageTesterBase):
+    def __init__(self, image, container_name, init_commands: typing.List[str], registry='',
+                 **init_kwargs: typing.Optional[typing.Dict]):
+        super().__init__(registry)
+
+        if isinstance(image, Image):
+            image_tag = image.tags[0]
+        elif isinstance(image, str):
+            image_tag = image
+        else:
+            raise FailedTestError(f'{image} is not a proper image, must be of "str" or "docker.models.images.Image"')
+
+        self.container_name: str = container_name
+        self.image_tag: str = image_tag
+
+        logfile = self._get_logfile_path(self.image_tag, container_name)
+
+        run_kwargs = {'auto_remove': True,
+                      'detach': True,
+                      'use_config_proxy': True,
+                      'environment': get_system_proxy(),
+                      'stdin_open': True,
+                      'tty': True,
+                      'user': 'root'}
+        if init_kwargs is not None:
+            run_kwargs.update(init_kwargs)
+
+        try:
+            self.container = self.client.containers.run(image=image, **run_kwargs)
+        except APIError as err:
+            raise FailedTestError(f'Docker daemon API error while starting the container: {err}')
+        if not self.container:
+            raise FailedTestError('Cannot create/start the container')
+
+        try:
+            self._exec_and_log_output(init_commands, logfile, f'Init {container_name}')
+        except APIError as err:
+            raise FailedTestError(f'Docker daemon API error while initializing container {container_name}: {err}')
+
+    def run_test(self, commands: typing.List[str], test_name: str):
+        """Running list of commands inside the container, logging the output and handling possible exceptions"""
+
+        logfile = self._get_logfile_path(self.image_tag, test_name)
+
+        if not self.container:
+            raise FailedTestError('The container is not running')
+
+        try:
+            self._exec_and_log_output(commands, logfile, f'Test {test_name}')
+        except APIError as err:
+            raise FailedTestError(f'Docker daemon API error while executing test {test_name}: {err}')
