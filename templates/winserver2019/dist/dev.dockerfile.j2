@@ -8,6 +8,6 @@ RUN IF not defined OPENVINO_WHEELS_URL ( `
     ) ELSE ( `
         python -m pip install --no-cache-dir --pre openvino==%OPENVINO_WHEELS_VERSION% --trusted-host=* --find-links %OPENVINO_WHEELS_URL% && `
         python -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]==%OPENVINO_WHEELS_VERSION% --trusted-host=* --find-links %OPENVINO_WHEELS_URL% `
-    ) && `
-    python -m pip uninstall -y opencv-python && `
+    )
+RUN python -m pip uninstall -y opencv-python && `
     python -m pip install --no-cache-dir opencv-python-headless
