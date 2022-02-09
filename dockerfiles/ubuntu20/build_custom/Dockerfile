@@ -83,10 +83,7 @@ LABEL vendor="Intel Corporation"
 
 ENV INTEL_OPENVINO_DIR="/opt/intel/openvino"
 
-COPY --from=build_openvino /opt/intel/repo /opt/intel/repo
-RUN rm -rf /opt/intel/repo/openvino/build/install
 COPY --from=build_openvino /opt/intel/repo/openvino/build/install ${INTEL_OPENVINO_DIR}
-COPY --from=build_openvino /opt/intel/repo/openvino/thirdparty/open_model_zoo/demos ${INTEL_OPENVINO_DIR}/demos
 COPY --from=build_openvino /tmp/libusb-1.0.22 /opt/libusb-1.0.22
 
 WORKDIR ${INTEL_OPENVINO_DIR}
@@ -196,6 +193,22 @@ RUN mkdir "${INTEL_OPENVINO_DIR}/extras"; \
     echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
     python3 -m pip uninstall -y opencv-python; \
     rm -rf /opt/intel/repo/opencv/build/install
+
+WORKDIR ${INTEL_OPENVINO_DIR}
+CMD ["/bin/bash"]
+# -------------------------------------------------------------------------------------------------
+FROM opencv as openvino_repo
+
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
+LABEL vendor="Intel Corporation"
+
+ENV INTEL_OPENVINO_DIR="/opt/intel/openvino"
+
+COPY --from=build_openvino /opt/intel/repo /opt/intel/repo
+
+# hadolint ignore=DL3013
+RUN ln --symbolic /opt/intel/repo/openvino/thirdparty/open_model_zoo/ ${INTEL_OPENVINO_DIR}/open_model_zoo && \
+    python3 -m pip install --no-cache-dir --no-deps open_model_zoo/demos/common/python
 
 WORKDIR ${INTEL_OPENVINO_DIR}
 CMD ["/bin/bash"]

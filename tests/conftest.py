@@ -55,7 +55,7 @@ def pytest_configure(config):
         'markers', 'xfail_log: mark test as xfailed if caplog contains the specified pattern',
     )
     dist = config.getoption('--distribution')
-    if dist in ('runtime', 'custom-no-cv'):
+    if dist in ('runtime'):
         log.info('Setting up runtime image dependencies')
         mount_root = pathlib.Path(config.getoption('--mount_root'))
         package_url = config.getoption('--package_url')
@@ -305,8 +305,8 @@ def install_omz_commands(request, bash, image_os, distribution, opencv_download_
                         bash('python3 -m pip install --no-deps open_model_zoo/demos/common/python'),
                         bash('open_model_zoo/demos/build_demos.sh || true')]
         else:
-            commands = [bash('python3 -m pip install --no-deps demos/common/python'),
-                        bash('demos/build_demos.sh || true')]
+            commands = [bash('open_model_zoo/demos/build_demos.sh || true'),
+                        bash('ln -s open_model_zoo/demos demos')]
     return commands
 
 
