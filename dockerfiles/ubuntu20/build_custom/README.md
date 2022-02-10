@@ -32,7 +32,7 @@ This command builds an image with OpenVINO™ 2021.2 release.
 docker build -t openvino:2021.2 --build-arg OPENVINO_BRANCH="releases/2021/2" .
 ```
 
-You can manually set up cmake parameters to build a custom package from source code using these files:  
+You can manually set up CMake parameters to build a custom package from source code using these files:  
 * [openvino_cmake.txt](openvino_cmake.txt)
 * [opencv_cmake.txt](opencv_cmake.txt)
 
@@ -57,14 +57,14 @@ The docker image is built using a multi-step build:
     OpenCV can be optionally built with extra modules (see the `BUILD_OPENCV_CONTRIB` argument description above).
 6. **openvino_repo**  
     Copy OpenVINO source code repository, build artifacts and Open Model Zoo demos from the `build_openvino` stage.   
-    *Note: this step significantly increases the image size.*
+    *Note: this stage significantly increases the image size.*
 
 Use the docker `--target` option to specify a final stage.
 ```
 docker build --target [stage] -t [image:tag] .
 ```
 
-**For example**:
+**For example**:  
 This command builds an image without OpenCV and OpenVINO source code:
 ```
 docker build --target openvino -t ie:latest .
