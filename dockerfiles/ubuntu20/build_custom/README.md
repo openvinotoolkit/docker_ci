@@ -56,7 +56,7 @@ The docker image is built using a multi-step build:
     Build and setup OpenCV with the parameters specified in opencv_cmake.txt.  
     OpenCV can be optionally built with extra modules (see the `BUILD_OPENCV_CONTRIB` argument description above).
 6. **openvino_repo**  
-    Copy OpenVINO source code repository, build artifacts and Open Model Zoo demos from the `build_openvino` stage.   
+    Copy OpenVINO source code repository, build artifacts, and Open Model Zoo demos from the `build_openvino` stage.   
     *Note: this stage significantly increases the image size.*
 
 Use the docker `--target` option to specify a final stage.
