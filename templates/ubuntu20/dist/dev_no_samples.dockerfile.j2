@@ -2,6 +2,7 @@
 WORKDIR ${INTEL_OPENVINO_DIR}
 ARG OPENVINO_WHEELS_VERSION={{ product_version }}
 ARG OPENVINO_WHEELS_URL
+# hadolint ignore=SC2102
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" && \

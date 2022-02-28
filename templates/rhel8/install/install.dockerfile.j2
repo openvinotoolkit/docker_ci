@@ -1,7 +1,7 @@
 # install product by installation script
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-# hadolint ignore=DL3031, DL3033
+# hadolint ignore=DL3031, DL3033, SC2211
 RUN chmod +x l_openvino*.sh && \
     ./l_openvino*.sh -a -s --eula accept && \
     mv /opt/intel/openvino/installer /opt/intel/openvino_installer && rmdir /opt/intel/openvino && \
