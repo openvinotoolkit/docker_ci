@@ -1,1 +1,1 @@
-pygobject 3.36.0 requires pycairo, which is not installed.
+openvino-dev * requires opencv-python, which is not installed.
