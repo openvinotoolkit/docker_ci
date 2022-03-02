@@ -4,6 +4,7 @@
 """Read "pip check" output from file and ignore specified errors
 """
 import argparse
+import fnmatch
 import logging
 import os
 import sys
@@ -53,7 +54,7 @@ for whitelist_path in args.whitelist:
 
 exit_code = 0
 for error in current_errors:
-    if error in whitelist_errors:
+    if any((fnmatch.fnmatch(error, pattern) for pattern in whitelist_errors)):
         log.warning(f'Expected pip dependencies error: {error}')
     else:
         exit_code = 1
