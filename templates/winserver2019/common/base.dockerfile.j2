@@ -15,7 +15,7 @@ USER ContainerAdministrator
 ARG HTTPS_PROXY
 {% endif %}
 
-{% for command in pre_commands %}
+{% for command in commands %}
 {{ command|safe }}
 {% endfor %}
 
