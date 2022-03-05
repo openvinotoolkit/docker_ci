@@ -46,8 +46,7 @@ You can find generated dockerfile in `<root_project>/dockerfiles/<image_os>` fol
 
 Select a product distribution:
 ```cmd
-  -dist, --distribution TYPE  Available types: dev, runtime, 
-                              proprietary (product pkg with an installer) or 
+  -dist, --distribution TYPE  Available types: dev, runtime or 
                               base (with CPU only and without installing dependencies). 
                               Using key --file <path_to_dockerfile> and -p <version> are  mandatory to build base distribution image.
                               base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder.
@@ -60,7 +59,7 @@ Select a product version. It will use public released product in docker image:
 ```
 
 Or if you have a product package link, you can specify directly:
-You can get OpenVINO distribution packages (runtime, dev) directly from [public storage](https://storage.openvinotoolkit.org/repositories/openvino/packages/) and proprietary package with registration [here](https://software.intel.com/content/www/us/en/develop/tools/openvino-toolkit/download.html).
+You can get OpenVINO distribution packages (runtime, dev) directly from [public storage](https://storage.openvinotoolkit.org/repositories/openvino/packages/).
 
 ```cmd
   -u, --package_url URL  Package external or local url, use http://, https://, ftp:// access scheme or relative <root_project> local path

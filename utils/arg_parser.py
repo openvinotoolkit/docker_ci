@@ -226,11 +226,9 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-dist',
             '--distribution',
-            choices=['base', 'runtime', 'dev', 'dev_no_samples',
-                     'proprietary', 'custom'],
+            choices=['base', 'runtime', 'dev', 'dev_no_samples', 'custom'],
             required=' test' in parser.prog,
-            help='Distribution type: dev, dev_no_samples, runtime, '
-                 'proprietary (product pkg with an installer) or '
+            help='Distribution type: dev, dev_no_samples, runtime or '
                  'base (with CPU only and without installing dependencies). '
                  'Using key --file <path_to_dockerfile> and '
                  '-p <version> are mandatory to build base distribution image.'
@@ -475,10 +473,7 @@ def parse_args(name: str, description: str):  # noqa
                 parser.error(f'Cannot get distribution type from the package URL provided. {args.package_url} '
                              'Please specify --distribution directly.')
         #  set installation method for the package
-        if args.distribution == 'proprietary':
-            args.install_type = 'install'
-        else:
-            args.install_type = 'copy'
+        args.install_type = 'copy'
 
         # workaround for https://bugs.python.org/issue16399 issue
         if not args.device and 'win' not in args.os:

@@ -6,7 +6,7 @@ import pytest
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 @pytest.mark.parametrize('_is_image_os', [('winserver2019', 'windows20h2')], indirect=True)
-@pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
 class TestDemosWindows:
     def test_security_cpu(self, omz_demos_win_cpu_tester, download_picture):
         omz_demos_win_cpu_tester.run_test(
