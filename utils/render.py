@@ -47,7 +47,7 @@ class DockerFileRender:
         main_stage = []
         if 'win' in args.os:
             if args.python == 'python38':
-                pre_stage.append('msbuild2019')  # !!! args.msbuild
+                pre_stage.append(args.pre_stage_msbuild)
                 pre_stage.append('vs')
                 pre_stage.append('pre_python38')
             if args.msbuild:
