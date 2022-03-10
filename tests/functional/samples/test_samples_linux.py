@@ -8,7 +8,7 @@ from utils.exceptions import FailedTestError
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-@pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary', 'custom-full')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('dev', 'custom-full')], indirect=True)
 class TestSamplesLinux:
     def test_benchmark_app_cpp_cpu(self, tester, image, install_openvino_dependencies, bash, download_picture):
         tester.test_docker_image(

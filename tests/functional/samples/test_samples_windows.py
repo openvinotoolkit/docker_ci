@@ -8,7 +8,7 @@ from utils.exceptions import FailedTestError
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 @pytest.mark.parametrize('_is_image_os', [('winserver2019', 'windows20h2')], indirect=True)
-@pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+@pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
 class TestSamplesWindows:
     @pytest.mark.xfail_log(pattern='Error: Download',
                            reason='Network problems when downloading alexnet files')

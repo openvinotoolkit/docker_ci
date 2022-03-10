@@ -7,7 +7,7 @@ import pytest
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 class TestToolsLinux:
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_accuracy_checker(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -17,7 +17,7 @@ class TestToolsLinux:
         )
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_benchmark(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -27,7 +27,7 @@ class TestToolsLinux:
         )
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
-    @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev', 'proprietary')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev')], indirect=True)
     def test_cl_compiler(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -38,7 +38,7 @@ class TestToolsLinux:
         )
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-    @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev', 'proprietary')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev')], indirect=True)
     def test_compile_tool(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -49,7 +49,7 @@ class TestToolsLinux:
         )
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_deployment_manager(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -60,7 +60,7 @@ class TestToolsLinux:
         )
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_mo(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -70,7 +70,7 @@ class TestToolsLinux:
         )
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_omz(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
@@ -85,7 +85,7 @@ class TestToolsLinux:
         )
 
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
-    @pytest.mark.parametrize('_is_distribution', [('dev', 'proprietary')], indirect=True)
+    @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_pot(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
         tester.test_docker_image(
