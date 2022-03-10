@@ -1,16 +1,10 @@
 # setup Python
 ARG PYTHON_VER=python3.8
 
-{% if HTTPS_PROXY is defined %}
-RUN powershell.exe -Command `
-  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.8.9/python-3.8.9-amd64.exe -Proxy %HTTPS_PROXY% -OutFile %TMP%\\python-3.8.exe ; `
-  Start-Process %TMP%\\python-3.8.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python38' -Wait ; `
-  Remove-Item %TMP%\\python-3.8.exe -Force
-{% else %}
-RUN powershell.exe -Command `
-  Invoke-WebRequest -URI https://www.python.org/ftp/python/3.8.9/python-3.8.9-amd64.exe -OutFile %TMP%\\python-3.8.exe ; `
-  Start-Process %TMP%\\python-3.8.exe -ArgumentList '/passive InstallAllUsers=1 PrependPath=1 TargetDir=c:\\Python38' -Wait ; `
-  Remove-Item %TMP%\\python-3.8.exe -Force
-{% endif %}
+COPY --from=base C:\cpython-3.8.12\PCbuild\amd64 c:\Python38
+COPY --from=base c:\cpython-3.8.12\Lib c:\Python38\Lib
+
+RUN setx /M path "%path%;C:\Python38;C:\Python38\Scripts"
 # hadolint ignore=DL3013
-RUN python -m pip install --no-cache-dir --upgrade pip
+RUN python -m ensurepip --upgrade --default-pip && `
+    python -m pip install --no-cache-dir --upgrade pip
