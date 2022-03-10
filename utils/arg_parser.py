@@ -119,7 +119,15 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             choices=['msbuild2019', 'msbuild2019_online'],
             help='MSBuild Tools for Windows docker image.'
                  'MSBuild Tools are licensed as a supplement your existing Visual Studio license. '
-                 'Please don’t share the image with MSBuild 2019 on a public Docker hub.',
+                 'Please don’t share the image with MSBuild 2019 on a public Docker Hub.',
+        )
+
+        parser.add_argument(
+            '--pre_stage_msbuild',
+            choices=['msbuild2019', 'msbuild2019_online'],
+            help='MSBuild Tools for Windows docker image to use on the first stage. '
+                 'Can be required to build some thirdparty dependencies from source code. '
+                 'MSBuild Tools are licensed as a supplement your existing Visual Studio license. ',
         )
 
         parser.add_argument(
@@ -452,6 +460,11 @@ def parse_args(name: str, description: str):  # noqa
                 args.python = 'python36'
             else:
                 args.python = 'python38'
+
+        if args.python == 'python38' and 'win' in args.os:
+            if not hasattr(args, 'pre_stage_msbuild') or not args.pre_stage_msbuild:
+                parser.error('Option --pre_stage_msbuild is required for Windows images to build the latest version '
+                             'of Python 3.8')
 
         if not args.distribution and args.package_url:
             if '_runtime_' in args.package_url:

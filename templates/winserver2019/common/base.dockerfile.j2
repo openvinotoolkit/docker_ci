@@ -1,6 +1,22 @@
 # escape=`
 # Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
+FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS base
+
+# Restore the default Windows shell for correct batch processing.
+SHELL ["cmd", "/S", "/C"]
+
+USER ContainerAdministrator
+
+{% if HTTPS_PROXY is defined %}
+ARG HTTPS_PROXY
+{% endif %}
+
+{% for command in pre_commands %}
+{{ command|safe }}
+{% endfor %}
+
+# -----------------
 FROM mcr.microsoft.com/windows/servercore:ltsc2019 AS ov_base
 
 LABEL description="This is the {{ distribution }} image for {{ product_name }} on Windows Server LTSC 2019"
@@ -15,7 +31,7 @@ USER ContainerAdministrator
 ARG HTTPS_PROXY
 {% endif %}
 
-{% for command in pre_commands %}
+{% for command in commands %}
 {{ command|safe }}
 {% endfor %}
 

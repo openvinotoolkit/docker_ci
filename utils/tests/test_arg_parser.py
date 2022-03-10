@@ -21,6 +21,7 @@ default_args = {
     # 'mode':'build',
     'msbuild': None,
     'ocl_release': '',
+    'pre_stage_msbuild': None,
     'rhel_platform': 'docker',
     'os': 'ubuntu18',
     'package_url': None,
@@ -93,6 +94,7 @@ default_args = {
             'package_url': 'openvino_dev_p_2022.1.0.320.zip',
             'source': 'local',
             'os': 'winserver2019',
+            'pre_stage_msbuild': 'msbuild2019_online',
         },
         {
             'device': ['cpu'],

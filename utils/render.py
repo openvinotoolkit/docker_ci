@@ -43,15 +43,18 @@ class DockerFileRender:
     def generate_dockerfile(self, args: argparse.Namespace, save_to_dir: pathlib.Path,
                             kwargs: typing.Dict[str, str]) -> pathlib.Path:
         """Creating of dockerfile based on templates and CLI parameters"""
-        settings = []
-        content = []
+        pre_stage = []
+        main_stage = []
         if 'win' in args.os:
+            if args.python == 'python38':
+                pre_stage.append(args.pre_stage_msbuild)
+                pre_stage.append('vs')
+                pre_stage.append('pre_python38')
             if args.msbuild:
-                settings.append(args.msbuild)
-                settings.append(args.cmake)
-            settings.append('vs')
-            settings.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
-            content.extend([args.python, args.distribution, *args.device])
+                main_stage.append(args.msbuild)
+                main_stage.append(args.cmake)
+            main_stage.append('vs')
+            main_stage.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
         else:
             env = f'{args.distribution}_env'
             pre_device_settings = []
@@ -59,11 +62,11 @@ class DockerFileRender:
             for device in pre_devices:
                 if device in args.device:
                     pre_device_settings.append(f'pre_{device}')
-            settings.extend([args.source, args.install_type, env, *pre_device_settings])
-            content.extend([env, args.python, args.distribution, *args.device])
+            pre_stage.extend([args.source, args.install_type, env, *pre_device_settings])
+            main_stage.extend([env, args.python, args.distribution, *args.device])
 
-        pre_commands = [self.get_template(arg, kwargs).render() for arg in settings]
-        commands = [self.get_template(arg, kwargs).render() for arg in content]
+        pre_commands = [self.get_template(arg, kwargs).render() for arg in pre_stage]
+        commands = [self.get_template(arg, kwargs).render() for arg in main_stage]
         layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
         if args.rhel_platform != 'docker':
             save_to_dir /= args.rhel_platform
