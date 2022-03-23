@@ -32,7 +32,17 @@ jobs:
           do
             for distr in ${IMAGES[$image_os]}
             do
-              python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }}
+              if [[ "$image_os" == win* ]]
+              then
+                if [[ "$distr" != "runtime" ]]
+                then
+                  python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }} --pre_stage_msbuild=msbuild2019_online --msbuild msbuild2019_online
+                else
+                  python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }} --pre_stage_msbuild=msbuild2019_online
+                fi
+              else
+                python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }}
+              fi
               if [ "$image_os" == "rhel8" ]
               then
                 python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }} --rhel_platform=openshift
