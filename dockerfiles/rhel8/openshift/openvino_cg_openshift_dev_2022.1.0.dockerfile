@@ -1,7 +1,14 @@
-# Copyright (C) 2019-2021 Intel Corporation
+# Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi8 AS base
+FROM registry.access.redhat.com/ubi8:8.4
 
+LABEL name="rhel8_dev" \
+      maintainer="openvino_docker@intel.com" \
+      vendor="Intel Corporation" \
+      version="2022.1.0" \
+      release="2022.1.0" \
+      summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
+      description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 # hadolint ignore=DL3002
 USER root
 
@@ -14,20 +21,27 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+
+
+
 # get product from URL
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
+
 COPY ${package_url} ${TEMP_DIR}/
 
+
 # install product by copying archive content
+
 ARG TEMP_DIR=/tmp/openvino_installer
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
+
 
 WORKDIR ${TEMP_DIR}
 
 RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
-    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+')" && \
+    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d.\d+')" && \
     OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
     OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
     mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
@@ -35,25 +49,30 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/workbench && rm -rf ${TEMP_DIR}
+    rm -rf ${INTEL_OPENVINO_DIR}/tools/workbench && rm -rf ${TEMP_DIR}
 
+
+ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
+ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/extras/opencv/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/3rdparty/hddl/lib
+ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PYTHONPATH=/opt/intel/openvino/python/python3.6:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
+ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
+ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
 
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 
-LABEL name="rhel8_dev" \
-      maintainer="openvino_docker@intel.com" \
-      vendor="Intel Corporation" \
-      version="2021.4" \
-      release="2021.4" \
-      summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
-      description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
-WORKDIR /
 
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
-RUN useradd -ms /bin/bash -G video,users openvino && \
+RUN sed -ri -e 's@^UMASK[[:space:]]+[[:digit:]]+@UMASK 000@g' /etc/login.defs && \
+	grep -E "^UMASK" /etc/login.defs && useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
+
+
 
 
 ARG LGPL_DEPS="gcc-c++ \
@@ -66,7 +85,7 @@ ARG INSTALL_SOURCES="no"
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
-RUN rm /etc/rhsm-host && yum -y update && rpm -qa --qf "%{name}\n" > base_packages.txt && \
+RUN rm /etc/rhsm-host && yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > base_packages.txt && \
 	yum install -y ${LGPL_DEPS} && \
 	${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
 	if [ "$INSTALL_SOURCES" = "yes" ]; then \
@@ -92,55 +111,57 @@ RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
 WORKDIR /licenses
 RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
 
+
+ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
+ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/extras/opencv/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/3rdparty/hddl/lib
+ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PYTHONPATH=/opt/intel/openvino/python/python3.6:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
+ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
+ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
+
 # setup Python
 ENV PYTHON_VER python3.6
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # dev package
-WORKDIR /tmp
-
+WORKDIR ${INTEL_OPENVINO_DIR}
+ARG OPENVINO_WHEELS_VERSION=2022.1.0
+ARG OPENVINO_WHEELS_URL
+# hadolint ignore=SC2102
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/python/${PYTHON_VER}/requirements.txt && \
-    find "${INTEL_OPENVINO_DIR}/" -type f \( -name "*requirements.*" -o  -name "*requirements_ubuntu18.*" -o \( -name "*requirements*.in" -and -not -name "*requirements-tensorflow.in" \) \) -not -path "*/accuracy_checker/*" -not -path "*/post_training_optimization_toolkit/*" -not -path "*/python3*/*" -not -path "*/python2*/*" -print0 | xargs -t -0 -n1 ${PYTHON_VER} -m pip install --no-cache-dir -r
-
-WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker
-RUN source ${INTEL_OPENVINO_DIR}/bin/setupvars.sh && \
-    ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/requirements.in && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/setup.py install && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/open_model_zoo/tools/accuracy_checker/build
+    if [ -z "$OPENVINO_WHEELS_URL" ]; then \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" ; \
+    else \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" ; \
+    fi
 
 # download source for PyPi LGPL packages
 WORKDIR /thirdparty
 RUN if [ "$INSTALL_SOURCES" = "yes" ]; then \
         curl -L https://files.pythonhosted.org/packages/ee/2d/9cdc2b527e127b4c9db64b86647d567985940ac3698eeabc7ffaccb4ea61/chardet-4.0.0.tar.gz --output chardet-4.0.0.tar.gz; \
-        curl -L https://files.pythonhosted.org/packages/81/47/5f2cea0164e77dd40726d83b4c865c2a701f60b73cb6af7b539cd42aafb4/flake8-import-order-0.18.1.tar.gz --output lake8-import-order-0.18.1.tar.gz; \
         curl -L https://files.pythonhosted.org/packages/81/41/e6cb9026374771e3bdb4c0fe8ac0c51c693a14b4f72f26275da15f7a4d8b/ethtool-0.14.tar.gz --output ethtool-0.14.tar.gz; \
         curl -L https://files.pythonhosted.org/packages/ef/86/c5a34243a932346c59cb25eb49a4d1dec227974209eb9b618d0ed57ea5be/gpg-1.10.0.tar.gz --output gpg-1.10.0.tar.gz; \
         curl -L https://files.pythonhosted.org/packages/e0/e8/1e4f21800015a9ca153969e85fc29f7962f8f82fc5dbc1ecbdeb9dc54c75/PyGObject-3.28.3.tar.gz --output PyGObject-3.28.3.tar.gz; \
     fi
 
-WORKDIR ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit
-RUN ${PYTHON_VER} -m pip install --no-cache-dir -r ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/requirements.txt && \
-    ${PYTHON_VER} ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/setup.py install --install-extras && \
-    rm -rf ${INTEL_OPENVINO_DIR}/deployment_tools/tools/post_training_optimization_toolkit/build
-
-RUN pip uninstall -y opencv-python
-
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
-# Please use `third-party-programs-docker-dev.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
-RUN curl -L https://raw.githubusercontent.com/openvinotoolkit/docker_ci/releases/2021/4/dockerfiles/rhel8/third-party-programs-docker-dev.txt --output third-party-programs-docker-dev.txt
+RUN curl -L https://github.com/openvinotoolkit/docker_ci/blob/releases/2022/1/dockerfiles/rhel8/third-party-programs-docker-runtime.txt --output third-party-programs-docker-runtime.txt && \
+    curl -L https://github.com/openvinotoolkit/docker_ci/blob/releases/2022/1/dockerfiles/rhel8/third-party-programs-docker-dev.txt --output third-party-programs-docker-dev.txt
 
 # for CPU
 
 # for GPU
-ARG INTEL_OPENCL=21.29.20389
-
 RUN groupmod -g 44 video
 
 # hadolint ignore=DL3031, DL3033
 WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
-RUN ./install_NEO_OCL_driver.sh --no_numa -y -d ${INTEL_OPENCL} && \
+RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
     yum clean all && rm -rf /var/cache/yum && \
     yum remove -y epel-release
 
@@ -149,11 +170,6 @@ RUN ./install_NEO_OCL_driver.sh --no_numa -y -d ${INTEL_OPENCL} && \
 
 RUN rm -rf /tmp && mkdir /tmp && rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 
-RUN if [ -f "${INTEL_OPENVINO_DIR}"/bin/setupvars.sh ]; then \
-        printf "\nexport TBB_DIR=\${INTEL_OPENVINO_DIR}/deployment_tools/inference_engine/external/tbb/cmake\n" >> ${INTEL_OPENVINO_DIR}/bin/setupvars.sh; \
-        printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /home/openvino/.bashrc; \
-        printf "\nsource \${INTEL_OPENVINO_DIR}/bin/setupvars.sh\n" >> /root/.bashrc; \
-    fi;
 
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}
