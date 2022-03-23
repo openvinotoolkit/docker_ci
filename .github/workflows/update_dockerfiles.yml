@@ -34,7 +34,12 @@ jobs:
             do
               if [[ "$image_os" == win* ]]
               then
-                python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }} --pre_stage_msbuild=msbuild2019_online
+                if [[ "$distr" != "runtime" ]]
+                then
+                  python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }} --pre_stage_msbuild=msbuild2019_online --msbuild msbuild2019_online
+                else
+                  python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }} --pre_stage_msbuild=msbuild2019_online
+                fi
               else
                 python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }}
               fi
