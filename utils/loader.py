@@ -357,7 +357,7 @@ INTEL_OPENVINO_VERSION = {
                 'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.1/'
                            'l_openvino_toolkit_runtime_rhel8_p_2022.1.0.643.tgz',
             },
-        },
+    },
 }
 DIVE_URL = {
     'windows': 'https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_windows_amd64.zip',
