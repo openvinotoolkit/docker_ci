@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2021 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:20.04 as ov_base
+FROM ubuntu:18.04 as ov_base
 
 # hadolint ignore=DL3002
 USER root
@@ -18,7 +18,7 @@ RUN apt-get update && \
       rm -rf /var/lib/apt/lists/*
 
 ARG PUBLIC_KEY="https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB"
-ARG APT_REPOSITORY="deb https://apt.repos.intel.com/openvino/2022 focal main"
+ARG APT_REPOSITORY="deb https://apt.repos.intel.com/openvino/2022 bionic main"
 ARG BUILD_ID
 # Install full package
 RUN curl -O ${PUBLIC_KEY} && \
@@ -52,9 +52,9 @@ RUN rm -r /opt/intel/ && mkdir -p "/opt/intel/openvino_${BUILD_ID}" && \
     mv /include /opt/intel/openvino_2022/runtime/include && \
     mv libopenvino_tensorflow_fe.so /opt/intel/openvino_2022/runtime/lib/intel64
 
-FROM ubuntu:20.04
+FROM ubuntu:18.04
 
-LABEL description="This is the base CPU only image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
+LABEL description="This is the base CPU only image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
 LABEL vendor="Intel Corporation"
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]

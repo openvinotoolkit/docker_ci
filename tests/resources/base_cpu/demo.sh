@@ -15,27 +15,23 @@ curl -O https://download.01.org/opencv/2020/openvinotoolkit/2020.1/open_model_zo
 
 echo 'cmake_minimum_required(VERSION 3.4.3)
 project(test_ie CXX)
-find_package(InferenceEngine REQUIRED)
-find_package(ngraph REQUIRED)
+find_package(OpenVINO REQUIRED)
 add_executable(${CMAKE_PROJECT_NAME} main.cpp)
 target_compile_features(${CMAKE_PROJECT_NAME} PRIVATE cxx_range_for)
 
-target_link_libraries(${CMAKE_PROJECT_NAME}
-  ${InferenceEngine_LIBRARIES}
-  ${NGRAPH_LIBRARIES}
-)' > CMakeLists.txt
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE openvino::runtime)' > CMakeLists.txt
 
-echo '#include <inference_engine.hpp>
+echo '#include <openvino/openvino.hpp>
 #include <iostream>
 
-using namespace InferenceEngine;
+using namespace ov;
 
 int main(int argc, char** argv){
     Core core;
-    CNNNetwork network = core.ReadNetwork("../face-detection-adas-0001.xml", "../face-detection-adas-0001.bin");
-    auto executable_network = core.LoadNetwork(network, "CPU");
-    auto req = executable_network.CreateInferRequest();
-    req.Infer();
+    std::shared_ptr<Model> model = core.read_model("../face-detection-adas-0001.xml", "../face-detection-adas-0001.bin");
+    CompiledModel compiled_model = core.compile_model(model, "CPU");;
+    InferRequest infer_request = compiled_model.create_infer_request();
+    infer_request.infer();
     std::cout <<"finished" << std::endl;
     return 0;
 }' > main.cpp
