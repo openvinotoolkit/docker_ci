@@ -596,11 +596,11 @@ def parse_args(name: str, description: str):  # noqa
         else:
             args.distribution = 'custom-full'
 
-    is_custom_not_full = args.distribution == 'custom-no-cv'
-    if hasattr(args, 'distribution') and not args.package_url and args.mode == 'test' and is_custom_not_full:
-        if args.product_version in INTEL_OPENVINO_VERSION:
-            args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]['dev']
-        else:
-            parser.error(f'Cannot find URL to package with test dependencies for {args.product_version} release. '
-                         f'Please specify --package_url directly')
+    if hasattr(args, 'distribution'):
+        if not args.package_url and args.mode == 'test' and args.distribution == 'custom-no-cv':
+            if args.product_version in INTEL_OPENVINO_VERSION:
+                args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]['dev']
+            else:
+                parser.error(f'Cannot find URL to package with test dependencies for {args.product_version} release. '
+                             f'Please specify --package_url directly')
     return args
