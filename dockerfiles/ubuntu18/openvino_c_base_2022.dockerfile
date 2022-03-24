@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2021 Intel Corporation
+# Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:18.04 as ov_base
 
@@ -60,7 +60,7 @@ LABEL vendor="Intel Corporation"
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 COPY --from=ov_base /opt/intel /opt/intel
-RUN echo "source /opt/intel/openvino_2021/bin/setupvars.sh" | tee -a /root/.bashrc
+RUN echo "source /opt/intel/openvino_2022/setupvars.sh" | tee -a /root/.bashrc
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
