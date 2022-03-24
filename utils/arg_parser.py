@@ -383,7 +383,7 @@ def parse_args(name: str, description: str):  # noqa
     if args.mode == 'deploy' and not args.tags:
         parser.error('The following argument is required: -t/--tags')
 
-    if not args.os:
+    if hasattr(args, 'os') and not args.os:
         possible_os: typing.Set[str] = set()
         if args.package_url:
             possible_os.update(filter(lambda os: os in args.package_url, parser.SUPPORTED_OS))
@@ -435,7 +435,7 @@ def parse_args(name: str, description: str):  # noqa
         parser.error('Dockerfile generation intended for non-Docker platforms '
                      'is supported only for RHEL-based images')
 
-    if args.product_version:
+    if hasattr(args, 'product_version') and args.product_version:
         fail_if_product_version_not_supported(args.product_version, parser)
         product_version = re.search(r'^\d{4}\.\d$', args.product_version)
         if product_version:
@@ -586,7 +586,8 @@ def parse_args(name: str, description: str):  # noqa
             parser.error('Cannot get product_version from the package URL and docker image. '
                          'Please specify --product_version directly.')
 
-    fail_if_product_version_not_supported(args.product_version, parser)
+    if hasattr(args, 'product_version'):
+        fail_if_product_version_not_supported(args.product_version, parser)
 
     if hasattr(args, 'distribution') and args.distribution == 'custom':
         if subprocess.call(['docker', 'run', '--rm', args.tags[0], 'ls', 'extras/opencv'],  # nosec
