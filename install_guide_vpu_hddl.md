@@ -37,7 +37,7 @@ Available releases for Ubuntu* 20.04:
 
 # Troubleshooting:
 
-Please follow the [configuration guide for HDDL device](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_linux_ivad_vpu.html).
+Please follow the [configuration guide for HDDL device](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_ivad_vpu.html).
 
 ---
 \* Other names and brands may be claimed as the property of others.
