@@ -30,7 +30,7 @@ You can use Docker CI framework to build an image, please follow [Get Started wi
  - VPU (NCS2)
  - HDDL (VPU HDDL) (_Prerequisite_: run HDDL daemon on the host machine, follow the [configuration guide for HDDL device](../install_guide_vpu_hddl.md))
 
- OpenVINO documentation for [supported devices](https://docs.openvinotoolkit.org/latest/openvino_docs_IE_DG_supported_plugins_Supported_Devices.html).
+ OpenVINO documentation for [supported devices](https://docs.openvino.ai/latest/openvino_docs_IE_DG_supported_plugins_Supported_Devices.html).
 
  **Distributions:**
 
@@ -38,15 +38,18 @@ You can use Docker CI framework to build an image, please follow [Get Started wi
  - **dev**: IE core, nGraph, plugins, samples, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Open Model Zoo tools (downloader, converter)
  - **base** (only for CPU): IE core, nGraph
 
+*Note*: OpenCV is not included since 2022.1.0 release. You can install it separately using the download script in the `extras/scripts` directory (`download_opencv.sh` for Linux and `download_opencv.ps1` for Windows). 
+
 You can generate Dockerfile with your settings, please follow the [DockerHub CI documentation](../get-started.md).
  * _runtime_ and _dev_ distributions are based on archive package of OpenVINO product. You can just remove unnecessary parts.
- * _base_ distribution is created by [OpenVINO™ Deployment Manager](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_deployment_manager_tool.html).
+ * _base_ distribution is created by [OpenVINO™ Deployment Manager](https://docs.openvino.ai/latest/openvino_docs_install_guides_deployment_manager_tool.html).
 
 ## Where to get OpenVINO package
 
 You can get OpenVINO distribution packages (runtime, dev) directly from [public storage](https://storage.openvinotoolkit.org/repositories/openvino/packages/).
 For example: 
-* take runtime `l_openvino_toolkit_runtime_ubuntu18_p_2021.2.185.tgz` package and specify `-dist runtime` option for Docker CI `docker_openvino.py` or take a Dockerfile with `runtime` suffix.
+* take runtime `l_openvino_toolkit_runtime_ubuntu20_p_2022.1.0.643.tgz` package and specify `-dist runtime` option for Docker CI `docker_openvino.py` or take a Dockerfile with `runtime` suffix.
+* take dev `l_openvino_toolkit_dev_ubuntu20_p_2022.1.0.643.tgz` package and specify `-dist dev` option for Docker CI `docker_openvino.py` or take a Dockerfile with `dev` suffix.
 
 ## How to build
 
@@ -91,7 +94,8 @@ You can use Dockerfiles from the `build_custom` folders to build a custom versio
 Prebuilt images are available on: 
 - [Docker Hub](https://hub.docker.com/u/openvino)
 - [Red Hat* Quay.io](https://quay.io/organization/openvino)
-- [Red Hat* Ecosystem Catalog](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
+- [Red Hat* Ecosystem Catalog (runtime image)](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
+- [Red Hat* Ecosystem Catalog (development image)](https://catalog.redhat.com/software/containers/intel/openvino-dev/613a450dc9bc35f21dc4a1f7)
 - [Azure* Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/intel_corporation.openvino)
 
 
@@ -101,8 +105,8 @@ Please follow [Run a container](../get-started.md#run-a-container) section in Do
 
 ## Documentation
 
-* [Install Intel® Distribution of OpenVINO™ toolkit for Linux* from a Docker* Image](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_linux.html)
-* [Install Intel® Distribution of OpenVINO™ toolkit for Windows* from Docker* Image](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html)
+* [Install Intel® Distribution of OpenVINO™ toolkit for Linux* from a Docker* Image](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_docker_linux.html)
+* [Install Intel® Distribution of OpenVINO™ toolkit for Windows* from Docker* Image](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html)
 * [Official Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
 
 ---
