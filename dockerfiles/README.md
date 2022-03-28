@@ -38,7 +38,7 @@ You can use Docker CI framework to build an image, please follow [Get Started wi
  - **dev**: IE core, nGraph, plugins, samples, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Open Model Zoo tools (downloader, converter)
  - **base** (only for CPU): IE core, nGraph
 
-*Note*: OpenCV is not included since 2022.1.0 release. You can install it separately using the download script in the `extras/scripts` directory (`download_opencv.sh` for Linux and `download_opencv.ps1` for Windows). 
+> **NOTE**: OpenCV is not included since OpenVINO 2022.1.0. You can install it separately using the download script in the `extras/scripts` directory (`download_opencv.sh` for Linux and `download_opencv.ps1` for Windows). 
 
 You can generate Dockerfile with your settings, please follow the [DockerHub CI documentation](../get-started.md).
  * _runtime_ and _dev_ distributions are based on archive package of OpenVINO product. You can just remove unnecessary parts.
