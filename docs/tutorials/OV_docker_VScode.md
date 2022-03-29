@@ -67,13 +67,13 @@ Then, you can open OpenVINO build and repositories in VS Code editor:
  - Open Explorer -> Open Folder -> `/opt/intel/openvino`
  - Open Explorer -> Open Folder -> `/opt/intel/repo`
 
-You can find OpenVINO samples in `/opt/intel/openvino/deployment_tools/inference_engine/samples` folder, lets try to debug some of them.
+You can find OpenVINO samples in `/opt/intel/openvino/samples` folder, lets try to debug some of them.
 
 ## Debug C++ sample
 
 *Prerequisites:* Install [Microsoft C/C++ Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools#:~:text=The%20C%2FC%2B%2B%20extension%20adds,such%20as%20IntelliSense%20and%20debugging.) to VS Code
 
-To build the C++ sample applications for Linux, go to the `/opt/intel/openvino/inference_engine/samples/cpp` directory, respectively, and run the `build_samples.sh` script. By default, it builds C++ samples in Release mode. 
+To build the C++ sample applications for Linux, go to the `/opt/intel/openvino/samples/cpp` directory, respectively, and run the `build_samples.sh` script. By default, it builds C++ samples in Release mode. 
 
 Lets build samples in Debug mode. We need to update `build_samples.sh` script and change _Release_ to _Debug_ on `#60 line "cmake -DCMAKE_BUILD_TYPE=Debug "$SAMPLES_PATH"" ` and run the script.
 
