@@ -26,15 +26,15 @@ In the DL Workbench, you can use the following OpenVINO™ toolkit components:
 
 Component  |                 Description
 |:------------------:|:------------------|
-| [Open Model Zoo](https://docs.openvinotoolkit.org/latest/omz_tools_downloader.html)| Get access to the collection of high-quality pre-trained deep learning [public](https://docs.openvinotoolkit.org/latest/omz_models_group_public.html) and [Intel-trained](https://docs.openvinotoolkit.org/latest/omz_models_group_intel.html) models trained to resolve a variety of different tasks.  |
-| [Model Optimizer](https://docs.openvinotoolkit.org/latest/openvino_docs_MO_DG_Deep_Learning_Model_Optimizer_DevGuide.html) |Optimize and transform models trained in supported frameworks to the IR format. <br>Supported frameworks include TensorFlow\*, Caffe\*, Kaldi\*, MXNet\*, and ONNX\* format.  
-| [Benchmark Tool](https://docs.openvinotoolkit.org/latest/openvino_inference_engine_tools_benchmark_tool_README.html)| Estimate deep learning model inference performance on supported devices.
-| [Accuracy Checker](https://docs.openvinotoolkit.org/latest/omz_tools_accuracy_checker.html) |Evaluate the accuracy of a model by collecting one or several metric values. 
-| [Post-Training Optimization Tool](https://docs.openvinotoolkit.org/latest/pot_README.html)|Optimize pre-trained models with lowering the precision of a model from floating-point precision(FP32 or FP16) to integer precision (INT8), without the need to retrain or fine-tune models.                              |
+| [Open Model Zoo](https://docs.openvino.ai/latest/omz_tools_downloader.html)| Get access to the collection of high-quality pre-trained deep learning [public](https://docs.openvino.ai/latest/omz_models_group_public.html) and [Intel-trained](https://docs.openvino.ai/latest/omz_models_group_intel.html) models trained to resolve a variety of different tasks.  |
+| [Model Optimizer](https://docs.openvino.ai/latest/openvino_docs_MO_DG_Deep_Learning_Model_Optimizer_DevGuide.html) |Optimize and transform models trained in supported frameworks to the IR format. <br>Supported frameworks include TensorFlow\*, Caffe\*, Kaldi\*, MXNet\*, and ONNX\* format.  
+| [Benchmark Tool](https://docs.openvino.ai/latest/openvino_inference_engine_tools_benchmark_tool_README.html)| Estimate deep learning model inference performance on supported devices.
+| [Accuracy Checker](https://docs.openvino.ai/latest/omz_tools_accuracy_checker.html) |Evaluate the accuracy of a model by collecting one or several metric values. 
+| [Post-Training Optimization Tool](https://docs.openvino.ai/latest/pot_README.html)|Optimize pre-trained models with lowering the precision of a model from floating-point precision(FP32 or FP16) to integer precision (INT8), without the need to retrain or fine-tune models.                              |
 
 ## <a id="requirements">System Requirements</a>
 
-The complete list of recommended requirements is available in the [documentation](https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Prerequisites.html).
+The complete list of recommended requirements is available in the [documentation](https://docs.openvino.ai/latest/workbench_docs_Workbench_DG_Prerequisites.html).
 
 To successfully run the DL Workbench with Python Starter, install Python 3.6 or higher.
 
@@ -57,7 +57,7 @@ This section describes how to start the DL Workbench using the Python wrapper, w
 works on Linux OS\*, macOS\* and Windows\*.
        
 For additional details, such as prerequisites, security, and troubleshooting, see 
-[OpenVINO DL Workbench documentation](https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Introduction.html).
+[OpenVINO DL Workbench documentation](https://docs.openvino.ai/latest/workbench_docs_Workbench_DG_Introduction.html).
 
 #### Step 1. Set Up Python Virtual Environment
 
@@ -109,7 +109,7 @@ You will see the help message for the starting package if installation finished 
 To start the latest available version of the DL Workbench, execute the following command:
 
 ```
-openvino-workbench --image openvino/workbench:2021.3
+openvino-workbench --image openvino/workbench:latest
 ```
 
 You can see the list of available arguments with the following command:
@@ -117,7 +117,7 @@ You can see the list of available arguments with the following command:
 openvino-workbench --help
 ```
 
-Refer to the [documentation](https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Introduction.html) for additional information.
+Refer to the [documentation](https://docs.openvino.ai/latest/workbench_docs_Workbench_DG_Introduction.html) for additional information.
 
 ### <a id="docker"> Use web-form to build a starting command </a>
 
@@ -125,7 +125,7 @@ This section describes how to start the DL Workbench using the plain Docker\* co
 works on Linux OS\*, macOS\* and Windows\*.
        
 For additional details, such as prerequisites, security, and troubleshooting, see 
-[OpenVINO DL Workbench documentation](https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Introduction.html).
+[OpenVINO DL Workbench documentation](https://docs.openvino.ai/latest/workbench_docs_Workbench_DG_Introduction.html).
 
 #### Step 1. Navigate to the web-form website
 
@@ -144,8 +144,9 @@ For additional details, such as prerequisites, security, and troubleshooting, se
   Pre-built DL Workbench Docker image is available on [Docker Hub*](https://hub.docker.com/repository/docker/openvino/workbench).
 
 # <a id="links">Additional Resources</a>
+* [DL Workbench Repository](https://github.com/openvinotoolkit/workbench)
 * [Release Notes](https://software.intel.com/content/www/us/en/develop/articles/openvino-relnotes.html)
-* [Documentation](https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Introduction.html)
+* [Documentation](https://docs.openvino.ai/latest/workbench_docs_Workbench_DG_Introduction.html)
 * [Feedback](https://community.intel.com/t5/Intel-Distribution-of-OpenVINO/bd-p/distribution-openvino-toolkit)
 * [Troubleshooting](https://community.intel.com/t5/Intel-Distribution-of-OpenVINO/bd-p/distribution-openvino-toolkit)
 
