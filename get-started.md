@@ -21,6 +21,7 @@ DockerHub CI framework based on [Docker SDK for Python](https://github.com/docke
     
     `pip install -r requirements.txt`
 3. Now you can use `docker_openvino.py` to build/test/deploy an image. See detailed instruction below.  
+
 **Note:** Please use Docker CI framework release version corresponding to the version of OpenVINO™ Toolkit.
 
 # How to
@@ -66,8 +67,8 @@ You can get OpenVINO distribution packages (runtime, dev) directly from [public 
 ```
 
 **Note:** This is required that OpenVINO package is named in the right way, which is, 
-distribution type (e.g., dev) and build number (e.g., 2019.4.420) have to be part of the URI, 
-for example, `openvino_dev_2019.3.376.tgz` fits the requirements, while `ov_R3.tgz` is not. 
+distribution type (e.g., dev) and build number (e.g., 2022.1.0.643) have to be part of the URI, 
+for example, `openvino_dev_2022.1.0.643.tgz` fits the requirements, while `ov_R3.tgz` is not. 
 Otherwise, you should specify `--distribution` and `--product_version` directly.
 
 Specify the product package source:
@@ -87,7 +88,7 @@ You can customize platform targets and minimize image size:
                      e.g. for CPU, HDDL it will be openvino_ch_<distribution>_<product_version>.dockerfile
 ```
 
-OpenVINO documentation for [supported devices](https://docs.openvinotoolkit.org/latest/openvino_docs_IE_DG_supported_plugins_Supported_Devices.html).
+OpenVINO documentation for [supported devices](https://docs.openvino.ai/latest/openvino_docs_IE_DG_supported_plugins_Supported_Devices.html).
 
 **Prerequisite:** Install the dependencies Microsoft Visual Studio* with C++ 2019, 2017, or 2015 with MSBuild
 
@@ -235,7 +236,7 @@ docker run -it --rm <image_name>:latest /bin/bash -c "python3 samples/python/hel
 ```cmd
 docker run -it --rm <image_name>:latest cmd /S /C "python samples\python\hello_query_device\hello_query_device.py"
 ```
-Please follow [Build and Run the Docker* Image for GPU](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html) instruction to get **GPU** access from Windows container. 
+Please follow the appropriate steps from the [Install Guide for Windows](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html) to get **GPU** access from Windows container. 
 
 **Linux image:** 
 
@@ -299,7 +300,7 @@ create issue on [GitHub* Issues](https://github.com/openvinotoolkit/docker_ci/is
 We will check a missing package to meet Intel(R) security policy.
 Please see [SECURITY](./SECURITY.md) for details to follow security guideline.
 
-If you got a proxy issues, please setup proxy settings for Docker Engine. See the Proxy section in [Install the DL Workbench from Docker Hub* ](https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Install_from_Docker_Hub.html) topic.
+If you got a proxy issues, please setup proxy settings for Docker Engine. See the Proxy section in [Install the DL Workbench from Docker Hub* ](https://docs.openvino.ai/latest/workbench_docs_Workbench_DG_Prerequisites.html#set-proxy) topic.
 DockerHub CI uses a system proxy to generate Dockerfile and build a docker image by default. 
 
 ---

@@ -14,10 +14,10 @@ You can reuse available Dockerfiles, add your layer and customize the image of O
 * [Available Tutorials](docs/tutorials)
 
 As [Docker\*](https://docs.docker.com/) is (mostly) just an isolation tool, the OpenVINO toolkit inside the container is the same as the OpenVINO toolkit installed natively on the host machine,
-so the [OpenVINO documentation](https://docs.openvinotoolkit.org/) is fully applicable to containerized OpenVINO distribution.
-Additionally, we provide receipts on how to manually build a Docker image with OpenVINO inside both for 
-[Linux](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_docker_linux.html) and [Windows](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_docker_windows.html) containers.
-As well you can use available dockerfiles from `<root_project>/dockerfiles/<image_os>` folder.
+so the [OpenVINO documentation](https://docs.openvino.ai/) is fully applicable to containerized OpenVINO distribution:
+* [Install Intel® Distribution of OpenVINO™ toolkit for Linux* from a Docker* Image](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_docker_linux.html)
+* [Install Intel® Distribution of OpenVINO™ toolkit for Windows* from Docker* Image](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html)
+* [Deploy with OpenVINO](https://docs.openvino.ai/latest/openvino_deployment_guide.html)
 
 ## Supported Operating Systems for Docker image:
 
@@ -33,7 +33,8 @@ Prebuilt images are available on:
 
 - [Docker Hub](https://hub.docker.com/u/openvino)
 - [Red Hat* Quay.io](https://quay.io/organization/openvino)
-- [Red Hat* Ecosystem Catalog](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
+- [Red Hat* Ecosystem Catalog (runtime image)](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
+- [Red Hat* Ecosystem Catalog (development image)](https://catalog.redhat.com/software/containers/intel/openvino-dev/613a450dc9bc35f21dc4a1f7)
 - [Azure* Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/intel_corporation.openvino)
 
 ## Licenses

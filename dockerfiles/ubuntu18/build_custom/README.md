@@ -88,7 +88,9 @@ Please follow the [Run built image](../get-started.md#run-built-image) section i
 Prebuilt images are available on: 
 - [Docker Hub](https://hub.docker.com/u/openvino)
 - [Red Hat* Quay.io](https://quay.io/organization/openvino)
-- [Red Hat* Ecosystem Catalog](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
+- [Red Hat* Ecosystem Catalog (runtime image)](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
+- [Red Hat* Ecosystem Catalog (development image)](https://catalog.redhat.com/software/containers/intel/openvino-dev/613a450dc9bc35f21dc4a1f7)
+- [Azure* Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/intel_corporation.openvino)
 
 
 ## License
@@ -96,8 +98,8 @@ This Dockerfile contains third-party components with different licenses.
 If you are distributing the container as a whole, then you are responsible for license compliance for all of the software it contains.
 
 ## Documentation
-* [Install Intel® Distribution of OpenVINO™ toolkit for Linux* from a Docker* Image](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_linux.html)
-* [Install Intel® Distribution of OpenVINO™ toolkit for Windows* from Docker* Image](https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html)
+* [Install Intel® Distribution of OpenVINO™ toolkit for Linux* from a Docker* Image](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_docker_linux.html)
+* [Install Intel® Distribution of OpenVINO™ toolkit for Windows* from Docker* Image](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html)
 * [Official Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
 ---
 \* Other names and brands may be claimed as the property of others.
