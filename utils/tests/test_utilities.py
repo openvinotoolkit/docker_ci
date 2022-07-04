@@ -158,7 +158,7 @@ def test_get_system_proxy(mock_data, res):
 def test_get_folder_structure_recursively(mock_exists, mock_walk, mock_data, ignore, res):
     mock_exists.return_value = True
     mock_walk.return_value = mock_data
-    out = list(map(lambda path: pathlib.Path(path).as_posix(), utilities.get_folder_structure_recursively('', ignore)))
+    out = list(pathlib.Path(path).as_posix() for path in utilities.get_folder_structure_recursively('', ignore))
     assert out == res  # noqa: S101  # nosec
 
 

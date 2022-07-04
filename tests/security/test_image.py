@@ -4,12 +4,14 @@
 import pathlib
 import subprocess  # nosec
 import sys
-
+import logging
 import pytest
 
 from setup import SNYK_API, SNYK_TOKEN
 from utils.loader import SNYK_URL
 from utils.utilities import download_file
+
+logger = logging.getLogger(__name__)
 
 
 class TestSDLImage:
@@ -32,7 +34,7 @@ class TestSDLImage:
         if process.returncode != 0:
             pytest.fail(f'SDL snyk issues: {cmd_line}\n{process_out}')
         else:
-            print(f'SDL snyk output: {cmd_line}\n{process_out}')
+            logger.info(f'SDL snyk output: {cmd_line}\n{process_out}')
 
     @pytest.mark.skipif(not sys.platform.startswith('win32'), reason="Linux doesn't support windows executable files")
     @pytest.mark.skipif(SNYK_TOKEN == '',  # noqa: S105 # nosec
@@ -60,4 +62,4 @@ class TestSDLImage:
         if process.returncode != 0:
             pytest.fail(f'SDL snyk issues: {cmd_line}\n{process_out}')
         else:
-            print(f'SDL snyk output: {cmd_line}\n{process_out}')
+            logger.info(f'SDL snyk output: {cmd_line}\n{process_out}')
