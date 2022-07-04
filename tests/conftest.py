@@ -434,7 +434,7 @@ def snyk_image(docker_api):
 def _is_distribution(request):
     settings = [request.param] if isinstance(request.param, str) else request.param
     image_dist = request.config.getoption('--distribution')
-    if not any(map(lambda x: x in image_dist, settings)):
+    if not any(x in image_dist for x in settings):
         pytest.skip(f'Test requires the product distribution should be {request.param} but get {image_dist}')
 
 

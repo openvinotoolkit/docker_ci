@@ -9,10 +9,13 @@ import re
 import subprocess  # nosec
 import sys
 import typing
+import logging
 
 from utils.loader import INTEL_OPENVINO_VERSION
 from utils.utilities import (check_internal_local_path,
                              check_printable_utf8_chars)
+
+logger = logging.getLogger(__name__)
 
 
 class DockerCIArgumentParser(argparse.ArgumentParser):
@@ -409,10 +412,10 @@ def parse_args(name: str, description: str):  # noqa
                      ' by default.')
 
     if args.mode == 'test' and 'runtime' in args.distribution and not args.package_url:
-        print('\nYou can run samples/demos on runtime docker image. '
-              'Please provide --package_url key with path to dev distribution package in '
-              'http/https/ftp access scheme or a local file in the project location as dependent package '
-              'to run all available tests.\n')
+        logger.info('\nYou can run samples/demos on runtime docker image. '
+                    'Please provide --package_url key with path to dev distribution package in '
+                    'http/https/ftp access scheme or a local file in the project location as dependent package '
+                    'to run all available tests.\n')
 
     if args.mode in ('deploy', 'all') and not hasattr(args, 'registry'):
         parser.error('Option --registry is mandatory for this mode.')

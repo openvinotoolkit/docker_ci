@@ -3,8 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 import subprocess  # nosec
 import sys
-
+import logging
 import pytest
+
+logger = logging.getLogger(__name__)
 
 
 class TestSDLHost:
@@ -22,7 +24,7 @@ class TestSDLHost:
         if process.returncode != 0:
             pytest.fail(f'SDL Bench for security issues: {process.stdout.decode()}')
         else:
-            print(f'SDL Bench for security output: {process.stdout.decode()}')
+            logger.info(f'SDL Bench for security output: {process.stdout.decode()}')
 
     @pytest.mark.skipif(not sys.platform.startswith('linux'),
                         reason="Docker bench for security script doesn't support Windows host")
