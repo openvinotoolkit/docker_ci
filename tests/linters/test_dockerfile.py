@@ -4,9 +4,13 @@
 import pathlib
 import subprocess  # nosec
 import sys
+import logging
 
 import pytest
 from tests.conftest import switch_container_engine
+
+
+logger = logging.getLogger(__name__)
 
 
 class TestDockerfile:
@@ -18,7 +22,7 @@ class TestDockerfile:
         if process.returncode != 0:
             pytest.fail(f'Linter handolint issues: {process.stdout.decode()}')
         else:
-            print(f'Linter handolint output: {process.stdout.decode()}')
+            logger.info(f'Linter handolint output: {process.stdout.decode()}')
 
     @pytest.fixture(scope='module')
     def _hadolint_pull(self, docker_api):

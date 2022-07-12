@@ -392,7 +392,7 @@ def parse_args(name: str, description: str):  # noqa
             possible_os.update(filter(lambda os: os in args.package_url, parser.SUPPORTED_OS))
         if hasattr(args, 'tags') and args.tags:
             for tag in args.tags:
-                possible_os.update(filter(lambda os: os in tag, parser.SUPPORTED_OS))
+                possible_os.update(filter(lambda os: os in tag, parser.SUPPORTED_OS))  # noqa: B023
         if len(possible_os) == 1:
             args.os = possible_os.pop()
         else:
