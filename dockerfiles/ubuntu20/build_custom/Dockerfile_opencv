@@ -1,0 +1,71 @@
+# Copyright (C) 2020-2022 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+FROM ubuntu:20.04 
+
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
+LABEL vendor="Intel Corporation"
+
+SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
+
+RUN apt-get update; \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y --no-install-recommends \
+        apt-utils \
+        git \
+        git-lfs \
+        ca-certificates \
+        sudo \
+        tzdata; \
+        build-essential \
+        cmake \
+        libva-dev \
+        libgtk-3-dev \
+        libavcodec-dev \
+        libavformat-dev \
+        libavutil-dev \
+        libswscale-dev \
+        libavresample-dev \
+        libgstreamer1.0-dev \
+        libgstreamer-plugins-base1.0-dev \
+        libgstreamer-plugins-good1.0-dev \
+        libgstreamer-plugins-bad1.0-dev; \
+    rm -rf /var/lib/apt/lists/*
+
+ARG OPENCV_BRANCH="4.6.0"
+
+ARG BUILD_OPENCV_CONTRIB="no"
+ARG OPENCV_CONTRIB_BRANCH="master"
+
+WORKDIR /opt/intel/repo
+RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} && \
+    if [ "$BUILD_OPENCV_CONTRIB" = "yes" ]; then \
+    git clone https://github.com/opencv/opencv_contrib.git --depth 1 -b ${OPENCV_CONTRIB_BRANCH}; fi
+
+COPY opencv_cmake.txt /opt/intel/repo
+
+WORKDIR /opt/intel/repo/opencv/build
+# hadolint ignore=SC2046
+RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh"; \
+    if [ "$BUILD_OPENCV_CONTRIB" = "yes" ]; then \
+      apt-get update && \
+      apt-get install -y --no-install-recommends libtesseract-dev && \
+      cmake $(cat /opt/intel/repo/opencv_cmake.txt) -D OPENCV_EXTRA_MODULES_PATH=/opt/intel/repo/opencv_contrib/modules /opt/intel/repo/opencv && \
+      rm -rf /var/lib/apt/lists/* ; \
+    else \
+      cmake $(cat /opt/intel/repo/opencv_cmake.txt) /opt/intel/repo/opencv; \
+    fi; \
+    make "-j$(nproc)"; \
+    make install
+
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+WORKDIR /opt/intel/repo/opencv/build/install
+RUN mkdir -p "${INTEL_OPENVINO_DIR}/extras"; \
+    cp -r . "${INTEL_OPENVINO_DIR}/extras/opencv"; \
+    rm -r "${INTEL_OPENVINO_DIR}/extras/opencv/python"; \
+    echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
+    echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
+    rm -rf /opt/intel/repo/opencv/build/install
+
+WORKDIR ${INTEL_OPENVINO_DIR}
+CMD ["/bin/bash"]
