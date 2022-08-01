@@ -521,7 +521,7 @@ def parse_args(name: str, description: str):  # noqa
                 args.product_version = dev_version.group(1)
                 args.build_id = args.product_version
             else:
-                build_id = re.search(r'_(\d{4}\.\d\.\d)\.(\d{3-4})', args.package_url)
+                build_id = re.search(r'_(\d{4}\.\d\.\d)\.(\d{3,4})', args.package_url)
                 if build_id:
                     # save product version YYYY.U.V.BBB
                     args.build_id = '.'.join(build_id.groups())
