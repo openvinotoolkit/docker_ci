@@ -1,5 +1,6 @@
 {% if HTTPS_PROXY is defined %}
 RUN powershell.exe -Command `
+        $ProgressPreference = 'SilentlyContinue' ; `
 	Invoke-WebRequest -URI https://github.com/python/cpython/archive/refs/tags/v3.8.12.zip -OutFile %TMP%\\python.zip -Proxy %HTTPS_PROXY% ; `
 	Expand-Archive -Path %TMP%\\python.zip -DestinationPath c:\\ -Force ; Remove-Item %TMP%\\python.zip -Force ; `
 	Invoke-WebRequest -URI https://www.python.org/ftp/python/3.8.10/python-3.8.10-embed-amd64.zip -OutFile %TMP%\\python-for-build.zip -Proxy %HTTPS_PROXY% ; `
@@ -8,6 +9,7 @@ RUN powershell.exe -Command `
 	Expand-Archive -Path %TMP%\\libffi.zip -DestinationPath c:\\ -Force ; Remove-Item %TMP%\\libffi.zip -Force
 {% else %}
 RUN powershell.exe -Command `
+        $ProgressPreference = 'SilentlyContinue' ; `
 	Invoke-WebRequest -URI https://github.com/python/cpython/archive/refs/tags/v3.8.12.zip -OutFile %TMP%\\python.zip ; `
 	Expand-Archive -Path %TMP%\\python.zip -DestinationPath c:\\ -Force ; Remove-Item %TMP%\\python.zip -Force ; `
 	Invoke-WebRequest -URI https://www.python.org/ftp/python/3.8.10/python-3.8.10-embed-amd64.zip -OutFile %TMP%\\python-for-build.zip ; `
