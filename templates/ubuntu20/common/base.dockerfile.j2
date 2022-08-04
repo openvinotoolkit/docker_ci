@@ -48,9 +48,15 @@ WORKDIR /thirdparty
 
 ARG INSTALL_SOURCES="no"
 
+{% if 'runtime' == distribution %}
+ARG DEPS="tzdata \
+          curl"
+{% else %}
 ARG DEPS="tzdata \
           curl \
           libopencv-dev"
+{% endif %}
+
 {% if 'runtime' == distribution %}
 ARG LGPL_DEPS="g++ \
                gcc"

@@ -276,7 +276,7 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
                          omz_rev, omz_fork):
     if 'win' in image_os:
         commands = [
-            f'powershell -file %INTEL_OPENVINO_DIR%\\\\extras\\\\scripts\\\\download_opencv.ps1 -batch"',
+            'powershell -file %INTEL_OPENVINO_DIR%\\\\extras\\\\scripts\\\\download_opencv.ps1 -batch"',
             'cmd /S /C curl -kL --output MinGit.zip '
             'https://github.com/git-for-windows/git/releases/download/v2.35.1.windows.1/MinGit-2.35.1-64-bit.zip && '
             'powershell -Command Expand-Archive MinGit.zip -DestinationPath c:\\\\MinGit &&'
@@ -292,7 +292,7 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
         if 'custom' not in distribution:
             install_dependencies = ''
             if 'ubuntu' in image_os:
-                install_dependencies = 'apt update && apt install -y git build-essential'
+                install_dependencies = 'apt update && apt install -y git build-essential libopencv-dev'
             elif 'rhel' in image_os:
                 install_dependencies = 'yum update -y && yum install -y git make'
 
