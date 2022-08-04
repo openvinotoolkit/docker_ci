@@ -292,13 +292,7 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
         if 'custom' not in distribution:
             install_dependencies = ''
             if 'ubuntu' in image_os:
-                install_dependencies = 'apt update && apt install -y git build-essential '
-                if image_os == 'ubuntu18':
-                    install_dependencies += ('libopencv-core3.2 libopencv-imgcodecs3.2 libopencv-imgproc3.2 '
-                                             'libopencv-videoio3.2 libopencv-highgui3.2')
-                elif image_os == 'ubuntu20':
-                    install_dependencies += ('libopencv-core4.2 libopencv-imgcodecs4.2 libopencv-imgproc4.2 '
-                                             'libopencv-videoio4.2 libopencv-highgui4.2')
+                install_dependencies = 'apt update && apt install -y git build-essential libopencv-dev'
             elif 'rhel' in image_os:
                 install_dependencies = 'yum update -y && yum install -y git make'
 
