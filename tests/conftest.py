@@ -32,7 +32,7 @@ def pytest_addoption(parser):
                                                           'openvino folder to search for OpenVINO wheels')
     parser.addoption('--product_version', action='store', help='Setup a product_version for check')
     parser.addoption('--wheels_version', action='store', help='Setup a version specifier for OpenVINO wheels')
-    parser.addoption('--opencv_download_server', action='store', help='Setup an URL of OpenCV download server')
+    parser.addoption('--omz_fork', action='store', help='Setup repo of Open Model Zoo repository')
     parser.addoption('--omz_rev', action='store', help='Setup a branch or commit hash in the Open Model Zoo repository '
                                                        'to download demos (default is the release branch corresponding '
                                                        'to product_version or master)')
@@ -250,6 +250,11 @@ def omz_rev(request):
 
 
 @pytest.fixture(scope='session')
+def omz_fork(request):
+    return request.config.getoption('--omz_fork', default='openvinotoolkit')
+
+
+@pytest.fixture(scope='session')
 def docker_api():
     return DockerAPI()
 
@@ -267,17 +272,16 @@ def dev_root(request):
 
 
 @pytest.fixture(scope='session')
-def install_omz_commands(request, bash, image_os, distribution, opencv_download_server_var, install_openvino_dev_wheel,
-                         omz_rev):
+def install_omz_commands(request, bash, image_os, distribution, install_openvino_dev_wheel,
+                         omz_rev, omz_fork):
     if 'win' in image_os:
         commands = [
-            f'cmd /V /C "set {opencv_download_server_var}&& '
             f'powershell -file %INTEL_OPENVINO_DIR%\\\\extras\\\\scripts\\\\download_opencv.ps1 -batch"',
             'cmd /S /C curl -kL --output MinGit.zip '
             'https://github.com/git-for-windows/git/releases/download/v2.35.1.windows.1/MinGit-2.35.1-64-bit.zip && '
             'powershell -Command Expand-Archive MinGit.zip -DestinationPath c:\\\\MinGit &&'
             'c:\\\\MinGit\\\\cmd\\\\git.exe clone --recurse-submodules --shallow-submodules '
-            'https://github.com/openvinotoolkit/open_model_zoo.git C:\\\\intel\\\\openvino\\\\open_model_zoo',
+            f'https://github.com/{omz_fork}/open_model_zoo.git C:\\\\intel\\\\openvino\\\\open_model_zoo',
             f'cmd /S /C cd C:\\\\intel\\\\openvino\\\\open_model_zoo && '
             f'c:\\\\MinGit\\\\cmd\\\\git.exe checkout {omz_rev}',
             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
@@ -297,7 +301,7 @@ def install_omz_commands(request, bash, image_os, distribution, opencv_download_
             commands = [bash(f'{install_dependencies} && '
                              f'{install_dev_wheel} && '
                              f'git clone --recurse-submodules --shallow-submodules '
-                             'https://github.com/openvinotoolkit/open_model_zoo.git && '
+                             f'https://github.com/{omz_fork}/open_model_zoo.git && '
                              f'cd open_model_zoo && git checkout {omz_rev} && cd .. && '
                              'ln -s open_model_zoo/demos demos',
                              ),
@@ -368,12 +372,6 @@ def bash(request):
         else:
             return f'/bin/bash -c "{command}"'
     return _bash
-
-
-@pytest.fixture(scope='session')
-def opencv_download_server_var(request):
-    opencv_server_url = request.config.getoption('--opencv_download_server')
-    return f'OPENVINO_OPENCV_DOWNLOAD_SERVER={opencv_server_url}' if opencv_server_url else ''
 
 
 @pytest.fixture()
