@@ -54,7 +54,11 @@ ARG DEPS="tzdata \
 {% else %}
 ARG DEPS="tzdata \
           curl \
-          libopencv-dev"
+          libopencv-core3.2 \
+          libopencv-imgcodecs3.2 \
+          libopencv-imgproc3.2 \
+          libopencv-videoio3.2 \
+          libopencv-highgui3.2"
 {% endif %}
 
 {% if 'runtime' == distribution %}
