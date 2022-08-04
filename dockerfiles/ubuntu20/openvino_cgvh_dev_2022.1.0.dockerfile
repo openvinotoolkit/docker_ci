@@ -102,7 +102,8 @@ WORKDIR /thirdparty
 ARG INSTALL_SOURCES="no"
 
 ARG DEPS="tzdata \
-          curl"
+          curl \
+          libopencv-dev"
 
 ARG LGPL_DEPS="g++ \
                gcc \

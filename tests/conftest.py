@@ -295,7 +295,6 @@ def install_omz_commands(request, bash, image_os, distribution, opencv_download_
             install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
 
             commands = [bash(f'{install_dependencies} && '
-                             f'{opencv_download_server_var} extras/scripts/download_opencv.sh && '
                              f'{install_dev_wheel} && '
                              f'git clone --recurse-submodules --shallow-submodules '
                              'https://github.com/openvinotoolkit/open_model_zoo.git && '
