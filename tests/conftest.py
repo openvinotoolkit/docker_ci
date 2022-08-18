@@ -292,7 +292,9 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
         if 'custom' not in distribution:
             install_dependencies = ''
             if 'ubuntu' in image_os:
-                install_dependencies = 'apt update && apt install -y git build-essential libopencv-dev'
+                install_dependencies = 'apt update && apt install -y git build-essential'
+                if distribution = "runtime":
+>                     install_dependencies = install_dependencies + ' && apt install -y libopencv-dev'
             elif 'rhel' in image_os:
                 install_dependencies = 'yum update -y && yum install -y git make'
 
