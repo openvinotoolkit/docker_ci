@@ -9,10 +9,13 @@ import re
 import subprocess  # nosec
 import sys
 import typing
+import logging
 
 from utils.loader import INTEL_OPENVINO_VERSION
 from utils.utilities import (check_internal_local_path,
                              check_printable_utf8_chars)
+
+logger = logging.getLogger(__name__)
 
 
 class DockerCIArgumentParser(argparse.ArgumentParser):
@@ -389,7 +392,7 @@ def parse_args(name: str, description: str):  # noqa
             possible_os.update(filter(lambda os: os in args.package_url, parser.SUPPORTED_OS))
         if hasattr(args, 'tags') and args.tags:
             for tag in args.tags:
-                possible_os.update(filter(lambda os: os in tag, parser.SUPPORTED_OS))
+                possible_os.update(filter(lambda os: os in tag, parser.SUPPORTED_OS))  # noqa: B023
         if len(possible_os) == 1:
             args.os = possible_os.pop()
         else:
@@ -409,10 +412,10 @@ def parse_args(name: str, description: str):  # noqa
                      ' by default.')
 
     if args.mode == 'test' and 'runtime' in args.distribution and not args.package_url:
-        print('\nYou can run samples/demos on runtime docker image. '
-              'Please provide --package_url key with path to dev distribution package in '
-              'http/https/ftp access scheme or a local file in the project location as dependent package '
-              'to run all available tests.\n')
+        logger.info('\nYou can run samples/demos on runtime docker image. '
+                    'Please provide --package_url key with path to dev distribution package in '
+                    'http/https/ftp access scheme or a local file in the project location as dependent package '
+                    'to run all available tests.\n')
 
     if args.mode in ('deploy', 'all') and not hasattr(args, 'registry'):
         parser.error('Option --registry is mandatory for this mode.')
@@ -518,7 +521,7 @@ def parse_args(name: str, description: str):  # noqa
                 args.product_version = dev_version.group(1)
                 args.build_id = args.product_version
             else:
-                build_id = re.search(r'p_(\d{4}\.\d\.\d)\.(\d{3})', args.package_url)
+                build_id = re.search(r'_(\d{4}\.\d\.\d)\.(\d{3,4})', args.package_url)
                 if build_id:
                     # save product version YYYY.U.V.BBB
                     args.build_id = '.'.join(build_id.groups())

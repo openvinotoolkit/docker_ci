@@ -1,10 +1,9 @@
 # Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 {%- if 'docker' == rhel_platform %}
-FROM registry.access.redhat.com/ubi8:8.4 AS base
+FROM registry.access.redhat.com/ubi8:8.5 AS base
 {% else %}
-FROM registry.access.redhat.com/ubi8:8.4
-
+FROM registry.access.redhat.com/ubi8:8.5
 LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
       vendor="Intel Corporation" \
@@ -26,14 +25,6 @@ WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-{% if 'docker' == rhel_platform %}
-ARG SUBSCRIPTION_ORG=
-ARG SUBSCRIPTION_KEY=
-
-RUN subscription-manager register --org=$SUBSCRIPTION_ORG --activationkey=$SUBSCRIPTION_KEY && subscription-manager attach && \
-    subscription-manager release --set="$(cat /etc/*release | grep VERSION_ID | cut -f2 -d'"')"
-{% endif %}
-
 {% for pre_command in pre_commands %}
 {{ pre_command|safe }}
 {% endfor %}
@@ -42,7 +33,7 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 
 {% if 'docker' == rhel_platform %}
 # -----------------
-FROM registry.access.redhat.com/ubi8:8.4 AS ov_base
+FROM registry.access.redhat.com/ubi8:8.5 AS ov_base
 
 LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
@@ -57,11 +48,6 @@ USER root
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-ARG SUBSCRIPTION_ORG=
-ARG SUBSCRIPTION_KEY=
-
-RUN subscription-manager register --org=$SUBSCRIPTION_ORG --activationkey=$SUBSCRIPTION_KEY && subscription-manager attach && \
-    subscription-manager release --set="$(cat /etc/*release | grep VERSION_ID | cut -f2 -d'"')"
 {% endif %}
 
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
@@ -70,7 +56,6 @@ RUN sed -ri -e 's@^UMASK[[:space:]]+[[:digit:]]+@UMASK 000@g' /etc/login.defs &&
     chown openvino -R /home/openvino
 
 {% if 'docker' == rhel_platform %}
-RUN mkdir /opt/intel
 
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
@@ -127,7 +112,7 @@ RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
 
 # Post-installation cleanup and setting up OpenVINO environment variables
 {% if 'docker' == rhel_platform  %}
-RUN rm -rf /tmp && mkdir /tmp && subscription-manager unregister
+RUN rm -rf /tmp && mkdir /tmp 
 {% elif 'openshift' == rhel_platform %}
 RUN rm -rf /tmp && mkdir /tmp && rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 {% else %}

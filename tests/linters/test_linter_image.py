@@ -4,11 +4,15 @@
 import pathlib
 import subprocess  # nosec
 import sys
+import logging
 
 import pytest
 
 from utils.loader import DIVE_URL
 from utils.utilities import download_file, unzip_file
+
+
+logger = logging.getLogger(__name__)
 
 
 class TestLinterImage:
@@ -22,7 +26,7 @@ class TestLinterImage:
         if process.returncode != 0:
             pytest.fail(f'Linter dive issues: {process.stdout.decode()}')
         else:
-            print(f'Linter dive output: {process.stdout.decode()}')
+            logger.info(f'Linter dive output: {process.stdout.decode()}')
 
     @pytest.mark.skipif(not sys.platform.startswith('win32'), reason="Linux doesn't support windows executable files")
     def test_dive_windows(self, image):
@@ -36,7 +40,7 @@ class TestLinterImage:
         if process.returncode != 0:
             pytest.fail(f'Linter dive issues: {process.stdout.decode()}')
         else:
-            print(f'Linter dive output: {process.stdout.decode()}')
+            logger.info(f'Linter dive output: {process.stdout.decode()}')
 
     @pytest.mark.skipif(not (sys.platform.startswith('linux') or sys.platform.startswith('darwin')),
                         reason='Windows has separate windows/linux docker images engine')

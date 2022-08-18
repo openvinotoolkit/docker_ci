@@ -144,7 +144,7 @@ RUN if [ "$INSTALL_SOURCES" = "yes" ]; then \
     fi
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
-RUN curl -L https://github.com/openvinotoolkit/docker_ci/blob/releases/2022/1/dockerfiles/rhel8/third-party-programs-docker-runtime.txt --output third-party-programs-docker-runtime.txt
+RUN curl -L https://raw.githubusercontent.com/openvinotoolkit/docker_ci/releases/2022/1/dockerfiles/rhel8/third-party-programs-docker-runtime.txt --output third-party-programs-docker-runtime.txt
 
 # for CPU
 

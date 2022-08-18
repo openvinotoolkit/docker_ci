@@ -9,12 +9,15 @@ import typing
 from urllib.request import Request, urlopen
 from urllib.error import URLError
 from ..loader import INTEL_OPENVINO_VERSION
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def check_and_print_error(cond, error_msg: str) -> bool:
     """Check condition and print specified error message if it false"""
     if not cond:
-        print(error_msg)
+        logger.info(error_msg)
     return bool(cond)
 
 
@@ -67,7 +70,7 @@ def check_release_links(product_version: str) -> typing.Set[bool]:
             except URLError:
                 results.add(check_and_print_error(False, f'{prefix} timeout error'))
 
-    print(f'{product_version} - done')
+    logger.info(f'{product_version} - done')
     return results
 
 
@@ -90,9 +93,9 @@ if __name__ == '__main__':
             results_set = results_set.union(check_release_links(version))
 
     if len(results_set) == 1 and next(iter(results_set)):
-        print('SUCCESS')
+        logger.info('SUCCESS')
         exit_code = 0
     else:
-        print('FAILED')
+        logger.info('FAILED')
         exit_code = -1
     sys.exit(exit_code)
