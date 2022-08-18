@@ -21,5 +21,4 @@ COPY --from=opencv /opt/repo/opencv/build/install ${INTEL_OPENVINO_DIR}/extras/o
 RUN  cp -r "${INTEL_OPENVINO_DIR}/extras/opencv/python/python3" "${INTEL_OPENVINO_DIR}/python"; \
      rm -r "${INTEL_OPENVINO_DIR}/extras/opencv/python"; \
      echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
-     echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
-     python3 -m pip uninstall -y opencv-python
+     echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"
