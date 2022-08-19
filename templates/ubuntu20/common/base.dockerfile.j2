@@ -59,7 +59,7 @@ RUN apt-get update; \
         libgstreamer-plugins-base1.0-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install numpy
+RUN python3 -m pip install numpy==1.19.5
 
 ARG OPENCV_BRANCH="4.6.0"
 
