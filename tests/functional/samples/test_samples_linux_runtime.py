@@ -292,7 +292,7 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('python3 -m pip install --no-cache-dir cmake setuptools opencv-python && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel(),
