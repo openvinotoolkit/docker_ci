@@ -298,7 +298,7 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
             elif 'rhel' in image_os:
                 install_dependencies = 'yum update -y && yum install -y git make'
 
-            install_dev_wheel = install_openvino_dev_wheel('[caffe,tensorflow]') if distribution == 'runtime' else 'true'
+            install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
 
             commands = [bash(f'{install_dependencies} && '
                              f'{install_dev_wheel} && '
