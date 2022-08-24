@@ -15,12 +15,6 @@ LABEL name="rhel8_{{ distribution }}" \
 
 # hadolint ignore=DL3002
 USER root
-{% if 'openshift' == rhel_platform %}
-COPY entitlement.pem /etc/pki/entitlement
-COPY entitlement-key.pem /etc/pki/entitlement
-COPY ./rhsm-conf /etc/rhsm
-COPY ./rhsm-ca /etc/rhsm/ca
-{% endif %}
 WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
@@ -38,8 +32,11 @@ FROM base as opencv
 LABEL description="This is the dev image for OpenCV building with OpenVINO Runtime backend"
 LABEL vendor="Intel Corporation"
 
-COPY entitlement /etc/pki/entitlement
-COPY rhsm /etc/rhsm
+{% if 'autobuild' != rhel_platform %}
+COPY ./entitlement /etc/pki/entitlement
+COPY ./rhsm-conf /etc/rhsm
+COPY ./rhsm-ca /etc/rhsm/ca
+{% endif %}
 
 RUN subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
