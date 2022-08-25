@@ -145,9 +145,9 @@ def tester(request):
 def omz_demos_lin_cpu_tester(request, image, install_omz_commands):
     registry = request.config.getoption('--registry', default='')
     kwargs = {'mem_limit': '4g'}
-    # mount subscription entitlement on rhel hosts 
+    # mount subscription entitlement on rhel hosts
     if os.path.exists('/etc/rhsm') and os.path.exists('/etc/pki/entitlement'):
-        kwargs["volumes"] = ['/etc/pki/entitlement:/etc/pki/entitlement', '/etc/rhsm:/etc/rhsm']
+        kwargs['volumes'] = ['/etc/pki/entitlement:/etc/pki/entitlement', '/etc/rhsm:/etc/rhsm']
     tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_cpu_tester', install_omz_commands, registry,
                                               **kwargs)
     yield tester
@@ -168,10 +168,11 @@ def omz_demos_win_cpu_tester(request, image, install_omz_commands, gpu_kwargs):
 def omz_demos_lin_gpu_tester(request, image, install_omz_commands, gpu_kwargs):
     registry = request.config.getoption('--registry', default='')
     kwargs = dict(mem_limit='4g', **gpu_kwargs)
-    # mount subscription entitlement on rhel hosts 
+    # mount subscription entitlement on rhel hosts
     if os.path.exists('/etc/rhsm') and os.path.exists('/etc/pki/entitlement'):
-        kwargs["volumes"] = ['/etc/pki/entitlement:/etc/pki/entitlement', '/etc/rhsm:/etc/rhsm']    
-    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_gpu_tester', install_omz_commands, registry, **kwargs)
+        kwargs['volumes'] = ['/etc/pki/entitlement:/etc/pki/entitlement', '/etc/rhsm:/etc/rhsm']
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_gpu_tester', install_omz_commands, registry,
+                                              **kwargs)
     yield tester
     tester.stop()
 
@@ -182,7 +183,8 @@ def omz_demos_lin_vpu_tester(request, image, install_omz_commands):
     kwargs = {'device_cgroup_rules': ['c 189:* rmw'],
               'volumes': ['/dev/bus/usb:/dev/bus/usb'],
               'mem_limit': '4g'}  # nosec # noqa: S108
-    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_vpu_tester', install_omz_commands, registry, **kwargs)
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_vpu_tester', install_omz_commands, registry,
+                                              **kwargs)
     yield tester
     tester.stop()
 
@@ -193,7 +195,8 @@ def omz_demos_lin_hddl_tester(request, image, install_omz_commands):
     kwargs = {'devices': ['/dev/ion:/dev/ion'],
               'volumes': ['/var/tmp:/var/tmp', '/dev/shm:/dev/shm'],  # nosec # noqa: S108
               'mem_limit': '4g'}
-    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_hddl_tester', install_omz_commands, registry, **kwargs)
+    tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_hddl_tester', install_omz_commands, registry,
+                                              **kwargs)
     yield tester
     tester.stop()
 
@@ -301,7 +304,11 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
             elif 'rhel' in image_os:
                 install_dependencies = 'yum install -y git make'
                 if distribution == 'runtime':
-                    install_dependencies = install_dependencies + ' && yum install -y opencv https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/opencv-devel-3.4.6-6.el8.x86_64.rpm && pip3 install opencv-python'
+                    install_dependencies = (install_dependencies + ' &&'
+                                            'yum install -y opencv '
+                                            'https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/'
+                                            'opencv-devel-3.4.6-6.el8.x86_64.rpm'
+                                            ' && pip3 install opencv-python')
 
             install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
 
