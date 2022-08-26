@@ -145,6 +145,9 @@ def tester(request):
 def omz_demos_lin_cpu_tester(request, image, install_omz_commands):
     registry = request.config.getoption('--registry', default='')
     kwargs = {'mem_limit': '4g'}
+    # mount subscription entitlement on rhel hosts
+    if os.path.exists('/etc/rhsm') and os.path.exists('/etc/pki/entitlement'):
+        kwargs['volumes'] = ['/etc/pki/entitlement:/etc/pki/entitlement', '/etc/rhsm:/etc/rhsm']
     tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_cpu_tester', install_omz_commands, registry,
                                               **kwargs)
     yield tester
@@ -165,6 +168,9 @@ def omz_demos_win_cpu_tester(request, image, install_omz_commands, gpu_kwargs):
 def omz_demos_lin_gpu_tester(request, image, install_omz_commands, gpu_kwargs):
     registry = request.config.getoption('--registry', default='')
     kwargs = dict(mem_limit='4g', **gpu_kwargs)
+    # mount subscription entitlement on rhel hosts
+    if os.path.exists('/etc/rhsm') and os.path.exists('/etc/pki/entitlement'):
+        kwargs['volumes'] = ['/etc/pki/entitlement:/etc/pki/entitlement', '/etc/rhsm:/etc/rhsm']
     tester = DockerImageTesterSharedContainer(image, 'init_omz_demos_lin_gpu_tester', install_omz_commands, registry,
                                               **kwargs)
     yield tester
@@ -296,7 +302,13 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
                 if distribution == 'runtime':
                     install_dependencies = install_dependencies + ' && apt install -y libopencv-dev python3-opencv'
             elif 'rhel' in image_os:
-                install_dependencies = 'yum update -y && yum install -y git make'
+                install_dependencies = 'yum install -y git make'
+                if distribution == 'runtime':
+                    install_dependencies = (install_dependencies + ' &&'
+                                            'yum install -y opencv '
+                                            'https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/'
+                                            'opencv-devel-3.4.6-6.el8.x86_64.rpm'
+                                            ' && pip3 install opencv-python')
 
             install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
 
@@ -321,7 +333,7 @@ def install_openvino_dependencies(request):
     if 'ubuntu' in image_os:
         return '/bin/bash -ac "apt update && apt install -y build-essential curl cmake file"'
     elif 'rhel' in image_os:
-        return '/bin/bash -ac "yum update -y && yum install -y make file"'
+        return '/bin/bash -ac "yum install -y make file && pip3 install opencv-python"'
     return ''
 
 
