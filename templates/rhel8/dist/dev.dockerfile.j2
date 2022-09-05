@@ -3,7 +3,7 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 ARG OPENVINO_WHEELS_VERSION={{ product_version }}
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102
-RUN yum install -y cmake && \
+RUN yum install -y cmake git && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" && \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" ; \
@@ -28,3 +28,6 @@ RUN curl -L https://raw.githubusercontent.com/openvinotoolkit/docker_ci/master/d
 COPY --from=opencv /opt/repo/opencv/build/install ${INTEL_OPENVINO_DIR}/extras/opencv
 RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
      echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"
+
+# build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
+RUN cd ${INTEL_OPENVINO_DIR}/samples/cpp && ./build_samples.sh -i . -b build && rm -Rf build
