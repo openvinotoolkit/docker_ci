@@ -22,4 +22,4 @@ RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a
      echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"
 
 # build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
-RUN cd ${INTEL_OPENVINO_DIR}/samples/cpp && ./build_samples.sh -i . -b build && rm -Rf build
+RUN cd ${INTEL_OPENVINO_DIR}/samples/cpp && ./build_samples.sh -b build && cp -R build/intel64/Release samples_bin && rm -Rf build
