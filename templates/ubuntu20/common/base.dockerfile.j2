@@ -59,7 +59,7 @@ RUN apt-get update; \
         libgstreamer-plugins-base1.0-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install numpy==1.19.5
+RUN python3 -m pip install --no-cache-dir numpy==1.19.5
 
 ARG OPENCV_BRANCH="4.6.0"
 
@@ -68,8 +68,8 @@ WORKDIR /opt/repo
 RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
 
 WORKDIR /opt/repo/opencv/build
-# hadolint ignore=SC2046
-RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh"; \
+# hadolint ignore=SC1091
+RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     cmake -G Ninja \
     -D BUILD_INFO_SKIP_EXTRA_MODULES=ON \
     -D BUILD_EXAMPLES=OFF \
@@ -139,8 +139,8 @@ RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh"; \
     -D CPU_BASELINE=SSE4_2 \
     -D OPENCV_IPP_GAUSSIAN_BLUR=ON \
     -D WITH_INF_ENGINE=ON \
-    -D InferenceEngine_DIR=${INTEL_OPENVINO_DIR}/runtime/cmake/ \
-    -D ngraph_DIR=${INTEL_OPENVINO_DIR}/runtime/cmake/ \
+    -D InferenceEngine_DIR="${INTEL_OPENVINO_DIR}"/runtime/cmake/ \
+    -D ngraph_DIR="${INTEL_OPENVINO_DIR}"/runtime/cmake/ \
     -D INF_ENGINE_RELEASE=2022010000 \
     -D VIDEOIO_PLUGIN_LIST=ffmpeg,gstreamer,mfx \
     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--allow-shlib-undefined \

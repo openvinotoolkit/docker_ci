@@ -16,12 +16,13 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 
-# get product from local archive
+# get product from URL
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
 WORKDIR ${TEMP_DIR}
-COPY ${package_url} ${TEMP_DIR}
+# hadolint ignore=DL3020
+ADD ${package_url} ${TEMP_DIR}
 
 # install product by copying archive content
 ARG TEMP_DIR=/tmp/openvino_installer
@@ -109,7 +110,7 @@ RUN apt-get update; \
         libgstreamer-plugins-base1.0-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install numpy==1.19.5
+RUN python3 -m pip install --no-cache-dir numpy==1.19.5
 
 ARG OPENCV_BRANCH="4.6.0"
 
@@ -119,7 +120,7 @@ RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
 
 WORKDIR /opt/repo/opencv/build
 # hadolint ignore=SC2046
-RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh"; \
+RUN source "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     cmake \
     -D BUILD_INFO_SKIP_EXTRA_MODULES=ON \
     -D BUILD_EXAMPLES=OFF \
@@ -189,8 +190,8 @@ RUN . "${INTEL_OPENVINO_DIR}/setupvars.sh"; \
     -D CPU_BASELINE=SSE4_2 \
     -D OPENCV_IPP_GAUSSIAN_BLUR=ON \
     -D WITH_INF_ENGINE=ON \
-    -D InferenceEngine_DIR=${INTEL_OPENVINO_DIR}/runtime/cmake/ \
-    -D ngraph_DIR=${INTEL_OPENVINO_DIR}/runtime/cmake/ \
+    -D InferenceEngine_DIR="${INTEL_OPENVINO_DIR}"/runtime/cmake/ \
+    -D ngraph_DIR="${INTEL_OPENVINO_DIR}"/runtime/cmake/ \
     -D INF_ENGINE_RELEASE=2022010000 \
     -D VIDEOIO_PLUGIN_LIST=ffmpeg,gstreamer,mfx \
     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--allow-shlib-undefined \
@@ -215,7 +216,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
 RUN sed -ri -e 's@^UMASK[[:space:]]+[[:digit:]]+@UMASK 000@g' /etc/login.defs && \
-        grep -E "^UMASK" /etc/login.defs && useradd -ms /bin/bash -G video,users openvino && \
+	grep -E "^UMASK" /etc/login.defs && useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
 RUN mkdir /opt/intel
@@ -248,15 +249,15 @@ RUN apt-get update && \
     if [ "$INSTALL_SOURCES" = "yes" ]; then \
       sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
       apt-get update && \
-          dpkg --get-selections | grep -v deinstall | awk '{print $1}' > all_packages.txt && \
-          grep -v -f base_packages.txt all_packages.txt | while read line; do \
-          package=$(echo $line); \
-          name=(${package//:/ }); \
+	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > all_packages.txt && \
+	  grep -v -f base_packages.txt all_packages.txt | while read line; do \
+	  package=$(echo $line); \
+	  name=(${package//:/ }); \
       grep -l GPL /usr/share/doc/${name[0]}/copyright; \
       exit_status=$?; \
-          if [ $exit_status -eq 0 ]; then \
-            apt-get source -q --download-only $package;  \
-          fi \
+	  if [ $exit_status -eq 0 ]; then \
+	    apt-get source -q --download-only $package;  \
+	  fi \
       done && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
     rm /usr/lib/python3.*/lib-dynload/readline.cpython-3*-gnu.so && rm -rf /var/lib/apt/lists/*
@@ -318,15 +319,15 @@ RUN apt-get update && \
     if [ "$INSTALL_SOURCES" = "yes" ]; then \
       sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
       apt-get update && \
-          dpkg --get-selections | grep -v deinstall | awk '{print $1}' > vpu_packages.txt && \
-          grep -v -f no_vpu_packages.txt vpu_packages.txt | while read line; do \
-          package=$(echo $line); \
-          name=(${package//:/ }); \
+	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > vpu_packages.txt && \
+	  grep -v -f no_vpu_packages.txt vpu_packages.txt | while read line; do \
+	  package=$(echo $line); \
+	  name=(${package//:/ }); \
       grep -l GPL /usr/share/doc/${name[0]}/copyright; \
       exit_status=$?; \
-          if [ $exit_status -eq 0 ]; then \
-            apt-get source -q --download-only $package;  \
-          fi \
+	  if [ $exit_status -eq 0 ]; then \
+	    apt-get source -q --download-only $package;  \
+	  fi \
       done && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
     rm -rf /var/lib/apt/lists/*
@@ -370,4 +371,3 @@ ENV DEBIAN_FRONTEND=noninteractive
 CMD ["/bin/bash"]
 
 # Setup custom layers below
-

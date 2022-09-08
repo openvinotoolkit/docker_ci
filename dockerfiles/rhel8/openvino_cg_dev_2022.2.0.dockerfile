@@ -8,13 +8,14 @@ WORKDIR /
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 
-# get product from local archive
+# get product from URL
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
 
 WORKDIR ${TEMP_DIR}
-COPY ${package_url} ${TEMP_DIR}
+# hadolint ignore=DL3020
+ADD ${package_url} ${TEMP_DIR}
 
 
 # install product by copying archive content
@@ -51,7 +52,7 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 
 
 
-FROM base as opencv
+FROM base as opencv  
 LABEL description="This is the dev image for OpenCV building with OpenVINO Runtime backend"
 LABEL vendor="Intel Corporation"
 
@@ -62,8 +63,9 @@ COPY ./rhsm-ca /etc/rhsm/ca
 
 
 RUN subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
-RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm
+RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && dnf clean all
+RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm && dnf clean all
+# hadolint ignore=DL3033
 RUN yum install -y \
     gtk3-devel \
     gstreamer1-devel \
@@ -75,18 +77,19 @@ RUN yum install -y \
     python38-devel \
     python38-pip \
     gcc-c++  \
-    gcc
+    gcc && yum clean all
 
 RUN rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 
-RUN python3 -m pip install numpy==1.19.5
+RUN python3 -m pip install --no-cache-dir numpy==1.19.5
 ARG OPENCV_BRANCH="4.6.0"
 
 WORKDIR /opt/repo
 RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
 
 WORKDIR /opt/repo/opencv/build
-RUN "${INTEL_OPENVINO_DIR}/setupvars.sh"; \
+# hadolint ignore=SC2046
+RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     cmake \
     -D BUILD_INFO_SKIP_EXTRA_MODULES=ON \
     -D BUILD_EXAMPLES=OFF \
@@ -157,8 +160,8 @@ RUN "${INTEL_OPENVINO_DIR}/setupvars.sh"; \
     -D CPU_BASELINE=SSE4_2 \
     -D OPENCV_IPP_GAUSSIAN_BLUR=ON \
     -D WITH_INF_ENGINE=ON \
-    -D InferenceEngine_DIR=${INTEL_OPENVINO_DIR}/runtime/cmake/ \
-    -D ngraph_DIR=${INTEL_OPENVINO_DIR}/runtime/cmake/ \
+    -D InferenceEngine_DIR="${INTEL_OPENVINO_DIR}"/runtime/cmake/ \
+    -D ngraph_DIR="${INTEL_OPENVINO_DIR}"/runtime/cmake/ \
     -D INF_ENGINE_RELEASE=2022010000 \
     -D VIDEOIO_PLUGIN_LIST=ffmpeg,gstreamer \
     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--allow-shlib-undefined \
@@ -192,7 +195,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
 RUN sed -ri -e 's@^UMASK[[:space:]]+[[:digit:]]+@UMASK 000@g' /etc/login.defs && \
-        grep -E "^UMASK" /etc/login.defs && useradd -ms /bin/bash -G video,users openvino && \
+	grep -E "^UMASK" /etc/login.defs && useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
 
@@ -214,22 +217,22 @@ ARG INSTALL_SOURCES="no"
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
 RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > base_packages.txt && \
-        yum install -y ${LGPL_DEPS} && \
-        ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
-        if [ "$INSTALL_SOURCES" = "yes" ]; then \
-            yum install -y yum-utils && \
-                rpm -qa --qf "%{name}\n" > all_packages.txt && \
-                grep -v -f base_packages.txt all_packages.txt | while read line; do \
-                package=$(echo $line); \
-                rpm -qa $package --qf "%{name}: %{license}\n" | grep GPL; \
-                exit_status=$?; \
-                if [ $exit_status -eq 0 ]; then \
-                    yumdownloader --skip-broken --source -y $package;  \
-                fi \
-          done && \
-          yum autoremove -y yum-utils && \
+	yum install -y ${LGPL_DEPS} && \
+	${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
+	if [ "$INSTALL_SOURCES" = "yes" ]; then \
+	    yum install -y yum-utils && \
+		rpm -qa --qf "%{name}\n" > all_packages.txt && \
+		grep -v -f base_packages.txt all_packages.txt | while read line; do \
+		package=$(echo $line); \
+		rpm -qa $package --qf "%{name}: %{license}\n" | grep GPL; \
+		exit_status=$?; \
+		if [ $exit_status -eq 0 ]; then \
+		    yumdownloader --skip-broken --source -y $package;  \
+		fi \
+	  done && \
+	  yum autoremove -y yum-utils && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
-        yum clean all && rm -rf /var/cache/yum
+	yum clean all && rm -rf /var/cache/yum
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
@@ -259,8 +262,8 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 WORKDIR ${INTEL_OPENVINO_DIR}
 ARG OPENVINO_WHEELS_VERSION=2022.2.0
 ARG OPENVINO_WHEELS_URL
-# hadolint ignore=SC2102
-RUN yum install -y cmake git && \
+# hadolint ignore=SC2102,DL3033
+RUN yum install -y cmake git && yum clean all && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" && \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" ; \
@@ -287,8 +290,8 @@ RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a
      echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"
 
 # build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
-RUN cd ${INTEL_OPENVINO_DIR}/samples/cpp && \
-    ./build_samples.sh -b build && \
+WORKDIR "${INTEL_OPENVINO_DIR}"/samples/cpp
+RUN ./build_samples.sh -b build && \
     cp -R build/intel64/Release samples_bin && cp build/intel64/Release/lib/libformat_reader.so . && \
     rm -Rf build && mkdir -p build/intel64/Release/lib && mv libformat_reader.so build/intel64/Release/lib/ && rm -Rf samples_bin/lib/
 
@@ -306,7 +309,7 @@ RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
 
 # Post-installation cleanup and setting up OpenVINO environment variables
 
-RUN rm -rf /tmp && mkdir /tmp
+RUN rm -rf /tmp && mkdir /tmp 
 
 
 USER openvino

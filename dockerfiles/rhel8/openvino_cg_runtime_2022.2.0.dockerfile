@@ -8,13 +8,14 @@ WORKDIR /
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 
-# get product from local archive
+# get product from URL
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
 
 WORKDIR ${TEMP_DIR}
-COPY ${package_url} ${TEMP_DIR}
+# hadolint ignore=DL3020
+ADD ${package_url} ${TEMP_DIR}
 
 
 # install product by copying archive content
@@ -72,7 +73,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
 RUN sed -ri -e 's@^UMASK[[:space:]]+[[:digit:]]+@UMASK 000@g' /etc/login.defs && \
-        grep -E "^UMASK" /etc/login.defs && useradd -ms /bin/bash -G video,users openvino && \
+	grep -E "^UMASK" /etc/login.defs && useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
 
@@ -91,22 +92,22 @@ ARG INSTALL_SOURCES="no"
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
 RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > base_packages.txt && \
-        yum install -y ${LGPL_DEPS} && \
-        ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
-        if [ "$INSTALL_SOURCES" = "yes" ]; then \
-            yum install -y yum-utils && \
-                rpm -qa --qf "%{name}\n" > all_packages.txt && \
-                grep -v -f base_packages.txt all_packages.txt | while read line; do \
-                package=$(echo $line); \
-                rpm -qa $package --qf "%{name}: %{license}\n" | grep GPL; \
-                exit_status=$?; \
-                if [ $exit_status -eq 0 ]; then \
-                    yumdownloader --skip-broken --source -y $package;  \
-                fi \
-          done && \
-          yum autoremove -y yum-utils && \
+	yum install -y ${LGPL_DEPS} && \
+	${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
+	if [ "$INSTALL_SOURCES" = "yes" ]; then \
+	    yum install -y yum-utils && \
+		rpm -qa --qf "%{name}\n" > all_packages.txt && \
+		grep -v -f base_packages.txt all_packages.txt | while read line; do \
+		package=$(echo $line); \
+		rpm -qa $package --qf "%{name}: %{license}\n" | grep GPL; \
+		exit_status=$?; \
+		if [ $exit_status -eq 0 ]; then \
+		    yumdownloader --skip-broken --source -y $package;  \
+		fi \
+	  done && \
+	  yum autoremove -y yum-utils && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
-        yum clean all && rm -rf /var/cache/yum
+	yum clean all && rm -rf /var/cache/yum
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
@@ -136,7 +137,8 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 WORKDIR ${INTEL_OPENVINO_DIR}
 ARG OPENVINO_WHEELS_VERSION=2022.2.0
 ARG OPENVINO_WHEELS_URL
-RUN yum install -y cmake && \
+# hadolint ignore=DL3033
+RUN yum install -y cmake && yum clean all && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" ; \
     else \
@@ -168,7 +170,7 @@ RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
 
 # Post-installation cleanup and setting up OpenVINO environment variables
 
-RUN rm -rf /tmp && mkdir /tmp
+RUN rm -rf /tmp && mkdir /tmp 
 
 
 USER openvino
