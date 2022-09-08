@@ -3,7 +3,7 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 ARG OPENVINO_WHEELS_VERSION={{ product_version }}
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102
-RUN apt-get update && apt-get install -y --no-install-recommends cmake git && rm -rf /var/lib/apt/lists/* && \
+RUN apt-get update && apt-get install -y --no-install-recommends cmake make git && rm -rf /var/lib/apt/lists/* && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" && \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" ; \
