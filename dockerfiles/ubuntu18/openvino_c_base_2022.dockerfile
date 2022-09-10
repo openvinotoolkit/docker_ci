@@ -17,15 +17,30 @@ RUN apt-get update && \
       python3-pip && \
       rm -rf /var/lib/apt/lists/*
 
-ARG PUBLIC_KEY="https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB"
-ARG APT_REPOSITORY="deb https://apt.repos.intel.com/openvino/2022 bionic main"
-ARG BUILD_ID
-# Install full package
-RUN curl -O ${PUBLIC_KEY} && \
-    apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB && \
-    echo ${APT_REPOSITORY} | tee /etc/apt/sources.list.d/intel-openvino-2022.list && \
-    apt-get update && apt-get install -y --no-install-recommends "openvino-${BUILD_ID}" && \
-    rm -rf /var/lib/apt/lists/*
+# get product from URL
+ARG package_url
+ARG TEMP_DIR=/tmp/openvino_installer
+
+WORKDIR ${TEMP_DIR}
+# hadolint ignore=DL3020
+ADD ${package_url} ${TEMP_DIR}
+
+# install product by copying archive content
+ARG TEMP_DIR=/tmp/openvino_installer
+ENV INTEL_OPENVINO_DIR /opt/intel/openvino
+ARG build_id
+
+RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
+    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d.\d+')" && \
+    OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
+    OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
+    mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
+    cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
+    rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
+    rm -rf ${INTEL_OPENVINO_DIR}/tools/workbench && rm -rf ${TEMP_DIR}
+
 
 # Install Python and some dependencies for deployment manager
 # hadolint ignore=DL3013
@@ -44,13 +59,13 @@ RUN cp -r /opt/intel/openvino_2022/runtime/cmake . && \
     cp -r /opt/intel/openvino_2022/runtime/lib/intel64/libopenvino_tensorflow_fe.so .
 
 # Replace full package by CPU package
-RUN rm -r /opt/intel/ && mkdir -p "/opt/intel/openvino_${BUILD_ID}" && \
-    tar -xf /openvino_pkg/openvino_deploy_package.tar.gz -C "/opt/intel/openvino_${BUILD_ID}" && \
-    ln --symbolic "/opt/intel/openvino_${BUILD_ID}" /opt/intel/openvino_2022 && \
-    ln --symbolic "/opt/intel/openvino_${BUILD_ID}" /opt/intel/openvino && \
-    mv /cmake /opt/intel/openvino_2022/runtime/cmake && \
-    mv /include /opt/intel/openvino_2022/runtime/include && \
-    mv libopenvino_tensorflow_fe.so /opt/intel/openvino_2022/runtime/lib/intel64
+RUN rm -r /opt/intel/ && mkdir -p "/opt/intel/openvino_${build_id}" && \
+    tar -xf "${TEMP_DIR}"/openvino_pkg/openvino_deploy_package.tar.gz -C "/opt/intel/openvino_${build_id}" && \
+    ln --symbolic "/opt/intel/openvino_${build_id}" /opt/intel/openvino_2022 && \
+    ln --symbolic "/opt/intel/openvino_${build_id}" /opt/intel/openvino && \
+    mv "${TEMP_DIR}"/cmake /opt/intel/openvino_2022/runtime/cmake && \
+    mv "${TEMP_DIR}"/include /opt/intel/openvino_2022/runtime/include && \
+    mv "${TEMP_DIR}"/libopenvino_tensorflow_fe.so /opt/intel/openvino_2022/runtime/lib/intel64
 
 FROM ubuntu:18.04
 
@@ -66,7 +81,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       curl \
       g++ \
-      cmake && \
+      cmake \
+      python3 && \
       rm -rf /var/lib/apt/lists/*
 
 # Creating user openvino
