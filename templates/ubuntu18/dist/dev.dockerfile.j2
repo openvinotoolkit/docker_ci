@@ -2,6 +2,8 @@
 WORKDIR ${INTEL_OPENVINO_DIR}
 ARG OPENVINO_WHEELS_VERSION={{ product_version }}
 ARG OPENVINO_WHEELS_URL
+
+RUN apt-get update && apt-get install -y --no-install-recommends git make && rm -rf /var/lib/apt/lists/*
 # hadolint ignore=SC2102
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
@@ -20,3 +22,9 @@ COPY dockerfiles/{{os}}/third-party-programs-docker-runtime.txt ${INTEL_OPENVINO
 COPY --from=opencv /opt/repo/opencv/build/install ${INTEL_OPENVINO_DIR}/extras/opencv
 RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
      echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"
+
+# build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
+WORKDIR ${INTEL_OPENVINO_DIR}/samples/cpp 
+RUN ./build_samples.sh -b build && \
+    cp -R build/intel64/Release samples_bin && cp build/intel64/Release/lib/libformat_reader.so . && \
+    rm -Rf build && mkdir -p build/intel64/Release/lib && mv libformat_reader.so build/intel64/Release/lib/ && rm -Rf samples_bin/lib/
