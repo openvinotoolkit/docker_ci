@@ -1,4 +1,8 @@
 # install product by copying archive content
+
+# Creating user openvino and adding it to groups"users"
+RUN useradd -ms /bin/bash -G users openvino
+
 {% if 'autobuild' != rhel_platform %}
 ARG TEMP_DIR=/tmp/openvino_installer
 {% endif -%}
@@ -16,7 +20,8 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
-    rm -rf ${INTEL_OPENVINO_DIR}/tools/workbench && rm -rf ${TEMP_DIR}
+    rm -rf ${INTEL_OPENVINO_DIR}/tools/workbench && rm -rf ${TEMP_DIR} && \
+    chown -R openvino /opt/intel/openvino_"$OV_BUILD"
 {% if no_samples is defined %}
 RUN rm -rf ${INTEL_OPENVINO_DIR}/samples
 {% endif %}
