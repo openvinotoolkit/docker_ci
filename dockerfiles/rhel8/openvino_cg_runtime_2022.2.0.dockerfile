@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi8:8.5 AS base
+FROM registry.access.redhat.com/ubi8:8.6 AS base
 # hadolint ignore=DL3002
 USER root
 WORKDIR /
@@ -54,7 +54,7 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 
 
 # -----------------
-FROM registry.access.redhat.com/ubi8:8.5 AS ov_base
+FROM registry.access.redhat.com/ubi8:8.6 AS ov_base
 
 LABEL name="rhel8_runtime" \
       maintainer="openvino_docker@intel.com" \

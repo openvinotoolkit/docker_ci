@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 {%- if 'docker' == rhel_platform %}
-FROM registry.access.redhat.com/ubi8:8.5 AS base
+FROM registry.access.redhat.com/ubi8:8.6 AS base
 {% else %}
-FROM registry.access.redhat.com/ubi8:8.5
+FROM registry.access.redhat.com/ubi8:8.6
 LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
       vendor="Intel Corporation" \
@@ -152,7 +152,7 @@ CMD ["/bin/bash"]
 
 {% if 'docker' == rhel_platform %}
 # -----------------
-FROM registry.access.redhat.com/ubi8:8.5 AS ov_base
+FROM registry.access.redhat.com/ubi8:8.6 AS ov_base
 
 LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
@@ -219,7 +219,7 @@ RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > bas
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
-        echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. Please use tag <YYYY.U_src> to pull the image with downloaded sources." > DockerImage_readme.txt ; \
+        echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. They are stored in https://storage.openvinotoolkit.org/repositories/openvino/ci_dependencies/container_gpl_sources/." > DockerImage_readme.txt ; \
     fi
 
 WORKDIR /licenses
