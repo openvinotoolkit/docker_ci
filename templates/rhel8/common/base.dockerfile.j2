@@ -142,7 +142,8 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D VIDEOIO_PLUGIN_LIST=ffmpeg,gstreamer \
     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--allow-shlib-undefined \
     -D CMAKE_BUILD_TYPE=Release /opt/repo/opencv && \
-    make -j$(nproc) && cmake -P cmake_install.cmake
+    make -j$(nproc) && cmake -P cmake_install.cmake && \
+    rm -Rf install/bin install/etc/samples
 
 WORKDIR /opt/repo/opencv/build/install
 CMD ["/bin/bash"]
