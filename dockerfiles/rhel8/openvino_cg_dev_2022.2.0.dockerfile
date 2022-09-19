@@ -301,6 +301,7 @@ RUN ./build_samples.sh -b build && \
     rm -Rf build && mkdir -p build/intel64/Release/lib && mv libformat_reader.so build/intel64/Release/lib/ && rm -Rf samples_bin/lib/
 
 # add Model API package
+# hadolint ignore=DL3013
 RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
     sed -i '/opencv-python/d' open_model_zoo/demos/common/python/requirements.txt && \
     pip3 --no-cache-dir install open_model_zoo/demos/common/python/ && \
