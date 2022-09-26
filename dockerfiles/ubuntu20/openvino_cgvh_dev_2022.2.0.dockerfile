@@ -16,17 +16,19 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 
-# get product from URL
+# get product from local archive
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
 WORKDIR ${TEMP_DIR}
-# hadolint ignore=DL3020
-ADD ${package_url} ${TEMP_DIR}
+COPY ${package_url} ${TEMP_DIR}
 
 # install product by copying archive content
 ARG TEMP_DIR=/tmp/openvino_installer
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
+
+# Creating user openvino and adding it to groups"users"
+RUN useradd -ms /bin/bash -G users openvino
 
 RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d.\d+')" && \
@@ -37,7 +39,8 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
-    rm -rf ${INTEL_OPENVINO_DIR}/tools/workbench && rm -rf ${TEMP_DIR}
+    rm -rf ${INTEL_OPENVINO_DIR}/tools/workbench && rm -rf ${TEMP_DIR} && \
+    chown -R openvino /opt/intel/openvino_"$OV_BUILD"
 
 
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
@@ -198,7 +201,8 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D VIDEOIO_PLUGIN_LIST=ffmpeg,gstreamer,mfx \
     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--allow-shlib-undefined \
     -D CMAKE_BUILD_TYPE=Release /opt/repo/opencv && \
-    ninja && cmake --install .
+    ninja && cmake --install . && \
+    rm -Rf install/bin install/etc/samples
 
 WORKDIR /opt/repo/opencv/build/install
 CMD ["/bin/bash"]
@@ -268,7 +272,7 @@ RUN apt-get update && \
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
-        echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. Please use tag <YYYY.U_src> to pull the image with downloaded sources." > DockerImage_readme.txt ; \
+        echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. They are stored in https://storage.openvinotoolkit.org/repositories/openvino/ci_dependencies/container_gpl_sources/." > DockerImage_readme.txt ; \
     fi
 
 
@@ -292,7 +296,7 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 ARG OPENVINO_WHEELS_VERSION=2022.2.0
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102
-RUN apt-get update && apt-get install -y --no-install-recommends cmake git && rm -rf /var/lib/apt/lists/* && \
+RUN apt-get update && apt-get install -y --no-install-recommends cmake make git && rm -rf /var/lib/apt/lists/* && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" && \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" ; \
@@ -315,6 +319,14 @@ WORKDIR ${INTEL_OPENVINO_DIR}/samples/cpp
 RUN ./build_samples.sh -b build && \
     cp -R build/intel64/Release samples_bin && cp build/intel64/Release/lib/libformat_reader.so . && \
     rm -Rf build && mkdir -p build/intel64/Release/lib && mv libformat_reader.so build/intel64/Release/lib/ && rm -Rf samples_bin/lib/
+
+# add Model API package
+# hadolint ignore=DL3013
+RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
+    sed -i '/opencv-python/d' open_model_zoo/demos/common/python/requirements.txt && \
+    pip3 --no-cache-dir install open_model_zoo/demos/common/python/ && \
+    rm -Rf open_model_zoo && \
+    python3 -c "from openvino.model_zoo import model_api"
 
 # for CPU
 
