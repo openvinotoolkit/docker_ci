@@ -35,10 +35,8 @@ You can use Docker CI framework to build an image, please follow [Get Started wi
  **Distributions:**
 
  - **runtime**: IE core, nGraph, plugins
- - **dev**: IE core, nGraph, plugins, samples, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Open Model Zoo tools (downloader, converter)
+ - **dev**: IE core, nGraph, plugins, samples, Python dev tools: Model Optimizer, Post training Optimization tool, Accuracy checker, Open Model Zoo tools (downloader, converter), OpenCV
  - **base** (only for CPU): IE core, nGraph
-
-> **NOTE**: OpenCV is not included since OpenVINO 2022.1.0. You can install it separately using the download script in the `extras/scripts` directory (`download_opencv.sh` for Linux and `download_opencv.ps1` for Windows). 
 
 You can generate Dockerfile with your settings, please follow the [DockerHub CI documentation](../get-started.md).
  * _runtime_ and _dev_ distributions are based on archive package of OpenVINO product. You can just remove unnecessary parts.
@@ -48,8 +46,7 @@ You can generate Dockerfile with your settings, please follow the [DockerHub CI 
 
 You can get OpenVINO distribution packages (runtime, dev) directly from [public storage](https://storage.openvinotoolkit.org/repositories/openvino/packages/).
 For example: 
-* take runtime `l_openvino_toolkit_runtime_ubuntu20_p_2022.1.0.643.tgz` package and specify `-dist runtime` option for Docker CI `docker_openvino.py` or take a Dockerfile with `runtime` suffix.
-* take dev `l_openvino_toolkit_dev_ubuntu20_p_2022.1.0.643.tgz` package and specify `-dist dev` option for Docker CI `docker_openvino.py` or take a Dockerfile with `dev` suffix.
+* take 2022.2 > linux > ubuntu20 `l_openvino_toolkit_ubuntu20_2022.2.0.7713.af16ea1d79a_x86_64.tgz` package.
 
 ## How to build
 
@@ -60,12 +57,9 @@ For example:
 You can use Docker CI framework to build an image, please follow [Get Started with DockerHub CI for Intel® Distribution of OpenVINO™ toolkit](../get-started.md).
 
 ```bash
-python3 docker_openvino.py build --file "dockerfiles/ubuntu18/openvino_c_base_2020.3.dockerfile" -os ubuntu18 -dist base -p 2020.3.341
+python3 docker_openvino.py build --file "dockerfiles/ubuntu18/openvino_c_base_2022.2.0.dockerfile" -os ubuntu18 -dist base -p 2022.2.0
 ```
-Or via Docker Engine directly, but you need specify `BUILD_ID` argument:
-```bash
-docker build --build-arg BUILD_ID=2020.3.341 -t ubuntu18_base_cpu:2020.3.341 - < dockerfiles/ubuntu18/openvino_c_base_2020.3.dockerfile
-```
+
 ----------------
 
 * Dev/runtime image:
@@ -73,14 +67,14 @@ docker build --build-arg BUILD_ID=2020.3.341 -t ubuntu18_base_cpu:2020.3.341 - <
 You can use Docker CI framework to build an image, please follow [Get Started with DockerHub CI for Intel® Distribution of OpenVINO™ toolkit](../get-started.md).
 
 ```bash
-python3 docker_openvino.py build --file "dockerfiles/ubuntu18/openvino_cgvh_dev_2021.dockerfile" -os ubuntu18 -dist dev -p 2021.1
+python3 docker_openvino.py build --file "dockerfiles/ubuntu18/openvino_cgvh_dev_2022.2.0.dockerfile" -os ubuntu18 -dist dev -p 2022.2.0
 ```
 For runtime distribution, please set appropriate `-dist` and `--file` options.
 
 Or via Docker Engine directly, but you need specify `package_url` argument (see [Where to get OpenVINO package section](#where-to-get-openvino-package)):
 ```bash
-docker build --build-arg package_url=https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.4/l_openvino_toolkit_dev_ubuntu18_p_2021.4.582.tgz \
-             -t ubuntu18_dev:2021.4 -f dockerfiles/ubuntu18/openvino_cgvh_dev_2021.4.dockerfile .
+docker build --build-arg package_url=https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.2/linux/l_openvino_toolkit_ubuntu18_2022.2.0.7713.af16ea1d79a_x86_64.tgz \
+-t ubuntu18_dev:2022.2.0 -f dockerfiles/ubuntu18/openvino_cgvh_dev_2022.2.0.dockerfile .
 ```
 ----------------
 

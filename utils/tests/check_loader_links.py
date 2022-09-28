@@ -37,11 +37,13 @@ def check_release_links(product_version: str) -> typing.Set[bool]:
         for dist in packages[image_os]:
             url = packages[image_os][dist]
             prefix = f'{image_os} {dist}: {url} -'
-
             # check version and distribution suffixes
             if product_version == '2020.1' and image_os == 'ubuntu18' and dist == 'dev':
                 results.add(check_and_print_error(url.count(major_version) == 1, f'{prefix} wrong release'))
                 results.add(check_and_print_error(dist in url, f'{prefix} wrong distribution in url'))
+            elif major_version == '2022.2':
+                # Staring from 2022.2 there is only one package per OS, without dev/runtime versions
+                results.add(check_and_print_error(url.count(major_version) == 2, f'{prefix} wrong * release'))
             elif dist != 'proprietary':
                 results.add(check_and_print_error(url.count(major_version) == 2, f'{prefix} wrong release'))
                 results.add(check_and_print_error(dist in url, f'{prefix} wrong distribution in url'))

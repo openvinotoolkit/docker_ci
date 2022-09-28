@@ -41,7 +41,7 @@ With this guide, you will learn how to:
 You can use [available Dockerfiles](dockerfiles/README.md) from `<root_project>/dockerfiles/<image_os>` folder or generate Dockerfile with your settings. 
 Run the following command in the repository's root:  
 ```bash
-python3 docker_openvino.py gen_dockerfile --distribution dev --product_version 2022.1
+python3 docker_openvino.py gen_dockerfile --distribution dev --product_version 2022.2.0
 ``` 
 You can find generated dockerfile in `<root_project>/dockerfiles/<image_os>` folder. By default, Dockerfile name format is `openvino_<devices>_<distribution>_<product_version>.dockerfile`.
 
@@ -126,7 +126,7 @@ python3 docker_openvino.py build --package_url <url>
 
 By default, 'build' mode will generate a dockerfile from templates (see details in the previous section):
 ```bash
-python3 docker_openvino.py build -dist runtime -os ubuntu20 --product_version 2022.1
+python3 docker_openvino.py build -dist runtime -os ubuntu20 --product_version 2022.2.0
 ```
 but you can specify dockerfile directly:
 ```cmd
@@ -198,7 +198,7 @@ Need install pytest-xdist package before: `pip install pytest-xdist`
 
 To gen_dockerfile, build, test and deploy image, run the following command in the repository's root:  
 ```bash
-python3 docker_openvino.py all --distribution dev --product_version 2022.1 --registry docker.io/openvino 
+python3 docker_openvino.py all --distribution dev --product_version 2022.2.0 --registry docker.io/openvino 
 ``` 
 See build and tests logs in `<repository_root>/logs/<image_tag>` folder and summary.log in `<repository_root>/logs`
 
