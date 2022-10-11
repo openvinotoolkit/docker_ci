@@ -19,7 +19,8 @@ class TestDemosWindows:
              'omz_downloader --name vehicle-attributes-recognition-barrier-0039 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\', download_picture('car_1.bmp'),
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\extras\\\\opencv\\\\build\\\\setup_vars_opencv4.cmd && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\security_barrier_camera_demo '
              '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
@@ -41,7 +42,8 @@ class TestDemosWindows:
             ['omz_downloader --name person-vehicle-bike-detection-crossroad-0078 --precisions FP16 '
              '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\', download_picture('car_1.bmp'),
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\extras\\\\opencv\\\\build\\\\setup_vars_opencv4.cmd && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\crossroad_camera_demo '
              '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
@@ -57,7 +59,8 @@ class TestDemosWindows:
             ['omz_downloader --name text-detection-0004 --precision FP16 -o C:\\\\Users\\\\ContainerAdministrator\\\\'
              'Documents\\\\Intel\\\\OpenVINO\\\\omz_demos_build\\\\intel64\\\\Release\\\\',
              download_picture('car_1.bmp'),
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\extras\\\\opencv\\\\build\\\\setup_vars_opencv4.cmd && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\text_detection_demo '
              '-m_td C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
@@ -87,7 +90,8 @@ class TestDemosWindows:
             ['omz_downloader --name semantic-segmentation-adas-0001 --precision FP16 -o C:\\\\Users\\\\'
              'ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\', download_picture('car_1.bmp'),
-             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\extras\\\\opencv\\\\build\\\\setup_vars_opencv4.cmd && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'omz_demos_build\\\\intel64\\\\Release\\\\segmentation_demo '
              '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
