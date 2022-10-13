@@ -39,7 +39,8 @@ ARG HTTPS_PROXY
 WORKDIR ${INTEL_OPENVINO_DIR}
 RUN cmd /S /C curl -kL --output opencv-4.6.0-vc14_vc15.exe `
     https://github.com/opencv/opencv/releases/download/4.6.0/opencv-4.6.0-vc14_vc15.exe
-RUN opencv-4.6.0-vc14_vc15.exe -o"C:\\\\intel\\\\openvino\\\\extras\\\\" -y
+RUN powershell.exe -Command Start-Process C:\intel\openvino\opencv-4.6.0-vc14_vc15.exe `
+    -ArgumentList '-o"C:\\\\intel\\\\openvino\\\\extras\\\\" -y /quiet /norestart' -Wait
 RUN del opencv-4.6.0-vc14_vc15.exe
 
 
