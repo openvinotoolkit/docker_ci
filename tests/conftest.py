@@ -291,7 +291,6 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
             f'c:\\\\MinGit\\\\cmd\\\\git.exe checkout {omz_rev}',
             'cmd /S /C C:\\\\intel\\\\openvino\\\\setupvars.bat && '
             'cmd /S /C C:\\\\intel\\\\openvino\\\\extras\\\\opencv\\\\build\\\\setup_vars_opencv4.cmd && '
-            'set OpenCV_DIR=C:\\\\intel\\\\openvino\\\\extras\\\\opencv\\\\build && '
             'C:\\\\intel\\\\openvino\\\\open_model_zoo\\\\demos\\\\build_demos_msvc.bat',
             'python -m pip install --no-deps C:\\\\intel\\\\openvino\\\\open_model_zoo\\\\demos\\\\common\\\\python',
         ]
