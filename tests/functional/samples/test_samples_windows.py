@@ -16,7 +16,7 @@ class TestSamplesWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+            ['C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'cd C:\\\\intel\\\\openvino\\\\samples\\\\cpp && '
              'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
              'omz_downloader --name alexnet --precisions FP16 -o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\'
@@ -26,7 +26,7 @@ class TestSamplesWindows:
              '--input_model C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet\\\\alexnet.caffemodel',
              download_picture('car_1.bmp'),
-             'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
@@ -40,14 +40,14 @@ class TestSamplesWindows:
         with pytest.raises(FailedTestError):
             tester.test_docker_image(
                 image,
-                ['cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+                ['C:\\\\intel\\\\openvino\\\\setupvars.bat && '
                  'cd C:\\\\intel\\\\openvino\\\\samples\\\\cpp && '
                  'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
                  'omz_downloader --name vehicle-attributes-recognition-barrier-0039 --precisions FP16 '
                  '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
                  'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
                  download_picture('car.png'),
-                 'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+                 'C:\\\\intel\\\\openvino\\\\setupvars.bat && '
                  'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
                  'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
                  'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
@@ -66,7 +66,7 @@ class TestSamplesWindows:
         kwargs = {'user': 'ContainerAdministrator'}
         tester.test_docker_image(
             image,
-            ['cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+            ['C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'cd C:\\\\intel\\\\openvino\\\\samples\\\\cpp && '
              'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
              'omz_downloader --name alexnet --precisions FP16 -o '
@@ -80,7 +80,7 @@ class TestSamplesWindows:
              'cmd /S /C python -c "import cv2; img = cv2.imread(\'C:\\\\intel\\\\openvino\\\\samples\\\\car_1.bmp\', '
              'cv2.IMREAD_UNCHANGED); res = cv2.resize(img, (227,227)); '
              'cv2.imwrite(\'C:\\\\intel\\\\openvino\\\\samples\\\\car_1_227.bmp\', res)"',
-             'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
+             'C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
              'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\classification_sample_async '
              '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
