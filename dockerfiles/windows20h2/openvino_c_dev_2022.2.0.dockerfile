@@ -14,15 +14,17 @@ ARG HTTPS_PROXY
 
 
 # setup MSBuild 2019
-ARG VS_DIR=/temp/msbuild2019
+RUN powershell.exe -Command $ProgressPreference = 'SilentlyContinue' ; Invoke-WebRequest -URI https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile %TMP%\\vs_buildtools.exe
 
-WORKDIR ${VS_DIR}
-COPY scripts\msbuild2019\ ${VS_DIR}
-RUN vs_buildtools.exe --quiet --norestart --wait --nocache --noUpdateInstaller --noWeb `
+RUN %TMP%\\vs_buildtools.exe --quiet --norestart --wait --nocache `
+	 --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools" `
      --add Microsoft.VisualStudio.Workload.MSBuildTools `
      --add Microsoft.VisualStudio.Workload.UniversalBuildTools `
      --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended `
-     --channelUri C:\doesntExist.chman && powershell set-executionpolicy remotesigned
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 `
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 `
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 `
+     --remove Microsoft.VisualStudio.Component.Windows81SDK || IF "%ERRORLEVEL%"=="3010" EXIT 0 && powershell set-executionpolicy remotesigned
 
 # Setup Microsoft Visual C++ 2015-2019 Redistributable (x64) - 14.27.29016
 
@@ -69,15 +71,17 @@ ARG HTTPS_PROXY
 
 
 # setup MSBuild 2019
-ARG VS_DIR=/temp/msbuild2019
+RUN powershell.exe -Command $ProgressPreference = 'SilentlyContinue' ; Invoke-WebRequest -URI https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile %TMP%\\vs_buildtools.exe
 
-WORKDIR ${VS_DIR}
-COPY scripts\msbuild2019\ ${VS_DIR}
-RUN vs_buildtools.exe --quiet --norestart --wait --nocache --noUpdateInstaller --noWeb `
+RUN %TMP%\\vs_buildtools.exe --quiet --norestart --wait --nocache `
+	 --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools" `
      --add Microsoft.VisualStudio.Workload.MSBuildTools `
      --add Microsoft.VisualStudio.Workload.UniversalBuildTools `
      --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended `
-     --channelUri C:\doesntExist.chman && powershell set-executionpolicy remotesigned
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 `
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 `
+     --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 `
+     --remove Microsoft.VisualStudio.Component.Windows81SDK || IF "%ERRORLEVEL%"=="3010" EXIT 0 && powershell set-executionpolicy remotesigned
 
 # setup CMake
 
