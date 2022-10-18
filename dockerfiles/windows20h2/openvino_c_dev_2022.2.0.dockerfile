@@ -9,8 +9,6 @@ SHELL ["cmd", "/S", "/C"]
 USER ContainerAdministrator
 
 
-ARG HTTPS_PROXY
-
 
 
 # setup MSBuild 2019
@@ -30,7 +28,7 @@ RUN %TMP%\\vs_buildtools.exe --quiet --norestart --wait --nocache `
 
 RUN powershell.exe -Command `
     $ProgressPreference = 'SilentlyContinue' ; `
-    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -Proxy %HTTPS_PROXY%  -OutFile "%TMP%\vc_redist.x64.exe" ; `
+    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -OutFile "%TMP%\vc_redist.x64.exe" ; `
     Start-Process %TMP%\\vc_redist.x64.exe -ArgumentList '/quiet /norestart' -Wait ; `
     Remove-Item "%TMP%\vc_redist.x64.exe" -Force
 
@@ -38,11 +36,11 @@ RUN powershell.exe -Command `
 
 RUN powershell.exe -Command `
         $ProgressPreference = 'SilentlyContinue' ; `
-	Invoke-WebRequest -URI https://github.com/python/cpython/archive/refs/tags/v3.8.12.zip -OutFile %TMP%\\python.zip -Proxy %HTTPS_PROXY% ; `
+	Invoke-WebRequest -URI https://github.com/python/cpython/archive/refs/tags/v3.8.12.zip -OutFile %TMP%\\python.zip ; `
 	Expand-Archive -Path %TMP%\\python.zip -DestinationPath c:\\ -Force ; Remove-Item %TMP%\\python.zip -Force ; `
-	Invoke-WebRequest -URI https://www.python.org/ftp/python/3.8.10/python-3.8.10-embed-amd64.zip -OutFile %TMP%\\python-for-build.zip -Proxy %HTTPS_PROXY% ; `
+	Invoke-WebRequest -URI https://www.python.org/ftp/python/3.8.10/python-3.8.10-embed-amd64.zip -OutFile %TMP%\\python-for-build.zip ; `
 	Expand-Archive -Path %TMP%\\python-for-build.zip -DestinationPath c:\\python-38-10 -Force ; Remove-Item %TMP%\\python-for-build.zip -Force ; `
-    Invoke-WebRequest -URI https://github.com/python/cpython-bin-deps/archive/1cf06233e3ceb49dc0a73c55e04b1174b436b632.zip -OutFile %TMP%\\libffi.zip -Proxy %HTTPS_PROXY% ; `
+    Invoke-WebRequest -URI https://github.com/python/cpython-bin-deps/archive/1cf06233e3ceb49dc0a73c55e04b1174b436b632.zip -OutFile %TMP%\\libffi.zip ; `
 	Expand-Archive -Path %TMP%\\libffi.zip -DestinationPath c:\\ -Force ; Remove-Item %TMP%\\libffi.zip -Force
 
 
@@ -66,8 +64,6 @@ SHELL ["cmd", "/S", "/C"]
 USER ContainerAdministrator
 
 
-ARG HTTPS_PROXY
-
 
 
 # setup MSBuild 2019
@@ -87,7 +83,7 @@ RUN %TMP%\\vs_buildtools.exe --quiet --norestart --wait --nocache `
 
 RUN powershell.exe -Command `
     $ProgressPreference = 'SilentlyContinue' ; `
-    Invoke-WebRequest -URI https://github.com/Kitware/CMake/releases/download/v3.14.7/cmake-3.14.7-win64-x64.msi -Proxy %HTTPS_PROXY% -OutFile %TMP%\\cmake-3.14.7-win64-x64.msi ; `
+    Invoke-WebRequest -URI https://github.com/Kitware/CMake/releases/download/v3.14.7/cmake-3.14.7-win64-x64.msi -OutFile %TMP%\\cmake-3.14.7-win64-x64.msi ; `
     Start-Process %TMP%\\cmake-3.14.7-win64-x64.msi -ArgumentList '/quiet /norestart' -Wait ; `
     Remove-Item %TMP%\\cmake-3.14.7-win64-x64.msi -Force
 
@@ -97,7 +93,7 @@ RUN SETX /M PATH "C:\Program Files\CMake\Bin;%PATH%"
 
 RUN powershell.exe -Command `
     $ProgressPreference = 'SilentlyContinue' ; `
-    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -Proxy %HTTPS_PROXY%  -OutFile "%TMP%\vc_redist.x64.exe" ; `
+    Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -OutFile "%TMP%\vc_redist.x64.exe" ; `
     Start-Process %TMP%\\vc_redist.x64.exe -ArgumentList '/quiet /norestart' -Wait ; `
     Remove-Item "%TMP%\vc_redist.x64.exe" -Force
 
