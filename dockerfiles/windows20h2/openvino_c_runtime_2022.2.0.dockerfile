@@ -12,7 +12,7 @@ USER ContainerAdministrator
 
 
 # setup MSBuild 2019
-RUN powershell.exe -Command Invoke-WebRequest -URI https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile %TMP%\\vs_buildtools.exe
+RUN powershell.exe -Command $ProgressPreference = 'SilentlyContinue' ; Invoke-WebRequest -URI https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile %TMP%\\vs_buildtools.exe
 
 RUN %TMP%\\vs_buildtools.exe --quiet --norestart --wait --nocache `
 	 --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools" `
@@ -27,6 +27,7 @@ RUN %TMP%\\vs_buildtools.exe --quiet --norestart --wait --nocache `
 # Setup Microsoft Visual C++ 2015-2019 Redistributable (x64) - 14.27.29016
 
 RUN powershell.exe -Command `
+    $ProgressPreference = 'SilentlyContinue' ; `
     Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -OutFile "%TMP%\vc_redist.x64.exe" ; `
     Start-Process %TMP%\\vc_redist.x64.exe -ArgumentList '/quiet /norestart' -Wait ; `
     Remove-Item "%TMP%\vc_redist.x64.exe" -Force
@@ -34,6 +35,7 @@ RUN powershell.exe -Command `
 
 
 RUN powershell.exe -Command `
+        $ProgressPreference = 'SilentlyContinue' ; `
 	Invoke-WebRequest -URI https://github.com/python/cpython/archive/refs/tags/v3.8.12.zip -OutFile %TMP%\\python.zip ; `
 	Expand-Archive -Path %TMP%\\python.zip -DestinationPath c:\\ -Force ; Remove-Item %TMP%\\python.zip -Force ; `
 	Invoke-WebRequest -URI https://www.python.org/ftp/python/3.8.10/python-3.8.10-embed-amd64.zip -OutFile %TMP%\\python-for-build.zip ; `
@@ -53,7 +55,7 @@ RUN C:\cpython-3.8.12\PCbuild\build.bat -p x64
 # -----------------
 FROM mcr.microsoft.com/windows:20H2 AS ov_base
 
-LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows OS 20H2"
+LABEL description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Windows OS 20H2"
 LABEL vendor="Intel Corporation"
 
 # Restore the default Windows shell for correct batch processing.
@@ -64,31 +66,10 @@ USER ContainerAdministrator
 
 
 
-# setup MSBuild 2019
-RUN powershell.exe -Command Invoke-WebRequest -URI https://aka.ms/vs/16/release/vs_buildtools.exe -OutFile %TMP%\\vs_buildtools.exe
-
-RUN %TMP%\\vs_buildtools.exe --quiet --norestart --wait --nocache `
-	 --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools" `
-     --add Microsoft.VisualStudio.Workload.MSBuildTools `
-     --add Microsoft.VisualStudio.Workload.UniversalBuildTools `
-     --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended `
-     --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 `
-     --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 `
-     --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 `
-     --remove Microsoft.VisualStudio.Component.Windows81SDK || IF "%ERRORLEVEL%"=="3010" EXIT 0 && powershell set-executionpolicy remotesigned
-
-# setup CMake
-
-RUN powershell.exe -Command `
-    Invoke-WebRequest -URI https://github.com/Kitware/CMake/releases/download/v3.14.7/cmake-3.14.7-win64-x64.msi -OutFile %TMP%\\cmake-3.14.7-win64-x64.msi ; `
-    Start-Process %TMP%\\cmake-3.14.7-win64-x64.msi -ArgumentList '/quiet /norestart' -Wait ; `
-    Remove-Item %TMP%\\cmake-3.14.7-win64-x64.msi -Force
-
-RUN SETX /M PATH "C:\Program Files\CMake\Bin;%PATH%"
-
 # Setup Microsoft Visual C++ 2015-2019 Redistributable (x64) - 14.27.29016
 
 RUN powershell.exe -Command `
+    $ProgressPreference = 'SilentlyContinue' ; `
     Invoke-WebRequest -URI https://aka.ms/vs/16/release/vc_redist.x64.exe -OutFile "%TMP%\vc_redist.x64.exe" ; `
     Start-Process %TMP%\\vc_redist.x64.exe -ArgumentList '/quiet /norestart' -Wait ; `
     Remove-Item "%TMP%\vc_redist.x64.exe" -Force
@@ -135,18 +116,29 @@ RUN powershell.exe -Command if ( -not (Test-Path -Path C:\intel\openvino) ) `
 
 # for CPU
 
-# dev package
+# runtime package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2022.1.0
+ARG OPENVINO_WHEELS_VERSION=2022.2.0
 ARG OPENVINO_WHEELS_URL
 RUN IF not defined OPENVINO_WHEELS_URL ( `
-        python -m pip install --no-cache-dir openvino==%OPENVINO_WHEELS_VERSION% && `
-        python -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]==%OPENVINO_WHEELS_VERSION% --use-deprecated=legacy-resolver `
+        python -m pip install --no-cache-dir openvino==%OPENVINO_WHEELS_VERSION% `
     ) ELSE ( `
-        python -m pip install --no-cache-dir --pre openvino==%OPENVINO_WHEELS_VERSION% --trusted-host=* --find-links %OPENVINO_WHEELS_URL% && `
-        python -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]==%OPENVINO_WHEELS_VERSION% --trusted-host=* --find-links %OPENVINO_WHEELS_URL% `
+        python -m pip install --no-cache-dir --pre openvino==%OPENVINO_WHEELS_VERSION% --trusted-host=* --find-links %OPENVINO_WHEELS_URL% `
     )
 
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+# Please use `third-party-programs-docker-runtime.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
+COPY dockerfiles\windows20h2\third-party-programs-docker-runtime.txt ${INTEL_OPENVINO_DIR}/licensing
+
+
+# install opencv
+WORKDIR ${INTEL_OPENVINO_DIR}
+RUN cmd /S /C curl -kL --output opencv-4.6.0-vc14_vc15.exe `
+    https://github.com/opencv/opencv/releases/download/4.6.0/opencv-4.6.0-vc14_vc15.exe && `
+    powershell.exe -Command Start-Process C:\intel\openvino\opencv-4.6.0-vc14_vc15.exe `
+    -ArgumentList '-o"C:\\\\intel\\\\openvino\\\\extras\\\\" -y /quiet /norestart' -Wait && `
+    del opencv-4.6.0-vc14_vc15.exe
+ENV OpenCV_DIR C:\intel\openvino\extras\opencv\build
 
 RUN rmdir /s /q %INTEL_OPENVINO_DIR%\.distribution & mkdir %INTEL_OPENVINO_DIR%\.distribution && `
     copy /b NUL %INTEL_OPENVINO_DIR%\.distribution\docker

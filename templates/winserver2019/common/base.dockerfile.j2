@@ -35,6 +35,15 @@ ARG HTTPS_PROXY
 {{ command|safe }}
 {% endfor %}
 
+# install opencv
+WORKDIR ${INTEL_OPENVINO_DIR}
+RUN cmd /S /C curl -kL --output opencv-4.6.0-vc14_vc15.exe `
+    https://github.com/opencv/opencv/releases/download/4.6.0/opencv-4.6.0-vc14_vc15.exe && `
+    powershell.exe -Command Start-Process C:\intel\openvino\opencv-4.6.0-vc14_vc15.exe `
+    -ArgumentList '-o"C:\\\\intel\\\\openvino\\\\extras\\\\" -y /quiet /norestart' -Wait && `
+    del opencv-4.6.0-vc14_vc15.exe
+ENV OpenCV_DIR C:\intel\openvino\extras\opencv\build
+
 RUN rmdir /s /q %INTEL_OPENVINO_DIR%\.distribution & mkdir %INTEL_OPENVINO_DIR%\.distribution && `
     copy /b NUL %INTEL_OPENVINO_DIR%\.distribution\docker
 
