@@ -109,12 +109,13 @@ RUN setx /M path "%path%;C:\Python38;C:\Python38\Scripts"
 RUN python -m ensurepip --upgrade --default-pip && `
     python -m pip install --no-cache-dir --upgrade pip
 
-# get product from local path
+# download package from external URL
 ARG package_url
 ARG TEMP_DIR=/temp
 
 WORKDIR ${TEMP_DIR}
-COPY ${package_url} ${TEMP_DIR}
+# hadolint ignore=DL3020
+ADD ${package_url} ${TEMP_DIR}
 
 # install product by copying archive content
 ARG build_id
