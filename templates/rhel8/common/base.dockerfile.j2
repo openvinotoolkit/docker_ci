@@ -184,13 +184,13 @@ COPY --from=base /opt/intel /opt/intel
 
 {% if 'runtime' == distribution %}
 ARG LGPL_DEPS="gcc-c++"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core"
 {% else %}
 ARG LGPL_DEPS="gcc-c++ \
                glibc \
                libstdc++ \
                libgcc"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core"
 {% endif %}
 ARG INSTALL_SOURCES="no"
 

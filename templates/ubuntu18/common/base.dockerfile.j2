@@ -181,12 +181,12 @@ ARG DEPS="tzdata \
           curl"
 {% if 'runtime' == distribution %}
 ARG LGPL_DEPS=
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=core"
 {% elif 'dev' == distribution or 'dev_no_samples' == distribution %}
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=core"
 {% else %}
 ARG LGPL_DEPS="g++ \
                gcc \
