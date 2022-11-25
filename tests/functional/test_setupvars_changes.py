@@ -35,6 +35,7 @@ class TestSetupvarsChanges:
             ["/bin/bash -c 'env > /tmp/logs/env_setupvars_before.txt && "
              'source /opt/intel/openvino/setupvars.sh > /dev/null && '
              "env > /tmp/logs/env_setupvars_after.txt'",
+             '/bin/bash -c "python3 -m pip install jinja2"',
              '/bin/bash -ac "python3 /tmp/environment_vars/env_vars_changes_compare.py '
              f'-e /tmp/dist/{distribution}_env.dockerfile.j2 '
              '-b /tmp/logs/env_setupvars_before.txt -a /tmp/logs/env_setupvars_after.txt '
