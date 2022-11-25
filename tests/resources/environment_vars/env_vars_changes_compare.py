@@ -124,10 +124,12 @@ def main() -> int:
     if vars_expected != vars_current:
         exit_code = 1
         vars_changed_script = extract_changed_environment_variables(vars_before, vars_after)
-        vars_changed = extract_changed_environment_variables(vars_expected, vars_current)
+        vars_changed = extract_changed_environment_variables(vars_expected, vars_current)      
         log.error('FAILED: changes detected')
         log.error(f'    after script launch {vars_changed_script}')
-        log.error(f'    with expected {vars_changed}')
+        log.error(f'    with changed {vars_changed}')
+        log.error(f'    expected {vars_expected}')
+        log.error(f'    current {vars_current}') 
 
         expected_vars_sorted_path = pathlib.Path(args.logs) / f'sorted_{os.path.basename(args.expected)}'
         save_env_template(expected_vars_sorted_path, vars_expected)
