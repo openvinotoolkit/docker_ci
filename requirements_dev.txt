@@ -34,3 +34,4 @@ flake8-class-attributes-order
 flake8-variables-names
 flake8-functions
 Pep8-naming
+Jinja2
