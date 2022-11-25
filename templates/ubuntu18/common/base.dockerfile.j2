@@ -63,7 +63,8 @@ ARG OPENCV_BRANCH="4.6.0"
 
 
 WORKDIR /opt/repo
-RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} && git fetch 4.x && git cherry-pick 1b1bbe426277715a876878890a3dc88231b871bc
+RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} && \
+    git fetch 4.x && git cherry-pick 1b1bbe426277715a876878890a3dc88231b871bc
 
 WORKDIR /opt/repo/opencv/build
 # hadolint ignore=SC2046
