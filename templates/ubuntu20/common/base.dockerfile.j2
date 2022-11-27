@@ -63,9 +63,10 @@ RUN python3 -m pip install --no-cache-dir numpy==1.19.5
 
 ARG OPENCV_BRANCH="4.6.0"
 
-
 WORKDIR /opt/repo
-RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
+RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} && cd opencv && \
+    git fetch 4.x && \\
+    git cherry-pick 1b1bbe426277715a876878890a3dc88231b871bc
 
 WORKDIR /opt/repo/opencv/build
 # hadolint ignore=SC1091
