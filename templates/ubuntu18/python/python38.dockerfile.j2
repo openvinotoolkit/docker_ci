@@ -2,3 +2,4 @@
 ENV PYTHON_VER python3.8
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip setuptools
+RUN update-alternatives --install /usr/bin/python3 python /usr/bin/python3.8 2
