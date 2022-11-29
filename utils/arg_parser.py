@@ -105,9 +105,8 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-py',
             '--python',
-            choices=['python36', 'python37', 'python38'],
-            help='Python interpreter for docker image, currently default for OS. ubuntu18: python36, '
-                 'ubuntu20: python38, winserver2019:python37 or python38',
+            choices=['python37', 'python38'],
+            help='Python interpreter for docker image, currently default is python38',
         )
 
         parser.add_argument(
@@ -458,7 +457,7 @@ def parse_args(name: str, description: str):  # noqa
 
         if not args.python:
             if args.os in ('ubuntu18', 'rhel8'):
-                args.python = 'python36'
+                args.python = 'python38'
             else:
                 args.python = 'python38'
 
