@@ -16,16 +16,17 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 
-# get product from local archive
+# get product from URL
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
 WORKDIR ${TEMP_DIR}
-COPY ${package_url} ${TEMP_DIR}
+# hadolint ignore=DL3020
+ADD ${package_url} ${TEMP_DIR}
 
 # install product by copying archive content
 ARG TEMP_DIR=/tmp/openvino_installer
-ENV INTEL_OPENVINO_DIR /opt/intel/openvino
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
 
 # Creating user openvino and adding it to groups"users"
 RUN useradd -ms /bin/bash -G users openvino
@@ -45,13 +46,15 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
 
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
 ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
-ENV LD_LIBRARY_PATH=/opt/intel/openvino/extras/opencv/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/3rdparty/hddl/lib
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/extras/opencv/lib
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
 
 # for VPU
 ARG BUILD_DEPENDENCIES="autoconf \
@@ -115,13 +118,14 @@ RUN apt-get update; \
         libgstreamer-plugins-base1.0-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --no-cache-dir numpy==1.19.5
+RUN python3 -m pip install --no-cache-dir numpy==1.23.1
 
 ARG OPENCV_BRANCH="4.6.0"
 
-
 WORKDIR /opt/repo
-RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
+RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} && cd opencv && \
+    git fetch origin 4.x:4.x && \
+    git cherry-pick -n 1b1bbe426277715a876878890a3dc88231b871bc
 
 WORKDIR /opt/repo/opencv/build
 # hadolint ignore=SC1091
@@ -241,7 +245,7 @@ ARG DEPS="tzdata \
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=core"
 
 
 # hadolint ignore=DL3008
@@ -278,13 +282,15 @@ RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
 
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
 ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
-ENV LD_LIBRARY_PATH=/opt/intel/openvino/extras/opencv/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/3rdparty/hddl/lib
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/extras/opencv/lib
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
 
 # setup Python
 ENV PYTHON_VER python3.8
@@ -293,7 +299,7 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2022.2.0
+ARG OPENVINO_WHEELS_VERSION=2022.3.0
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102
 RUN apt-get update && apt-get install -y --no-install-recommends cmake make git && rm -rf /var/lib/apt/lists/* && \
@@ -317,7 +323,7 @@ RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a
 # build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
 WORKDIR ${INTEL_OPENVINO_DIR}/samples/cpp
 RUN ./build_samples.sh -b build && \
-    cp -R build/intel64/Release samples_bin && cp build/intel64/Release/lib/libformat_reader.so . && \
+    cp -R build/intel64/Release samples_bin && cp build/intel64/Release/libformat_reader.so . && \
     rm -Rf build && mkdir -p build/intel64/Release/lib && mv libformat_reader.so build/intel64/Release/lib/ && rm -Rf samples_bin/lib/
 
 # add Model API package
@@ -334,6 +340,8 @@ RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
 ARG TEMP_DIR=/tmp/opencl
 
 WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
+#temporary
+RUN curl https://raw.githubusercontent.com/dtrawins/openvino/install-dep/scripts/install_dependencies/install_NEO_OCL_driver.sh -o ./install_NEO_OCL_driver.sh && chmod 755 install_NEO_OCL_driver.sh 
 RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
     rm -rf /var/lib/apt/lists/*
 

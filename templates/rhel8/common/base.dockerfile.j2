@@ -57,7 +57,7 @@ RUN yum install -y \
 
 RUN rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 
-RUN python3 -m pip install --no-cache-dir numpy==1.19.5
+RUN python3 -m pip install --no-cache-dir numpy==1.23.1
 ARG OPENCV_BRANCH="4.6.0"
 
 WORKDIR /opt/repo
@@ -195,17 +195,6 @@ ARG LGPL_DEPS="gcc-c++ \
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core"
 {% endif %}
 ARG INSTALL_SOURCES="no"
-{% if 'autobuild' != rhel_platform %}
-#COPY ./entitlement /etc/pki/entitlement
-#COPY ./rhsm-conf /etc/rhsm
-#COPY ./rhsm-ca /etc/rhsm/ca
-{% endif %}
-
-#RUN subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
-#RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && dnf clean all
-#RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm && dnf clean all
-# temporary
-RUN curl https://raw.githubusercontent.com/dtrawins/openvino/install-dep/scripts/install_dependencies/install_openvino_dependencies.sh -o ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && chmod 775 ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
@@ -230,10 +219,6 @@ RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > bas
 	  yum autoremove -y yum-utils && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
 	yum clean all && rm -rf /var/cache/yum
-
-{% if 'autobuild' != rhel_platform %}
-RUN rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
-{% endif %}
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
