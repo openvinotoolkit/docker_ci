@@ -491,7 +491,7 @@ def parse_args(name: str, description: str):  # noqa
         if not args.package_url and not args.product_version:
             latest_public_version = max(INTEL_OPENVINO_VERSION.__iter__())
             args.product_version = '2022.2.0' if latest_public_version <= '2022.2.0' else latest_public_version
-        args.build_id = args.product_version
+        args.build_id = ""
 
         if not args.package_url and args.distribution not in ('base',):
             if not args.distribution or not args.product_version:

@@ -225,4 +225,4 @@ def main() -> typing.Union[int, ExitCode]:
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(str(main()))

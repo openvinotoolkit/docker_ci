@@ -1,6 +1,6 @@
 # install product by copying archive content
 ARG TEMP_DIR=/tmp/openvino_installer
-ENV INTEL_OPENVINO_DIR /opt/intel/openvino
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
 
 # Creating user openvino and adding it to groups"users"
 RUN useradd -ms /bin/bash -G users openvino
