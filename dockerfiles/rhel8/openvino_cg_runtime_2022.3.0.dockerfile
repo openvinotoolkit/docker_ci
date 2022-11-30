@@ -57,9 +57,6 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 
 
-
-
-
 # -----------------
 FROM registry.access.redhat.com/ubi8:8.6 AS ov_base
 
@@ -82,7 +79,6 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 RUN sed -ri -e 's@^UMASK[[:space:]]+[[:digit:]]+@UMASK 000@g' /etc/login.defs && \
 	grep -E "^UMASK" /etc/login.defs && useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
-
 
 
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
