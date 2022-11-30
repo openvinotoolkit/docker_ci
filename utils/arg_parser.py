@@ -527,8 +527,7 @@ def parse_args(name: str, description: str):  # noqa
                     # save product version YYYY.U.V
                     args.product_version = build_id.group(1)
                 else:
-                    parser.error(f'Cannot get build number from the package URL provided: {args.package_url}. '
-                                 f'Please specify --product_version directly.')
+                    args.build_id = args.product_version
 
         if not args.dockerfile_name:
             devices = ''.join([d[0] for d in args.device])
