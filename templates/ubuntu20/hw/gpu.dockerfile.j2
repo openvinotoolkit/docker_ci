@@ -2,7 +2,5 @@
 ARG TEMP_DIR=/tmp/opencl
 
 WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
-#temporary
-RUN curl https://raw.githubusercontent.com/dtrawins/openvino/install-dep/scripts/install_dependencies/install_NEO_OCL_driver.sh -o ./install_NEO_OCL_driver.sh && chmod 755 install_NEO_OCL_driver.sh 
 RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
     rm -rf /var/lib/apt/lists/*

@@ -3,8 +3,6 @@ RUN groupmod -g 44 video
 
 # hadolint ignore=DL3031, DL3033
 WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
-#temporary
-RUN curl https://raw.githubusercontent.com/dtrawins/openvino/install-dep/scripts/install_dependencies/install_NEO_OCL_driver.sh -o ./install_NEO_OCL_driver.sh && chmod 755 install_NEO_OCL_driver.sh
 RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
     yum clean all && rm -rf /var/cache/yum && \
     yum remove -y epel-release
