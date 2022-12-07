@@ -81,6 +81,8 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 # -----------------
 
+
+
 FROM base AS opencv
 
 LABEL description="This is the dev image for OpenCV building with OpenVINO Runtime backend"
@@ -92,7 +94,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 RUN apt-get update; \
     apt-get install -y --no-install-recommends \
         git \
-        python3-dev \
+        python3.8-dev \
         python3-pip \
         build-essential \
         cmake \
@@ -116,6 +118,8 @@ RUN apt-get update; \
         libgstreamer-plugins-base1.0-dev && \
     rm -rf /var/lib/apt/lists/*
 
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
+RUN python3 -m pip install --upgrade pip setuptools --no-cache-dir 
 RUN python3 -m pip install --no-cache-dir numpy==1.23.1
 
 ARG OPENCV_BRANCH="4.6.0"
@@ -212,6 +216,7 @@ WORKDIR /opt/repo/opencv/build/install
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 
+
 FROM ubuntu:18.04 AS ov_base
 
 LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 18.04 LTS"
@@ -245,7 +250,7 @@ ARG DEPS="tzdata \
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=core"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=core  -c=dev"
 
 
 # hadolint ignore=DL3008
@@ -253,6 +258,10 @@ RUN apt-get update && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+RUN curl https://raw.githubusercontent.com/openvinotoolkit/openvino/master/scripts/install_dependencies/install_openvino_dependencies.sh -o ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
+    chmod 775 ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
 
 # hadolint ignore=DL3008, SC2012
 RUN apt-get update && \
@@ -308,10 +317,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends git make && rm 
 RUN ${PYTHON_VER} -m pip install --no-cache-dir cmake && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
         ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" && \
-        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" ; \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --extra-index-url https://download.pytorch.org/whl/cpu; \
     else \
         ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
-        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" ; \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" --extra-index-url https://download.pytorch.org/whl/cpu; \
     fi
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
@@ -343,8 +352,6 @@ RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
 ARG TEMP_DIR=/tmp/opencl
 
 WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
-#temporary
-RUN curl https://raw.githubusercontent.com/dtrawins/openvino/install-dep/scripts/install_dependencies/install_NEO_OCL_driver.sh -o ./install_NEO_OCL_driver.sh && chmod 755 install_NEO_OCL_driver.sh
 RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
     rm -rf /var/lib/apt/lists/*
 

@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi8:8.6 AS base
+FROM registry.access.redhat.com/ubi8:8.7 AS base
 # hadolint ignore=DL3002
 USER root
 WORKDIR /
@@ -55,7 +55,7 @@ ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
 
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
-
+# -----------------
 
 
 
@@ -69,7 +69,7 @@ COPY ./rhsm-conf /etc/rhsm
 COPY ./rhsm-ca /etc/rhsm/ca
 
 
-RUN subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
+RUN rm -f /etc/rhsm-host && subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && dnf clean all
 RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm && dnf clean all
 # hadolint ignore=DL3033
@@ -187,7 +187,7 @@ CMD ["/bin/bash"]
 
 
 # -----------------
-FROM registry.access.redhat.com/ubi8:8.6 AS ov_base
+FROM registry.access.redhat.com/ubi8:8.7 AS ov_base
 
 LABEL name="rhel8_dev" \
       maintainer="openvino_docker@intel.com" \
@@ -221,9 +221,12 @@ ARG LGPL_DEPS="gcc-c++ \
                glibc \
                libstdc++ \
                libgcc"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core -c=dev"
 
 ARG INSTALL_SOURCES="no"
+
+RUN curl https://raw.githubusercontent.com/openvinotoolkit/openvino/master/scripts/install_dependencies/install_openvino_dependencies.sh -o ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
+    chmod 775 ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
@@ -244,6 +247,18 @@ RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > bas
 	  yum autoremove -y yum-utils && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
 	yum clean all && rm -rf /var/cache/yum
+
+
+COPY ./entitlement /etc/pki/entitlement
+COPY ./rhsm-conf /etc/rhsm
+COPY ./rhsm-ca /etc/rhsm/ca
+
+# patch components with vulnerabilites
+RUN rm -f /etc/rhsm-host && yum upgrade -y wavpack gstreamer1-plugins-good && yum clean all && rm -rf /var/cache/yum
+
+
+RUN  rm -Rf /etc/pki/entitlement /etc/rhsm/ca /etc/rhsm/rhsm.conf
+
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
@@ -278,11 +293,10 @@ ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102,DL3033
 RUN yum install -y cmake git && yum clean all && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
-        ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" && \
-        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" ; \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --extra-index-url https://download.pytorch.org/whl/cpu; \
     else \
         ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
-        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" ; \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" --extra-index-url https://download.pytorch.org/whl/cpu ; \
     fi
 
 # download source for PyPi LGPL packages
@@ -323,8 +337,6 @@ RUN groupmod -g 44 video
 
 # hadolint ignore=DL3031, DL3033
 WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
-#temporary
-RUN curl https://raw.githubusercontent.com/dtrawins/openvino/install-dep/scripts/install_dependencies/install_NEO_OCL_driver.sh -o ./install_NEO_OCL_driver.sh && chmod 755 install_NEO_OCL_driver.sh
 RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
     yum clean all && rm -rf /var/cache/yum && \
     yum remove -y epel-release
