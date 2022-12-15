@@ -209,6 +209,7 @@ RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > bas
 {%- endif %}
 	yum install -y ${LGPL_DEPS} && \
 	${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
+    yum remove gflags.x86_64 gflags-devel.x86_64 -y && yum install -y http://mirror.centos.org/centos/8-stream/PowerTools/x86_64/os/Packages/gflags-2.2.2-1.el8.x86_64.rpm http://mirror.centos.org/centos/8-stream/PowerTools/x86_64/os/Packages/gflags-devel-2.2.2-1.el8.x86_64.rpm && \
 	if [ "$INSTALL_SOURCES" = "yes" ]; then \
 	    yum install -y yum-utils && \
 		rpm -qa --qf "%{name}\n" > all_packages.txt && \
