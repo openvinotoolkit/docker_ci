@@ -197,8 +197,8 @@ ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core -c=dev"
 {% endif %}
 ARG INSTALL_SOURCES="no"
 
-RUN curl https://raw.githubusercontent.com/dtrawins/openvino/gflags2.2-rh/scripts/install_dependencies/install_openvino_dependencies.sh -o ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
-    chmod 775 ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+RUN sed -i -e 's|vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-devel-2.1.2-6|mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-devel-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
+    sed -i -e 's|vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-2.1.2-6|mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
