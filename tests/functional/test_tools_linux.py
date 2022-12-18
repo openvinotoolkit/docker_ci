@@ -26,7 +26,7 @@ class TestToolsLinux:
             self.test_benchmark.__name__, **kwargs,
         )
 
-    @pytest.mark.skip(reason="cl_compiler is not present in 2022.3")
+    @pytest.mark.skip(reason='cl_compiler is not present in 2022.3')
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev')], indirect=True)
     def test_cl_compiler(self, tester, image, bash):
