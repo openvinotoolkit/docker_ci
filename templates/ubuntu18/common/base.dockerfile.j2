@@ -209,9 +209,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
 
-#RUN apt-get update && apt-get install -y ca-certificates --no-install-recommends && rm -rf /var/lib/apt/lists/* && update-ca-certificates
-#RUN curl https://raw.githubusercontent.com/openvinotoolkit/openvino/master/scripts/install_dependencies/install_openvino_dependencies.sh -o ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
-#    chmod 775 ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+RUN apt-get update && apt-get install -y ca-certificates --no-install-recommends && rm -rf /var/lib/apt/lists/* && update-ca-certificates
+RUN curl https://raw.githubusercontent.com/openvinotoolkit/openvino/master/scripts/install_dependencies/install_openvino_dependencies.sh -o ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
+    chmod 775 ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
 
 # hadolint ignore=DL3008, SC2012
 RUN apt-get update && \
