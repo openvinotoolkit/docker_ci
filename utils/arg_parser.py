@@ -276,9 +276,9 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
 
 
 def fail_if_product_version_not_supported(product_version: str, parser: DockerCIArgumentParser):
-    if product_version < '2022.1':
+    if product_version < '2022.3':
         parser.error('This version of the DockerHub CI framework does not support OpenVINO releases earlier than '
-                     '2022.1.0. Please use previous versions of the DockerHub CI.')
+                     '2022.3.0. Please use previous versions of the DockerHub CI.')
 
 def parse_args(name: str, description: str):  # noqa
     """Parse all the args set up above"""
@@ -490,7 +490,7 @@ def parse_args(name: str, description: str):  # noqa
 
         if not args.package_url and not args.product_version:
             latest_public_version = max(INTEL_OPENVINO_VERSION.__iter__())
-            args.product_version = '2022.2.0' if latest_public_version <= '2022.2.0' else latest_public_version
+            args.product_version = latest_public_version
         args.build_id = ''
 
         if not args.package_url and args.distribution not in ('base',):
@@ -582,7 +582,7 @@ def parse_args(name: str, description: str):  # noqa
             args.product_version = match.group(1)
         elif args.distribution == 'custom':
             latest_public_version = list(INTEL_OPENVINO_VERSION.keys())[-1]
-            args.product_version = '2022.2.0' if latest_public_version <= '2022.2.0' else latest_public_version
+            args.product_version = latest_public_version
         else:
             parser.error('Cannot get product_version from the package URL and docker image. '
                          'Please specify --product_version directly.')
