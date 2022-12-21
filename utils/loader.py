@@ -414,7 +414,7 @@ INTEL_OPENVINO_VERSION = {
             {
                 'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.3/'
                        'linux/l_openvino_toolkit_ubuntu18_2022.3.0.9052.9752fafe8eb_x86_64.tgz',
-                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.3'
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.3/'
                        'linux/l_openvino_toolkit_ubuntu18_2022.3.0.9052.9752fafe8eb_x86_64.tgz',
             },
         'ubuntu20':
