@@ -41,17 +41,17 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     chown -R openvino /opt/intel/openvino_"$OV_BUILD"
 
 
-ENV HDDL_INSTALL_DIR=/opt/intel/openvino_/runtime/3rdparty/hddl
-ENV InferenceEngine_DIR=/opt/intel/openvino_/runtime/cmake
-ENV LD_LIBRARY_PATH=/opt/intel/openvino_/runtime/3rdparty/hddl/lib:/opt/intel/openvino_/runtime/3rdparty/tbb/lib:/opt/intel/openvino_/runtime/lib/intel64:/opt/intel/openvino_/tools/compile_tool
-ENV OpenCV_DIR=/opt/intel/openvino_/extras/opencv/cmake
+ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
+ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool
+ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONPATH=/opt/intel/openvino_/python/python3.8:/opt/intel/openvino_/python/python3:/opt/intel/openvino_/extras/opencv/python
-ENV TBB_DIR=/opt/intel/openvino_/runtime/3rdparty/tbb/cmake
-ENV ngraph_DIR=/opt/intel/openvino_/runtime/cmake
-ENV OpenVINO_DIR=/opt/intel/openvino_/runtime/cmake
-ENV INTEL_OPENVINO_DIR=/opt/intel/openvino_
-ENV PKG_CONFIG_PATH=/opt/intel/openvino_/runtime/lib/intel64/pkgconfig
+ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
+ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
+ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
 
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
@@ -141,17 +141,17 @@ WORKDIR /licenses
 RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
 
 
-ENV HDDL_INSTALL_DIR=/opt/intel/openvino_/runtime/3rdparty/hddl
-ENV InferenceEngine_DIR=/opt/intel/openvino_/runtime/cmake
-ENV LD_LIBRARY_PATH=/opt/intel/openvino_/runtime/3rdparty/hddl/lib:/opt/intel/openvino_/runtime/3rdparty/tbb/lib:/opt/intel/openvino_/runtime/lib/intel64:/opt/intel/openvino_/tools/compile_tool
-ENV OpenCV_DIR=/opt/intel/openvino_/extras/opencv/cmake
+ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
+ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool
+ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONPATH=/opt/intel/openvino_/python/python3.8:/opt/intel/openvino_/python/python3:/opt/intel/openvino_/extras/opencv/python
-ENV TBB_DIR=/opt/intel/openvino_/runtime/3rdparty/tbb/cmake
-ENV ngraph_DIR=/opt/intel/openvino_/runtime/cmake
-ENV OpenVINO_DIR=/opt/intel/openvino_/runtime/cmake
-ENV INTEL_OPENVINO_DIR=/opt/intel/openvino_
-ENV PKG_CONFIG_PATH=/opt/intel/openvino_/runtime/lib/intel64/pkgconfig
+ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
+ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
+ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
 
 # setup Python
 ENV PYTHON_VER python3.8
