@@ -1,9 +1,9 @@
 # Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 {%- if 'docker' == rhel_platform %}
-FROM registry.access.redhat.com/ubi8:8.6 AS base
+FROM registry.access.redhat.com/ubi8:8.7 AS base
 {% else %}
-FROM registry.access.redhat.com/ubi8:8.6
+FROM registry.access.redhat.com/ubi8:8.7
 LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
       vendor="Intel Corporation" \
@@ -24,7 +24,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 {% endfor %}
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
-
+# -----------------
 
 {% if distribution == 'dev' %}
 
@@ -38,7 +38,7 @@ COPY ./rhsm-conf /etc/rhsm
 COPY ./rhsm-ca /etc/rhsm/ca
 {% endif %}
 
-RUN subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
+RUN rm -f /etc/rhsm-host && subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && dnf clean all
 RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm && dnf clean all
 # hadolint ignore=DL3033
@@ -57,11 +57,14 @@ RUN yum install -y \
 
 RUN rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 
-RUN python3 -m pip install --no-cache-dir numpy==1.19.5
+RUN python3 -m pip install --no-cache-dir numpy==1.23.1
 ARG OPENCV_BRANCH="4.6.0"
 
 WORKDIR /opt/repo
-RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
+RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} 
+WORKDIR /opt/repo/opencv
+RUN git fetch origin 4.x:4.x && \
+    git cherry-pick -n 1b1bbe426277715a876878890a3dc88231b871bc
 
 WORKDIR /opt/repo/opencv/build
 # hadolint ignore=SC2046
@@ -153,7 +156,7 @@ CMD ["/bin/bash"]
 
 {% if 'docker' == rhel_platform %}
 # -----------------
-FROM registry.access.redhat.com/ubi8:8.6 AS ov_base
+FROM registry.access.redhat.com/ubi8:8.7 AS ov_base
 
 LABEL name="rhel8_{{ distribution }}" \
       maintainer="openvino_docker@intel.com" \
@@ -184,15 +187,19 @@ COPY --from=base /opt/intel /opt/intel
 
 {% if 'runtime' == distribution %}
 ARG LGPL_DEPS="gcc-c++"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core"
 {% else %}
 ARG LGPL_DEPS="gcc-c++ \
                glibc \
                libstdc++ \
                libgcc"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core -c=dev"
 {% endif %}
 ARG INSTALL_SOURCES="no"
+
+# hadolint ignore=SC2016
+RUN sed -i -e 's|https://vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-devel-2.1.2-6|http://mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-devel-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
+    sed -i -e 's|https://vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-2.1.2-6|http://mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
@@ -217,6 +224,18 @@ RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > bas
 	  yum autoremove -y yum-utils && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
 	yum clean all && rm -rf /var/cache/yum
+
+{% if 'autobuild' != rhel_platform %}
+COPY ./entitlement /etc/pki/entitlement
+COPY ./rhsm-conf /etc/rhsm
+COPY ./rhsm-ca /etc/rhsm/ca
+{% endif %}
+# patch components with vulnerabilites
+RUN rm -f /etc/rhsm-host && yum upgrade -y wavpack gstreamer1-plugins-good && yum clean all && rm -rf /var/cache/yum
+
+{% if 'autobuild' != rhel_platform %}
+RUN  rm -Rf /etc/pki/entitlement /etc/rhsm/ca /etc/rhsm/rhsm.conf
+{% endif %}
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \

@@ -5,6 +5,7 @@
 """
 import argparse
 import difflib
+import jinja2
 import logging
 import pathlib
 import re
@@ -13,6 +14,18 @@ import sys
 import typing
 import uuid
 
+def parse_build_id(vars: dict):
+    openvino_dir = vars["INTEL_OPENVINO_DIR"]
+    return openvino_dir.split("_")[1]
+
+def render_expected(template_path: str, build_id: str):
+    with open(template_path) as file:
+        template = jinja2.Template(file.read())
+    rendered = template.render(build_id=build_id)
+    f = open(template_path+"rendered", "w")
+    f.write(rendered)
+    f.close()
+    return template_path+"rendered"
 
 def normalize_env_variables(variables: typing.Dict[str, str]) -> typing.Dict[str, str]:
     """Cleanup environment variables dict from duplicates in PATH-like variables"""
@@ -114,7 +127,11 @@ def main() -> int:
     vars_after = load_variables(args.after)
     vars_created = {name: vars_after[name] for name in set(vars_after.keys()) - set(vars_before.keys())}
 
-    vars_expected = load_variables(args.expected, True)
+
+    build_id = parse_build_id(vars_after)
+    rendered_expected = render_expected(args.expected, build_id)
+    vars_expected = load_variables(rendered_expected, True)
+
     vars_expected_updated = {name: vars_after[name] for name in vars_after if name in vars_expected}
     vars_current = {**vars_expected, **vars_created, **vars_expected_updated}
 
@@ -127,7 +144,9 @@ def main() -> int:
         vars_changed = extract_changed_environment_variables(vars_expected, vars_current)
         log.error('FAILED: changes detected')
         log.error(f'    after script launch {vars_changed_script}')
-        log.error(f'    with expected {vars_changed}')
+        log.error(f'    with changed {vars_changed}')
+        log.error(f'    expected {vars_expected}')
+        log.error(f'    current {vars_current}') 
 
         expected_vars_sorted_path = pathlib.Path(args.logs) / f'sorted_{os.path.basename(args.expected)}'
         save_env_template(expected_vars_sorted_path, vars_expected)

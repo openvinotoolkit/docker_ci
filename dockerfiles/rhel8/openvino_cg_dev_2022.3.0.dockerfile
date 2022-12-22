@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM registry.access.redhat.com/ubi8:8.6 AS base
+FROM registry.access.redhat.com/ubi8:8.7 AS base
 # hadolint ignore=DL3002
 USER root
 WORKDIR /
@@ -8,13 +8,14 @@ WORKDIR /
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 
-# get product from local archive
+# get product from URL
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
 
 WORKDIR ${TEMP_DIR}
-COPY ${package_url} ${TEMP_DIR}
+# hadolint ignore=DL3020
+ADD ${package_url} ${TEMP_DIR}
 
 
 # install product by copying archive content
@@ -42,17 +43,19 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
 
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
 ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
-ENV LD_LIBRARY_PATH=/opt/intel/openvino/extras/opencv/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/3rdparty/hddl/lib
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/extras/opencv/lib
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
 
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
-
+# -----------------
 
 
 
@@ -66,7 +69,7 @@ COPY ./rhsm-conf /etc/rhsm
 COPY ./rhsm-ca /etc/rhsm/ca
 
 
-RUN subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
+RUN rm -f /etc/rhsm-host && subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && dnf clean all
 RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm && dnf clean all
 # hadolint ignore=DL3033
@@ -85,11 +88,14 @@ RUN yum install -y \
 
 RUN rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 
-RUN python3 -m pip install --no-cache-dir numpy==1.19.5
+RUN python3 -m pip install --no-cache-dir numpy==1.23.1
 ARG OPENCV_BRANCH="4.6.0"
 
 WORKDIR /opt/repo
-RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
+RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} 
+WORKDIR /opt/repo/opencv
+RUN git fetch origin 4.x:4.x && \
+    git cherry-pick -n 1b1bbe426277715a876878890a3dc88231b871bc
 
 WORKDIR /opt/repo/opencv/build
 # hadolint ignore=SC2046
@@ -181,13 +187,13 @@ CMD ["/bin/bash"]
 
 
 # -----------------
-FROM registry.access.redhat.com/ubi8:8.6 AS ov_base
+FROM registry.access.redhat.com/ubi8:8.7 AS ov_base
 
 LABEL name="rhel8_dev" \
       maintainer="openvino_docker@intel.com" \
       vendor="Intel Corporation" \
-      version="2022.2.0" \
-      release="2022.2.0" \
+      version="2022.3.0" \
+      release="2022.3.0" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
       description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
@@ -215,9 +221,13 @@ ARG LGPL_DEPS="gcc-c++ \
                glibc \
                libstdc++ \
                libgcc"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt"
+ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core -c=dev"
 
 ARG INSTALL_SOURCES="no"
+
+# hadolint ignore=SC2016
+RUN sed -i -e 's|https://vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-devel-2.1.2-6|http://mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-devel-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
+    sed -i -e 's|https://vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-2.1.2-6|http://mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
@@ -239,6 +249,18 @@ RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > bas
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
 	yum clean all && rm -rf /var/cache/yum
 
+
+COPY ./entitlement /etc/pki/entitlement
+COPY ./rhsm-conf /etc/rhsm
+COPY ./rhsm-ca /etc/rhsm/ca
+
+# patch components with vulnerabilites
+RUN rm -f /etc/rhsm-host && yum upgrade -y wavpack gstreamer1-plugins-good && yum clean all && rm -rf /var/cache/yum
+
+
+RUN  rm -Rf /etc/pki/entitlement /etc/rhsm/ca /etc/rhsm/rhsm.conf
+
+
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
         echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. They are stored in https://storage.openvinotoolkit.org/repositories/openvino/ci_dependencies/container_gpl_sources/." > DockerImage_readme.txt ; \
@@ -250,13 +272,15 @@ RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
 
 ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
 ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
-ENV LD_LIBRARY_PATH=/opt/intel/openvino/extras/opencv/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/3rdparty/hddl/lib
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/extras/opencv/lib
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
 
 # setup Python
 ENV PYTHON_VER python3.8
@@ -265,16 +289,15 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2022.2.0
+ARG OPENVINO_WHEELS_VERSION=2022.3.0
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102,DL3033
 RUN yum install -y cmake git && yum clean all && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
-        ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" && \
-        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" ; \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --extra-index-url https://download.pytorch.org/whl/cpu; \
     else \
         ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
-        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" ; \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" --extra-index-url https://download.pytorch.org/whl/cpu ; \
     fi
 
 # download source for PyPi LGPL packages
@@ -297,7 +320,7 @@ RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a
 # build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
 WORKDIR "${INTEL_OPENVINO_DIR}"/samples/cpp
 RUN ./build_samples.sh -b build && \
-    cp -R build/intel64/Release samples_bin && cp build/intel64/Release/lib/libformat_reader.so . && \
+    cp -R build/intel64/Release samples_bin && cp build/intel64/Release/libformat_reader.so . && \
     rm -Rf build && mkdir -p build/intel64/Release/lib && mv libformat_reader.so build/intel64/Release/lib/ && rm -Rf samples_bin/lib/
 
 # add Model API package

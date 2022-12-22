@@ -46,7 +46,7 @@ default_args = {
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
             'dockerfile_name': 'openvino_cgvh_dev_2022.1.0.dockerfile',
-            'python': 'python36',
+            'python': 'python38',
             'tags': ['ubuntu18_dev:2022.1.0', 'ubuntu18_dev:latest'],
             'image_json_path': pathlib.Path('image_data.json').absolute(),
             'install_type': 'copy',
@@ -62,7 +62,7 @@ default_args = {
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
             'dockerfile_name': 'openvino_cgvh_dev_2022.1.0.dockerfile',
-            'python': 'python36',
+            'python': 'python38',
             'tags': ['ubuntu18_dev:2022.1.0.320', 'ubuntu18_dev:latest'],
             'distribution': 'dev',
             'install_type': 'copy',
@@ -80,7 +80,7 @@ default_args = {
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
             'dockerfile_name': 'openvino_cgvh_dev_2022.1.0.dockerfile',
-            'python': 'python36',
+            'python': 'python38',
             'tags': ['ubuntu18_dev:2022.1.0.320', 'ubuntu18_dev:latest', 'ubuntu18_dev:2022.1.0.320_qqq'],
             'distribution': 'dev',
             'install_type': 'copy',
@@ -117,7 +117,7 @@ default_args = {
         {
             'device': ['cpu'],
             'dockerfile_name': 'openvino_c_base_2022.1.0.dockerfile',
-            'python': 'python36',
+            'python': 'python38',
             'tags': ['ubuntu18_base_cpu:2022.1.0', 'ubuntu18_base_cpu:latest'],
             'distribution': 'base',
             'product_version': '2022.1.0',
@@ -133,7 +133,7 @@ default_args = {
         },
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
-            'python': 'python36',
+            'python': 'python38',
             'dockerfile_name': 'openvino_cgvh_dev_2022.1.0.dockerfile',
             'tags': ['ubuntu18_dev:2022.1.0', 'ubuntu18_dev:latest'],
             'distribution': 'dev',
@@ -150,7 +150,7 @@ default_args = {
         },
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
-            'python': 'python36',
+            'python': 'python38',
             'dockerfile_name': 'openvino_cgvh_dev_2022.1.0.dockerfile',
             'tags': ['ubuntu18_dev:2022.1.0', 'ubuntu18_dev:latest'],
             'distribution': 'dev',
@@ -166,7 +166,7 @@ default_args = {
         },
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
-            'python': 'python36',
+            'python': 'python38',
             'dockerfile_name': 'openvino_cgvh_dev_2022.1.0.dev20211216.dockerfile',
             'tags': ['ubuntu18_dev:2022.1.0.dev20211216', 'ubuntu18_dev:latest'],
             'distribution': 'dev',
@@ -185,7 +185,7 @@ default_args = {
         },
         {
             'device': ['cpu', 'hddl'],
-            'python': 'python36',
+            'python': 'python38',
             'dockerfile_name': 'openvino_ch_dev_2022.1.0.dockerfile',
             'tags': ['my_tag:latest'],
             'distribution': 'dev',
@@ -239,7 +239,7 @@ default_args = {
         },
         {
             'device': ['cpu', 'gpu', 'vpu', 'hddl'],
-            'python': 'python36',
+            'python': 'python38',
             'tags': ['ubuntu18_dev:2022.1.0.320', 'ubuntu18_dev:latest'],
             'dockerfile_name': 'openvino_cgvh_dev_2022.1.0.dockerfile',
             'distribution': 'dev',

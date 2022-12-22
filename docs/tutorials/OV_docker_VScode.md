@@ -77,7 +77,7 @@ To build the C++ sample applications for Linux, go to the `/opt/intel/openvino/s
 
 Lets build samples in Debug mode. We need to update `build_samples.sh` script and change _Release_ to _Debug_ on `#60 line "cmake -DCMAKE_BUILD_TYPE=Debug "$SAMPLES_PATH"" ` and run the script.
 
-Then, you can see built samples in `/root/inference_engine_cpp_samples_build/intel64/Debug/` folder.
+Then, you can see built samples in `/root/openvino_cpp_samples_build/intel64/Debug/` folder.
 
 Select the Run icon in the Activity Bar on the side of VS Code to bring up the [Run view](https://code.visualstudio.com/docs/editor/debugging#_run-view). You can also use the keyboard shortcut `Ctrl+Shift+D`.
 If running and debugging is not yet configured (no launch.json has been created), VS Code shows the Run start view. Click on "create a launch.json file" link and select an option "C/C++ (gdb) Launch". 
@@ -88,10 +88,10 @@ Please update launch.json with the following settings:
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/root/inference_engine_cpp_samples_build/intel64/Debug/hello_query_device",
+            "program": "/root/openvino_cpp_samples_build/intel64/Debug/hello_query_device",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "/root/inference_engine_cpp_samples_build/intel64/Debug/",
+            "cwd": "/root/openvino_cpp_samples_build/intel64/Debug/",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

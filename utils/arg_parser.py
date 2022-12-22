@@ -105,9 +105,8 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-py',
             '--python',
-            choices=['python36', 'python37', 'python38'],
-            help='Python interpreter for docker image, currently default for OS. ubuntu18: python36, '
-                 'ubuntu20: python38, winserver2019:python37 or python38',
+            choices=['python37', 'python38'],
+            help='Python interpreter for docker image, currently default is python38',
         )
 
         parser.add_argument(
@@ -458,7 +457,7 @@ def parse_args(name: str, description: str):  # noqa
 
         if not args.python:
             if args.os in ('ubuntu18', 'rhel8'):
-                args.python = 'python36'
+                args.python = 'python38'
             else:
                 args.python = 'python38'
 
@@ -492,7 +491,7 @@ def parse_args(name: str, description: str):  # noqa
         if not args.package_url and not args.product_version:
             latest_public_version = max(INTEL_OPENVINO_VERSION.__iter__())
             args.product_version = '2022.2.0' if latest_public_version <= '2022.2.0' else latest_public_version
-        args.build_id = args.product_version
+        args.build_id = ''
 
         if not args.package_url and args.distribution not in ('base',):
             if not args.distribution or not args.product_version:
@@ -528,8 +527,7 @@ def parse_args(name: str, description: str):  # noqa
                     # save product version YYYY.U.V
                     args.product_version = build_id.group(1)
                 else:
-                    parser.error(f'Cannot get build number from the package URL provided: {args.package_url}. '
-                                 f'Please specify --product_version directly.')
+                    args.build_id = args.product_version
 
         if not args.dockerfile_name:
             devices = ''.join([d[0] for d in args.device])

@@ -24,8 +24,8 @@ so the [OpenVINO documentation](https://docs.openvino.ai/) is fully applicable t
  - Ubuntu 18.04 LTS
  - Ubuntu 20.04 LTS
  - RHEL 8
- - Windows Server Core base OS LTSC 2019
- - Windows base OS 20H2
+ - Windows Server Core base OS LTSC 2019 (up to 2022.2.0)
+ - Windows base OS 20H2 (up to 2022.2.0)
 
 ## Prebuilt images
 
