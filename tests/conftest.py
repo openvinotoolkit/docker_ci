@@ -32,7 +32,6 @@ def pytest_addoption(parser):
                                                           'openvino folder to search for OpenVINO wheels')
     parser.addoption('--product_version', action='store', help='Setup a product_version for check')
     parser.addoption('--wheels_version', action='store', help='Setup a version specifier for OpenVINO wheels')
-    parser.addoption('--omz_fork', action='store', help='Setup repo of Open Model Zoo repository')
     parser.addoption('--omz_rev', action='store', help='Setup a branch or commit hash in the Open Model Zoo repository '
                                                        'to download demos (default is the release branch corresponding '
                                                        'to product_version or master)')

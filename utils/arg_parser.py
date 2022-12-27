@@ -484,7 +484,8 @@ def parse_args(name: str, description: str):  # noqa
             elif args.os == 'rhel8':
                 args.device = ['cpu', 'gpu']
             else:
-                args.device = ['cpu', 'gpu', 'vpu', 'hddl']
+                # args.device = ['cpu', 'gpu', 'vpu', 'hddl']
+                args.device = ['cpu', 'gpu']  # 2022.3 v/h not supported
         elif not args.device:
             args.device = ['cpu']
 
