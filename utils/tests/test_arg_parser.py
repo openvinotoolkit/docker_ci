@@ -20,7 +20,6 @@ default_args = {
     'linter_check': [],
     # 'mode':'build',
     'msbuild': None,
-    'ocl_release': '',
     'pre_stage_msbuild': None,
     'rhel_platform': 'docker',
     'os': 'ubuntu18',
