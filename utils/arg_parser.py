@@ -544,6 +544,11 @@ def parse_args(name: str, description: str):  # noqa
             args.wheels_version = (args.product_version if args.build_id == args.product_version
                                    else f'{args.product_version}.*')
 
+    if args.mode in ('test') and not args.wheels_version:
+        latest_public_version = max(INTEL_OPENVINO_VERSION.__iter__())
+        latest_public_version = '2022.2.0' if latest_public_version <= '2022.2.0' else latest_public_version
+        args.wheels_version = latest_public_version
+
     if not hasattr(args, 'tags') or not args.tags:
         layers = '_'.join(args.layers)
         tgl_postfix = ''
