@@ -268,7 +268,7 @@ class Launcher:
                 result = result_dive
         test_report = self.logdir / 'tests.html'
         curr_time = timeit.default_timer()
-        result_tests = pytest.main([  # noqa
+        params = [  # noqa
             f'{self.location / "tests" / "functional"}',
             '-k', self.args.test_expression,
             '-m', self.args.test_mark_expression,
@@ -286,7 +286,9 @@ class Launcher:
             '--self-contained-html',
             '--tb=short',
             '--color=yes',
-        ])
+        ]
+        log.info(f'Params passed to pytest: {params}')
+        result_tests = pytest.main(params)
         log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
         log.info(f'Testing report location: {test_report}')
         log.info(f'Testing detailed logs location: {test_report.parent}')
