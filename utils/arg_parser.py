@@ -133,14 +133,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         )
 
         parser.add_argument(
-            '--ocl_release',
-            default='',
-            help='Deprecated option since 2022.1.0. '
-                 'The recommended version of Intel(R) Graphics Compute Runtime for OpenCL(TM) '
-                 '(need for GPU inference) for specified OS will be installed in the Docker image.',
-        )
-
-        parser.add_argument(
             '-l',
             '--layers',
             metavar='NAME',
@@ -159,6 +151,13 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             help='Specify build or template arguments for your layer. '
                  'You can use "no_samples=True" to remove OMZ, IE samples and demos from final docker image. '
                  'Set "INSTALL_SOURCES=yes" to download source for 3d party LGPL/GPL dependencies.',
+        )
+
+        parser.add_argument(
+            '--no-cache',
+            dest='no_cache',
+            action='store_true',
+            help='Specify if image should be built without cache. False by default.'
         )
 
     @staticmethod
