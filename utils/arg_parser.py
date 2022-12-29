@@ -157,7 +157,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             '--no-cache',
             dest='no_cache',
             action='store_true',
-            help='Specify if image should be built without cache. False by default.'
+            help='Specify if image should be built without cache. False by default.',
         )
 
     @staticmethod
@@ -543,11 +543,6 @@ def parse_args(name: str, description: str):  # noqa
             args.wheels_version = (args.product_version if args.build_id == args.product_version
                                    else f'{args.product_version}.*')
 
-    if args.mode in ('test') and not args.wheels_version:
-        latest_public_version = max(INTEL_OPENVINO_VERSION.__iter__())
-        latest_public_version = '2022.2.0' if latest_public_version <= '2022.2.0' else latest_public_version
-        args.wheels_version = latest_public_version
-
     if not hasattr(args, 'tags') or not args.tags:
         layers = '_'.join(args.layers)
         tgl_postfix = ''
@@ -591,6 +586,11 @@ def parse_args(name: str, description: str):  # noqa
         else:
             parser.error('Cannot get product_version from the package URL and docker image. '
                          'Please specify --product_version directly.')
+
+    if args.mode in ('test') and (not hasattr(args, 'wheels_version') or not args.wheels_version):
+        latest_public_version = max(INTEL_OPENVINO_VERSION.__iter__())
+        latest_public_version = '2022.2.0' if latest_public_version <= '2022.2.0' else latest_public_version
+        args.wheels_version = args.product_version if hasattr(args, 'product_version') else latest_public_version
 
     if hasattr(args, 'product_version'):
         fail_if_product_version_not_supported(args.product_version, parser)
