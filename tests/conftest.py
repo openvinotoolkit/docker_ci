@@ -35,6 +35,12 @@ def pytest_addoption(parser):
     parser.addoption('--omz_rev', action='store', help='Setup a branch or commit hash in the Open Model Zoo repository '
                                                        'to download demos (default is the release branch corresponding '
                                                        'to product_version or master)')
+    parser.addoption(
+        '--omz_fork',
+        action='store',
+        help='Setup repo of Open Model Zoo repository',
+        default='openvinotoolkit',
+    )
 
 
 def pytest_configure(config):
