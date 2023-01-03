@@ -72,7 +72,9 @@ def compare_templates(expected_path: pathlib.Path, actual_path: pathlib.Path, im
     with open(expected_path, mode='r') as expected, \
          open(actual_path, mode='r') as actual, \
          open(pathlib.Path(log) / f'env_{uuid.uuid4()}.html', mode='w') as html_log:
-        html_log.write(difflib.HtmlDiff(wrapcolumn=100).make_file(expected.readlines(), actual.readlines(),
+        expected_lines = [re.sub(r"\/openvino_[0-9\.]*", "/openvino", l) for l in expected.readlines()]
+        actual_lines = [re.sub(r"\/openvino_[0-9\.]*", "/openvino", l) for l in actual.readlines()]
+        html_log.write(difflib.HtmlDiff(wrapcolumn=100).make_file(expected_lines, actual_lines,
                                                                   'origin', image, context=True))
 
 
