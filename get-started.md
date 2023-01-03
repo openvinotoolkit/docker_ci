@@ -41,7 +41,7 @@ With this guide, you will learn how to:
 You can use [available Dockerfiles](dockerfiles/README.md) from `<root_project>/dockerfiles/<image_os>` folder or generate Dockerfile with your settings. 
 Run the following command in the repository's root:  
 ```bash
-python3 docker_openvino.py gen_dockerfile --distribution dev --product_version 2022.2.0
+python3 docker_openvino.py gen_dockerfile -os ubuntu20 --distribution dev --product_version 2022.3.0
 ``` 
 You can find generated dockerfile in `<root_project>/dockerfiles/<image_os>` folder. By default, Dockerfile name format is `openvino_<devices>_<distribution>_<product_version>.dockerfile`.
 
