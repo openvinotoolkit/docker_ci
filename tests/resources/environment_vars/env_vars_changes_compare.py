@@ -5,7 +5,6 @@
 """
 import argparse
 import difflib
-import jinja2
 import logging
 import pathlib
 import re
@@ -14,18 +13,6 @@ import sys
 import typing
 import uuid
 
-def parse_build_id(vars: dict):
-    openvino_dir = vars["INTEL_OPENVINO_DIR"]
-    return openvino_dir.split("_")[1]
-
-def render_expected(template_path: str, build_id: str):
-    with open(template_path) as file:
-        template = jinja2.Template(file.read())
-    rendered = template.render(build_id=build_id)
-    f = open(template_path+"rendered", "w")
-    f.write(rendered)
-    f.close()
-    return template_path+"rendered"
 
 def normalize_env_variables(variables: typing.Dict[str, str]) -> typing.Dict[str, str]:
     """Cleanup environment variables dict from duplicates in PATH-like variables"""
@@ -56,6 +43,7 @@ def load_variables(path: str, env_prefix: bool = False) -> typing.Dict[str, str]
                 return {}
             name = match.group(1)
             value = match.group(2)
+            value = re.sub(r"\/openvino_[0-9\.]*", "/openvino", value)  # remove build_id from path
             variables[name] = value
     return normalize_env_variables(variables)
 
@@ -72,9 +60,7 @@ def compare_templates(expected_path: pathlib.Path, actual_path: pathlib.Path, im
     with open(expected_path, mode='r') as expected, \
          open(actual_path, mode='r') as actual, \
          open(pathlib.Path(log) / f'env_{uuid.uuid4()}.html', mode='w') as html_log:
-        expected_lines = [re.sub(r"\/openvino_[0-9\.]*", "/openvino", l) for l in expected.readlines()]
-        actual_lines = [re.sub(r"\/openvino_[0-9\.]*", "/openvino", l) for l in actual.readlines()]
-        html_log.write(difflib.HtmlDiff(wrapcolumn=100).make_file(expected_lines, actual_lines,
+        html_log.write(difflib.HtmlDiff(wrapcolumn=100).make_file(expected.readlines(), actual.readlines(),
                                                                   'origin', image, context=True))
 
 
@@ -129,10 +115,7 @@ def main() -> int:
     vars_after = load_variables(args.after)
     vars_created = {name: vars_after[name] for name in set(vars_after.keys()) - set(vars_before.keys())}
 
-
-    build_id = parse_build_id(vars_after)
-    rendered_expected = render_expected(args.expected, build_id)
-    vars_expected = load_variables(rendered_expected, True)
+    vars_expected = load_variables(args.expected, True)
 
     vars_expected_updated = {name: vars_after[name] for name in vars_after if name in vars_expected}
     vars_current = {**vars_expected, **vars_created, **vars_expected_updated}
