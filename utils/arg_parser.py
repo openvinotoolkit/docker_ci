@@ -133,14 +133,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         )
 
         parser.add_argument(
-            '--ocl_release',
-            default='',
-            help='Deprecated option since 2022.1.0. '
-                 'The recommended version of Intel(R) Graphics Compute Runtime for OpenCL(TM) '
-                 '(need for GPU inference) for specified OS will be installed in the Docker image.',
-        )
-
-        parser.add_argument(
             '-l',
             '--layers',
             metavar='NAME',
@@ -159,6 +151,13 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             help='Specify build or template arguments for your layer. '
                  'You can use "no_samples=True" to remove OMZ, IE samples and demos from final docker image. '
                  'Set "INSTALL_SOURCES=yes" to download source for 3d party LGPL/GPL dependencies.',
+        )
+
+        parser.add_argument(
+            '--no-cache',
+            dest='no_cache',
+            action='store_true',
+            help='Specify if image should be built without cache. False by default.',
         )
 
     @staticmethod
@@ -586,6 +585,11 @@ def parse_args(name: str, description: str):  # noqa
         else:
             parser.error('Cannot get product_version from the package URL and docker image. '
                          'Please specify --product_version directly.')
+
+    if args.mode in ('test') and (not hasattr(args, 'wheels_version') or not args.wheels_version):
+        latest_public_version = max(INTEL_OPENVINO_VERSION.__iter__())
+        latest_public_version = '2022.2.0' if latest_public_version <= '2022.2.0' else latest_public_version
+        args.wheels_version = args.product_version if hasattr(args, 'product_version') else latest_public_version
 
     if hasattr(args, 'product_version'):
         fail_if_product_version_not_supported(args.product_version, parser)

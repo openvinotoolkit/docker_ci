@@ -20,7 +20,6 @@ default_args = {
     'linter_check': [],
     # 'mode':'build',
     'msbuild': None,
-    'ocl_release': '',
     'pre_stage_msbuild': None,
     'rhel_platform': 'docker',
     'os': 'ubuntu18',
@@ -202,6 +201,7 @@ default_args = {
             'product_version': '2022.3.0',
         },
         {
+            'wheels_version': '2022.3.0',
         },
         id='(Test) Set product_version manually',
     ),
@@ -215,6 +215,7 @@ default_args = {
         },
         {
             'product_version': '2022.3.2',
+            'wheels_version': '2022.3.2',
         },
         id='(Test) Parse product_version from package_url',
     ),
@@ -227,6 +228,7 @@ default_args = {
         },
         {
             'product_version': '2022.3.1',
+            'wheels_version': '2022.3.1',
         },
         id='(Test) Parse product_version from tags',
     ),
