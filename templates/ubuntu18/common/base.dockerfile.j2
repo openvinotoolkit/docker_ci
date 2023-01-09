@@ -64,14 +64,12 @@ RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
 RUN python3 -m pip install --upgrade pip setuptools --no-cache-dir 
 RUN python3 -m pip install --no-cache-dir numpy==1.23.1
 
-ARG OPENCV_BRANCH="4.6.0"
+ARG OPENCV_BRANCH="4.7.0"
 
 
 WORKDIR /opt/repo
 RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} 
 WORKDIR /opt/repo/opencv
-RUN git fetch origin 4.x:4.x && \
-    git cherry-pick -n 1b1bbe426277715a876878890a3dc88231b871bc
 
 WORKDIR /opt/repo/opencv/build
 # hadolint ignore=SC2046
