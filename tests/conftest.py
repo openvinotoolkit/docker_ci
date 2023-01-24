@@ -324,7 +324,7 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
                              f'cd open_model_zoo && git checkout {omz_rev} && cd .. && '
                              'ln -s open_model_zoo/demos demos',
                              ),
-                        bash('python3 -m pip install --no-deps open_model_zoo/demos/common/python'),
+                        bash('python3 -m pip install open_model_zoo/demos/common/python'),
                         bash('open_model_zoo/demos/build_demos.sh || true')]
         else:
             commands = [bash('open_model_zoo/demos/build_demos.sh || true'),
