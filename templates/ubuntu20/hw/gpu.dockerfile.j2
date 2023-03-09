@@ -10,4 +10,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends gpg gpg-agent &
        level-zero=1.8.5+i815~u20.04 && \
        apt-get purge gpg gpg-agent --yes && apt-get --yes autoremove && \
        apt-get clean ; \
-       rm -rf /var/lib/apt/lists/* && rm -rf /tmp/* ; \
+       rm -rf /var/lib/apt/lists/* && rm -rf /tmp/* 
