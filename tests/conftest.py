@@ -307,8 +307,9 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
                 if distribution == 'runtime':
                     install_dependencies = install_dependencies + ' && apt install -y libopencv-dev python3-opencv'
             elif 'rhel' in image_os:
+                install_dependencies = 'rm -f /etc/rhsm-host'
                 if distribution == 'runtime':
-                    install_dependencies = ('rm -f /etc/rhsm-host'
+                    install_dependencies = (install_dependencies + ' &&'
                                             'yum install -y opencv git make'
                                             'https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/'
                                             'opencv-devel-3.4.6-6.el8.x86_64.rpm'
