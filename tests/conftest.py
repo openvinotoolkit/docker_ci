@@ -312,11 +312,11 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
                                             'yum install -y opencv git make'
                                             'https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/'
                                             'opencv-devel-3.4.6-6.el8.x86_64.rpm'
-                                            ' && pip3 install opencv-python')
+                                            ' && pip3 install opencv-python && ')
 
             install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
 
-            commands = [bash(f'{install_dependencies} && '
+            commands = [bash(f'{install_dependencies}'
                              f'{install_dev_wheel} && '
                              f'git clone --recurse-submodules --shallow-submodules '
                              f'https://github.com/{omz_fork}/open_model_zoo.git && '
