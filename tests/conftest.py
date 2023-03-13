@@ -336,7 +336,7 @@ def install_openvino_dependencies(request):
     if 'ubuntu' in image_os:
         return '/bin/bash -ac "apt update && apt install -y build-essential curl cmake file libgl1"'
     elif 'rhel' in image_os:
-        return '/bin/bash -ac "rm -f /etc/rhsm-host && yum install -y make file mesa-libGL && pip3 install opencv-python"'
+        return 'bash -ac "rm -f /etc/rhsm-host && yum install -y make file mesa-libGL && pip3 install opencv-python"'
     return ''
 
 
