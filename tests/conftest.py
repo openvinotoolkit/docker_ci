@@ -311,7 +311,7 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
                 if distribution == 'runtime':
                     install_dependencies = (install_dependencies + ' && '
                                             'yum install -y opencv git make'
-                                            ' && pip3 install opencv-python && ')
+                                            ' && pip3 install opencv-python')
 
             install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
 
