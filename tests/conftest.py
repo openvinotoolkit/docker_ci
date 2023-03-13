@@ -317,7 +317,7 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
 
             install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
 
-            commands = [bash(f'{install_dependencies}'
+            commands = [bash(f'{install_dependencies} && '
                              f'{install_dev_wheel} && '
                              f'git clone --recurse-submodules --shallow-submodules '
                              f'https://github.com/{omz_fork}/open_model_zoo.git && '
