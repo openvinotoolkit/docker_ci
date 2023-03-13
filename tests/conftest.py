@@ -311,8 +311,6 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
                 if distribution == 'runtime':
                     install_dependencies = (install_dependencies + ' &&'
                                             'yum install -y opencv git make'
-                                            'https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/'
-                                            'opencv-devel-3.4.6-6.el8.x86_64.rpm'
                                             ' && pip3 install opencv-python && ')
 
             install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
@@ -336,9 +334,9 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
 def install_openvino_dependencies(request):
     image_os = request.config.getoption('--image_os')
     if 'ubuntu' in image_os:
-        return '/bin/bash -ac "apt update && apt install -y build-essential curl cmake file"'
+        return '/bin/bash -ac "apt update && apt install -y build-essential curl cmake file libgl1"'
     elif 'rhel' in image_os:
-        return '/bin/bash -ac "rm -f /etc/rhsm-host && yum install -y make file && pip3 install opencv-python"'
+        return '/bin/bash -ac "rm -f /etc/rhsm-host && yum install -y make file mesa-libGL && pip3 install opencv-python"'
     return ''
 
 
