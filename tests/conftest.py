@@ -309,7 +309,7 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
             elif 'rhel' in image_os:
                 install_dependencies = 'rm -f /etc/rhsm-host'
                 if distribution == 'runtime':
-                    install_dependencies = (install_dependencies + ' &&'
+                    install_dependencies = (install_dependencies + ' && '
                                             'yum install -y opencv git make'
                                             ' && pip3 install opencv-python && ')
 
