@@ -223,14 +223,6 @@ RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > bas
 	yum clean all && rm -rf /var/cache/yum
 
 {% if 'autobuild' != rhel_platform %}
-COPY ./entitlement /etc/pki/entitlement
-COPY ./rhsm-conf /etc/rhsm
-COPY ./rhsm-ca /etc/rhsm/ca
-{% endif %}
-# patch components with vulnerabilites
-RUN rm -f /etc/rhsm-host && yum upgrade -y wavpack gstreamer1-plugins-good && yum clean all && rm -rf /var/cache/yum
-
-{% if 'autobuild' != rhel_platform %}
 RUN  rm -Rf /etc/pki/entitlement /etc/rhsm/ca /etc/rhsm/rhsm.conf
 {% endif %}
 
