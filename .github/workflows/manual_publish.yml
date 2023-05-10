@@ -12,11 +12,11 @@ on:
         required: true
         default: 'dev'
       os:
-        description: 'OS for Docker image: ubuntu18, ubuntu20, winserver2019, windows20h2'
+        description: 'OS for Docker image: ubuntu20, winserver2019, windows20h2'
         required: true
         default: ''
       host_os:
-        description: 'OS for Host machine: ubuntu-18.04, windows-docker'
+        description: 'OS for Host machine: ubuntu-20.04, windows-docker'
         required: true
         default: ''
       tags:
@@ -32,7 +32,7 @@ jobs:
   manual_publish:
     strategy:
       matrix:
-        os: [ ubuntu-18.04, windows-docker ]
+        os: [ ubuntu-20.04, windows-docker ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Code checkout
@@ -45,7 +45,7 @@ jobs:
         if: ${{ matrix.os == github.event.inputs.host_os }}
         run: python -m pip install -r requirements.txt
       - name: Docker login to registry (Linux)
-        if: ${{ matrix.os == 'ubuntu-18.04' }}
+        if: ${{ matrix.os == 'ubuntu-20.04' }}
         run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -62,7 +62,7 @@ jobs:
       - name: Docker logout
         run: docker logout
       - name: Docker login to Azure registry (Linux)
-        if: ${{ matrix.os == 'ubuntu-18.04' && contains(github.event.inputs.os, 'ubuntu') }}
+        if: ${{ matrix.os == 'ubuntu-20.04' && contains(github.event.inputs.os, 'ubuntu') }}
         run: echo $AZURE_PASSWORD | docker login --username $AZURE_USERNAME --password-stdin openvino.azurecr.io
         env:
           AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
