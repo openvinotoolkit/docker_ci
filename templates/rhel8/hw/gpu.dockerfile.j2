@@ -1,6 +1,6 @@
 # for GPU
 RUN groupmod -g 44 video
-
+# hadolint ignore=DL3041
 RUN dnf install -y libedit ; \
     rpm -ivh https://repositories.intel.com/graphics/rhel/8.6/intel-gmmlib-22.3.1-i529.el8.x86_64.rpm ; \
     rpm -ivh https://repositories.intel.com/graphics/rhel/8.6/intel-igc-core-1.0.12504.6-i537.el8.x86_64.rpm ; \
