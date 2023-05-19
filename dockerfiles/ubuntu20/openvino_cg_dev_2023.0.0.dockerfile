@@ -33,7 +33,7 @@ RUN useradd -ms /bin/bash -G users openvino
 
 RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d.\d+')" && \
-    OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
+    OV_YEAR="$(echo $OV_BUILD | grep -oP '^[^\d]*(\d+)')" && \
     OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
     mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
     cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
@@ -101,13 +101,10 @@ RUN apt-get update; \
 
 RUN python3 -m pip install --no-cache-dir numpy==1.23.1
 
-ARG OPENCV_BRANCH="4.6.0"
+ARG OPENCV_BRANCH="4.7.0"
 
 WORKDIR /opt/repo
 RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} 
-WORKDIR /opt/repo/opencv
-RUN git fetch origin 4.x:4.x && \
-    git cherry-pick -n 1b1bbe426277715a876878890a3dc88231b871bc
 
 WORKDIR /opt/repo/opencv/build
 # hadolint ignore=SC1091
@@ -187,7 +184,7 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D VIDEOIO_PLUGIN_LIST=ffmpeg,gstreamer,mfx \
     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--allow-shlib-undefined \
     -D CMAKE_BUILD_TYPE=Release /opt/repo/opencv && \
-    ninja && cmake --install . && \
+    ninja -j $(nproc) && cmake --install . && \
     rm -Rf install/bin install/etc/samples
 
 WORKDIR /opt/repo/opencv/build/install
@@ -284,7 +281,7 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2022.3.0
+ARG OPENVINO_WHEELS_VERSION=2023.0.0
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102
 RUN apt-get update && apt-get install -y --no-install-recommends cmake make git && rm -rf /var/lib/apt/lists/* && \
@@ -308,8 +305,8 @@ RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a
 # build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
 WORKDIR ${INTEL_OPENVINO_DIR}/samples/cpp
 RUN ./build_samples.sh -b build && \
-    cp -R build/intel64/Release samples_bin && cp build/intel64/Release/libformat_reader.so . && \
-    rm -Rf build && mkdir -p build/intel64/Release/lib && mv libformat_reader.so build/intel64/Release/lib/ && rm -Rf samples_bin/lib/
+    cp -R build/intel64/Release samples_bin && \
+    rm -Rf build 
 
 # add Model API package
 # hadolint ignore=DL3013
@@ -322,11 +319,19 @@ RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
 # for CPU
 
 # for GPU
-ARG TEMP_DIR=/tmp/opencl
 
-WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
-RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends gpg gpg-agent && \
+    curl https://repositories.intel.com/graphics/intel-graphics.key | gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg && \
+    echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu focal-legacy main' | tee  /etc/apt/sources.list.d/intel.gpu.focal.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+       intel-opencl-icd=22.43.24595.35+i538~20.04 \
+       intel-level-zero-gpu=1.3.24595.35+i538~20.04 \
+       level-zero=1.8.8+i524~u20.04 \
+       ocl-icd-libopencl1 && \
+       apt-get purge gpg gpg-agent --yes && apt-get --yes autoremove && \
+       apt-get clean ; \
+       rm -rf /var/lib/apt/lists/* && rm -rf /tmp/* 
 
 
 # Post-installation cleanup and setting up OpenVINO environment variables

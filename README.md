@@ -16,16 +16,12 @@ You can reuse available Dockerfiles, add your layer and customize the image of O
 As [Docker\*](https://docs.docker.com/) is (mostly) just an isolation tool, the OpenVINO toolkit inside the container is the same as the OpenVINO toolkit installed natively on the host machine,
 so the [OpenVINO documentation](https://docs.openvino.ai/) is fully applicable to containerized OpenVINO distribution:
 * [Install Intel® Distribution of OpenVINO™ toolkit for Linux* from a Docker* Image](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_docker_linux.html)
-* [Install Intel® Distribution of OpenVINO™ toolkit for Windows* from Docker* Image](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_docker_windows.html)
 * [Deploy with OpenVINO](https://docs.openvino.ai/latest/openvino_deployment_guide.html)
 
 ## Supported Operating Systems for Docker image:
 
- - Ubuntu 18.04 LTS
  - Ubuntu 20.04 LTS
  - RHEL 8
- - Windows Server Core base OS LTSC 2019 (up to 2022.2.0)
- - Windows base OS 20H2 (up to 2022.2.0)
 
 ## Prebuilt images
 
@@ -56,8 +52,6 @@ Components:
 
 - Ubuntu: https://hub.docker.com/_/ubuntu
 - Red Hat: https://catalog.redhat.com/software/containers/ubi8/ubi/5c359854d70cc534b3a3784e
-- Windows Server Core base OS: https://hub.docker.com/_/microsoft-windows-servercore
-- Windows base OS: https://hub.docker.com/_/microsoft-windows
 - Intel® Distribution of OpenVINO™ toolkit: https://software.intel.com/en-us/license/eula-for-intel-software-development-products
 
 ## Security guideline

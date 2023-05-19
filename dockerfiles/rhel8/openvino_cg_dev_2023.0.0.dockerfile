@@ -30,7 +30,7 @@ ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
 RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d.\d+')" && \
-    OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
+    OV_YEAR="$(echo $OV_BUILD | grep -oP '^[^\d]*(\d+)')" && \
     OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
     mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
     cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
@@ -89,13 +89,10 @@ RUN yum install -y \
 RUN rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 
 RUN python3 -m pip install --no-cache-dir numpy==1.23.1
-ARG OPENCV_BRANCH="4.6.0"
+ARG OPENCV_BRANCH="4.7.0"
 
 WORKDIR /opt/repo
 RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} 
-WORKDIR /opt/repo/opencv
-RUN git fetch origin 4.x:4.x && \
-    git cherry-pick -n 1b1bbe426277715a876878890a3dc88231b871bc
 
 WORKDIR /opt/repo/opencv/build
 # hadolint ignore=SC2046
@@ -192,8 +189,8 @@ FROM registry.access.redhat.com/ubi8:8.7 AS ov_base
 LABEL name="rhel8_dev" \
       maintainer="openvino_docker@intel.com" \
       vendor="Intel Corporation" \
-      version="2022.3.0" \
-      release="2022.3.0" \
+      version="2023.0.0" \
+      release="2023.0.0" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
       description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
@@ -250,14 +247,6 @@ RUN yum update -y --excludepkgs redhat-release && rpm -qa --qf "%{name}\n" > bas
 	yum clean all && rm -rf /var/cache/yum
 
 
-COPY ./entitlement /etc/pki/entitlement
-COPY ./rhsm-conf /etc/rhsm
-COPY ./rhsm-ca /etc/rhsm/ca
-
-# patch components with vulnerabilites
-RUN rm -f /etc/rhsm-host && yum upgrade -y wavpack gstreamer1-plugins-good && yum clean all && rm -rf /var/cache/yum
-
-
 RUN  rm -Rf /etc/pki/entitlement /etc/rhsm/ca /etc/rhsm/rhsm.conf
 
 
@@ -289,7 +278,7 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2022.3.0
+ARG OPENVINO_WHEELS_VERSION=2023.0.0
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102,DL3033
 RUN yum install -y cmake git && yum clean all && \
@@ -320,8 +309,8 @@ RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a
 # build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
 WORKDIR "${INTEL_OPENVINO_DIR}"/samples/cpp
 RUN ./build_samples.sh -b build && \
-    cp -R build/intel64/Release samples_bin && cp build/intel64/Release/libformat_reader.so . && \
-    rm -Rf build && mkdir -p build/intel64/Release/lib && mv libformat_reader.so build/intel64/Release/lib/ && rm -Rf samples_bin/lib/
+    cp -R build/intel64/Release samples_bin && \
+    rm -Rf build
 
 # add Model API package
 # hadolint ignore=DL3013
@@ -336,11 +325,15 @@ RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
 # for GPU
 RUN groupmod -g 44 video
 
-# hadolint ignore=DL3031, DL3033
-WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
-RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
-    yum clean all && rm -rf /var/cache/yum && \
-    yum remove -y epel-release
+RUN dnf install -y libedit ; \
+    rpm -ivh https://repositories.intel.com/graphics/rhel/8.6/intel-gmmlib-22.3.1-i529.el8.x86_64.rpm ; \
+    rpm -ivh https://repositories.intel.com/graphics/rhel/8.6/intel-igc-core-1.0.12504.6-i537.el8.x86_64.rpm ; \
+    rpm -ivh https://repositories.intel.com/graphics/rhel/8.6/intel-igc-opencl-1.0.12504.6-i537.el8.x86_64.rpm ; \
+    rpm -ivh https://repositories.intel.com/graphics/rhel/8.6/intel-opencl-22.43.24595.35-i538.el8.x86_64.rpm ; \
+    rpm -ivh https://repositories.intel.com/graphics/rhel/8.6/intel-level-zero-gpu-1.3.24595.35-i538.el8.x86_64.rpm ; \
+    rpm -ivh https://repositories.intel.com/graphics/rhel/8.6/level-zero-1.8.8-i524.el8.x86_64.rpm ; \
+    rpm -ivh http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/Packages/ocl-icd-2.2.12-1.el8.x86_64.rpm ; \
+    dnf clean all
 
 
 # Post-installation cleanup and setting up OpenVINO environment variables
