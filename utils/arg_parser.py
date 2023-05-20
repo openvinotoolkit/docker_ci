@@ -105,7 +105,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-py',
             '--python',
-            choices=['python37', 'python38'],
+            choices=['python37', 'python38', 'python310'],
             help='Python interpreter for docker image, currently default is python38',
         )
 
@@ -455,10 +455,10 @@ def parse_args(name: str, description: str):  # noqa
                              'It is an insecure way.')
 
         if not args.python:
-            if args.os in ('ubuntu18', 'rhel8'):
+            if args.os in ('ubuntu20', 'rhel8'):
                 args.python = 'python38'
             else:
-                args.python = 'python38'
+                args.python = 'python310'
 
         if args.python == 'python38' and 'win' in args.os:
             if not hasattr(args, 'pre_stage_msbuild') or not args.pre_stage_msbuild:
