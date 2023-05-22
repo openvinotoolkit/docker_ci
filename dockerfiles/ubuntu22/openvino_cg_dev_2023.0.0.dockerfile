@@ -44,12 +44,11 @@ RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     chown -R openvino /opt/intel/openvino_"$OV_BUILD"
 
 
-ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
 ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
 ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/extras/opencv/lib
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV PYTHONPATH=/opt/intel/openvino/python/python3.10:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
@@ -90,7 +89,7 @@ RUN apt-get update; \
         libavcodec-dev \
         libavformat-dev \
         libswscale-dev \
-        libavresample-dev \
+        libswresample-dev \
         libtbb2 \
         libssl-dev \
         libva-dev \
@@ -256,18 +255,22 @@ RUN apt-get update && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
     rm /usr/lib/python3.*/lib-dynload/readline.cpython-3*-gnu.so && rm -rf /var/lib/apt/lists/*
 
+RUN curl -L -O  https://github.com/oneapi-src/oneTBB/releases/download/v2021.9.0/oneapi-tbb-2021.9.0-lin.tgz && \
+    tar -xzf  oneapi-tbb-2021.9.0-lin.tgz&& \
+    cp oneapi-tbb-2021.9.0/lib/intel64/gcc4.8/libtbb.so* /opt/intel/openvino/runtime/lib/intel64/ && \
+    rm -Rf oneapi-tbb-2021.9.0*
+
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
         echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. They are stored in https://storage.openvinotoolkit.org/repositories/openvino/ci_dependencies/container_gpl_sources/." > DockerImage_readme.txt ; \
     fi
 
 
-ENV HDDL_INSTALL_DIR=/opt/intel/openvino/runtime/3rdparty/hddl
 ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
 ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/extras/opencv/lib
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV PYTHONPATH=/opt/intel/openvino/python/python3.10:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
@@ -275,7 +278,7 @@ ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
 ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
 
 # setup Python
-ENV PYTHON_VER python3.8
+ENV PYTHON_VER python3.10
 
 RUN ${PYTHON_VER} -m pip install --upgrade pip
 
@@ -319,19 +322,19 @@ RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
 # for CPU
 
 # for GPU
-
-RUN apt-get update && apt-get install -y --no-install-recommends gpg gpg-agent && \
-    curl https://repositories.intel.com/graphics/intel-graphics.key | gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg && \
-    echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu focal-legacy main' | tee  /etc/apt/sources.list.d/intel.gpu.focal.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-       intel-opencl-icd=22.43.24595.35+i538~20.04 \
-       intel-level-zero-gpu=1.3.24595.35+i538~20.04 \
-       level-zero=1.8.8+i524~u20.04 \
-       ocl-icd-libopencl1 && \
-       apt-get purge gpg gpg-agent --yes && apt-get --yes autoremove && \
-       apt-get clean ; \
-       rm -rf /var/lib/apt/lists/* && rm -rf /tmp/* 
+# hadolint ignore=DL3003
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
+    apt-get clean ; \
+    rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
+# hadolint ignore=SC2164
+RUN mkdir /tmp/gpu_deps && cd /tmp/gpu_deps ; \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.05.25593.11/libigdgmm12_22.3.0_amd64.deb ; \
+    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-core_1.0.13700.14_amd64.deb ; \
+    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-opencl_1.0.13700.14_amd64.deb ; \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd_23.13.26032.30_amd64.deb ; \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/libigdgmm12_22.3.0_amd64.deb ; \
+    dpkg -i *.deb && rm -Rf /tmp/gpu_deps
 
 
 # Post-installation cleanup and setting up OpenVINO environment variables
