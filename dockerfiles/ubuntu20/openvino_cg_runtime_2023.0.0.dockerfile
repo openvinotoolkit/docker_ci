@@ -33,14 +33,14 @@ RUN useradd -ms /bin/bash -G users openvino
 
 RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
     OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d.\d+')" && \
-    OV_YEAR="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+')" && \
+    OV_YEAR="$(echo "$OV_BUILD" | grep -oP '^[^\d]*(\d+)')" && \
     OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
     mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
     cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
     rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
-    rm -rf ${INTEL_OPENVINO_DIR}/tools/workbench && rm -rf ${TEMP_DIR} && \
+    rm -rf "${INTEL_OPENVINO_DIR}/tools/workbench" && rm -rf "${TEMP_DIR}" && \
     chown -R openvino /opt/intel/openvino_"$OV_BUILD"
 
 
@@ -150,7 +150,7 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # runtime package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2022.3.0
+ARG OPENVINO_WHEELS_VERSION=2023.0.0
 ARG OPENVINO_WHEELS_URL
 RUN apt-get update && apt-get install -y --no-install-recommends cmake make && rm -rf /var/lib/apt/lists/* && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
@@ -166,11 +166,19 @@ COPY dockerfiles/ubuntu20/third-party-programs-docker-runtime.txt ${INTEL_OPENVI
 # for CPU
 
 # for GPU
-ARG TEMP_DIR=/tmp/opencl
 
-WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
-RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends gpg gpg-agent && \
+    curl https://repositories.intel.com/graphics/intel-graphics.key | gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg && \
+    echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu focal-legacy main' | tee  /etc/apt/sources.list.d/intel.gpu.focal.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+       intel-opencl-icd=22.43.24595.35+i538~20.04 \
+       intel-level-zero-gpu=1.3.24595.35+i538~20.04 \
+       level-zero=1.8.8+i524~u20.04 \
+       ocl-icd-libopencl1 && \
+       apt-get purge gpg gpg-agent --yes && apt-get --yes autoremove && \
+       apt-get clean ; \
+       rm -rf /var/lib/apt/lists/* && rm -rf /tmp/* 
 
 
 # Post-installation cleanup and setting up OpenVINO environment variables
