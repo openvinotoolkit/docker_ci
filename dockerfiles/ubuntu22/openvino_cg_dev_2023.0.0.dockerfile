@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:20.04 AS base
+FROM ubuntu:22.04 AS base
 
 # hadolint ignore=DL3002
 USER root
@@ -15,14 +15,51 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-{% for pre_command in pre_commands %}
-{{ pre_command|safe }}
-{% endfor %}
+
+# get product from URL
+ARG package_url
+ARG TEMP_DIR=/tmp/openvino_installer
+
+WORKDIR ${TEMP_DIR}
+# hadolint ignore=DL3020
+ADD ${package_url} ${TEMP_DIR}
+
+# install product by copying archive content
+ARG TEMP_DIR=/tmp/openvino_installer
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+
+# Creating user openvino and adding it to groups"users"
+RUN useradd -ms /bin/bash -G users openvino
+
+RUN tar -xzf "${TEMP_DIR}"/*.tgz && \
+    OV_BUILD="$(find . -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d.\d+')" && \
+    OV_YEAR="$(echo "$OV_BUILD" | grep -oP '^[^\d]*(\d+)')" && \
+    OV_FOLDER="$(find . -maxdepth 1 -type d -name "*openvino*")" && \
+    mkdir -p /opt/intel/openvino_"$OV_BUILD"/ && \
+    cp -rf "$OV_FOLDER"/*  /opt/intel/openvino_"$OV_BUILD"/ && \
+    rm -rf "${TEMP_DIR:?}"/"$OV_FOLDER" && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino && \
+    ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
+    rm -rf "${INTEL_OPENVINO_DIR}/tools/workbench" && rm -rf "${TEMP_DIR}" && \
+    chown -R openvino /opt/intel/openvino_"$OV_BUILD"
+
+
+ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/extras/opencv/lib
+ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PYTHONPATH=/opt/intel/openvino/python/python3.10:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
+ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
+ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
+
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 # -----------------
 
-{% if distribution == 'dev' %}
+
 
 FROM base AS opencv
 
@@ -52,7 +89,7 @@ RUN apt-get update; \
         libavcodec-dev \
         libavformat-dev \
         libswscale-dev \
-        libavresample-dev \
+        libswresample-dev \
         libtbb2 \
         libssl-dev \
         libva-dev \
@@ -152,11 +189,11 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
 WORKDIR /opt/repo/opencv/build/install
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
-{% endif %}
 
-FROM ubuntu:20.04 AS ov_base
 
-LABEL description="This is the {{ distribution }} image for {{ product_name }} on Ubuntu 20.04 LTS"
+FROM ubuntu:22.04 AS ov_base
+
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 22.04 LTS"
 LABEL vendor="Intel Corporation"
 
 USER root
@@ -183,21 +220,12 @@ ARG INSTALL_SOURCES="no"
 
 ARG DEPS="tzdata \
           curl"
-{% if 'runtime' == distribution %}
-ARG LGPL_DEPS="g++ \
-               gcc"
-ARG INSTALL_PACKAGES="-c=python -c=core"
-{% elif 'dev' == distribution or 'dev_no_samples' == distribution %}
+
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
 ARG INSTALL_PACKAGES="-c=python -c=core -c=dev"
-{% else %}
-ARG LGPL_DEPS="g++ \
-               gcc \
-               libc6-dev"
-ARG INSTALL_PACKAGES="-c=python"
-{% endif %}
+
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
@@ -227,14 +255,86 @@ RUN apt-get update && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
     rm /usr/lib/python3.*/lib-dynload/readline.cpython-3*-gnu.so && rm -rf /var/lib/apt/lists/*
 
+RUN curl -L -O  https://github.com/oneapi-src/oneTBB/releases/download/v2021.9.0/oneapi-tbb-2021.9.0-lin.tgz && \
+    tar -xzf  oneapi-tbb-2021.9.0-lin.tgz&& \
+    cp oneapi-tbb-2021.9.0/lib/intel64/gcc4.8/libtbb.so* /opt/intel/openvino/runtime/lib/intel64/ && \
+    rm -Rf oneapi-tbb-2021.9.0*
+
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
         echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. They are stored in https://storage.openvinotoolkit.org/repositories/openvino/ci_dependencies/container_gpl_sources/." > DockerImage_readme.txt ; \
     fi
 
-{% for command in commands %}
-{{ command|safe }}
-{% endfor %}
+
+ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/extras/opencv/lib
+ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PYTHONPATH=/opt/intel/openvino/python/python3.10:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
+ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
+ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
+
+# setup Python
+ENV PYTHON_VER python3.10
+
+RUN ${PYTHON_VER} -m pip install --upgrade pip
+
+# dev package
+WORKDIR ${INTEL_OPENVINO_DIR}
+ARG OPENVINO_WHEELS_VERSION=2023.0.0
+ARG OPENVINO_WHEELS_URL
+# hadolint ignore=SC2102
+RUN apt-get update && apt-get install -y --no-install-recommends cmake make git && rm -rf /var/lib/apt/lists/* && \
+    if [ -z "$OPENVINO_WHEELS_URL" ]; then \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino=="$OPENVINO_WHEELS_VERSION" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --extra-index-url https://download.pytorch.org/whl/cpu; \
+    else \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" --extra-index-url https://download.pytorch.org/whl/cpu; \
+    fi
+
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+# Please use `third-party-programs-docker-dev.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
+COPY dockerfiles/ubuntu22/third-party-programs-docker-dev.txt ${INTEL_OPENVINO_DIR}/licensing
+COPY dockerfiles/ubuntu22/third-party-programs-docker-runtime.txt ${INTEL_OPENVINO_DIR}/licensing
+
+COPY --from=opencv /opt/repo/opencv/build/install ${INTEL_OPENVINO_DIR}/extras/opencv
+RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
+     echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"
+
+# build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
+WORKDIR ${INTEL_OPENVINO_DIR}/samples/cpp
+RUN ./build_samples.sh -b build && \
+    cp -R build/intel64/Release samples_bin && \
+    rm -Rf build 
+
+# add Model API package
+# hadolint ignore=DL3013
+RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
+    sed -i '/opencv-python/d' open_model_zoo/demos/common/python/requirements.txt && \
+    pip3 --no-cache-dir install open_model_zoo/demos/common/python/ && \
+    rm -Rf open_model_zoo && \
+    python3 -c "from openvino.model_zoo import model_api"
+
+# for CPU
+
+# for GPU
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
+    apt-get clean ; \
+    rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
+# hadolint ignore=DL3003
+RUN mkdir /tmp/gpu_deps && cd /tmp/gpu_deps && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.05.25593.11/libigdgmm12_22.3.0_amd64.deb && \
+    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-core_1.0.13700.14_amd64.deb && \
+    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-opencl_1.0.13700.14_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd_23.13.26032.30_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/libigdgmm12_22.3.0_amd64.deb && \
+    dpkg -i ./*.deb && rm -Rf /tmp/gpu_deps
+
 
 # Post-installation cleanup and setting up OpenVINO environment variables
 ENV LIBVA_DRIVER_NAME=iHD
@@ -252,6 +352,3 @@ ENV DEBIAN_FRONTEND=noninteractive
 CMD ["/bin/bash"]
 
 # Setup custom layers below
-{% for layer in layers %}
-{{ layer|safe }}
-{% endfor %}

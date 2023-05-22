@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2022 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:20.04 AS base
+FROM ubuntu:22.04 AS base
 
 # hadolint ignore=DL3002
 USER root
@@ -52,7 +52,7 @@ RUN apt-get update; \
         libavcodec-dev \
         libavformat-dev \
         libswscale-dev \
-        libavresample-dev \
+        libswresample-dev \
         libtbb2 \
         libssl-dev \
         libva-dev \
@@ -154,9 +154,9 @@ CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 {% endif %}
 
-FROM ubuntu:20.04 AS ov_base
+FROM ubuntu:22.04 AS ov_base
 
-LABEL description="This is the {{ distribution }} image for {{ product_name }} on Ubuntu 20.04 LTS"
+LABEL description="This is the {{ distribution }} image for {{ product_name }} on Ubuntu 22.04 LTS"
 LABEL vendor="Intel Corporation"
 
 USER root
@@ -226,6 +226,11 @@ RUN apt-get update && \
       done && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
     rm /usr/lib/python3.*/lib-dynload/readline.cpython-3*-gnu.so && rm -rf /var/lib/apt/lists/*
+
+RUN curl -L -O  https://github.com/oneapi-src/oneTBB/releases/download/v2021.9.0/oneapi-tbb-2021.9.0-lin.tgz && \
+    tar -xzf  oneapi-tbb-2021.9.0-lin.tgz&& \
+    cp oneapi-tbb-2021.9.0/lib/intel64/gcc4.8/libtbb.so* /opt/intel/openvino/runtime/lib/intel64/ && \
+    rm -Rf oneapi-tbb-2021.9.0*
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
