@@ -227,10 +227,10 @@ RUN apt-get update && \
       echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
     rm /usr/lib/python3.*/lib-dynload/readline.cpython-3*-gnu.so && rm -rf /var/lib/apt/lists/*
 
-RUN curl -L -o oneapi-tbb-2021.2.0-lin.tgz https://github.com/oneapi-src/oneTBB/releases/download/v2021.2.0/oneapi-tbb-2021.2.0-lin.tgz && \
-    tar -xzf oneapi-tbb-2021.2.0-lin.tgz && \
-    cp oneapi-tbb-2021.2.0/lib/intel64/gcc4.8/libtbb.so* /opt/intel/openvino/runtime/lib/intel64/ && \
-    rm -Rf oneapi-tbb-2021.2.0*
+RUN curl -L -O  https://github.com/oneapi-src/oneTBB/releases/download/v2021.9.0/oneapi-tbb-2021.9.0-lin.tgz && \
+    tar -xzf  oneapi-tbb-2021.9.0-lin.tgz&& \
+    cp oneapi-tbb-2021.9.0/lib/intel64/gcc4.8/libtbb.so* /opt/intel/openvino/runtime/lib/intel64/ && \
+    rm -Rf oneapi-tbb-2021.9.0*
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
