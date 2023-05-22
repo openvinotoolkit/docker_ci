@@ -193,7 +193,7 @@ CMD ["/bin/bash"]
 
 FROM ubuntu:22.04 AS ov_base
 
-LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
+LABEL description="This is the dev image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 22.04 LTS"
 LABEL vendor="Intel Corporation"
 
 USER root
@@ -224,7 +224,7 @@ ARG DEPS="tzdata \
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=core -c=dev"
+ARG INSTALL_PACKAGES="-c=python -c=core -c=dev"
 
 
 # hadolint ignore=DL3008

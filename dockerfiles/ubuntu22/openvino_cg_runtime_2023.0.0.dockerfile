@@ -63,7 +63,7 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 
 FROM ubuntu:22.04 AS ov_base
 
-LABEL description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 20.04 LTS"
+LABEL description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 22.04 LTS"
 LABEL vendor="Intel Corporation"
 
 USER root
@@ -93,7 +93,7 @@ ARG DEPS="tzdata \
 
 ARG LGPL_DEPS="g++ \
                gcc"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=core"
+ARG INSTALL_PACKAGES="-c=python -c=core"
 
 
 # hadolint ignore=DL3008

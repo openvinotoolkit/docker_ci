@@ -47,8 +47,7 @@ You can find generated dockerfile in `<root_project>/dockerfiles/<image_os>` fol
 
 Select a product distribution:
 ```cmd
-  -dist, --distribution TYPE  Available types: dev, runtime or 
-                              base (with CPU only and without installing dependencies). 
+  -dist, --distribution TYPE  Available types: dev or runtime. 
                               Using key --file <path_to_dockerfile> and -p <version> are  mandatory to build base distribution image.
                               base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder.
 ```
