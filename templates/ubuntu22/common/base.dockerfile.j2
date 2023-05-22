@@ -232,10 +232,6 @@ RUN curl -L -o oneapi-tbb-2021.2.0-lin.tgz https://github.com/oneapi-src/oneTBB/
     cp oneapi-tbb-2021.2.0/lib/intel64/gcc4.8/libtbb.so* /opt/intel/openvino/runtime/lib/intel64/ && \
     rm -Rf oneapi-tbb-2021.2.0*
 
-wget -nv https://github.com/oneapi-src/oneTBB/releases/download/v2021.2.0/oneapi-tbb-2021.2.0-lin.tgz && \
-    tar -xzf oneapi-tbb-2021.2.0-lin.tgz && \
-    cp oneapi-tbb-2021.2.0/lib/intel64/gcc4.8/libtbb.so* /opt/intel/openvino/runtime/lib/intel64/
-
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
         echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. They are stored in https://storage.openvinotoolkit.org/repositories/openvino/ci_dependencies/container_gpl_sources/." > DockerImage_readme.txt ; \
