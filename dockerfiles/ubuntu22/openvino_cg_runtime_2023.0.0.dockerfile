@@ -169,19 +169,18 @@ COPY dockerfiles/ubuntu22/third-party-programs-docker-runtime.txt ${INTEL_OPENVI
 # for CPU
 
 # for GPU
-# hadolint ignore=DL3003
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
     apt-get clean ; \
     rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
-# hadolint ignore=SC2164
-RUN mkdir /tmp/gpu_deps && cd /tmp/gpu_deps ; \
-    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.05.25593.11/libigdgmm12_22.3.0_amd64.deb ; \
-    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-core_1.0.13700.14_amd64.deb ; \
-    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-opencl_1.0.13700.14_amd64.deb ; \
-    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd_23.13.26032.30_amd64.deb ; \
-    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/libigdgmm12_22.3.0_amd64.deb ; \
-    dpkg -i *.deb && rm -Rf /tmp/gpu_deps
+# hadolint ignore=DL3003
+RUN mkdir /tmp/gpu_deps && cd /tmp/gpu_deps && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.05.25593.11/libigdgmm12_22.3.0_amd64.deb && \
+    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-core_1.0.13700.14_amd64.deb && \
+    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-opencl_1.0.13700.14_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd_23.13.26032.30_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/libigdgmm12_22.3.0_amd64.deb && \
+    dpkg -i ./*.deb && rm -Rf /tmp/gpu_deps
 
 
 # Post-installation cleanup and setting up OpenVINO environment variables
