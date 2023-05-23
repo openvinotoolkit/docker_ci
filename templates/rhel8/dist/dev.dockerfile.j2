@@ -28,6 +28,13 @@ COPY --from=opencv /opt/repo/opencv/build/install ${INTEL_OPENVINO_DIR}/extras/o
 RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
      echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"
 
+# Install dependencies needed by OV::RemoteTensor
+RUN yum install -y \
+    https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/opencl-headers-2.2-1.20180306gite986688.el8.noarch.rpm \
+    https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/ocl-icd-devel-2.2.12-1.el8.x86_64.rpm \
+    https://vault.centos.org/centos/8/AppStream/x86_64/os/Packages/ocl-icd-2.2.12-1.el8.x86_64.rpm && \
+    yum clean all
+
 # build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
 WORKDIR "${INTEL_OPENVINO_DIR}"/samples/cpp
 RUN ./build_samples.sh -b build && \
