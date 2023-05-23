@@ -225,7 +225,7 @@ ARG DEPS="tzdata \
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=core -c=dev"
+ARG INSTALL_PACKAGES="-c=python -c=core -c=dev"
 
 
 # hadolint ignore=DL3008
@@ -301,6 +301,9 @@ COPY dockerfiles/ubuntu20/third-party-programs-docker-runtime.txt ${INTEL_OPENVI
 COPY --from=opencv /opt/repo/opencv/build/install ${INTEL_OPENVINO_DIR}/extras/opencv
 RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
      echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"
+
+# Install dependencies for OV::RemoteTensor 
+RUN apt-get update && apt-get install -y --no-install-recommends opencl-headers ocl-icd-opencl-dev && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
 # build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
 WORKDIR ${INTEL_OPENVINO_DIR}/samples/cpp

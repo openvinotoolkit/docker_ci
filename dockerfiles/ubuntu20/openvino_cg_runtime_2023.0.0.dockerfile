@@ -94,7 +94,7 @@ ARG DEPS="tzdata \
 
 ARG LGPL_DEPS="g++ \
                gcc"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=core"
+ARG INSTALL_PACKAGES="-c=python -c=core"
 
 
 # hadolint ignore=DL3008
