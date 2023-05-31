@@ -34,7 +34,8 @@ Prebuilt images are available on:
 - [Red Hat* Ecosystem Catalog (development image)](https://catalog.redhat.com/software/containers/intel/openvino-dev/613a450dc9bc35f21dc4a1f7)
 - [Azure* Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/intel_corporation.openvino)
 
-Note: OpenVINO development environment in a docker container is available also in [notebook repository]. It can be deployed in OpenShift RHODS
+Note: OpenVINO development environment in a docker container is available also in [notebook repository](https://github.com/openvinotoolkit/openvino_notebooks).
+It can be deployed in [OpenShift RedHat OpenData Science (RHODS)](https://github.com/openvinotoolkit/operator/blob/main/docs/notebook_in_rhods.md)
 
 ## Licenses
 
