@@ -10,7 +10,7 @@ You can reuse available Dockerfiles, add your layer and customize the image of O
 
 * [Get Started with OpenVINO™ toolkit images](get-started.md)
 * [Available Dockerfiles for OpenVINO™ toolkit](dockerfiles)
-* [Generating the dockerfiles and building the images](docs/docker_openvino.md)
+* [Generating the dockerfiles and building the images](docs/openvino_docker.md)
 * [Working with OpenVINO containers](docs/containers.md)
 * [Deployment with GPU accelerators](docs/accelerators.md)
 * [Available Tutorials](docs/tutorials)

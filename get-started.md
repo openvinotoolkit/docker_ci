@@ -1,7 +1,7 @@
--# Geting Started with OpenVINO™ Toolkit Images
+# Geting Started with OpenVINO™ Toolkit Images
 
-You can easily get started by using the precompiled and publish docker images.
-In order to start using them you need to have the following prerequisites:
+You can easily get started by using the precompiled and published docker images.
+In order to start using them you need to meet the following prerequisites:
 - Linux operating system or Windows Subsystem for Linux (WSL2)
 - Installed docker engine or compatible container engine
 - Permissions to start containers (sudo or docker group membership)
@@ -12,17 +12,17 @@ In order to start using them you need to have the following prerequisites:
 docker pull openvino/ubuntu20_dev:latest
 ```
 
-## Start the container interacctively
+## Start the container with an interactive session
 
 ```bash
 export IMAGE=openvino/ubuntu20_dev:latest
-docker run -it --rm $IMAGE
+docker run -it --rm $IMAGE /bin/bash
 ```
 
 Inside the interactive session, you can run all OpenVINO samples and tools.
 
 # Run a python sample
-If you want to try some samples, then run the image with the command below:
+If you want to try samples, then run the image with the command like below:
 
 ```bash
 docker run -it --rm $IMAGE /bin/bash -c "python3 samples/python/hello_query_device/hello_query_device.py"
@@ -38,7 +38,7 @@ docker run -it -u $(id -u):$(id -g) -v $(pwd)/:/model/ --rm $IMAGE \
 docker run -it -u $(id -u):$(id -g) -v $(pwd)/:/model/ --rm $IMAGE \
 /bin/bash -c "omz_converter --name googlenet-v1 --precision FP32 -d /model -o /model"
 ```
-In result the converted model will be copied to `public/googlenet-v1/FP32` folder in the current directly:
+In result, the converted model will be copied to `public/googlenet-v1/FP32` folder in the current directly:
 ```
 tree public/googlenet-v1/
 public/googlenet-v1/
@@ -57,6 +57,8 @@ docker run -it -u $(id -u):$(id -g) -v $(pwd)/:/model/ --rm $IMAGE benchmark_app
 ```
 
 Check also:
+
+[PRebuilt images](#prebuilt-images)
 
 [Working with OpenVINO Containers](docs/containers.md)
 

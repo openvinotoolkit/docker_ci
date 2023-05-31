@@ -4,7 +4,7 @@
 
 The runtime images include OpenVINO toolkit with all required dependencies to run inference operations and openvino API both in python and C++.
 There are no development tools installed.
-Here are examples how to runtime image could be used:
+Here are examples how the runtime image could be used:
 
 ```
 export IMAGE=openvino/ubuntu20_runtime:2023.0.0
