@@ -56,9 +56,9 @@ public/googlenet-v1/
 docker run -it -u $(id -u):$(id -g) -v $(pwd)/:/model/ --rm $IMAGE benchmark_app -m /model/public/googlenet-v1/FP32/googlenet-v1.xml
 ```
 
-Check also:
+**Check also:**
 
-[PRebuilt images](#prebuilt-images)
+[Prebuilt images](#prebuilt-images)
 
 [Working with OpenVINO Containers](docs/containers.md)
 

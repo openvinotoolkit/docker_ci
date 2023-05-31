@@ -62,8 +62,8 @@ You can get OpenVINO distribution packages (runtime, dev) directly from [public 
 ```
 
 **Note:** This is required that OpenVINO package is named in the right way, which is, 
-distribution type (e.g., dev) and build number (e.g., 2022.1.0.643) have to be part of the URI, 
-for example, `openvino_dev_2022.1.0.643.tgz` fits the requirements, while `ov_R3.tgz` is not. 
+build number (e.g., 2022.1.0.643) have to be part of the URI, 
+for example, `openvino_2022.1.0.643.tgz` fits the requirements, while `ov_R3.tgz` is not. 
 Otherwise, you should specify `--distribution` and `--product_version` directly.
 
 Specify the product package source:
@@ -73,31 +73,17 @@ Specify the product package source:
 
 Select an image operation system:
 ```cmd
-  -os {ubuntu18,ubuntu20,rhel8,winserver2019,windows20h2} Operation System for docker image. By default: ubuntu18
+  -os {ubuntu22,ubuntu20,rhel8} Operation System for docker image. By default: ubuntu18
 ```
 
 You can customize platform targets and minimize image size:
 ```cmd
-  -d, --device NAME  Target inference hardware: cpu, gpu, vpu, hddl. Default is all. 
+  -d, --device NAME  Target inference hardware: cpu, gpu. Default is all. 
                      Dockerfile name format has the first letter from device name, 
-                     e.g. for CPU, HDDL it will be openvino_ch_<distribution>_<product_version>.dockerfile
+                     e.g. for CPU, GPU it will be openvino_ch_<distribution>_<product_version>.dockerfile
 ```
 
-OpenVINO documentation for [supported devices](https://docs.openvino.ai/latest/openvino_docs_IE_DG_supported_plugins_Supported_Devices.html).
-
-**Prerequisite:** Install the dependencies Microsoft Visual Studio* with C++ 2019, 2017, or 2015 with MSBuild
-
-You can add Visual Studio Build Tools to Windows OS docker image. Previously you need to add offline installer layout in scripts/msbuild2019 folder then 
-update `<repository_root>/templates/winserver2019/msbuild/msbuild2019.dockerfile.j2` dockerfile, 
-please follow the official Microsoft [documentation](https://docs.microsoft.com/en-us/visualstudio/install/create-an-offline-installation-of-visual-studio?view=vs-2019).
-Or use Build Tools online installer, follow the [documentation](https://docs.microsoft.com/en-us/visualstudio/install/build-tools-container?view=vs-2019) and 
-update `<repository_root>/templates/winserver2019/msbuild/msbuild2019_online.dockerfile.j2` dockerfile.
-Visual Studio Build Tools are licensed as a supplement your existing Visual Studio license. 
-Any images built with these tools should be for your personal use or for use in your organization in accordance with your existing Visual Studio and Windows licenses.
-Please don’t share the image with Visual Studio Build Tools on a public Docker hub.
-```cmd
-  --msbuild {msbuild2019, msbuild2019_online} MSBuild Tools for Windows docker image.
-```
+OpenVINO documentation for [supported devices](https://docs.openvino.ai/2023.0/openvino_docs_IE_DG_supported_plugins_Supported_Devices.html).
 
 You can add your layer and customize image:
 ```cmd
@@ -121,7 +107,7 @@ python3 docker_openvino.py build --package_url <url>
 
 By default, 'build' mode will generate a dockerfile from templates (see details in the previous section):
 ```bash
-python3 docker_openvino.py build -dist runtime -os ubuntu20 --product_version 2022.2.0
+python3 docker_openvino.py build -dist runtime -os ubuntu20 --product_version 2023.0.0
 ```
 but you can specify dockerfile directly:
 ```cmd
@@ -193,7 +179,7 @@ Need install pytest-xdist package before: `pip install pytest-xdist`
 
 To gen_dockerfile, build, test and deploy image, run the following command in the repository's root:  
 ```bash
-python3 docker_openvino.py all --distribution dev --product_version 2022.2.0 --registry docker.io/openvino 
+python3 docker_openvino.py all --distribution dev --product_version 2023.0.0 --registry docker.io/openvino 
 ``` 
 See build and tests logs in `<repository_root>/logs/<image_tag>` folder and summary.log in `<repository_root>/logs`
 
@@ -213,8 +199,19 @@ create issue on [GitHub* Issues](https://github.com/openvinotoolkit/docker_ci/is
 We will check a missing package to meet Intel(R) security policy.
 Please see [SECURITY](./SECURITY.md) for details to follow security guideline.
 
-If you got a proxy issues, please setup proxy settings for Docker Engine. See the Proxy section in [Install the DL Workbench from Docker Hub* ](https://docs.openvino.ai/latest/workbench_docs_Workbench_DG_Prerequisites.html#set-proxy) topic.
+If you got a proxy issues, please setup proxy settings for Docker Engine.
 DockerHub CI uses a system proxy to generate Dockerfile and build a docker image by default. 
+
+
+**Check also:**
+
+[Prebuilt images](#prebuilt-images)
+
+[Working with OpenVINO Containers](docs/containers.md)
+
+[Deployment with GPU accelerator](docs/accelerators.md)
+
+[Generating dockerfiles and building the images in Docker_CI tools](docs/openvino_docker.md)
 
 
 ---

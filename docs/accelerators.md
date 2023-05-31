@@ -1,7 +1,7 @@
 # Using OpenVINO™ Toolkit containers with GPU accelerators
 
 
-Containers can be used to execute inference operations with GPU acceleration.
+Containers can be used to execute inference operations with GPU acceleration or with the [virtual devices](https://docs.openvino.ai/nightly/openvino_docs_Runtime_Inference_Modes_Overview.html).
 
 There are the following prerequisites:
 
@@ -43,11 +43,30 @@ docker run -it --device=/dev/dxg -v /usr/lib/wsl:/usr/lib/wsl $IMAGE ./samples/c
 Run the benchmark app using GPU accelerator with `-use_device_mem` param showcasing inference without copy between CPU and GPU memory
 ```
 docker run --device /dev/dri --group-add=$(stat -c \"%g\" /dev/dri/render* ) $IMAGE bash -c " \
-   curl -O https://storage.openvinotoolkit.org/repositories/open_model_zoo/2022.1/models_bin/3/resnet50-binary-0001/FP32-INT1/resnet50-binary-0001.xml && \
-   curl -O https://storage.openvinotoolkit.org/repositories/open_model_zoo/2022.1/models_bin/3/resnet50-binary-0001/FP32-INT1/resnet50-binary-0001.bin && \
+   curl -O https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/resnet50-binary-0001/FP16-INT1/resnet50-binary-0001.xml && \
+   curl -O https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/resnet50-binary-0001/FP16-INT1/resnet50-binary-0001.bin && \
    ./samples/cpp/samples_bin/benchmark_app -m resnet50-binary-0001.xml -d GPU -use_device_mem -inference_only=false"
 ```
 In the benchmark app, the parameter `-use_device_mem` employs the OV::RemoteTensor as the input buffer. It demonstrates the gain without data copy beteen the host and the GPU device.
+
+Run the benchmark app using both GPU and CPU. Load will be distributed on both types of devices:
+```
+docker run --device /dev/dri --group-add=$(stat -c \"%g\" /dev/dri/render* ) $IMAGE bash -c " \
+   curl -O https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/resnet50-binary-0001/FP16-INT1/resnet50-binary-0001.xml && \
+   curl -O https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/resnet50-binary-0001/FP16-INT1/resnet50-binary-0001.bin && \
+   ./samples/cpp/samples_bin/benchmark_app -m resnet50-binary-0001.xml -d MULTI:GPU,CPU"
+```
+
+
+**Check also:**
+
+[Prebuilt images](#prebuilt-images)
+
+[Working with OpenVINO Containers](docs/containers.md)
+
+[Generating dockerfiles and building the images in Docker_CI tools](docs/openvino_docker.md)
+
+[OpenVINO GPU Plugin](https://docs.openvino.ai/2023.0/openvino_docs_OV_UG_supported_plugins_GPU.html)
 
 
 

@@ -62,3 +62,13 @@ docker run $IMAGE bash -c "git clone --depth=1 --recurse-submodules --shallow-su
    python3 classification_demo.py -m resnet50-binary-0001.xml -i zebra.jpeg --labels ../../../data/dataset_classes/imagenet_2012.txt --no_show -nstreams 1 -r"
 
 ```
+
+**Check also:**
+
+[Prebuilt images](#prebuilt-images)
+
+[Deployment with GPU accelerator](docs/accelerators.md)
+
+[Generating dockerfiles and building the images in Docker_CI tools](docs/openvino_docker.md)
+
+[OpenVINO GPU Plugin](https://docs.openvino.ai/2023.0/openvino_docs_OV_UG_supported_plugins_GPU.html)
