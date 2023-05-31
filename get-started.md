@@ -1,4 +1,4 @@
-# Geting Started with OpenVINO™ Toolkit Images
+# Getting Started with OpenVINO™ Toolkit Images
 
 You can easily get started by using the precompiled and published docker images.
 In order to start using them you need to meet the following prerequisites:
