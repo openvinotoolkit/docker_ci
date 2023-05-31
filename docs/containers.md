@@ -2,7 +2,7 @@
 
 ## Runtime images
 
-The runtime images include OpenVINO toolkit with all required dependencies to run inference operations and openvino API both in python and C++.
+The runtime images include OpenVINO toolkit with all required dependencies to run inference operations and OpenVINO API both in Python and C++.
 There are no development tools installed.
 Here are examples how the runtime image could be used:
 
@@ -24,8 +24,8 @@ docker run -it $IMAGE python3 samples/python/hello_query_device/hello_query_devi
 
 ## Development images
 
-Dev images include the OpenVINO runtime components and in addition also development tools. It includes a complete environment for experimenting with OpenVINO.
-Below are examples how the development container can be used:
+Dev images include the OpenVINO runtime components and development tools as well. It includes a complete environment for experimenting with OpenVINO.
+Examples how the development container can be used are below:
 
 ```
 export IMAGE=openvino/ubuntu20_dev:2023.0.0
