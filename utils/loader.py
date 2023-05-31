@@ -444,7 +444,8 @@ INTEL_OPENVINO_VERSION = {
             {
                 'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/'
                 'linux/l_openvino_toolkit_ubuntu20_2023.0.0.10926.b4452d56304_x86_64.tgz',
-                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/linux/l_openvino_toolkit_ubuntu20_2023.0.0.10926.b4452d56304_x86_64.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/'
+                'linux/l_openvino_toolkit_ubuntu20_2023.0.0.10926.b4452d56304_x86_64.tgz',
             },
         'rhel8':
             {
