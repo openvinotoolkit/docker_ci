@@ -13,7 +13,7 @@ Note, that on WLS2, there must be present a character device `/dev/drx`.
 
 - Docker image for the container must include GPU runtime drivers like described on https://docs.openvino.ai/nightly/openvino_docs_install_guides_configurations_for_intel_gpu.html# 
 
-While the host and preconfigured docker engine is up and running, use the following docker parameters while starting the container:
+While the host and preconfigured docker engine is up and running, use the docker run parameters like described below.
 
 ## Linux
 
@@ -35,7 +35,7 @@ export IMAGE=openvino/ubuntu20_dev:2023.0.0
 docker run -it --device=/dev/dxg -v /usr/lib/wsl:/usr/lib/wsl $IMAGE ./samples/cpp/samples_bin/hello_query_device
 ```
 `--device /dev/dri` - it passes the virtual GPU device to the container
-`-v /usr/lib/wsl:/usr/lib/wsl` - it mounts required WSL libs into the cointainer
+`-v /usr/lib/wsl:/usr/lib/wsl` - it mounts required WSL libs into the container
 
 
 ## Usage example:
