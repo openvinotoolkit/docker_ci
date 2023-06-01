@@ -8,20 +8,21 @@ You can reuse available Dockerfiles, add your layer and customize the image of O
 
 ## Documentation
 
-* [Get Started with DockerHub CI for OpenVINO™ toolkit](get-started.md)
+* [Get Started with OpenVINO™ toolkit images](get-started.md)
 * [Available Dockerfiles for OpenVINO™ toolkit](dockerfiles)
-* [Available Dockerfiles for OpenVINO™ Deep Learning Workbench](dockerfiles/dl-workbench)
+* [Generating the dockerfiles and building the images](docs/openvino_docker.md)
+* [Working with OpenVINO containers](docs/containers.md)
+* [Deployment with GPU accelerators](docs/accelerators.md)
 * [Available Tutorials](docs/tutorials)
 
 As [Docker\*](https://docs.docker.com/) is (mostly) just an isolation tool, the OpenVINO toolkit inside the container is the same as the OpenVINO toolkit installed natively on the host machine,
-so the [OpenVINO documentation](https://docs.openvino.ai/) is fully applicable to containerized OpenVINO distribution:
-* [Install Intel® Distribution of OpenVINO™ toolkit for Linux* from a Docker* Image](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_docker_linux.html)
-* [Deploy with OpenVINO](https://docs.openvino.ai/latest/openvino_deployment_guide.html)
+so the [OpenVINO documentation](https://docs.openvino.ai/) is fully applicable to containerized OpenVINO distribution.
 
-## Supported Operating Systems for Docker image:
+## Supported Operating Systems for Docker Base Image:
 
+ - Ubuntu 22.04 LTS
  - Ubuntu 20.04 LTS
- - RHEL 8
+ - RedHat UBI 8
 
 ## Prebuilt images
 
@@ -32,6 +33,9 @@ Prebuilt images are available on:
 - [Red Hat* Ecosystem Catalog (runtime image)](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
 - [Red Hat* Ecosystem Catalog (development image)](https://catalog.redhat.com/software/containers/intel/openvino-dev/613a450dc9bc35f21dc4a1f7)
 - [Azure* Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/intel_corporation.openvino)
+
+Note: OpenVINO development environment in a docker container is available also in [notebook repository](https://github.com/openvinotoolkit/openvino_notebooks).
+It can be deployed in [OpenShift RedHat OpenData Science (RHODS)](https://github.com/openvinotoolkit/operator/blob/main/docs/notebook_in_rhods.md)
 
 ## Licenses
 
