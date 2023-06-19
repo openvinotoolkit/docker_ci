@@ -41,7 +41,7 @@ With this guide, you will learn how to:
 You can use [available Dockerfiles](dockerfiles/README.md) from `<root_project>/dockerfiles/<image_os>` folder or generate Dockerfile with your settings. 
 Run the following command in the repository's root:  
 ```bash
-python3 docker_openvino.py gen_dockerfile -os ubuntu20 --distribution dev --product_version 2022.3.0
+python3 docker_openvino.py gen_dockerfile -os ubuntu20 --distribution dev --product_version 2022.3.1
 ``` 
 You can find generated dockerfile in `<root_project>/dockerfiles/<image_os>` folder. By default, Dockerfile name format is `openvino_<devices>_<distribution>_<product_version>.dockerfile`.
 
@@ -65,11 +65,6 @@ You can get OpenVINO distribution packages (runtime, dev) directly from [public 
 ```cmd
   -u, --package_url URL  Package external or local url, use http://, https://, ftp:// access scheme or relative <root_project> local path
 ```
-
-**Note:** This is required that OpenVINO package is named in the right way, which is, 
-distribution type (e.g., dev) and build number (e.g., 2022.1.0.643) have to be part of the URI, 
-for example, `openvino_dev_2022.1.0.643.tgz` fits the requirements, while `ov_R3.tgz` is not. 
-Otherwise, you should specify `--distribution` and `--product_version` directly.
 
 Specify the product package source:
 ```cmd
@@ -126,7 +121,7 @@ python3 docker_openvino.py build --package_url <url>
 
 By default, 'build' mode will generate a dockerfile from templates (see details in the previous section):
 ```bash
-python3 docker_openvino.py build -dist runtime -os ubuntu20 --product_version 2022.2.0
+python3 docker_openvino.py build -dist runtime -os ubuntu20 --product_version 2022.3.1
 ```
 but you can specify dockerfile directly:
 ```cmd
@@ -198,7 +193,7 @@ Need install pytest-xdist package before: `pip install pytest-xdist`
 
 To gen_dockerfile, build, test and deploy image, run the following command in the repository's root:  
 ```bash
-python3 docker_openvino.py all --distribution dev --product_version 2022.2.0 --registry docker.io/openvino 
+python3 docker_openvino.py all --distribution dev --product_version 2022.3.1 --registry docker.io/openvino 
 ``` 
 See build and tests logs in `<repository_root>/logs/<image_tag>` folder and summary.log in `<repository_root>/logs`
 
