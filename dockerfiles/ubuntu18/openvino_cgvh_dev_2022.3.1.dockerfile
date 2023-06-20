@@ -56,6 +56,27 @@ ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
 ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
 ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
 
+# for VPU
+ARG BUILD_DEPENDENCIES="autoconf \
+                        automake \
+                        build-essential \
+                        libtool \
+                        unzip"
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ${BUILD_DEPENDENCIES} && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt
+RUN curl -L https://github.com/libusb/libusb/archive/v1.0.22.zip --output v1.0.22.zip && \
+    unzip v1.0.22.zip && rm -rf v1.0.22.zip
+
+WORKDIR /opt/libusb-1.0.22
+RUN ./bootstrap.sh && \
+    ./configure --disable-udev --enable-shared && \
+    make -j4
+
 RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.distribution && \
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 # -----------------
@@ -287,7 +308,7 @@ RUN update-alternatives --install /usr/bin/python3 python /usr/bin/python3.8 2
 
 # dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2022.3.0
+ARG OPENVINO_WHEELS_VERSION=2022.3.1
 ARG OPENVINO_WHEELS_URL
 
 RUN apt-get update && apt-get install -y --no-install-recommends git make && rm -rf /var/lib/apt/lists/*
@@ -332,6 +353,62 @@ ARG TEMP_DIR=/tmp/opencl
 WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
 RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
     rm -rf /var/lib/apt/lists/*
+
+# for VPU
+ARG LGPL_DEPS=udev
+
+WORKDIR /thirdparty
+
+# hadolint ignore=DL3008, SC2012
+RUN apt-get update && \
+    dpkg --get-selections | grep -v deinstall | awk '{print $1}' > no_vpu_packages.txt && \
+    apt-get install -y --no-install-recommends ${LGPL_DEPS} && \
+    if [ "$INSTALL_SOURCES" = "yes" ]; then \
+      sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+      apt-get update && \
+	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > vpu_packages.txt && \
+	  grep -v -f no_vpu_packages.txt vpu_packages.txt | while read line; do \
+	  package=$(echo $line); \
+	  name=(${package//:/ }); \
+      grep -l GPL /usr/share/doc/${name[0]}/copyright; \
+      exit_status=$?; \
+	  if [ $exit_status -eq 0 ]; then \
+	    apt-get source -q --download-only $package;  \
+	  fi \
+      done && \
+      echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=base /opt/libusb-1.0.22 /opt/libusb-1.0.22
+
+# libglib2.0-dev package that is required to build dl_streamer samples
+WORKDIR /opt/libusb-1.0.22/libusb
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends binutils && \
+    /bin/mkdir -p '/usr/local/lib' && \
+    /bin/bash ../libtool   --mode=install /usr/bin/install -c   libusb-1.0.la '/usr/local/lib' && \
+    /bin/mkdir -p '/usr/local/include/libusb-1.0' && \
+    /usr/bin/install -c -m 644 libusb.h '/usr/local/include/libusb-1.0' && \
+    /bin/mkdir -p '/usr/local/lib/pkgconfig' &&\
+    apt-get autoremove -y binutils && \
+    apt-get install libglib2.0-dev g++ -y --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/libusb-1.0.22/
+RUN /usr/bin/install -c -m 644 libusb-1.0.pc '/usr/local/lib/pkgconfig' && \
+    cp ${INTEL_OPENVINO_DIR}/install_dependencies/97-myriad-usbboot.rules /etc/udev/rules.d/ && \
+    ldconfig
+
+# for HDDL
+WORKDIR /tmp
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libboost-filesystem1.65-dev \
+        libboost-program-options1.65-dev \
+        libboost-thread1.65-dev \
+        libjson-c3 libxxf86vm-dev && \
+    rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
 
 USER openvino
