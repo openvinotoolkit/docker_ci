@@ -58,12 +58,13 @@ RUN yum install -y \
 RUN rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 
 RUN python3 -m pip install --no-cache-dir numpy==1.23.1
-ARG OPENCV_BRANCH="4.7.0"
-
+ARG OPENCV_BRANCH="377be68d923e40900ac5526242bcf221e3f355e5" # 4.8 with a fix for building tests
 WORKDIR /opt/repo
-RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} 
-
+RUN git clone https://github.com/opencv/opencv.git
+WORKDIR /opt/repo/opencv
+RUN git checkout ${OPENCV_BRANCH}
 WORKDIR /opt/repo/opencv/build
+
 # hadolint ignore=SC2046
 RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     cmake \
@@ -80,6 +81,7 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D BUILD_TBB=OFF \
     -D BUILD_WEBP=OFF \
     -D BUILD_ZLIB=ON \
+    -D BUILD_TESTS=ON \
     -D WITH_1394=OFF \
     -D WITH_CUDA=OFF \
     -D WITH_EIGEN=OFF \
@@ -109,8 +111,8 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D ENABLE_CXX11=ON \
     -D INSTALL_PDB=ON \
     -D INSTALL_TESTS=ON \
-    -D INSTALL_C_EXAMPLES=ON \
-    -D INSTALL_PYTHON_EXAMPLES=ON \
+    -D INSTALL_C_EXAMPLES=OFF \
+    -D INSTALL_PYTHON_EXAMPLES=OFF \
     -D CMAKE_INSTALL_PREFIX=install \
     -D OPENCV_SKIP_PKGCONFIG_GENERATION=ON \
     -D OPENCV_SKIP_PYTHON_LOADER=OFF \
