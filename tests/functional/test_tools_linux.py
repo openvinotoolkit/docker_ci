@@ -38,6 +38,7 @@ class TestToolsLinux:
             self.test_cl_compiler.__name__, **kwargs,
         )
 
+    @pytest.mark.skip(reason='compiler tool deprecated in 2023.0')
     @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev')], indirect=True)
     def test_compile_tool(self, tester, image, bash):
