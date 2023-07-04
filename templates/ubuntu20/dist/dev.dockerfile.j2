@@ -26,9 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends opencl-headers 
 
 # build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
 WORKDIR ${INTEL_OPENVINO_DIR}/samples/cpp
-RUN ./build_samples.sh -b build && \
-    cp -R build/intel64/Release samples_bin && \
-    rm -Rf build 
+RUN ./build_samples.sh -b /tmp/build -i ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin && \
+    rm -Rf /tmp/build
 
 # add Model API package
 # hadolint ignore=DL3013
