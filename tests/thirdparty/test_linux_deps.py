@@ -11,7 +11,7 @@ import pytest
 @pytest.mark.parametrize('_is_not_distribution', [('base')], indirect=True)
 class TestLinuxDependencies:
     @pytest.mark.usefixtures('_is_image_os')
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22')], indirect=True)
     def test_gpl_apt_deps(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')

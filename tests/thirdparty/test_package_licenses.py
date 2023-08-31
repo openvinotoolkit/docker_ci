@@ -11,7 +11,7 @@ import pytest
 @pytest.mark.parametrize('_is_not_image_os', [('winserver2019', 'windows20h2')], indirect=True)
 class TestLicenseLinux:
     @pytest.mark.usefixtures('_is_image_os')
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22')], indirect=True)
     def test_package_licenses(self, tester, image):
         root = pathlib.Path(os.path.realpath(__name__)).parent
         image_folder = image.replace('/', '_').replace(':', '_')
