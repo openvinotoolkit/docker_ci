@@ -8,14 +8,13 @@ WORKDIR /
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 
-# get product from URL
+# get product from local archive
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
 
 WORKDIR ${TEMP_DIR}
-# hadolint ignore=DL3020
-ADD ${package_url} ${TEMP_DIR}
+COPY ${package_url} ${TEMP_DIR}
 
 
 # install product by copying archive content
@@ -46,7 +45,7 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
 ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV PYTHONPATH=/opt/intel/openvino/python:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
@@ -66,8 +65,8 @@ FROM registry.access.redhat.com/ubi8:8.7 AS ov_base
 LABEL name="rhel8_runtime" \
       maintainer="openvino_docker@intel.com" \
       vendor="Intel Corporation" \
-      version="2023.0.0" \
-      release="2023.0.0" \
+      version="2023.1.0" \
+      release="2023.1.0" \
       summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
       description="This is the runtime image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
 
@@ -98,7 +97,8 @@ ARG INSTALL_SOURCES="no"
 
 # hadolint ignore=SC2016
 RUN sed -i -e 's|https://vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-devel-2.1.2-6|http://mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-devel-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
-    sed -i -e 's|https://vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-2.1.2-6|http://mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+    sed -i -e 's|https://vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-2.1.2-6|http://mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
+    sed -i -e 's|download-ib01.fedoraproject.org|dl.fedoraproject.org|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
 
 WORKDIR /thirdparty
 # hadolint ignore=DL3031, DL3033, SC2012
@@ -138,7 +138,7 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
 ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV PYTHONPATH=/opt/intel/openvino/python:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
@@ -152,7 +152,7 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # runtime package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2023.0.0
+ARG OPENVINO_WHEELS_VERSION=2023.1.0
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=DL3033
 RUN yum install -y cmake && yum clean all && \

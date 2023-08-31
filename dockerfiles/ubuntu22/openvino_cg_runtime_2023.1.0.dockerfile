@@ -16,13 +16,12 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 
-# get product from URL
+# get product from local archive
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
 WORKDIR ${TEMP_DIR}
-# hadolint ignore=DL3020
-ADD ${package_url} ${TEMP_DIR}
+COPY ${package_url} ${TEMP_DIR}
 
 # install product by copying archive content
 ARG TEMP_DIR=/tmp/openvino_installer
@@ -48,7 +47,7 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
 ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONPATH=/opt/intel/openvino/python/python3.10:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV PYTHONPATH=/opt/intel/openvino/python:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
@@ -139,7 +138,7 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
 ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONPATH=/opt/intel/openvino/python/python3.10:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV PYTHONPATH=/opt/intel/openvino/python:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
@@ -153,7 +152,7 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # runtime package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2023.0.0
+ARG OPENVINO_WHEELS_VERSION=2023.1.0
 ARG OPENVINO_WHEELS_URL
 RUN apt-get update && apt-get install -y --no-install-recommends cmake make && rm -rf /var/lib/apt/lists/* && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \

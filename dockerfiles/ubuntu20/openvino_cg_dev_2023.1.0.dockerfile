@@ -16,13 +16,12 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 
-# get product from URL
+# get product from local archive
 ARG package_url
 ARG TEMP_DIR=/tmp/openvino_installer
 
 WORKDIR ${TEMP_DIR}
-# hadolint ignore=DL3020
-ADD ${package_url} ${TEMP_DIR}
+COPY ${package_url} ${TEMP_DIR}
 
 # install product by copying archive content
 ARG TEMP_DIR=/tmp/openvino_installer
@@ -49,7 +48,7 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
 ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/extras/opencv/lib
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV PYTHONPATH=/opt/intel/openvino/python:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
@@ -100,13 +99,13 @@ RUN apt-get update; \
     rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install --no-cache-dir numpy==1.23.1
-
-ARG OPENCV_BRANCH="4.7.0"
-
+ARG OPENCV_BRANCH="377be68d923e40900ac5526242bcf221e3f355e5" # 4.8 with a fix for building tests
 WORKDIR /opt/repo
-RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH} 
-
+RUN git clone https://github.com/opencv/opencv.git
+WORKDIR /opt/repo/opencv
+RUN git checkout ${OPENCV_BRANCH} 
 WORKDIR /opt/repo/opencv/build
+
 # hadolint ignore=SC1091
 RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     cmake -G Ninja \
@@ -123,6 +122,7 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D BUILD_TBB=OFF \
     -D BUILD_WEBP=OFF \
     -D BUILD_ZLIB=ON \
+    -D BUILD_TESTS=ON \
     -D WITH_1394=OFF \
     -D WITH_CUDA=OFF \
     -D WITH_EIGEN=OFF \
@@ -151,8 +151,8 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D ENABLE_PRECOMPILED_HEADERS=OFF \
     -D ENABLE_CXX11=ON \
     -D INSTALL_PDB=ON \
-    -D INSTALL_TESTS=ON \
-    -D INSTALL_C_EXAMPLES=ON \
+    -D INSTALL_TESTS=OFF \
+    -D INSTALL_C_EXAMPLES=OFF \
     -D INSTALL_PYTHON_EXAMPLES=OFF \
     -D CMAKE_INSTALL_PREFIX=install \
     -D OPENCV_SKIP_PKGCONFIG_GENERATION=ON \
@@ -267,7 +267,7 @@ ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
 ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/hddl/lib:/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool:/opt/intel/openvino/extras/opencv/lib
 ENV OpenCV_DIR=/opt/intel/openvino/extras/opencv/cmake
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONPATH=/opt/intel/openvino/python/python3.8:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
+ENV PYTHONPATH=/opt/intel/openvino/python:/opt/intel/openvino/python/python3:/opt/intel/openvino/extras/opencv/python
 ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
 ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
 ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
@@ -281,7 +281,7 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2023.0.0
+ARG OPENVINO_WHEELS_VERSION=2023.1.0
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102
 RUN apt-get update && apt-get install -y --no-install-recommends cmake make git && rm -rf /var/lib/apt/lists/* && \
@@ -307,9 +307,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends opencl-headers 
 
 # build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
 WORKDIR ${INTEL_OPENVINO_DIR}/samples/cpp
-RUN ./build_samples.sh -b build && \
-    cp -R build/intel64/Release samples_bin && \
-    rm -Rf build 
+RUN ./build_samples.sh -b /tmp/build -i ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin && \
+    rm -Rf /tmp/build
 
 # add Model API package
 # hadolint ignore=DL3013
