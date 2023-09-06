@@ -478,7 +478,29 @@ INTEL_OPENVINO_VERSION = {
                 'linux/l_openvino_toolkit_rhel8_2023.0.1.11005.fa1c41994f3_x86_64.tgz',
             },
     },
-
+    '2023.0.2': {
+        'ubuntu22':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0.2/'
+                'linux/l_openvino_toolkit_ubuntu22_2023.0.2.11065.e662b1a3301_x86_64.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0.2/'
+                'linux/l_openvino_toolkit_ubuntu22_2023.0.2.11065.e662b1a3301_x86_64.tgz',
+            },
+        'ubuntu20':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0.2/'
+                'linux/l_openvino_toolkit_ubuntu20_2023.0.2.11065.e662b1a3301_x86_64.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0.2/'
+                'linux/l_openvino_toolkit_ubuntu20_2023.0.2.11065.e662b1a3301_x86_64.tgz',
+            },
+        'rhel8':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0.2/'
+                'linux/l_openvino_toolkit_rhel8_2023.0.2.11065.e662b1a3301_x86_64.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0.2/'
+                'linux/l_openvino_toolkit_rhel8_2023.0.2.11065.e662b1a3301_x86_64.tgz',
+            },
+    },
 }
 DIVE_URL = {
     'windows': 'https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_windows_amd64.zip',
