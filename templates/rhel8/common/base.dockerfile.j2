@@ -185,7 +185,7 @@ COPY --from=base /opt/intel /opt/intel
 {% endif %}
 
 {% if 'runtime' == distribution %}
-ARG LGPL_DEPS=""
+ARG LGPL_DEPS="bash" # no new packages
 ARG INSTALL_PACKAGES="-c=python -c=core"
 {% else %}
 ARG LGPL_DEPS="gcc-c++ \
