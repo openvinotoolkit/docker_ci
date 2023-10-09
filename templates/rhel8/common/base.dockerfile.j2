@@ -185,8 +185,8 @@ COPY --from=base /opt/intel /opt/intel
 {% endif %}
 
 {% if 'runtime' == distribution %}
-ARG LGPL_DEPS="gcc-c++"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core"
+ARG LGPL_DEPS=""
+ARG INSTALL_PACKAGES="-c=python -c=core"
 {% else %}
 ARG LGPL_DEPS="gcc-c++ \
                glibc \
