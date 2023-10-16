@@ -185,8 +185,7 @@ ARG INSTALL_SOURCES="no"
 ARG DEPS="tzdata \
           curl"
 {% if 'runtime' == distribution %}
-ARG LGPL_DEPS="g++ \
-               gcc"
+ARG LGPL_DEPS=""
 ARG INSTALL_PACKAGES="-c=python -c=core"
 {% elif 'dev' == distribution or 'dev_no_samples' == distribution %}
 ARG LGPL_DEPS="g++ \
