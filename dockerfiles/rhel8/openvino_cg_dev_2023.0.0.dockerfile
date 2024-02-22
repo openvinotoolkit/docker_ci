@@ -162,6 +162,8 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D BUILD_opencv_world=OFF \
     -D BUILD_opencv_python2=OFF \
     -D BUILD_opencv_python3=ON \
+    -D BUILD_opencv_dnn=OFF \
+    -D BUILD_opencv_gapi=OFF \
     -D PYTHON3_PACKAGES_PATH=install/python/python3 \
     -D PYTHON3_LIMITED_API=ON \
     -D HIGHGUI_PLUGIN_LIST=all \
