@@ -322,7 +322,7 @@ RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
     sed -i '/opencv-python/d' open_model_zoo/demos/common/python/requirements.txt && \
     pip3 --no-cache-dir install open_model_zoo/demos/common/python/ && \
     rm -Rf open_model_zoo && \
-    python3 -c "from openvino.model_zoo import model_api"
+    python3 -c "from model_zoo import model_api"
 
 # for CPU
 
