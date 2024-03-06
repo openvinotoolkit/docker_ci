@@ -283,7 +283,7 @@ RUN ${PYTHON_VER} -m pip install --upgrade pip
 
 # dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION=2023.0.0
+ARG OPENVINO_WHEELS_VERSION=2024.0.0
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102
 RUN apt-get update && apt-get install -y --no-install-recommends cmake make git && rm -rf /var/lib/apt/lists/* && \
