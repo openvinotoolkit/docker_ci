@@ -6,6 +6,229 @@
 Supports released/supported versions of product/its dependencies
 """
 INTEL_OPENVINO_VERSION = {
+    '2020.1': {
+        'winserver2019':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.1/'
+                       'w_openvino_toolkit_dev_p_2020.1.033.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.1/'
+                           'w_openvino_toolkit_runtime_p_2020.1.033.zip',
+            },
+        'ubuntu18':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.1/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2020.1.023.tgz',
+            },
+    },
+    '2020.2': {
+        'winserver2019':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.2/'
+                       'w_openvino_toolkit_dev_p_2020.2.117.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.2/'
+                           'w_openvino_toolkit_runtime_p_2020.2.117.zip',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.2/'
+                            'w_openvino_toolkit_data_dev_p_2020.2.117.zip',
+            },
+        'ubuntu18':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.2/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2020.2.120.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.2/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2020.2.120.tgz',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.2/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2020.2.120.tgz',
+            },
+    },
+    '2020.3': {
+        'winserver2019':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3/'
+                       'w_openvino_toolkit_dev_p_2020.3.194.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3/'
+                           'w_openvino_toolkit_runtime_p_2020.3.194.zip',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3/'
+                            'w_openvino_toolkit_data_dev_p_2020.3.194.zip',
+            },
+        'ubuntu18':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2020.3.194.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2020.3.194.tgz',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2020.3.194.tgz',
+            },
+    },
+    '2020.3.1': {
+        'winserver2019':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.1/'
+                       'w_openvino_toolkit_dev_p_2020.3.341.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.1/'
+                           'w_openvino_toolkit_runtime_p_2020.3.341.zip',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.1/'
+                            'w_openvino_toolkit_data_dev_p_2020.3.341.zip',
+            },
+        'ubuntu18':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.1/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2020.3.341.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.1/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2020.3.341.tgz',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.1/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2020.3.341.tgz',
+            },
+    },
+    '2020.3.2': {
+        'winserver2019':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                       'w_openvino_toolkit_dev_p_2020.3.355.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                           'w_openvino_toolkit_runtime_p_2020.3.355.zip',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                            'w_openvino_toolkit_data_dev_p_2020.3.355.zip',
+            },
+        'ubuntu18':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2020.3.355.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2020.3.355.tgz',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2020.3.355.tgz',
+            },
+        'centos7':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.3.2/'
+                           'l_openvino_toolkit_runtime_centos7_p_2020.3.355.tgz',
+            },
+    },
+    '2020.4': {
+        'winserver2019':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.4/'
+                       'w_openvino_toolkit_dev_p_2020.4.287.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.4/'
+                           'w_openvino_toolkit_runtime_p_2020.4.287.zip',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.4/'
+                            'w_openvino_toolkit_data_dev_p_2020.4.287.zip',
+            },
+        'ubuntu18':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.4/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2020.4.287.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.4/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2020.4.287.tgz',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2020.4/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2020.4.287.tgz',
+            },
+    },
+    '2021.1': {
+        'winserver2019':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.1/'
+                       'w_openvino_toolkit_dev_p_2021.1.110.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.1/'
+                           'w_openvino_toolkit_runtime_p_2021.1.110.zip',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.1/'
+                            'w_openvino_toolkit_data_dev_p_2021.1.110.zip',
+            },
+        'ubuntu18':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.1/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2021.1.110.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.1/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2021.1.110.tgz',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.1/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2021.1.110.tgz',
+            },
+        'ubuntu20':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.1/'
+                           'l_openvino_toolkit_runtime_ubuntu20_p_2021.1.110.tgz',
+            },
+        'centos7':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.1/'
+                           'l_openvino_toolkit_runtime_centos7_p_2021.1.110.tgz',
+            },
+    },
+    '2021.2': {
+        'winserver2019':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
+                       'w_openvino_toolkit_dev_p_2021.2.185.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
+                           'w_openvino_toolkit_runtime_p_2021.2.185.zip',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
+                            'w_openvino_toolkit_data_dev_p_2021.2.185.zip',
+            },
+        'ubuntu18':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2021.2.185.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2021.2.185.tgz',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2021.2.185.tgz',
+            },
+        'ubuntu20':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
+                           'l_openvino_toolkit_runtime_ubuntu20_p_2021.2.185.tgz',
+            },
+        'centos7':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
+                           'l_openvino_toolkit_runtime_centos7_p_2021.2.185.tgz',
+            },
+        'rhel8':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.2/'
+                           'l_openvino_toolkit_runtime_rhel8_p_2021.2.185.tgz',
+            },
+    },
+    '2021.3': {
+        'winserver2019':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                       'w_openvino_toolkit_dev_p_2021.3.394.zip',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                           'w_openvino_toolkit_runtime_p_2021.3.394.zip',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                            'w_openvino_toolkit_data_dev_p_2021.3.394.zip',
+            },
+        'ubuntu18':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                       'l_openvino_toolkit_dev_ubuntu18_p_2021.3.394.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                           'l_openvino_toolkit_runtime_ubuntu18_p_2021.3.394.tgz',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                            'l_openvino_toolkit_data_dev_ubuntu18_p_2021.3.394.tgz',
+            },
+        'ubuntu20':
+            {
+                'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                       'l_openvino_toolkit_dev_ubuntu20_p_2021.3.394.tgz',
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                           'l_openvino_toolkit_runtime_ubuntu20_p_2021.3.394.tgz',
+                'data_dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                            'l_openvino_toolkit_data_dev_ubuntu20_p_2021.3.394.tgz',
+            },
+        'centos7':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                           'l_openvino_toolkit_runtime_centos7_p_2021.3.394.tgz',
+            },
+        'rhel8':
+            {
+                'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2021.3/'
+                           'l_openvino_toolkit_runtime_rhel8_p_2021.3.394.tgz',
+            },
+    },
     '2021.4': {
         'winserver2019':
             {
