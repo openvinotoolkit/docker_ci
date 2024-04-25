@@ -473,6 +473,26 @@ INTEL_OPENVINO_VERSION = {
                            'linux/l_openvino_toolkit_rhel8_2024.0.0.14509.34caeefd078_x86_64.tgz',
             },
     },
+    '2024.1': {
+        'ubuntu22': {
+            'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.1/'
+                   'linux/l_openvino_toolkit_ubuntu22_2024.1.0.15008.f4afc983258_x86_64.tgz',
+            'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.1/'
+                   'linux/l_openvino_toolkit_ubuntu22_2024.1.0.15008.f4afc983258_x86_64.tgz',
+        },
+        'ubuntu20': {
+            'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.1/'
+                   'linux/l_openvino_toolkit_ubuntu20_2024.1.0.15008.f4afc983258_x86_64.tgz',
+            'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.1/'
+                   'linux/l_openvino_toolkit_ubuntu20_2024.1.0.15008.f4afc983258_x86_64.tgz',
+        },
+        'rhel8': {
+            'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.1/'
+                   'linux/l_openvino_toolkit_rhel8_2024.1.0.15008.f4afc983258_x86_64.tgz',
+            'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.1/'
+                   'linux/l_openvino_toolkit_rhel8_2024.1.0.15008.f4afc983258_x86_64.tgz',
+        },
+    },
 }
 DIVE_URL = {
     'windows': 'https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_windows_amd64.zip',
