@@ -473,7 +473,7 @@ INTEL_OPENVINO_VERSION = {
                            'linux/l_openvino_toolkit_rhel8_2024.0.0.14509.34caeefd078_x86_64.tgz',
             },
     },
-    '2024.1': {
+    '2024.1.0': {
         'ubuntu22': {
             'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.1/'
                    'linux/l_openvino_toolkit_ubuntu22_2024.1.0.15008.f4afc983258_x86_64.tgz',
