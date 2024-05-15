@@ -1,0 +1,10 @@
+# setup Python
+ENV PYTHON_VER python3.11
+
+RUN ${PYTHON_VER} -m venv /var/venv
+
+ENV VIRTUAL_ENV=/var/venv
+ENV PATH=/var/venv/bin:$PATH
+
+RUN ${PYTHON_VER} -m pip install --upgrade pip
+RUN ${PYTHON_VER} -m pip install --no-cache-dir numpy==1.26.4
