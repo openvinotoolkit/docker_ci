@@ -1,5 +1,5 @@
 # escape=`
-# Copyright (C) 2019-2022 Intel Corporation
+# Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 FROM mcr.microsoft.com/windows:20H2 AS base
 
