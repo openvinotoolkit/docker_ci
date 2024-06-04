@@ -8,6 +8,8 @@ on:
     paths:
       - 'dockerfiles/**/*ockerfile'
 
+permissions: read-all
+
 jobs:
   hadolint_check:
     runs-on: ubuntu-20.04

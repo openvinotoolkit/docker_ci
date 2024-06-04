@@ -28,6 +28,8 @@ on:
         required: false
         default: ''
 
+permissions: read-all
+
 jobs:
   manual_publish:
     strategy:
