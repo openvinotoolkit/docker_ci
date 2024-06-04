@@ -20,6 +20,8 @@ on:
         required: false
         default: ''
 
+permissions: read-all
+
 jobs:
   build_test_lin:
     runs-on: ubuntu-20.04

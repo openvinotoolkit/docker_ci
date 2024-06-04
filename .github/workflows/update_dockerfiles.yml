@@ -8,6 +8,8 @@ on:
         required: true
         default: ''
 
+permissions: read-all
+
 jobs:
   update_dockerfiles:
     runs-on: ubuntu-20.04
