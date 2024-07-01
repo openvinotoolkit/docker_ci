@@ -21,7 +21,8 @@ logger = logging.getLogger(__name__)
 class DockerCIArgumentParser(argparse.ArgumentParser):
     """CLI argument parser for this framework"""
 
-    SUPPORTED_OS: typing.List = ['ubuntu18', 'ubuntu20', 'ubuntu22', 'winserver2019', 'windows20h2', 'rhel8']
+    SUPPORTED_OS: typing.List = ['ubuntu18', 'ubuntu20', 'ubuntu22', 'winserver2019',
+                                 'windows20h2', 'rhel8', 'debian12']
 
     def __init__(self, prog: typing.Optional[str] = None, description: typing.Optional[str] = None):
         super().__init__(prog=prog, description=description,
@@ -455,7 +456,9 @@ def parse_args(name: str, description: str):  # noqa
                              'It is an insecure way.')
 
         if not args.python:
-            if args.os in ('ubuntu22'):
+            if args.os in ('debian12', ):
+                args.python = 'python311'
+            elif args.os in ('ubuntu22', ):
                 args.python = 'python310'
             else:
                 args.python = 'python38'

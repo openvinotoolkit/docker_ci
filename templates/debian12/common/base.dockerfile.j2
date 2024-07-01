@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-FROM ubuntu:22.04 AS base
+FROM debian:12-slim AS base
 
 # hadolint ignore=DL3002
 USER root
@@ -53,7 +53,7 @@ RUN apt-get update; \
         libavformat-dev \
         libswscale-dev \
         libswresample-dev \
-        libtbb2 \
+        libtbb-dev \
         libssl-dev \
         libva-dev \
         libmfx-dev \
@@ -61,9 +61,8 @@ RUN apt-get update; \
         libgstreamer-plugins-base1.0-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --no-cache-dir numpy==1.23.1
-
-ARG OPENCV_BRANCH="377be68d923e40900ac5526242bcf221e3f355e5" # 4.8 with a fix for building tests
+# 4.8 with a fix for building tests
+ARG OPENCV_BRANCH="377be68d923e40900ac5526242bcf221e3f355e5"
 WORKDIR /opt/repo
 RUN git clone https://github.com/opencv/opencv.git
 WORKDIR /opt/repo/opencv
@@ -158,9 +157,9 @@ CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
 {% endif %}
 
-FROM ubuntu:22.04 AS ov_base
+FROM debian:12-slim AS ov_base
 
-LABEL description="This is the {{ distribution }} image for {{ product_name }} on Ubuntu 22.04 LTS"
+LABEL description="This is the {{ distribution }} image for {{ product_name }} on Debian 12"
 LABEL vendor="Intel Corporation"
 
 USER root
