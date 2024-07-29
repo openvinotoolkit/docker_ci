@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 class DockerCIArgumentParser(argparse.ArgumentParser):
     """CLI argument parser for this framework"""
 
-    SUPPORTED_OS: typing.List = ['ubuntu18', 'ubuntu20', 'ubuntu22', 'winserver2019', 'windows20h2', 'rhel8']
+    SUPPORTED_OS: typing.List = ['ubuntu18', 'ubuntu20', 'ubuntu22', 'ubuntu24', 'winserver2019', 'windows20h2', 'rhel8']
 
     def __init__(self, prog: typing.Optional[str] = None, description: typing.Optional[str] = None):
         super().__init__(prog=prog, description=description,
@@ -105,7 +105,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             '-py',
             '--python',
-            choices=['python37', 'python38', 'python310'],
+            choices=['python37', 'python38', 'python310', 'python311', 'python312', 'python313'],
             help='Python interpreter for docker image, currently default is python38',
         )
 
@@ -455,8 +455,10 @@ def parse_args(name: str, description: str):  # noqa
                              'It is an insecure way.')
 
         if not args.python:
-            if args.os in ('ubuntu22'):
+            if args.os in ('ubuntu22', ):
                 args.python = 'python310'
+            elif args.os in ('ubuntu24', ):
+                args.python = 'python312'
             else:
                 args.python = 'python38'
 
@@ -478,12 +480,10 @@ def parse_args(name: str, description: str):  # noqa
 
         # workaround for https://bugs.python.org/issue16399 issue
         if not args.device and 'win' not in args.os:
-            if args.distribution == 'base':
-                args.device = ['cpu']
-            elif args.os == 'rhel8':
-                args.device = ['cpu', 'gpu']
+            if args.os in ('ubuntu22', 'ubuntu24'):
+                args.device = ['cpu', 'gpu', 'npu']
             else:
-                args.device = ['cpu', 'gpu']  # 2022.3 v/h not supported
+                args.device = ['cpu', 'gpu']
         elif not args.device:
             args.device = ['cpu']
 
