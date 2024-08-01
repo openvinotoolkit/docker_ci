@@ -1,0 +1,42 @@
+{
+    "_based_on": "ubuntu",
+    "base_image": "ubuntu:22.04",
+    "os_id": "ubuntu22",
+    "os_codename": "jammy",
+    "components": {
+        "intel-opencl-icd": {
+            "apt": [
+                "https://github.com/intel/compute-runtime/releases/download/24.22.29735.20/intel-opencl-icd_24.22.29735.20_amd64.deb"
+            ],
+            "requires": [
+                "compute-runtime"
+            ]
+        },
+        "level-zero": {
+            "apt": [
+                "https://github.com/oneapi-src/level-zero/releases/download/v1.17.19/level-zero_1.17.19+u22.04_amd64.deb"
+            ]
+        },
+        "intel-level-zero-gpu": {
+            "apt": [
+                "https://github.com/intel/compute-runtime/releases/download/24.22.29735.20/intel-level-zero-gpu_1.3.29735.20_amd64.deb"
+            ],
+            "requires": [
+                "compute-runtime"
+            ]
+        },
+        "intel-level-zero-npu": {
+            "apt": [
+                "https://github.com/intel/linux-npu-driver/releases/download/v1.5.1/intel-level-zero-npu_1.5.1.20240708-9842236399_ubuntu22.04_amd64.deb",
+                "https://github.com/intel/linux-npu-driver/releases/download/v1.5.1/intel-driver-compiler-npu_1.5.1.20240708-9842236399_ubuntu22.04_amd64.deb"
+            ]
+        },
+        "compute-runtime": {
+            "apt": [
+                "https://github.com/intel/compute-runtime/releases/download/24.22.29735.20/libigdgmm12_22.3.19_amd64.deb",
+                "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.16900.23/intel-igc-core_1.0.16900.23_amd64.deb",
+                "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.16900.23/intel-igc-opencl_1.0.16900.23_amd64.deb"
+            ]
+        }
+    }
+}

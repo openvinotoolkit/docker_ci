@@ -1,0 +1,18 @@
+{
+    "_based_on": "ubuntu22",
+    "_template": "Dockerfile_2024_deb_default.j2",
+    "package": {
+        "url": "https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.3/linux/l_openvino_toolkit_ubuntu22_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz",
+        "version": "2024.3.0"
+    },
+    "presets": {
+        "runtime": [
+            "preset_runtime",
+            "device_npu"
+        ],
+        "dev": [
+            "preset_dev",
+            "device_npu"
+        ]
+    }
+}

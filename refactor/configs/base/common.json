@@ -1,0 +1,49 @@
+{
+    "components": {
+        "device_cpu": {
+            "tests": [
+                "check_device@CPU"
+            ]
+        },
+        "device_gpu": {
+            "requires": [
+                "level-zero",
+                "intel-level-zero-gpu",
+                "opencl-loader",
+                "intel-opencl-icd"
+            ],
+            "tests": [
+                "check_device@GPU"
+            ]
+        },
+        "device_npu": {
+            "requires": [
+                "level-zero",
+                "intel-level-zero-npu"
+            ],
+            "tests": [
+                "check_device@NPU"
+            ]
+        },
+        "openvino_dev": {
+            "requires": [
+                "python",
+                "build_tools"
+            ],
+            "extras": "caffe,kaldi,mxnet,onnx,pytorch,tensorflow,tensorflow2"
+        },
+        "preset_runtime": {
+            "requires": [
+                "base",
+                "device_cpu",
+                "device_gpu"
+            ]
+        },
+        "preset_dev": {
+            "requires": [
+                "preset_runtime",
+                "openvino_dev"
+            ]
+        }
+    }
+}

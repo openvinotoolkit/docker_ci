@@ -1,0 +1,36 @@
+{
+    "_based_on": "ubuntu",
+    "base_image": "ubuntu:20.04",
+    "os_id": "ubuntu20",
+    "os_codename": "focal",
+    "components": {
+        "intel-opencl-icd": {
+            "apt": [
+                "https://github.com/intel/compute-runtime/releases/download/22.37.24175/intel-opencl-icd_22.37.24175_amd64.deb"
+            ],
+            "requires": [
+                "compute-runtime"
+            ]
+        },
+        "level-zero": {
+            "apt": [
+                "https://github.com/oneapi-src/level-zero/releases/download/v1.9.9/level-zero_1.9.9+u18.04_amd64.deb"
+            ]
+        },
+        "intel-level-zero-gpu": {
+            "apt": [
+                "https://github.com/intel/compute-runtime/releases/download/22.37.24175/intel-level-zero-gpu_1.3.24175_amd64.deb"
+            ],
+            "requires": [
+                "compute-runtime"
+            ]
+        },
+        "compute-runtime": {
+            "apt": [
+                "https://github.com/intel/compute-runtime/releases/download/22.37.24175/libigdgmm12_22.1.8_amd64.deb",
+                "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.12037.1/intel-igc-core_1.0.12037.1_amd64.deb",
+                "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.12037.1/intel-igc-opencl_1.0.12037.1_amd64.deb"
+            ]
+        }
+    }
+}
