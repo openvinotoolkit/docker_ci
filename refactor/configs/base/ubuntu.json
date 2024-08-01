@@ -1,0 +1,35 @@
+{
+    "_based_on": "common",
+    "components": {
+        "base": {
+            "apt": [
+                "curl",
+                "tzdata",
+                "ca-certificates"
+            ]
+        },
+        "python": {
+            "apt": [
+                "python3",
+                "libpython3-dev",
+                "python3-pip",
+                "python3-venv"
+            ]
+        },
+        "build_tools": {
+            "apt": [
+                "g++",
+                "gcc",
+                "libc6-dev",
+                "make",
+                "cmake",
+                "pkgconf"
+            ]
+        },
+        "opencl-loader": {
+            "apt": [
+                "ocl-icd-libopencl1"
+            ]
+        }
+    }
+}
