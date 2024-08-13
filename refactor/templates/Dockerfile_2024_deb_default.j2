@@ -67,9 +67,10 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH=$VIRTUAL_ENV/bin:$PATH
 
+{%- set pyver = (package.wheels.version or package.version) %}
 RUN pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir "openvino=={{ package.version }}"
-{%- if components.openvino_dev.enable %} "openvino-dev[{{ components.openvino_dev.extras }}]=={{ package.version }}" {% endif %}
-{%- if package.wheels_url %} --find-links {{ package.wheels_url }} {% endif %}
+RUN pip install --no-cache-dir "openvino=={{ pyver }}"
+{%- if components.openvino_dev.enable %} "openvino-dev[{{ components.openvino_dev.extras }}]=={{ pyver }}" {% endif %}
+{%- if package.wheels.url %} --trusted-host=* --find-links {{ package.wheels.url }} {% endif %}
 
 {%- endif %}

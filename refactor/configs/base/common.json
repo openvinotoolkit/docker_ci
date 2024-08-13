@@ -1,8 +1,19 @@
 {
     "components": {
+        "base": {
+            "tests": [
+                "local_library_loadable.sh@libopenvino.so",
+                "local_library_loadable.sh@libopenvino_c.so"
+            ]
+        },
+        "python": {
+            "tests": [
+                "check_python_openvino.sh"
+            ]
+        },
         "device_cpu": {
             "tests": [
-                "check_device@CPU"
+                "local_library_loadable.sh@libopenvino_intel_cpu_plugin.so"
             ]
         },
         "device_gpu": {
@@ -13,7 +24,7 @@
                 "intel-opencl-icd"
             ],
             "tests": [
-                "check_device@GPU"
+                "local_library_loadable.sh@libopenvino_intel_gpu_plugin.so"
             ]
         },
         "device_npu": {
@@ -22,7 +33,7 @@
                 "intel-level-zero-npu"
             ],
             "tests": [
-                "check_device@NPU"
+                "local_library_loadable.sh@libopenvino_intel_npu_plugin.so"
             ]
         },
         "openvino_dev": {
@@ -30,7 +41,10 @@
                 "python",
                 "build_tools"
             ],
-            "extras": "caffe,kaldi,mxnet,onnx,pytorch,tensorflow,tensorflow2"
+            "extras": "caffe,kaldi,mxnet,onnx,pytorch,tensorflow,tensorflow2",
+            "tests": [
+                "check_omz_tools.sh"
+            ]
         },
         "preset_runtime": {
             "requires": [

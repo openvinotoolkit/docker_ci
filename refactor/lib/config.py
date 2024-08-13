@@ -77,7 +77,11 @@ class Env:
                 yield f"{product_name.name}/{product_conf.name.rsplit('.', 1)[0]}"
 
 
-def process(config, preset):
+def process(config, preset, include_components=(), exclude_components=()):
+    # enable --include-components
+    for component in include_components:
+        config["components"][component]["enable"] = True
+
     # enable components of the selected preset
     for component in config["presets"][preset]:
         config["components"][component]["enable"] = True
@@ -96,6 +100,10 @@ def process(config, preset):
         if not enabled:
             continue
         enable_recursively(config["components"], cname)
+
+    # disable --exclude-components
+    for component in exclude_components:
+        config["components"][component]["enable"] = False
 
 
     # collect apt packages
@@ -121,5 +129,16 @@ def process(config, preset):
         "downloads": apt_downloads,
         "download_dir": "/tmp/apt_dl"
     }
+
+    # collect tests
+    tests = set()
+    for cname, component in config["components"].items():
+        if not component.get("enable"):
+            continue
+        comp_tests = component.get("tests")
+        if comp_tests and isinstance(comp_tests, list):
+            tests.update(comp_tests)
+
+    config["tests"] = list(tests)
 
     return config
