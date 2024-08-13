@@ -1,0 +1,20 @@
+{
+    "_based_on": "ubuntu20",
+    "_template": "Dockerfile_2024_deb_default.j2",
+    "package": {
+        "url": "http://ov-share-03.sclab.intel.com/openvino_ci/closed_builds/dldt/master/commit/70aa39a3ab1c8554fe1bcd1dde13ce2e1ad19a70/swf_drop/packages/releases/l_openvino_toolkit_ubuntu20_2024.4.0.16333.70aa39a3ab1_x86_64.tgz",
+        "version": "2024.4.0",
+        "wheels": {
+            "url": "http://ov-share-03.sclab.intel.com/openvino_ci/private_builds/dldt/master/commit/70aa39a3ab1c8554fe1bcd1dde13ce2e1ad19a70/private_linux_manylinux2014_release/wheels/",
+            "version": "2024.4.0.dev20240812"
+        }
+    },
+    "presets": {
+        "runtime": [
+            "preset_runtime"
+        ],
+        "dev": [
+            "preset_dev"
+        ]
+    }
+}
