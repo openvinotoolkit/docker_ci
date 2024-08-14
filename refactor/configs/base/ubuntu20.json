@@ -22,7 +22,8 @@
                 "https://github.com/intel/compute-runtime/releases/download/22.37.24175/intel-level-zero-gpu_1.3.24175_amd64.deb"
             ],
             "requires": [
-                "compute-runtime"
+                "compute-runtime",
+                "level-zero"
             ]
         },
         "compute-runtime": {

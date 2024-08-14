@@ -64,7 +64,7 @@ WORKDIR ${INTEL_OPENVINO_DIR}
 
 {% if components.python.enable -%}
 # Python setup
-RUN python3 -m venv $VIRTUAL_ENV
+RUN {{ components.python.command or "python3" }} -m venv $VIRTUAL_ENV
 ENV PATH=$VIRTUAL_ENV/bin:$PATH
 
 {%- set pyver = (package.wheels.version or package.version) %}

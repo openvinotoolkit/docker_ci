@@ -1,0 +1,58 @@
+{
+    "_based_on": "ubuntu",
+    "base_image": "ubuntu:18.04",
+    "os_id": "ubuntu18",
+    "os_codename": "bionic",
+    "components": {
+        "base": {
+            "requires": [
+                "libtbb"
+            ]
+        },
+        "libtbb": {
+            "apt": [
+                "libtbb2"
+            ]
+        },
+        "python": {
+            "apt": [
+                "python3.8",
+                "libpython3.8-dev",
+                "python3-venv",
+                "python3.8-venv",
+                "python3-pip"
+            ],
+            "command": "python3.8"
+        },
+        "intel-opencl-icd": {
+            "apt": [
+                "https://github.com/intel/compute-runtime/releases/download/21.38.21026/intel-opencl_21.38.21026_amd64.deb",
+                "https://github.com/intel/compute-runtime/releases/download/21.38.21026/intel-ocloc_21.38.21026_amd64.deb"
+            ],
+            "requires": [
+                "compute-runtime"
+            ]
+        },
+        "level-zero": {
+            "apt": [
+                "https://github.com/oneapi-src/level-zero/releases/download/v1.9.9/level-zero_1.9.9+u18.04_amd64.deb"
+            ]
+        },
+        "intel-level-zero-gpu": {
+            "apt": [
+                "https://github.com/intel/compute-runtime/releases/download/21.38.21026/intel-level-zero-gpu_1.2.21026_amd64.deb"
+            ],
+            "requires": [
+                "compute-runtime",
+                "level-zero"
+            ]
+        },
+        "compute-runtime": {
+            "apt": [
+                "https://github.com/intel/compute-runtime/releases/download/21.38.21026/intel-gmmlib_21.2.1_amd64.deb",
+                "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.8708/intel-igc-core_1.0.8708_amd64.deb",
+                "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.8708/intel-igc-opencl_1.0.8708_amd64.deb"
+            ]
+        }
+    }
+}
