@@ -276,9 +276,9 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
 
 def fail_if_product_version_not_supported(product_version: str, parser: DockerCIArgumentParser):
     if product_version < '2022.1':
-        parser.error('This version of the DockerHub CI framework does not support OpenVINO releases earlier than '
-                     '2022.1.0. Current detected product version {product_version}. Please use previous versions '
-                     'of the DockerHub CI.'.format(product_version=product_version))
+        parser.error(f'This version of the DockerHub CI framework does not support OpenVINO releases earlier than '
+                     '2022.1.0. Current detected product version "{product_version}". Please use previous versions '
+                     'of the DockerHub CI.')
 
 def parse_args(name: str, description: str):  # noqa
     """Parse all the args set up above"""
@@ -438,6 +438,7 @@ def parse_args(name: str, description: str):  # noqa
                      'is supported only for RHEL-based images')
 
     if hasattr(args, 'product_version') and args.product_version:
+        logger.info(f'Found product version {args.product_version} in arguments.')
         fail_if_product_version_not_supported(args.product_version, parser)
         product_version = re.search(r'^\d{4}\.\d$', args.product_version)
         if product_version:
@@ -498,7 +499,7 @@ def parse_args(name: str, description: str):  # noqa
                 parser.error('Insufficient arguments. Provide --package_url '
                              'or --distribution (with optional --product_version) arguments')
             if args.mode != 'gen_dockerfile' or args.rhel_platform == 'autobuild':
-                dev_version = re.search(r'^\d{4}\.\d\.\d\.(?:d\.)?dev\d{8}$', args.product_version)
+                dev_version = re.search(r'^\d{4}\.(?:\d\.){2,3}dev\d{8}$', args.product_version)
                 if dev_version:
                     args.product_version = dev_version.group()
                 else:
@@ -514,13 +515,14 @@ def parse_args(name: str, description: str):  # noqa
                                  f'and {args.distribution} distribution. Please specify --package_url directly.')
 
         if args.package_url and not args.build_id:
-            dev_version = re.search(r'_(\d{4}\.\d\.\d\.(?:d\.)?dev\d{8})', args.package_url)
+            logger.info(f'Parsing product version in the package_url...')
+            dev_version = re.search(r'_(\d{4}\.(?:\d\.){2,3}dev\d{8})_)', args.package_url)
             if dev_version:
                 # save product version and build version as YYYY.U.V.devYYYYMMDD
                 args.product_version = dev_version.group(1)
                 args.build_id = args.product_version
             else:
-                build_id = re.search(r'_(\d{4}\.\d\.\d)\.(\d{3,4})', args.package_url)
+                build_id = re.search(r'_(\d{4}\.(?:\d\.){2,3})\.(\d{3,4})', args.package_url)
                 if build_id:
                     # save product version YYYY.U.V.BBB
                     args.build_id = '.'.join(build_id.groups())
@@ -576,7 +578,7 @@ def parse_args(name: str, description: str):  # noqa
     if args.mode == 'test' and not args.product_version:
         match = re.search(r':(\d{4}\.\d\.\d)', str(args.tags))
         if not match and args.package_url:
-            match = re.search(r'p_(\d{4}\.\d\.\d)', args.package_url)
+            match = re.search(r'_(\d{4}\.\d\.\d)', args.package_url)
         if match:
             # save product version YYYY.U.V
             args.product_version = match.group(1)
