@@ -276,8 +276,9 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
 
 def fail_if_product_version_not_supported(product_version: str, parser: DockerCIArgumentParser):
     if product_version < '2022.1':
-        parser.error(f'This version of the DockerHub CI framework does not support OpenVINO releases earlier than '
-                     '2022.1.0. Current detected product version {product_version}. Please use previous versions of the DockerHub CI.')
+        parser.error('This version of the DockerHub CI framework does not support OpenVINO releases earlier than '
+                     '2022.1.0. Current detected product version {product_version}. Please use previous versions '
+                     'of the DockerHub CI.'.format(product_version=product_version))
 
 def parse_args(name: str, description: str):  # noqa
     """Parse all the args set up above"""
