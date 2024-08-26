@@ -5,10 +5,16 @@ ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102,DL3033
 RUN yum install -y cmake git && yum clean all && \
     if [ -z "$OPENVINO_WHEELS_URL" ]; then \
-        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --extra-index-url https://download.pytorch.org/whl/cpu; \
+        
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino=="${OPENVINO_WHEELS_VERSION}" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino-tokenizers=="${OPENVINO_WHEELS_VERSION}.0" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino-genai=="${OPENVINO_WHEELS_VERSION}.0" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="${OPENVINO_WHEELS_VERSION}" --extra-index-url https://download.pytorch.org/whl/cpu; \
     else \
-        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
-        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="$OPENVINO_WHEELS_VERSION" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" --extra-index-url https://download.pytorch.org/whl/cpu ; \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino=="${OPENVINO_WHEELS_VERSION}" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino-tokenizers=="${OPENVINO_WHEELS_VERSION}.0" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino-genai=="${OPENVINO_WHEELS_VERSION}.0" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
+        ${PYTHON_VER} -m pip install --no-cache-dir --pre openvino_dev[caffe,kaldi,mxnet,onnx,pytorch,tensorflow2]=="${OPENVINO_WHEELS_VERSION}" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" --extra-index-url https://download.pytorch.org/whl/cpu ; \
     fi
 
 # download source for PyPi LGPL packages
