@@ -497,7 +497,7 @@ def parse_args(name: str, description: str):  # noqa
                 parser.error('Insufficient arguments. Provide --package_url '
                              'or --distribution (with optional --product_version) arguments')
             if args.mode != 'gen_dockerfile' or args.rhel_platform == 'autobuild':
-                dev_version = re.search(r'^\d{4}\.\d\.\d\.dev\d{8}$', args.product_version)
+                dev_version = re.search(r'^\d{4}\.\d\.\d\.(?:d\.)?dev\d{8}$', args.product_version)
                 if dev_version:
                     args.product_version = dev_version.group()
                 else:
@@ -513,7 +513,7 @@ def parse_args(name: str, description: str):  # noqa
                                  f'and {args.distribution} distribution. Please specify --package_url directly.')
 
         if args.package_url and not args.build_id:
-            dev_version = re.search(r'p_(\d{4}\.\d\.\d\.dev\d{8})', args.package_url)
+            dev_version = re.search(r'_(\d{4}\.\d\.\d\.(?:d\.)?dev\d{8})', args.package_url)
             if dev_version:
                 # save product version and build version as YYYY.U.V.devYYYYMMDD
                 args.product_version = dev_version.group(1)
