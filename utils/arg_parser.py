@@ -658,7 +658,12 @@ def parse_args(name: str, description: str):  # noqa
                 )
 
     if args.mode not in ("test", "deploy"):
-        args.year = args.build_id[:4] if args.build_id else args.product_version[:4]
+        if args.build_id:
+            args.year = args.build_id[:4]
+        elif args.product_version:
+            args.year = args.product_version[:4]
+        else:
+            args.year = None
 
     if args.mode == "test" and not args.product_version:
         match = re.search(r":(\d{4}\.\d\.\d)", str(args.tags))
