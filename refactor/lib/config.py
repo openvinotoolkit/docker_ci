@@ -41,7 +41,7 @@ class Env:
                 for key in keys
             }
         if isinstance(old, list):
-            print("Warning: lists are replaced, not merged")
+            print(f"Warning: lists are replaced, not merged: {old}")
         return new
 
 
@@ -66,6 +66,9 @@ class Env:
         # TODO: if valid path is given instead of a product, use it
         with open(f"{self.product_dir}/{product}.json") as prodconf:
             return self._load(json.load(prodconf))
+        
+    def from_dict(self, data):
+        return self._load(data)
 
     def discover(self):
         for product_name in os.scandir(self.product_dir):
@@ -75,6 +78,9 @@ class Env:
                 if not product_conf.name.endswith(".json"):
                     continue
                 yield f"{product_name.name}/{product_conf.name.rsplit('.', 1)[0]}"
+
+CONFIGS_ROOT = os.path.realpath(f"{__file__}/../../configs")
+default_env = Env(f"{CONFIGS_ROOT}/releases", f"{CONFIGS_ROOT}/base")
 
 
 def process(config, preset, include_components=(), exclude_components=()):
@@ -110,8 +116,7 @@ def process(config, preset, include_components=(), exclude_components=()):
     apt_packages = []
     apt_downloads = []
     for cname, component in config["components"].items():
-        enabled = component.get("enable")
-        if not enabled:
+        if not component.get("enable"):
             continue
         apt = component.get("apt")
         if not apt:
@@ -129,6 +134,24 @@ def process(config, preset, include_components=(), exclude_components=()):
         "downloads": apt_downloads,
         "download_dir": "/tmp/apt_dl"
     }
+
+    # collect rpm packages
+    rpm_packages = []
+    for cname, component in config["components"].items():
+        if not component.get("enable"):
+            continue
+        rpm = component.get("rpm")
+        if not rpm:
+            continue
+        rpm_packages.extend(rpm)
+    
+    config["rpm"] = {
+        "packages": rpm_packages
+    }
+
+    assert bool(config["rpm"]["packages"]) ^ \
+        bool(config["apt"]["packages"] or config["apt"]["downloads"]), \
+        "Can't be both rpm and apt based system. Something's wrong"
 
     # collect tests
     tests = set()

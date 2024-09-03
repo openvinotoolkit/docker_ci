@@ -20,11 +20,14 @@
 #}
 
 FROM {{ base_image }}
-ARG DEBIAN_FRONTEND=noninteractive
 
 # System package dependencies
+{%- if apt.packages or apt.downloads %}
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
+    {% if apt.packages -%}
     apt install -y --no-install-recommends {{ apt.packages | join(" ") }} && \
+    {% endif -%}
     {% if apt.downloads -%}
     mkdir -p {{ apt.download_dir }} && \
     cd {{ apt.download_dir }} && \
@@ -33,6 +36,13 @@ RUN apt update && \
     apt install -y --no-install-recommends {{ apt.downloads | map(attribute=1) | join(" ") }} && \
     {% endif -%}
     rm -rf {{ apt.download_dir }} /var/lib/apt/lists/*
+{%- endif %}
+
+{%- if rpm.packages %}
+RUN yum install -y {{ rpm.packages | join(" ") }} && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+{%- endif %}
 
 # User setup (is it needed?)
 RUN sed -si "s/^UMASK.+/UMASK 000/g" /etc/login.defs
