@@ -699,8 +699,8 @@ def parse_args(name: str, description: str):  # noqa
 
     if hasattr(args, "distribution") and args.distribution == "custom":
         if (
-            subprocess.call(
-                ["docker", "run", "--rm", args.tags[0], "ls", "extras/opencv"],  # nosec
+            subprocess.call(                                                        # nosec B603 B607
+                ["docker", "run", "--rm", args.tags[0], "ls", "extras/opencv"],     # nosec B603 B607
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
             )
