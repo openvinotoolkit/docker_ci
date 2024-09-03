@@ -32,6 +32,11 @@
                 "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.12037.1/intel-igc-core_1.0.12037.1_amd64.deb",
                 "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.12037.1/intel-igc-opencl_1.0.12037.1_amd64.deb"
             ]
+        },
+        "device_npu": {
+            "requires": [],
+            "tests": [],
+            "_comment": "ubuntu20 doesn't support NPU, so we clear NPU requirements"
         }
     }
 }

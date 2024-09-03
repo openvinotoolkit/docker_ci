@@ -43,14 +43,16 @@
             ],
             "extras": "caffe,kaldi,mxnet,onnx,pytorch,tensorflow,tensorflow2",
             "tests": [
-                "check_omz_tools.sh"
+                "check_omz_tools.sh@CPU",
+                "check_omz_tools.sh@GPU"
             ]
         },
         "preset_runtime": {
             "requires": [
                 "base",
                 "device_cpu",
-                "device_gpu"
+                "device_gpu",
+                "device_npu"
             ]
         },
         "preset_dev": {
@@ -59,5 +61,13 @@
                 "openvino_dev"
             ]
         }
+    },
+    "presets": {
+        "runtime": [
+            "preset_runtime"
+        ],
+        "dev": [
+            "preset_dev"
+        ]
     }
 }

@@ -1,28 +1,30 @@
-# Dockerfile generation for OpenVINO releases, for Ubuntu 20.04, Ubuntu 22.04, RHEL 8
+# Dockerfile templates for OpenVINO releases, for Ubuntu 20.04, Ubuntu 22.04 and RHEL 8
 
-## How to run
+## How to use, how to run
 
 The tool does not require any non-standard Python packages, it only needs Python 3.10+ present
 
-`configs/releases` directory contains configurations for all the supported releases. In general, if you want to build
-`ubuntu20_dev:2024.3.0` image you should run this command:
+`configs/releases` directory contains configurations for all the supported releases. For example, if you want to build 
+`ubuntu20_dev:2024.3.0` image, then you should run this command:
 
 ```bash
 python3 image.py 2024.3.0/ubuntu20 --preset dev --build
 ```
-This will generate `Dockerfile` and build it, tagging it `localhost/ubuntu20_dev:2024.3.0`
+This will generate `Dockerfile`, build it and tag it `localhost/ubuntu20_dev:2024.3.0`
+
+If you add `--test` option, it will also run some tests associated with this image.
 
 ## Current support state
 
 Os support:
 * Ubuntu 20: ✅
 * Ubuntu 22: ✅
-* Ubuntu 24: ❌
-* RHEL8: ❌ (TODO)
+* Ubuntu 24: ❌ (WIP)
+* RHEL8: ❌ (WIP)
 
 OpenVINO releases support:
 * before 2024.1.0 ❌
-* 2024.1.0 ❌(TODO)
+* 2024.1.0 ❌(WIP)
 * 2024.2.0 ✅
 * 2024.3.0 ✅
 
@@ -37,10 +39,22 @@ Note that even though `Intel NPU` is said to be supported it doesn't mean that e
 
 ## How to work with it
 
+To make it easier to test your changes, whatever they are, you might find it useful to install `pytest` package, as it makes checking all images specified in this repository as easy as running `pytest` command in the root directory. It will also let you select or deselect some tests with pytest's `-k` option. Examples:
+
+This will only run dockerfile generation tests:
+```
+pytest -v -k "generate"
+```
+
+This will run tests for all but "nightly" configs (to be precise: all the tests which names don't contain "nightly"):
+```
+pytest -v -k "not nightly"
+```
+
 ### When new OpenVINO release
 
 1) Create a new release directory in `config/releases` called after the release version;
-2) For each package build for specific os supported by this project, create a json file and use previous versions ad a template.
+2) For each package build for specific os supported by this project, create a json file and use previous versions as a template.
 
 ### When new OS needs to be supported
 
@@ -64,12 +78,12 @@ Note: recursion is forbidden, that is, the dependency graph must have no cycles.
 
 TODO: check for recursion, right now it will be infinitely loading if recursion appears.
 
-#### Merging rules
+#### Merging rules (a.k.a. what if there are values for the same key in different configs)
 
 1) If either object is null (or if either is missing / is undefined) then the other is returned
 2) If objects have different types then an error is returned
 3) If objects are dictionaries then they are merged with this algorithm
-4) otherwise the new object is returned instead of the old one (including lists)
+4) otherwise the new object is returned instead of the old one (including lists!)
 
 TODO: ^^^ describe merging better ^^^
 
@@ -317,4 +331,3 @@ configuration would look like.
         </tr>
     </tbody>
 </table>
-
