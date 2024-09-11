@@ -56,6 +56,7 @@ default_args = {
         {
             'mode': 'build',
             'package_url': 'openvino_genai_ubuntu22_2024.5.0.0_x86_64.tar.gz',
+            'distribution': 'dev',
             'os': 'ubuntu22',
             'source': 'local',
         },
@@ -68,13 +69,14 @@ default_args = {
             'install_type': 'copy',
             'product_version': '2024.5.0.0',
         },
-        id='parse product_version and distribution from package_url',
+        id='parse product_version from package_url',
     ),
     pytest.param(
         {
             'mode': 'build',
             'package_url': 'openvino_genai_ubuntu22_2024.5.0.0_x86_64.tar.gz',
             'os': 'ubuntu22',
+            'distribution': 'dev',
             'source': 'local',
             'tag_postfix': '_qqq',
         },
@@ -164,6 +166,7 @@ default_args = {
             'mode': 'build',
             'package_url': 'openvino_genai_ubuntu22_2024.5.0.0.dev20240905_x86_64.tar.gz',
             'os': 'ubuntu22',
+            'distribution': 'dev',
             'source': 'local',
         },
         {
@@ -183,6 +186,7 @@ default_args = {
             'package_url': 'openvino_genai_ubuntu22_2024.5.0.0.tar.gz',
             'source': 'local',
             'os': 'ubuntu22',
+            'distribution': 'dev',
             'tags': ['my_tag:latest'],
             'device': ['cpu', 'gpu'],
         },
@@ -242,6 +246,7 @@ default_args = {
             'package_url': 'openvino_genai_ubuntu22_2024.5.0.0_x86_64.tar.gz',
             'source': 'local',
             'os': 'ubuntu22',
+            'distribution': 'dev',
             'registry': 'https://deploy',
         },
         {
