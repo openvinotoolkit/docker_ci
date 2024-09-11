@@ -82,7 +82,7 @@ jobs:
         run: docker logout openvino.azurecr.io
       - name: Collecting artifacts
         if: ${{ matrix.os == github.event.inputs.host_os }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: logs
           path: |

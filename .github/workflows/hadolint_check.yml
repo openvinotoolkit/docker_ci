@@ -37,7 +37,7 @@ jobs:
           done <  <(find dockerfiles/ \( -name '*.dockerfile' -o -name 'Dockerfile' \) -print0)
           exit "$has_issues"
       - name: Collecting artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: hadolint_results
