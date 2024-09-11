@@ -1,0 +1,8 @@
+{
+    "_based_on": "ubuntu20",
+    "_template": "Dockerfile_default.j2",
+    "package": {
+        "url": "https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.3/linux/l_openvino_toolkit_ubuntu20_2023.3.0.13775.ceeafaf64f3_x86_64.tgz",
+        "version": "2023.3.0"
+    }
+}
