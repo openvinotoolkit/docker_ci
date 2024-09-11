@@ -45,7 +45,7 @@ default_args = {
         {
             'device': ['cpu', 'gpu'],
             'dockerfile_name': 'openvino_cg_dev_2022.1.0.dockerfile',
-            'python': 'python38',
+            'python': 'python310',
             'tags': ['ubuntu18_dev:2022.1.0', 'ubuntu18_dev:latest'],
             'image_json_path': pathlib.Path('image_data.json').absolute(),
             'install_type': 'copy',
@@ -63,7 +63,7 @@ default_args = {
         {
             'device': ['cpu', 'gpu'],
             'dockerfile_name': 'openvino_cg_dev_2024.5.0.0.dockerfile',
-            'python': 'python38',
+            'python': 'python310',
             'tags': ['ubuntu22_dev:2024.5.0.0', 'ubuntu22_dev:latest'],
             'distribution': 'dev',
             'install_type': 'copy',
@@ -83,7 +83,7 @@ default_args = {
         {
             'device': ['cpu', 'gpu'],
             'dockerfile_name': 'openvino_cg_dev_2024.5.0.0.dockerfile',
-            'python': 'python38',
+            'python': 'python310',
             'tags': ['ubuntu22_dev:2024.5.0.0', 'ubuntu22_dev:latest', 'ubuntu22_dev:2024.5.0.0_qqq'],
             'distribution': 'dev',
             'install_type': 'copy',
@@ -102,7 +102,7 @@ default_args = {
     #     {
     #         'device': ['cpu'],
     #         'dockerfile_name': 'openvino_c_dev_2022.1.0.dockerfile',
-    #         'python': 'python38',
+    #         'python': 'python310',
     #         'tags': ['winserver2019_dev:2022.1.0.320', 'winserver2019_dev:latest'],
     #         'distribution': 'dev',
     #         'product_version': '2022.1.0',
@@ -120,7 +120,7 @@ default_args = {
     #     {
     #         'device': ['cpu'],
     #         'dockerfile_name': 'openvino_c_base_2022.1.0.dockerfile',
-    #         'python': 'python38',
+    #         'python': 'python310',
     #         'tags': ['ubuntu18_base_cpu:2022.1.0', 'ubuntu18_base_cpu:latest'],
     #         'distribution': 'base',
     #         'product_version': '2022.1.0',
@@ -136,7 +136,7 @@ default_args = {
         },
         {
             'device': ['cpu', 'gpu'],
-            'python': 'python38',
+            'python': 'python310',
             'dockerfile_name': 'openvino_cg_dev_2022.1.0.dockerfile',
             'tags': ['ubuntu18_dev:2022.1.0', 'ubuntu18_dev:latest'],
             'distribution': 'dev',
@@ -153,7 +153,7 @@ default_args = {
         },
         {
             'device': ['cpu', 'gpu'],
-            'python': 'python38',
+            'python': 'python310',
             'dockerfile_name': 'openvino_cg_dev_2022.1.0.dockerfile',
             'tags': ['ubuntu18_dev:2022.1.0', 'ubuntu18_dev:latest'],
             'distribution': 'dev',
@@ -171,7 +171,7 @@ default_args = {
         },
         {
             'device': ['cpu', 'gpu'],
-            'python': 'python38',
+            'python': 'python310',
             'dockerfile_name': 'openvino_cg_dev_2024.5.0.0.dev20240905.dockerfile',
             'tags': ['ubuntu22_dev:2024.5.0.0.dev20240905', 'ubuntu22_dev:latest'],
             'distribution': 'dev',
@@ -192,7 +192,7 @@ default_args = {
         },
         {
             'device': ['cpu', 'gpu'],
-            'python': 'python38',
+            'python': 'python310',
             'dockerfile_name': 'openvino_ch_dev_2024.5.0.dockerfile',
             'tags': ['my_tag:latest'],
             'distribution': 'dev',
@@ -251,7 +251,7 @@ default_args = {
         },
         {
             'device': ['cpu', 'gpu'],
-            'python': 'python38',
+            'python': 'python310',
             'tags': ['ubuntu22_dev:2024.5.0.0', 'ubuntu22_dev:latest'],
             'dockerfile_name': 'openvino_cg_dev_2024.5.0.0.dockerfile',
             'distribution': 'dev',
