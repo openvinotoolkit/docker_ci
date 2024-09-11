@@ -39,7 +39,7 @@ else:
     package_info = package_filename.parse(args.package_url.rsplit("/", 1)[-1])
     package_version = package_info.get("version")
     package_version_extra = package_info.get("version_extra")
-    if package_version and package_version_extra:
+    if args.wheels_url and package_version and package_version_extra:
         # concatenating without the last part
         package_version += "." + package_version_extra.rsplit(".", 1)[0]
     config_data = {
@@ -48,10 +48,10 @@ else:
         "package": {
             "url": args.package_url,
             "version": package_version,
-            # "wheels": {
-            #     "url": args.wheels_url,
-            #     # "version": None
-            # }
+            "wheels": {
+                "url": args.wheels_url,
+                # "version": None
+            }
         }
     }
     context = config.default_env.from_dict(config_data)

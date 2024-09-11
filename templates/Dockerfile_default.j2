@@ -25,6 +25,7 @@ FROM {{ base_image }}
 {%- if apt.packages or apt.downloads %}
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
+    apt upgrade -y && \
     {% if apt.packages -%}
     apt install -y --no-install-recommends {{ apt.packages | join(" ") }} && \
     {% endif -%}
@@ -78,7 +79,7 @@ RUN {{ components.python.command or "python3" }} -m venv $VIRTUAL_ENV
 ENV PATH=$VIRTUAL_ENV/bin:$PATH
 
 {%- set pyver = (package.wheels.version or package.version) %}
-RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir "openvino=={{ pyver }}"
 {%- if components.openvino_dev.enable %} "openvino-dev[{{ components.openvino_dev.extras }}]=={{ pyver }}" {% endif %}
 {%- if package.wheels.url %} --trusted-host=* --find-links {{ package.wheels.url }} {% endif %}
