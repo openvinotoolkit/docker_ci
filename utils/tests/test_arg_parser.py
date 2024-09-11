@@ -39,6 +39,7 @@ default_args = {
             'package_url': 'openvino.zip',
             'distribution': 'dev',
             'source': 'local',
+            'os': 'ubuntu22',
             'product_version': '2022.1.0',
             'image_json_path': 'image_data.json',
         },
@@ -132,6 +133,7 @@ default_args = {
             'mode': 'build',
             'package_url': 'openvino_dev_p_2022.1.320.zip',
             'source': 'local',
+            'os': 'ubuntu22',
             'product_version': '2022.1.0',
         },
         {
@@ -149,6 +151,7 @@ default_args = {
             'mode': 'build',
             'package_url': 'openvino_dev_p_2022.1.320.zip',
             'source': 'local',
+            'os': 'ubuntu22',
             'product_version': '2022.1',
         },
         {
@@ -183,7 +186,7 @@ default_args = {
     pytest.param(
         {
             'mode': 'build',
-            'package_url': 'openvino_genai_ubuntu22_2024.5.0.0.tar.gz',
+            'package_url': 'openvino_genai_ubuntu22_2024.5.0.0_x86_64.tar.gz',
             'source': 'local',
             'os': 'ubuntu22',
             'distribution': 'dev',
@@ -193,7 +196,7 @@ default_args = {
         {
             'device': ['cpu', 'gpu'],
             'python': 'python310',
-            'dockerfile_name': 'openvino_ch_dev_2024.5.0.dockerfile',
+            'dockerfile_name': 'openvino_cg_dev_2024.5.0.dockerfile',
             'tags': ['my_tag:latest'],
             'distribution': 'dev',
             'product_version': '2024.5.0.0',
