@@ -1,0 +1,9 @@
+# install custom wheel
+USER root
+
+ARG wheel_url
+ADD ${wheel_url} /tmp/custom_wheels/
+RUN python3 -m pip install --no-cache-dir  /tmp/custom_wheels/* && \
+    rm -rf /tmp/*
+
+USER openvino
