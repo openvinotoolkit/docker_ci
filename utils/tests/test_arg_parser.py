@@ -275,15 +275,15 @@ default_args = {
             'mode': 'test',
             'tags': ['custom:no-cv'],
             'distribution': 'custom',
-            'product_version': '2022.1.0',
-            'package_url': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.1.0/'
-                           'l_openvino_toolkit_dev_ubuntu18_p_2022.1.0.582.tgz',
+            'product_version': '2024.3.0',
+            'package_url': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.3/linux/'
+                           'l_openvino_toolkit_ubuntu22_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz',
         },
         {
             'distribution': 'custom-no-cv',
-            'product_version': '2022.1.0',
-            'package_url': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.1.0/'
-                           'l_openvino_toolkit_dev_ubuntu18_p_2022.1.0.582.tgz',
+            'product_version': '2024.3.0',
+            'package_url': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.3/linux/'
+                           'l_openvino_toolkit_ubuntu22_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz',
         },
         id='Successful test custom image',
     ),
