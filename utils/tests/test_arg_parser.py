@@ -394,7 +394,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
             'distribution': 'dev',
             'test_expression': 'cpu',
         },
-        'Options --tags and --distribution are mandatory. Image operation system is "ubuntu18" by default.',
+        "Options --tags and --distribution are mandatory. Image operation system is 'ubuntu18' by default.",
         id='Test without --tags',
     ),
     pytest.param(
@@ -403,7 +403,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
             'test_expression': 'cpu',
             'tags': ['test:latest'],
         },
-        'Options --tags and --distribution are mandatory. Image operation system is "ubuntu18" by default.',
+        "Options --tags and --distribution are mandatory. Image operation system is 'ubuntu18' by default.",
         id='Test without --distribution',
     ),
     pytest.param(

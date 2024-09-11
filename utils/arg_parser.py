@@ -292,8 +292,8 @@ def fail_if_product_version_not_supported(product_version: str, parser: DockerCI
         parser.error("Product version is not specified.")
     elif product_version < "2022.1":
         parser.error(
-            f"This version of the DockerHub CI framework does not support OpenVINO releases earlier than "
-            "2022.1.0. Current detected product version '{product_version}'. Please use previous versions "
+            "This version of the DockerHub CI framework does not support OpenVINO releases earlier than "
+            f"2022.1.0. Current detected product version {product_version}. Please use previous versions "
             "of the DockerHub CI."
         )
 
@@ -586,7 +586,7 @@ def parse_args(name: str, description: str):  # noqa
                     )
 
         if args.package_url and not args.build_id:
-            logger.info(f"Parsing product version in the package_url...")
+            logger.info(f"Parsing product version in the package_url {args.package_url}...")
             dev_version = re.search(r"_(\d{4}\.(?:\d\.){2,3}dev\d{8})_", args.package_url)
             if dev_version:
                 # save product version and build version as YYYY.U.V.devYYYYMMDD
