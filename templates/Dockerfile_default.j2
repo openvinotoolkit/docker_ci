@@ -55,7 +55,7 @@ RUN mkdir -p $INTEL_OPENVINO_DIR && \
     chmod a=rwx $INTEL_OPENVINO_DIR && \
     cd $INTEL_OPENVINO_DIR && \
     curl "{{ package.url }}" \
-    | tar -xz --strip-components=1
+    | tar -xz --strip-components=1 --no-same-owner --owner=openvino --group=openvino
 
 # Package env setup
 ENV PKG_CONFIG_PATH=$INTEL_OPENVINO_DIR/runtime/lib/intel64/pkgconfig

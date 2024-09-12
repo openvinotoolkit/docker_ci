@@ -22,6 +22,7 @@ parser.add_argument("--exclude-components", help="list of components to forceful
 parser.add_argument("-o", "--out", "--output", default="Dockerfile",
     help="output file name to write Dockerfile to, defaults to 'Dockerfile'")
 parser.add_argument("-j", action="store_true", help="Also output a json with information about the image.")
+parser.add_argument("--tests", action="store_true", help="Also generate test.sh that will run tests for the image")
 
 
 args = parser.parse_args()
@@ -37,11 +38,11 @@ if args.config:
     context = config.default_env.load(args.config)
 else:
     package_info = package_filename.parse(args.package_url.rsplit("/", 1)[-1])
-    package_version = package_info.get("version")
-    package_version_extra = package_info.get("version_extra")
-    if args.wheels_url and package_version and package_version_extra:
-        # concatenating without the last part
-        package_version += "." + package_version_extra.rsplit(".", 1)[0]
+    package_version = package_info["version"]
+    wheels_version = package_version
+    if args.wheels_url:
+        # this is a pre-release then add extra version
+        package_version += "." + package_info["version_extra"]
     config_data = {
         "_based_on": package_info["os"],
         "_template": "Dockerfile_default.j2",
@@ -50,7 +51,7 @@ else:
             "version": package_version,
             "wheels": {
                 "url": args.wheels_url,
-                # "version": None
+                "version": wheels_version
             }
         }
     }
@@ -72,13 +73,31 @@ dockerfile = jinjaenv.get_template(template).render(context)
 with open(args.out, "w") as outfile:
     outfile.write(dockerfile)
 
+image_name = f"{context['os_id']}_{args.preset}:{context['package']['version']}"
+
 if args.j:
     with open("image_data.json", "w") as file:
         json.dump({
-            "image_name": f"{context['os_id']}_{args.preset}:{context['package']['version']}",
+            "image_name": image_name,
             "base_image": context["base_image"],
             "product_version": context["package"]["version"],
             "wheels_version": None,
             "distribution": args.preset,
             "os": context["os_id"]
         }, file)
+
+if args.tests:
+    testfile = open("test.sh", "w")
+    testfile.write("set -e\n")
+    testfile.write(f"IMAGE_NAME={image_name}\n")
+    testfile.write("TESTS_VOLUME=./refactor/tests/in_container:/tests\n")
+    testfile.write('crun() { docker run --rm -it -v $TESTS_VOLUME $IMAGE_NAME bash -c "$1"; }\n')
+    testfile.write('run_test() { echo TEST $1 $2; crun "/tests/$1 $2 2>&1 >/dev/null && echo SUCCESS || echo ERROR"; }\n')
+    testfile.write("docker build -t $IMAGE_NAME .\n")
+    for test in context["tests"]:
+        arg = None
+        try:
+            test, arg = test.split("@", 1)
+        except ValueError:
+            pass
+        testfile.write(f"run_test {test} {arg}\n")

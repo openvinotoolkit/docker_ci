@@ -17,7 +17,7 @@ def test_runs_without_virtualenv():
     if "VIRTUAL_ENV" in environ:
         del environ["VIRTUAL_ENV"]
     subprocess.check_call(
-        args=[os.path.realpath(sys.executable), "image.py", "--help"],
+        args=[os.path.realpath(sys.executable), "generate.py", "--help"],
         env=environ
     )
 
@@ -56,22 +56,3 @@ def parametrize_config_preset():
 def test_dockerfile_generate(config, preset, temp_file):
     dockerfile = temp_file("Dockerfile")
     subprocess.check_call([sys.executable, "image.py", config, "-p", preset, "-o", dockerfile])
-
-
-@pytest.mark.parametrize('config,preset', parametrize_config_preset())
-def test_dockerfile_build_internal(config, preset, temp_file):
-    dockerfile = temp_file("Dockerfile")
-    subprocess.check_call([sys.executable, "image.py", config, "-p", preset, "-o", dockerfile, "--build"])
-
-
-@pytest.mark.parametrize('config,preset', parametrize_config_preset())
-def test_dockerfile_build_manually(config, preset, temp_file):
-    dockerfile = temp_file("Dockerfile")
-    subprocess.check_call([sys.executable, "image.py", config, "-p", preset, "-o", dockerfile])
-    subprocess.check_call(["docker", "build", "-f", dockerfile])
-
-
-@pytest.mark.parametrize('config,preset', parametrize_config_preset())
-def test_dockerfile_test_internal(config, preset, temp_file):
-    dockerfile = temp_file("Dockerfile")
-    subprocess.check_call([sys.executable, "image.py", config, "-p", preset, "-o", dockerfile, "--build", "--test"])
