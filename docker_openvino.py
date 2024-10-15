@@ -57,6 +57,8 @@ command = [
 ]
 if args.wheels_url:
     command.extend(["--wheels-url", args.wheels_url])
+if args.os:
+    command.extend(["--os", args.os])
 log_run(command)
 
 image_info = json.load(open("image_data.json"))

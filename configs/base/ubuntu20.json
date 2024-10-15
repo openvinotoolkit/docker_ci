@@ -38,6 +38,13 @@
                 "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.12037.1/intel-igc-opencl_1.0.12037.1_amd64.deb"
             ]
         },
-        "intel-level-zero-npu": {}
+        "intel-level-zero-npu": {},
+        "python": {
+            "_comment": [
+                "pinning this package helps speeding up installation",
+                "it keeps pip from trying multiple versions of different libraries"
+            ],
+            "pin_packages": ["typing_extensions~=4.12"]
+        }
     }
 }

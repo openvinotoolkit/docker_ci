@@ -58,6 +58,7 @@
             "rpm": [
                 "https://vault.centos.org/8-stream/AppStream/x86_64/os/Packages/ocl-icd-2.2.12-1.el8.x86_64.rpm"
             ]
-        }
+        },
+        "intel-level-zero-npu": {}
     }
 }

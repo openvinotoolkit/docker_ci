@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--config", help="Use pre-existing config to generate Dockerfile.")
 parser.add_argument("--package_url", "--package-url", help="Generate config for given package url.")
 parser.add_argument("--wheels_url", "--wheels-url", help="Also specify wheels url when generating the config.")
+parser.add_argument("--os", help="Overwrite OS if package-url is given")
 parser.add_argument("-p", "--preset", default="runtime", help="preset to build, e.g. 'dev' or 'runtime'")
 parser.add_argument("--include-components",
     help="list of components to forcefully enable (separated by comma)")
@@ -43,7 +44,7 @@ else:
         # this is a pre-release then add extra version
         package_version += "." + package_info["version_extra"]
     config_data = {
-        "_based_on": package_info["os"],
+        "_based_on": args.os or package_info["os"],
         "_template": "Dockerfile_default.j2",
         "package": {
             "url": args.package_url,
