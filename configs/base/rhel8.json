@@ -3,6 +3,11 @@
     "base_image": "registry.access.redhat.com/ubi8/ubi",
     "os_id": "rhel8",
     "components": {
+        "os_specific": {
+            "breaks": [
+                "intel-level-zero-npu"
+            ]
+        },
         "build_tools": {
             "rpm": [
                 "gcc",
@@ -53,11 +58,6 @@
             "rpm": [
                 "https://vault.centos.org/8-stream/AppStream/x86_64/os/Packages/ocl-icd-2.2.12-1.el8.x86_64.rpm"
             ]
-        },
-        "device_npu": {
-            "requires": [],
-            "tests": [],
-            "_comment": "rhel8 doesn't support NPU, so we clear NPU requirements"
         }
     }
 }

@@ -1,0 +1,14 @@
+{
+    "_based_on": "ubuntu20",
+    "_template": "Dockerfile_default.j2",
+    "package": {
+        "url": "https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/linux/l_openvino_toolkit_ubuntu20_2024.4.0.16579.c3152d32c9c_x86_64.tgz",
+        "version": "2024.4.0"
+    },
+    "components": {
+        "python": {
+            "_comment": "pinning this package helps speeding up installation and keep nvidia cuda libraries from downloading multiple times",
+            "pin_packages": ["typing_extensions~=4.12"]
+        }
+    }
+}

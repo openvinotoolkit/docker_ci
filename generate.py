@@ -39,7 +39,6 @@ if args.config:
 else:
     package_info = package_filename.parse(args.package_url.rsplit("/", 1)[-1])
     package_version = package_info["version"]
-    wheels_version = package_version
     if args.wheels_url:
         # this is a pre-release then add extra version
         package_version += "." + package_info["version_extra"]
@@ -49,9 +48,9 @@ else:
         "package": {
             "url": args.package_url,
             "version": package_version,
+            "distribution": package_info["dist"],
             "wheels": {
                 "url": args.wheels_url,
-                "version": wheels_version
             }
         }
     }

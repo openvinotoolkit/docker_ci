@@ -1,6 +1,8 @@
 import json
 import os
 
+from lib import package_filename
+
 
 class _ConfDir:
     def __init__(self, root_dir):

@@ -4,9 +4,12 @@
     "os_id": "ubuntu18",
     "os_codename": "bionic",
     "components": {
-        "base": {
+        "os_specific": {
             "requires": [
                 "libtbb"
+            ],
+            "breaks": [
+                "intel-level-zero-npu"
             ]
         },
         "libtbb": {
@@ -54,10 +57,6 @@
                 "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.8708/intel-igc-opencl_1.0.8708_amd64.deb"
             ]
         },
-        "device_npu": {
-            "requires": [],
-            "tests": [],
-            "_comment": "ubuntu20 doesn't support NPU, so we clear NPU requirements"
-        }
+        "intel-level-zero-npu": {}
     }
 }

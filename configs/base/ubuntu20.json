@@ -4,6 +4,11 @@
     "os_id": "ubuntu20",
     "os_codename": "focal",
     "components": {
+        "os_specific": {
+            "breaks": [
+                "intel-level-zero-npu"
+            ]
+        },
         "intel-opencl-icd": {
             "apt": [
                 "https://github.com/intel/compute-runtime/releases/download/22.37.24175/intel-opencl-icd_22.37.24175_amd64.deb"
@@ -33,10 +38,6 @@
                 "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.12037.1/intel-igc-opencl_1.0.12037.1_amd64.deb"
             ]
         },
-        "device_npu": {
-            "requires": [],
-            "tests": [],
-            "_comment": "ubuntu20 doesn't support NPU, so we clear NPU requirements"
-        }
+        "intel-level-zero-npu": {}
     }
 }

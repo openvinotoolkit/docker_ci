@@ -6,10 +6,8 @@
         "version": "2023.3.0"
     },
     "components": {
-        "device_npu": {
-            "requires": [],
-            "tests": [],
-            "_comment": "2023* releases don't support NPU, so we clear NPU requirements"
+        "package_specific": {
+            "breaks": ["device_npu"]
         }
     }
 }

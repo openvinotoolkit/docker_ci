@@ -1,11 +1,17 @@
 {
     "components": {
         "base": {
+            "requires": [
+                "os_specific",
+                "package_specific"
+            ],
             "tests": [
                 "local_library_loadable.sh@libopenvino.so",
                 "local_library_loadable.sh@libopenvino_c.so"
             ]
         },
+        "os_specific": {},
+        "package_specific": {},
         "python": {
             "tests": [
                 "check_python_openvino.sh"
@@ -50,6 +56,7 @@
         "preset_runtime": {
             "requires": [
                 "base",
+                "python",
                 "device_cpu",
                 "device_gpu",
                 "device_npu"
