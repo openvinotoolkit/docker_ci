@@ -3,10 +3,17 @@ from sys import stdout, executable as python
 import argparse
 import subprocess
 import json
+import os
 
 '''
 This file is to provide limited support for older interface to run with old pipelines
 '''
+
+PROXY_ENV=["http_proxy", "https_proxy", "no_proxy"]
+PROXY_ENV=map(lambda x: (x, os.environ.get(x)), PROXY_ENV)
+PROXY_ENV=filter(lambda x: x[1], PROXY_ENV)
+PROXY_ENV=list(PROXY_ENV)
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("command")
@@ -59,7 +66,9 @@ image_name = image_info["image_name"]
 if args.command == "all":
     log_run(["docker", "pull", image_info["base_image"]])
 
-log_run(["docker", "build", ".", "-t", image_name])
+build_args_proxy = [f"--build-arg={k}={v}" for k, v in PROXY_ENV]
+
+log_run(["docker", "build", ".", "-t", image_name, *build_args_proxy])
 
 if args.command == "all":
     remote_name = f"{args.remote_repo}/{image_name}"
