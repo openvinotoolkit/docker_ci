@@ -1,0 +1,91 @@
+# Copyright (C) 2019-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+{#-
+    Single stage image for Ubuntu 20, 22 and OpenVINO 2024.*
+    Single stage image does not build OpenCV thus samples can be built only with limited support.
+    Arguments:
+        * base_image
+        * package
+            * url
+            * version
+            * [wheels_url]
+        * components
+            * python
+            ...
+        * apt
+            * packages (package names (without downloaded))
+            * downloads ((url, name) for each package to download)
+            * download_dir
+#}
+
+FROM {{ base_image }}
+
+# System package dependencies
+{%- if apt.packages or apt.downloads %}
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt update && \
+    apt upgrade -y && \
+    {% if apt.packages -%}
+    apt install -y --no-install-recommends {{ apt.packages | join(" ") }} && \
+    {% endif -%}
+    {% if apt.downloads -%}
+    mkdir -p {{ apt.download_dir }} && \
+    cd {{ apt.download_dir }} && \
+    {% for dl in apt.downloads -%} curl -L {{dl.0}} -o {{dl.1}} && \
+    {% endfor -%}
+    apt install -y --no-install-recommends {{ apt.downloads | map(attribute=1) | join(" ") }} && \
+    {% endif -%}
+    rm -rf {{ apt.download_dir }} /var/lib/apt/lists/*
+{%- endif %}
+
+{%- if rpm.packages %}
+RUN yum install -y {{ rpm.packages | join(" ") }} && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+{%- endif %}
+
+# User setup (is it needed?)
+RUN sed -si "s/^UMASK.+/UMASK 000/g" /etc/login.defs
+RUN useradd -ms /bin/bash -G users,video openvino
+
+# Package setup
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+RUN mkdir -p $INTEL_OPENVINO_DIR && \
+    chmod a=rwx $INTEL_OPENVINO_DIR && \
+    cd $INTEL_OPENVINO_DIR && \
+    curl "{{ package.url }}" \
+    | tar -xz --strip-components=1 --no-same-owner --owner=openvino --group=openvino
+
+# Package env setup
+ENV PKG_CONFIG_PATH=$INTEL_OPENVINO_DIR/runtime/lib/intel64/pkgconfig
+ENV TBB_DIR=$INTEL_OPENVINO_DIR/runtime/3rdparty/tbb/lib/cmake/TBB
+ENV OpenVINO_DIR=$INTEL_OPENVINO_DIR/runtime/cmake
+ENV PYTHONPATH=$INTEL_OPENVINO_DIR/python:$INTEL_OPENVINO_DIR/python/python3:
+ENV LD_LIBRARY_PATH=$INTEL_OPENVINO_DIR/runtime/3rdparty/tbb/lib:$INTEL_OPENVINO_DIR/runtime/lib/intel64
+
+{% if components.python.enable -%}
+# Setup python venv dir, set permissive rights
+ENV VIRTUAL_ENV=/opt/venv
+RUN mkdir -p $VIRTUAL_ENV && chmod a=rwx $VIRTUAL_ENV
+{%- endif %}
+
+USER openvino
+WORKDIR ${INTEL_OPENVINO_DIR}
+
+{% if components.python.enable -%}
+# Python setup
+RUN {{ components.python.command or "python3" }} -m venv $VIRTUAL_ENV
+ENV PATH=$VIRTUAL_ENV/bin:$PATH
+
+{%- set pyver = (package.wheels.version or package.version) %}
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir "openvino=={{ pyver }}"
+{%- if package.distribution == "genai" %} "openvino_genai~={{ pyver }}" "openvino_tokenizers~={{ pyver }}"{%- endif -%}
+{%- if components.python.pin_packages %} {{components.python.pin_packages | join(" ")}}{%- endif -%}
+{%- if components.openvino_dev.enable %} "openvino-dev[{{ components.openvino_dev.extras }}]=={{ pyver }}"
+{#- Setting this extra index url stops nvidia cuda libraries from installing by default -#}
+{#- #} --extra-index-url https://download.pytorch.org/whl/cpu {%- endif -%}
+{%- if package.wheels.url %} --trusted-host=* --find-links {{ package.wheels.url }} {% endif %}
+
+{%- endif %}

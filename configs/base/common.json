@@ -1,0 +1,80 @@
+{
+    "components": {
+        "base": {
+            "requires": [
+                "os_specific",
+                "package_specific"
+            ],
+            "tests": [
+                "local_library_loadable.sh@libopenvino.so",
+                "local_library_loadable.sh@libopenvino_c.so"
+            ]
+        },
+        "os_specific": {},
+        "package_specific": {},
+        "python": {
+            "tests": [
+                "check_python_openvino.sh"
+            ]
+        },
+        "device_cpu": {
+            "tests": [
+                "local_library_loadable.sh@libopenvino_intel_cpu_plugin.so"
+            ]
+        },
+        "device_gpu": {
+            "requires": [
+                "level-zero",
+                "intel-level-zero-gpu",
+                "opencl-loader",
+                "intel-opencl-icd"
+            ],
+            "tests": [
+                "local_library_loadable.sh@libopenvino_intel_gpu_plugin.so"
+            ]
+        },
+        "device_npu": {
+            "requires": [
+                "level-zero",
+                "intel-level-zero-npu"
+            ],
+            "tests": [
+                "local_library_loadable.sh@libopenvino_intel_npu_plugin.so"
+            ]
+        },
+        "openvino_dev": {
+            "requires": [
+                "python",
+                "build_tools"
+            ],
+            "extras": "caffe,kaldi,mxnet,onnx,pytorch,tensorflow,tensorflow2",
+            "tests": [
+                "check_omz_tools.sh@CPU",
+                "check_omz_tools.sh@GPU"
+            ]
+        },
+        "preset_runtime": {
+            "requires": [
+                "base",
+                "python",
+                "device_cpu",
+                "device_gpu",
+                "device_npu"
+            ]
+        },
+        "preset_dev": {
+            "requires": [
+                "preset_runtime",
+                "openvino_dev"
+            ]
+        }
+    },
+    "presets": {
+        "runtime": [
+            "preset_runtime"
+        ],
+        "dev": [
+            "preset_dev"
+        ]
+    }
+}

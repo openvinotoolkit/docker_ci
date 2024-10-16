@@ -1,0 +1,13 @@
+{
+    "_based_on": "ubuntu22",
+    "_template": "Dockerfile_default.j2",
+    "package": {
+        "url": "https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.3/linux/l_openvino_toolkit_ubuntu22_2023.3.0.13775.ceeafaf64f3_x86_64.tgz",
+        "version": "2023.3.0"
+    },
+    "components": {
+        "package_specific": {
+            "breaks": ["device_npu"]
+        }
+    }
+}

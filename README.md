@@ -1,78 +1,333 @@
-![Codestyle](https://github.com/openvinotoolkit/docker_ci/workflows/Codestyle%20checks/badge.svg?branch=master)
-[![Images build check](https://github.com/openvinotoolkit/docker_ci/actions/workflows/images_build_check.yml/badge.svg?branch=master)](https://github.com/openvinotoolkit/docker_ci/actions/workflows/images_build_check.yml)
+# Dockerfile templates for OpenVINO releases, for Ubuntu 20.04, Ubuntu 22.04 and RHEL 8
 
-# DockerHub CI for [Intel® Distribution of OpenVINO™ toolkit](https://github.com/openvinotoolkit/openvino)
+## How to use, how to run
 
-The Framework can generate a Dockerfile, build, test, and deploy an image with the Intel® Distribution of OpenVINO™ toolkit.
-You can reuse available Dockerfiles, add your layer and customize the image of OpenVINO™ for your needs.
+The tool does not require any non-standard Python packages, it only needs Python 3.10+ present
 
-## Documentation
+`configs/releases` directory contains configurations for all the supported releases. For example, if you want to build 
+`ubuntu20_dev:2024.3.0` image, then you should run this command:
 
-* [Get Started with OpenVINO™ toolkit images](get-started.md)
-* [Available Dockerfiles for OpenVINO™ toolkit](dockerfiles)
-* [Generating the dockerfiles and building the images](docs/openvino_docker.md)
-* [Working with OpenVINO containers](docs/containers.md)
-* [Deployment with GPU accelerators](docs/accelerators.md)
-* [Available Tutorials](docs/tutorials)
+```bash
+python3 image.py 2024.3.0/ubuntu20 --preset dev --build
+```
+This will generate `Dockerfile`, build it and tag it `localhost/ubuntu20_dev:2024.3.0`
 
-As [Docker\*](https://docs.docker.com/) is (mostly) just an isolation tool, the OpenVINO toolkit inside the container is the same as the OpenVINO toolkit installed natively on the host machine,
-so the [OpenVINO documentation](https://docs.openvino.ai/) is fully applicable to containerized OpenVINO distribution.
+If you add `--test` option, it will also run some tests associated with this image.
 
-## Supported Operating Systems for Docker Base Image:
+## Current support state
 
- - Ubuntu 22.04 LTS
- - Ubuntu 20.04 LTS
- - RedHat UBI 8
+Os support:
+* Ubuntu 20: ✅
+* Ubuntu 22: ✅
+* Ubuntu 24: ❌ (WIP)
+* RHEL8: ❌ (WIP)
 
-## Prebuilt images
+OpenVINO releases support:
+* before 2024.1.0 ❌
+* 2024.1.0 ❌(WIP)
+* 2024.2.0 ✅
+* 2024.3.0 ✅
 
-Prebuilt images are available on:
+Device support:
+* x86-64 CPU ✅
+* aarch64 CPU ❌
+* armhf CPU ❌
+* Intel GPU ✅
+* Intel NPU ✅
 
-- [Docker Hub](https://hub.docker.com/u/openvino)
-- [Red Hat* Quay.io](https://quay.io/organization/openvino)
-- [Red Hat* Ecosystem Catalog (runtime image)](https://catalog.redhat.com/software/containers/intel/openvino-runtime/606ff4d7ecb5241699188fb3)
-- [Red Hat* Ecosystem Catalog (development image)](https://catalog.redhat.com/software/containers/intel/openvino-dev/613a450dc9bc35f21dc4a1f7)
-- [Azure* Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/intel_corporation.openvino)
+Note that even though `Intel NPU` is said to be supported it doesn't mean that every configuration supports it, for example `Ubuntu 20` doesn't support running on `Intel NPU`, only `Ubuntu 22` (and above when applicable) support it. Similar situation exists for Arm CPUs with Intel hardware.
 
-Note: OpenVINO development environment in a docker container is available also in [notebook repository](https://github.com/openvinotoolkit/openvino_notebooks).
-It can be deployed in [OpenShift RedHat OpenData Science (RHODS)](https://github.com/openvinotoolkit/operator/blob/main/docs/notebook_in_rhods.md)
+## How to work with it
 
-## Licenses
+To make it easier to test your changes, whatever they are, you might find it useful to install `pytest` package, as it makes checking all images specified in this repository as easy as running `pytest` command in the root directory. It will also let you select or deselect some tests with pytest's `-k` option. Examples:
 
-The DockerHub CI framework for Intel® Distribution of OpenVINO™ toolkit is licensed under [Apache License Version 2.0](./LICENSE).
-By contributing to the project, you agree to the license and copyright terms therein and release your contribution under these terms.
+This will only run dockerfile generation tests:
+```
+pytest -v -k "generate"
+```
 
-**LEGAL NOTICE: Your use of this software and any required dependent software (the "Software Package") is subject to the terms and conditions of the [software license agreements](https://software.intel.com/content/dam/develop/external/us/en/documents/intel-openvino-license-agreements.pdf) for the Software Package, which may also include notices, disclaimers, or license terms for third party or open source software included in or with the Software Package, and your use indicates your acceptance of all such terms.
-Please refer to the "third-party-programs.txt" or other similarly-named text file included with the Software Package for additional details.**
+This will run tests for all but "nightly" configs (to be precise: all the tests which names don't contain "nightly"):
+```
+pytest -v -k "not nightly"
+```
 
-Intel is committed to the respect of human rights and avoiding complicity in human rights abuses, a policy reflected in the [Intel Global Human Rights Principles](https://www.intel.com/content/www/us/en/policy/policy-human-rights.html). Accordingly, by accessing the Intel material on this platform you agree that you will not use the material in a product or application that causes or contributes to a violation of an internationally recognized human right.
+### When new OpenVINO release
 
-By downloading and using this container and the included software, you agree to the terms and conditions of the software license agreements located [here](https://software.intel.com/en-us/license/eula-for-intel-software-development-products).
-Please, review content inside `<openvino_install_root>/licensing` folder for more details.
-As for any pre-built image usage, it is the image user's responsibility to ensure that any use of this image complies with any relevant licenses and potential fees for all software contained within. 
-We will have no indemnity or warranty coverage from suppliers.
+1) Create a new release directory in `config/releases` called after the release version;
+2) For each package build for specific os supported by this project, create a json file and use previous versions as a template.
 
-Components:
+### When new OS needs to be supported
 
-- Ubuntu: https://hub.docker.com/_/ubuntu
-- Red Hat: https://catalog.redhat.com/software/containers/ubi8/ubi/5c359854d70cc534b3a3784e
-- Intel® Distribution of OpenVINO™ toolkit: https://software.intel.com/en-us/license/eula-for-intel-software-development-products
+1) Create corresponding configs in the affected release directories
+2) Create a base config for the new os
 
-## Security guideline
+Try to use the previous os version configs as a template if applicable.
 
-See [SECURITY](./SECURITY.md) guide for details.
+Note: some package versions are hard-coded or refer to a specific build, make sure those are also up-to-date for the new OS.
 
-## How to Contribute
+## How it works
 
-See [CONTRIBUTING](./CONTRIBUTING.md) for details. Thank you!
+### Config file structure
 
-## Support
+Configuration in this project is done with a chain of configs. Product configs are stored in `configs/releases`
+directory, they inherit from base configs stored in `configs/base` which can also inherit from other base configs.
+Config inheritance is defined with `_based_on` property, the config pointed at by `_based_on` will load first and then
+the original config will merge with the base config.
 
-Please report questions, issues and suggestions using:
+Note: recursion is forbidden, that is, the dependency graph must have no cycles.
 
-* [GitHub* Issues](https://github.com/openvinotoolkit/docker_ci/issues)
-* The [`openvino`](https://stackoverflow.com/questions/tagged/openvino) tag on StackOverflow\*
-* [Forum](https://software.intel.com/en-us/forums/computer-vision)
+TODO: check for recursion, right now it will be infinitely loading if recursion appears.
 
----
-\* Other names and brands may be claimed as the property of others.
+#### Merging rules (a.k.a. what if there are values for the same key in different configs)
+
+1) If either object is null (or if either is missing / is undefined) then the other is returned
+2) If objects have different types then an error is returned
+3) If objects are dictionaries then they are merged with this algorithm
+4) otherwise the new object is returned instead of the old one (including lists!)
+
+TODO: ^^^ describe merging better ^^^
+
+Note: lists are not merged, they replace each other
+
+This table shows a simplified example of how the files could be related to each other and how the merged
+configuration would look like.
+
+<style>
+    table {
+        border-width: 5px;
+        border-style: solid
+    }
+
+    td {
+        border-width: 3px;
+        border-style: solid
+    }
+</style>
+<table>
+    <tbody>
+        <tr>
+            <td>common.json</td>
+            <td>ubuntu.json</td>
+            <td>ubuntu22.json</td>
+            <td>releases/…/ubuntu22.json</td>
+            <td>result (what will be read)</td>
+        </tr>
+        <tr>
+            <td>{</td>
+            <td>{</td>
+            <td>{</td>
+            <td>{</td>
+            <td>{</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>"_based_on": "common"</td>
+            <td>"_based_on": "ubuntu"</td>
+            <td>"_based_on": "ubuntu22"</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>"_template": "Dockerfile.j2"</td>
+            <td>"_template": "Dockerfile.j2"</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>"package": {</td>
+            <td>"package": {</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>"url": "https://example.com"</td>
+            <td>"url": "https://example.com"</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>"version": "2024.3.0"</td>
+            <td>"version": "2024.3.0"</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>}</td>
+            <td>}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>"presets": {</td>
+            <td>"presets": {</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>"runtime": ["preset_runtime", "device_gpu"]</td>
+            <td>"runtime": ["preset_runtime", "device_gpu"]</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>…</td>
+            <td>…</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>}</td>
+            <td>}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>"base_image": "ubuntu:22.04"</td>
+            <td></td>
+            <td>"base_image": "ubuntu:22.04"</td>
+        </tr>
+        <tr>
+            <td>"components": {</td>
+            <td>"components": {</td>
+            <td>"components": {</td>
+            <td></td>
+            <td>"components": {</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>"intel-level-zero-gpu": {</td>
+            <td></td>
+            <td>"intel-level-zero-gpu": {</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>"requires": ["level-zero"]</td>
+            <td></td>
+            <td>"requires": ["level-zero"]</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>"apt": ["https://..."]</td>
+            <td></td>
+            <td>"apt": ["https://..."]</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>}</td>
+            <td></td>
+            <td>}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>"level-zero": {</td>
+            <td></td>
+            <td>"level-zero": {</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>"apt": ["https://..."]</td>
+            <td></td>
+            <td>"apt": ["https://..."]</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>}</td>
+            <td></td>
+            <td>}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>"base": {</td>
+            <td></td>
+            <td></td>
+            <td>"base": {</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>"apt": ["curl", …]</td>
+            <td></td>
+            <td></td>
+            <td>"apt": ["curl", …]</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>}</td>
+            <td></td>
+            <td></td>
+            <td>}</td>
+        </tr>
+        <tr>
+            <td>"preset_runtime": {</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>"preset_runtime": {</td>
+        </tr>
+        <tr>
+            <td>"requires": ["base"]</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>"requires": ["base"]</td>
+        </tr>
+        <tr>
+            <td>}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>}</td>
+        </tr>
+        <tr>
+            <td>"device_gpu": {</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>"device_gpu": {</td>
+        </tr>
+        <tr>
+            <td>"requires": ["intel-level-zero-gpu", ...]</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>"requires": ["intel-level-zero-gpu", ...]</td>
+        </tr>
+        <tr>
+            <td>}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>}</td>
+        </tr>
+        <tr>
+            <td>}</td>
+            <td>}</td>
+            <td>}</td>
+            <td>}</td>
+            <td>}</td>
+        </tr>
+        <tr>
+            <td>}</td>
+            <td>}</td>
+            <td>}</td>
+            <td>}</td>
+            <td>}</td>
+        </tr>
+    </tbody>
+</table>

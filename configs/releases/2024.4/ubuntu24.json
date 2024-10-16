@@ -1,0 +1,7 @@
+{
+    "_based_on": "ubuntu24",
+    "_template": "Dockerfile_default.j2",
+    "package": {
+        "url": "https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.4/linux/l_openvino_toolkit_ubuntu24_2024.4.0.16579.c3152d32c9c_x86_64.tgz"
+    }
+}
