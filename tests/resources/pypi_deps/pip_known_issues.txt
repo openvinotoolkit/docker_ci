@@ -1,0 +1,1 @@
+openvino-dev * requires opencv-python, which is not installed.

@@ -1,0 +1,13 @@
+gcc
+gcc-c++
+make
+glibc
+libstdc++
+libgcc
+cmake
+curl
+sudo
+python3
+python3-devel
+python3-setuptools
+python3-pip
