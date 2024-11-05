@@ -1,23 +1,19 @@
 # Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-{%- if 'docker' == rhel_platform %}
-FROM registry.access.redhat.com/ubi8 AS base
-{% else %}
-FROM registry.access.redhat.com/ubi8
-LABEL name="rhel8_{{ distribution }}" \
-      maintainer="openvino_docker@intel.com" \
-      vendor="Intel Corporation" \
-      version="{{ product_version }}" \
-      release="{{ product_version }}" \
-      summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
-      description="This is the {{ distribution }} image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
-{% endif -%}
+FROM ubuntu:24.04 AS base
 
 # hadolint ignore=DL3002
 USER root
 WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl tzdata ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 {% for pre_command in pre_commands %}
 {{ pre_command|safe }}
@@ -28,47 +24,61 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
 
 {% if distribution == 'dev' %}
 
-FROM base as opencv  
+FROM base AS opencv
+
 LABEL description="This is the dev image for OpenCV building with OpenVINO Runtime backend"
 LABEL vendor="Intel Corporation"
 
-{% if 'autobuild' != rhel_platform %}
-COPY ./entitlement /etc/pki/entitlement
-COPY ./rhsm-conf /etc/rhsm
-COPY ./rhsm-ca /etc/rhsm/ca
-{% endif %}
+SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-RUN rm -f /etc/rhsm-host && subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
-RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && dnf clean all
-RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm && dnf clean all
-# hadolint ignore=DL3033
-RUN yum install -y \
-    gtk3-devel \
-    gstreamer1-devel \
-    gstreamer1-plugins-base-devel \
-    ffmpeg-devel \
-    libmfx-devel \
-    cmake \
-    git \
-    python38-devel \
-    python38-pip \
-    gcc-c++  \
-    gcc && yum clean all
+# hadolint ignore=DL3008
+RUN apt-get update; \
+    apt-get install -y --no-install-recommends \
+        git \
+        python3-dev \
+        python3-pip \
+        python3-venv \
+        build-essential \
+        cmake \
+        ninja-build \
+        libgtk-3-dev \
+        libpng-dev \
+        libjpeg-dev \
+        libwebp-dev \
+        libtiff5-dev \
+        libopenexr-dev \
+        libopenblas-dev \
+        libx11-dev \
+        libavutil-dev \
+        libavcodec-dev \
+        libavformat-dev \
+        libswscale-dev \
+        libswresample-dev \
+        # libtbb2 \
+        libssl-dev \
+        libva-dev \
+        libmfx-dev \
+        libgstreamer1.0-dev \
+        libgstreamer-plugins-base1.0-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH=$VIRTUAL_ENV/bin:$PATH
 
-# hadolint ignore=DL3013
-RUN python3 -m pip install --no-cache-dir numpy==1.23.1
-ARG OPENCV_BRANCH="377be68d923e40900ac5526242bcf221e3f355e5" # 4.8 with a fix for building tests
+RUN python3 -m pip install --no-cache-dir --upgrade pip
+RUN python3 -m pip install --no-cache-dir numpy==1.26.4
+
+ARG OPENCV_BRANCH=4.10.0
 WORKDIR /opt/repo
 RUN git clone https://github.com/opencv/opencv.git
 WORKDIR /opt/repo/opencv
 RUN git checkout ${OPENCV_BRANCH}
 WORKDIR /opt/repo/opencv/build
 
-# hadolint ignore=SC2046
+# hadolint ignore=SC1091
 RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
-    cmake \
+    cmake -G Ninja \
     -D BUILD_INFO_SKIP_EXTRA_MODULES=ON \
     -D BUILD_EXAMPLES=OFF \
     -D BUILD_JASPER=OFF \
@@ -94,7 +104,7 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D WITH_JASPER=OFF \
     -D WITH_LAPACK=OFF \
     -D WITH_MATLAB=OFF \
-    -D WITH_MFX=OFF \
+    -D WITH_MFX=ON \
     -D WITH_OPENCLAMDBLAS=OFF \
     -D WITH_OPENCLAMDFFT=OFF \
     -D WITH_OPENEXR=OFF \
@@ -124,7 +134,6 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D OPENCV_LIB_INSTALL_PATH=lib \
     -D OPENCV_CONFIG_INSTALL_PATH=cmake \
     -D OPENCV_3P_LIB_INSTALL_PATH=3rdparty \
-    -D OPENCV_SAMPLES_SRC_INSTALL_PATH=samples \
     -D OPENCV_DOC_INSTALL_PATH=doc \
     -D OPENCV_OTHER_INSTALL_PATH=etc \
     -D OPENCV_LICENSES_INSTALL_PATH=etc/licenses \
@@ -144,116 +153,115 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D InferenceEngine_DIR="${INTEL_OPENVINO_DIR}"/runtime/cmake/ \
     -D ngraph_DIR="${INTEL_OPENVINO_DIR}"/runtime/cmake/ \
     -D INF_ENGINE_RELEASE=2022010000 \
-    -D VIDEOIO_PLUGIN_LIST=ffmpeg,gstreamer \
+    -D VIDEOIO_PLUGIN_LIST=ffmpeg,gstreamer,mfx \
     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--allow-shlib-undefined \
     -D CMAKE_BUILD_TYPE=Release /opt/repo/opencv && \
-    make -j$(nproc) && cmake -P cmake_install.cmake && \
+    ninja -j "$(nproc)" && cmake --install . && \
     rm -Rf install/bin install/etc/samples
 
 WORKDIR /opt/repo/opencv/build/install
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
-
 {% endif %}
 
-{% if 'docker' == rhel_platform %}
-# -----------------
-FROM registry.access.redhat.com/ubi8 AS ov_base
+FROM ubuntu:24.04 AS ov_base
 
-LABEL name="rhel8_{{ distribution }}" \
-      maintainer="openvino_docker@intel.com" \
-      vendor="Intel Corporation" \
-      version="{{ product_version }}" \
-      release="{{ product_version }}" \
-      summary="Provides the latest release of Intel(R) Distribution of OpenVINO(TM) toolkit." \
-      description="This is the {{ distribution }} image for Intel(R) Distribution of OpenVINO(TM) toolkit on RHEL UBI 8"
+LABEL description="This is the {{ distribution }} image for {{ product_name }} on Ubuntu 22.04 LTS"
+LABEL vendor="Intel Corporation"
 
-WORKDIR /
 USER root
+WORKDIR /
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
-{% endif %}
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Creating user openvino and adding it to groups "video" and "users" to use GPU and VPU
 RUN sed -ri -e 's@^UMASK[[:space:]]+[[:digit:]]+@UMASK 000@g' /etc/login.defs && \
 	grep -E "^UMASK" /etc/login.defs && useradd -ms /bin/bash -G video,users openvino && \
     chown openvino -R /home/openvino
 
-{% if 'docker' == rhel_platform %}
+RUN mkdir /opt/intel
 
 ENV INTEL_OPENVINO_DIR /opt/intel/openvino
 
-COPY --from=base /opt/intel /opt/intel
-{% endif %}
-
-{% if 'runtime' == distribution %}
-ARG LGPL_DEPS="bash" # no new packages
-ARG INSTALL_PACKAGES="-c=python -c=core"
-{% else %}
-ARG LGPL_DEPS="gcc-c++ \
-               glibc \
-               libstdc++ \
-               libgcc"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core -c=dev"
-{% endif %}
-ARG INSTALL_SOURCES="no"
-
-# hadolint ignore=SC2016
-RUN sed -i -e 's|https://vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-devel-2.1.2-6|http://mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-devel-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh && \
-    sed -i -e 's|https://vault.centos.org/centos/8/PowerTools/$arch/os/Packages/gflags-2.1.2-6|http://mirror.centos.org/centos/8-stream/PowerTools/$arch/os/Packages/gflags-2.2.2-1|g' ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh
+COPY --from=base /opt/intel/ /opt/intel/
 
 WORKDIR /thirdparty
-# hadolint ignore=DL3031, DL3033, SC2012
-{% if 'openshift' == rhel_platform -%}
-RUN rm /etc/rhsm-host && rpm -qa --qf "%{name}\n" > base_packages.txt && \
-{%- else -%}
-RUN rpm -qa --qf "%{name}\n" > base_packages.txt && \
-{%- endif %}
-	yum install -y ${LGPL_DEPS} && \
-	${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y $INSTALL_PACKAGES && \
-	if [ "$INSTALL_SOURCES" = "yes" ]; then \
-	    yum install -y yum-utils && \
-		rpm -qa --qf "%{name}\n" > all_packages.txt && \
-		grep -v -f base_packages.txt all_packages.txt | while read line; do \
-		package=$(echo $line); \
-		rpm -qa $package --qf "%{name}: %{license}\n" | grep GPL; \
-		exit_status=$?; \
-		if [ $exit_status -eq 0 ]; then \
-		    yumdownloader --skip-broken --source -y $package;  \
-		fi \
-	  done && \
-	  yum autoremove -y yum-utils && \
-      echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
-	yum clean all && rm -rf /var/cache/yum
 
-{% if 'autobuild' != rhel_platform %}
-RUN  rm -Rf /etc/pki/entitlement /etc/rhsm/ca /etc/rhsm/rhsm.conf
+ARG INSTALL_SOURCES="no"
+
+ARG DEPS="tzdata \
+          curl"
+{% if 'runtime' == distribution %}
+ARG LGPL_DEPS=""
+ARG INSTALL_PACKAGES="-c=python -c=core"
+{% elif 'dev' == distribution or 'dev_no_samples' == distribution %}
+ARG LGPL_DEPS="g++ \
+               gcc \
+               libc6-dev"
+ARG INSTALL_PACKAGES="-c=python -c=core -c=dev"
+{% else %}
+ARG LGPL_DEPS="g++ \
+               gcc \
+               libc6-dev"
+ARG INSTALL_PACKAGES="-c=python"
 {% endif %}
+
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
+    apt-get install -y --no-install-recommends ${DEPS} && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get reinstall -y ca-certificates && rm -rf /var/lib/apt/lists/* && update-ca-certificates
+
+# hadolint ignore=DL3008, SC2012
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends python3-venv ${LGPL_DEPS} && \
+    ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y ${INSTALL_PACKAGES} && \
+    if [ "$INSTALL_SOURCES" = "yes" ]; then \
+      sed -Ei 's/# deb-src /deb-src /' /etc/apt/sources.list && \
+      apt-get update && \
+	  dpkg --get-selections | grep -v deinstall | awk '{print $1}' > all_packages.txt && \
+	  grep -v -f base_packages.txt all_packages.txt | while read line; do \
+	  package=$(echo $line); \
+	  name=(${package//:/ }); \
+      grep -l GPL /usr/share/doc/${name[0]}/copyright; \
+      exit_status=$?; \
+	  if [ $exit_status -eq 0 ]; then \
+	    apt-get source -q --download-only $package;  \
+	  fi \
+      done && \
+      echo "Download source for $(ls | wc -l) third-party packages: $(du -sh)"; fi && \
+    rm /usr/lib/python3.*/lib-dynload/readline.cpython-3*-gnu.so && rm -rf /var/lib/apt/lists/*
+
+RUN curl -L -O  https://github.com/oneapi-src/oneTBB/releases/download/v2021.9.0/oneapi-tbb-2021.9.0-lin.tgz && \
+    tar -xzf  oneapi-tbb-2021.9.0-lin.tgz&& \
+    cp oneapi-tbb-2021.9.0/lib/intel64/gcc4.8/libtbb.so* /opt/intel/openvino/runtime/lib/intel64/ && \
+    rm -Rf oneapi-tbb-2021.9.0*
 
 WORKDIR ${INTEL_OPENVINO_DIR}/licensing
 RUN if [ "$INSTALL_SOURCES" = "no" ]; then \
         echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. They are stored in https://storage.openvinotoolkit.org/repositories/openvino/ci_dependencies/container_gpl_sources/." > DockerImage_readme.txt ; \
     fi
 
-WORKDIR /licenses
-RUN cp -rf "${INTEL_OPENVINO_DIR}"/licensing /licenses
-
 {% for command in commands %}
 {{ command|safe }}
 {% endfor %}
 
 # Post-installation cleanup and setting up OpenVINO environment variables
-{% if 'docker' == rhel_platform  %}
-RUN rm -rf /tmp && mkdir /tmp 
-{% elif 'openshift' == rhel_platform %}
-RUN rm -rf /tmp && mkdir /tmp && rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
-{% else %}
-RUN rm -rf /tmp && mkdir /tmp
-{% endif %}
+ENV LIBVA_DRIVER_NAME=iHD
+ENV GST_VAAPI_ALL_DRIVERS=1
+ENV LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri
+
+RUN apt-get update && \
+    apt-get autoremove -y gfortran && \
+    rm -rf /var/lib/apt/lists/*
 
 USER openvino
 WORKDIR ${INTEL_OPENVINO_DIR}
+ENV DEBIAN_FRONTEND=noninteractive
 
 CMD ["/bin/bash"]
 

@@ -24,6 +24,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         "ubuntu18",
         "ubuntu20",
         "ubuntu22",
+        "ubuntu24",
         "winserver2019",
         "windows20h2",
         "rhel8",
@@ -116,7 +117,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             "-py",
             "--python",
-            choices=["python37", "python38", "python310"],
+            choices=["python37", "python38", "python39", "python310", "python311", "python312"],
             help="Python interpreter for docker image, currently default is python38",
         )
 
@@ -516,10 +517,12 @@ def parse_args(name: str, description: str):  # noqa
                 )
 
         if not args.python:
-            if args.os in "ubuntu22":
+            if args.os == "ubuntu24":
+                args.python = "python312"
+            elif args.os == "ubuntu22":
                 args.python = "python310"
             else:
-                args.python = "python38"
+                args.python = "python39"
 
         if args.python == "python38" and "win" in args.os:
             if not hasattr(args, "pre_stage_msbuild") or not args.pre_stage_msbuild:
