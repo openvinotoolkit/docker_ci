@@ -32,33 +32,32 @@ FROM base as opencv
 LABEL description="This is the dev image for OpenCV building with OpenVINO Runtime backend"
 LABEL vendor="Intel Corporation"
 
+RUN rm -f /etc/rhsm-host
 {% if 'autobuild' != rhel_platform %}
 COPY ./entitlement /etc/pki/entitlement
 COPY ./rhsm-conf /etc/rhsm
-COPY ./rhsm-ca /etc/rhsm/ca
 {% endif %}
-
-RUN rm -f /etc/rhsm-host && subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
-RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && dnf clean all
-RUN dnf install -y https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm && dnf clean all
-# hadolint ignore=DL3033
-RUN yum install -y \
-    gtk3-devel \
-    gstreamer1-devel \
-    gstreamer1-plugins-base-devel \
-    ffmpeg-devel \
-    libmfx-devel \
-    cmake \
-    git \
-    python38-devel \
-    python38-pip \
-    gcc-c++  \
-    gcc && yum clean all
+RUN subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
+RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
+        https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm \
+    && dnf install -y \
+        gtk3-devel \
+        gstreamer1-devel \
+        gstreamer1-plugins-base-devel \
+        ffmpeg-devel \
+        libmfx-devel \
+        cmake \
+        git \
+        python39-devel \
+        python39-pip \
+        gcc-c++  \
+        gcc \
+    && dnf clean all
 
 RUN rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 
 RUN python3 -m pip install --no-cache-dir numpy==1.23.1
-ARG OPENCV_BRANCH="377be68d923e40900ac5526242bcf221e3f355e5" # 4.8 with a fix for building tests
+ARG OPENCV_BRANCH=4.10.0
 WORKDIR /opt/repo
 RUN git clone https://github.com/opencv/opencv.git
 WORKDIR /opt/repo/opencv
@@ -187,13 +186,14 @@ COPY --from=base /opt/intel /opt/intel
 {% endif %}
 
 {% if 'runtime' == distribution %}
-ARG LGPL_DEPS="bash" # no new packages
+ARG LGPL_DEPS="bash python39" # no new packages
 ARG INSTALL_PACKAGES="-c=python -c=core"
 {% else %}
 ARG LGPL_DEPS="gcc-c++ \
                glibc \
                libstdc++ \
-               libgcc"
+               libgcc \
+               python39"
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core -c=dev"
 {% endif %}
 ARG INSTALL_SOURCES="no"
