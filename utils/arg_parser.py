@@ -519,7 +519,7 @@ def parse_args(name: str, description: str):  # noqa
             if args.os in "ubuntu22":
                 args.python = "python310"
             else:
-                args.python = "python38"
+                args.python = "python39"
 
         if args.python == "python38" and "win" in args.os:
             if not hasattr(args, "pre_stage_msbuild") or not args.pre_stage_msbuild:

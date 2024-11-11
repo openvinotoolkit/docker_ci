@@ -35,7 +35,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 RUN apt-get update; \
     apt-get install -y --no-install-recommends \
         git \
-        python3-dev \
+        python3.9-dev \
         python3-pip \
         build-essential \
         cmake \
@@ -192,12 +192,16 @@ ARG INSTALL_PACKAGES="-c=python -c=core"
 {% elif 'dev' == distribution or 'dev_no_samples' == distribution %}
 ARG LGPL_DEPS="g++ \
                gcc \
-               libc6-dev"
+               libc6-dev \
+               python3.9-venv \
+               python3-pip"
 ARG INSTALL_PACKAGES="-c=python -c=core -c=dev"
 {% else %}
 ARG LGPL_DEPS="g++ \
                gcc \
-               libc6-dev"
+               libc6-dev \
+               python3.9-venv \
+               python3-pip"
 ARG INSTALL_PACKAGES="-c=python"
 {% endif %}
 
