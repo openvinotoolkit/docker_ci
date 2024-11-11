@@ -24,6 +24,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         "ubuntu18",
         "ubuntu20",
         "ubuntu22",
+        "ubuntu24",
         "winserver2019",
         "windows20h2",
         "rhel8",
@@ -516,7 +517,9 @@ def parse_args(name: str, description: str):  # noqa
                 )
 
         if not args.python:
-            if args.os in "ubuntu22":
+            if args.os == "ubuntu24":
+                args.python = "python312"
+            elif args.os == "ubuntu22":
                 args.python = "python310"
             else:
                 args.python = "python39"
