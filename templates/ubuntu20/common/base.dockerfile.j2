@@ -187,7 +187,7 @@ ARG INSTALL_SOURCES="no"
 ARG DEPS="tzdata \
           curl"
 {% if 'runtime' == distribution %}
-ARG LGPL_DEPS=""
+ARG LGPL_DEPS="python3.9-venv python3-pip"
 ARG INSTALL_PACKAGES="-c=python -c=core"
 {% elif 'dev' == distribution or 'dev_no_samples' == distribution %}
 ARG LGPL_DEPS="g++ \

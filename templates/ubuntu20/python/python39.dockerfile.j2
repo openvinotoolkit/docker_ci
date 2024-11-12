@@ -1,4 +1,5 @@
 # setup Python
-ENV PYTHON_VER python3.9
-
-RUN ${PYTHON_VER} -m pip install --upgrade pip
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3.9 -m venv $VIRTUAL_ENV
+ENV PATH=$VIRTUAL_ENV/bin:$PATH
+RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools
