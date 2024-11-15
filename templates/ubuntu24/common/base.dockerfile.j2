@@ -209,7 +209,7 @@ ARG INSTALL_PACKAGES="-c=python"
 {% endif %}
 
 # hadolint ignore=DL3008
-RUN apt-get update && \
+RUN apt-get update && apt-get upgrade -y && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
