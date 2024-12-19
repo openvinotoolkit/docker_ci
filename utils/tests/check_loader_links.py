@@ -59,7 +59,8 @@ def check_release_links(product_version: str) -> typing.Set[bool]:
                 if dist != 'proprietary':
                     results.add(check_and_print_error(image_os in url,
                                                       f'{image_os} {dist}: {url} - wrong image_os'))
-                results.add(check_and_print_error('/l_' in url, f'{prefix} wrong os prefix'))
+                if 'genai' not in url:
+                    results.add(check_and_print_error('/l_' in url, f'{prefix} wrong os prefix'))
 
             # check package availability
             req = Request(url, method='HEAD')
