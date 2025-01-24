@@ -83,9 +83,9 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir "openvino=={{ pyver }}"
 {%- if package.distribution == "genai" %} "openvino_genai~={{ pyver }}" "openvino_tokenizers~={{ pyver }}"{%- endif -%}
 {%- if components.python.pin_packages %} {{components.python.pin_packages | join(" ")}}{%- endif -%}
-{%- if components.openvino_dev.enable %} "openvino-dev[{{ components.openvino_dev.extras }}]=={{ pyver }}"
+{%- if package.version < "2025" and components.openvino_dev.enable %} "openvino-dev[{{ components.openvino_dev.extras }}]=={{ pyver }}"
 {#- Setting this extra index url stops nvidia cuda libraries from installing by default -#}
 {#- #} --extra-index-url https://download.pytorch.org/whl/cpu {%- endif -%}
-{%- if package.wheels.url %} --trusted-host=* --find-links {{ package.wheels.url }} {% endif %}
+{%- if package.wheels.url %} --pre --trusted-host=* --find-links {{ package.wheels.url }} {% endif %}
 
 {%- endif %}

@@ -1,0 +1,14 @@
+{
+    "_based_on": "ubuntu20",
+    "_template": "Dockerfile_default.j2",
+    "package": {
+        "url": "https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.6/linux/l_openvino_toolkit_ubuntu20_2024.6.0.17404.4c0f47d2335_x86_64.tgz"
+    },
+    "components": {
+        "preset_dev__release_contains_openvino_dev": {
+            "requires": [
+                "openvino_dev"
+            ]
+        }
+    }
+}

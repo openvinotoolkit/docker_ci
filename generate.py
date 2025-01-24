@@ -39,16 +39,12 @@ if args.config:
     context = config.default_env.load(args.config)
 else:
     package_info = package_filename.parse(args.package_url.rsplit("/", 1)[-1])
-    package_version = package_info["version"]
-    if args.wheels_url:
-        # this is a pre-release then add extra version
-        package_version += "." + package_info["version_extra"]
     config_data = {
         "_based_on": args.os or package_info["os"],
         "_template": "Dockerfile_default.j2",
         "package": {
             "url": args.package_url,
-            "version": package_version,
+            "version": package_info["version"],
             "distribution": package_info["dist"],
             "wheels": {
                 "url": args.wheels_url,

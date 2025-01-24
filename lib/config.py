@@ -82,7 +82,7 @@ class Env:
                 yield f"{product_name.name}/{product_conf.name.rsplit('.', 1)[0]}"
 
 CONFIGS_ROOT = os.path.realpath(f"{__file__}/../../configs")
-default_env = Env(f"{CONFIGS_ROOT}/releases", f"{CONFIGS_ROOT}/base")
+default_env = Env(CONFIGS_ROOT, f"{CONFIGS_ROOT}/base")
 
 
 def process(config, preset, include_components=(), exclude_components=()):

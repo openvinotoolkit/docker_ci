@@ -1,0 +1,7 @@
+{
+    "_based_on": "ubuntu20",
+    "_template": "Dockerfile_default.j2",
+    "package": {
+        "url": "https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/2024.6/linux/openvino_genai_ubuntu20_2024.6.0.0_x86_64.tar.gz"
+    }
+}
