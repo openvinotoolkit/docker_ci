@@ -605,6 +605,32 @@ INTEL_OPENVINO_VERSION = {
                        '2024.6/linux/l_openvino_toolkit_rhel8_2024.6.0.17404.4c0f47d2335_x86_64.tgz',
         },
     },
+    "2025.0.0": {
+        'ubuntu20': {
+            'dev': 'https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/'
+                   '2025.0/linux/openvino_genai_ubuntu20_2025.0.0.0_x86_64.tar.gz',
+            'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/'
+                       '2025.0/linux/openvino_genai_ubuntu20_2025.0.0.0_x86_64.tar.gz',
+        },
+        'ubuntu22': {
+            'dev': 'https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/'
+                   '2025.0/linux/openvino_genai_ubuntu22_2025.0.0.0_x86_64.tar.gz',
+            'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/'
+                       '2025.0/linux/openvino_genai_ubuntu22_2025.0.0.0_x86_64.tar.gz',
+        },
+        'ubuntu24': {
+            'dev': 'https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/'
+                   '2025.0/linux/openvino_genai_ubuntu24_2025.0.0.0_x86_64.tar.gz',
+            'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino_genai/packages/'
+                       '2025.0/linux/openvino_genai_ubuntu24_2025.0.0.0_x86_64.tar.gz',
+        },
+        'rhel8': {
+            'dev': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/'
+                   '2025.0/linux/openvino_toolkit_rhel8_2025.0.0.17942.1f68be9f594_x86_64.tgz',
+            'runtime': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/'
+                       '2025.0/linux/openvino_toolkit_rhel8_2025.0.0.17942.1f68be9f594_x86_64.tgz',
+        },
+    }
 }
 DIVE_URL = {
     'windows': 'https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_windows_amd64.zip',
