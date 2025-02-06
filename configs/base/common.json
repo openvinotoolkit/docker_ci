@@ -57,6 +57,7 @@
         "preset_runtime": {
             "requires": [
                 "base",
+                "python",
                 "device_cpu",
                 "device_gpu",
                 "device_npu"

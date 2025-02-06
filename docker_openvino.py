@@ -16,7 +16,7 @@ PROXY_ENV=list(PROXY_ENV)
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("command")
+parser.add_argument("command", help="all or build")
 parser.add_argument("--package_url", "--package-url")
 parser.add_argument("--wheels_url", "--wheels-url")
 parser.add_argument("-os", "--os")
