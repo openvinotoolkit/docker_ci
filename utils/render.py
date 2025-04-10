@@ -44,14 +44,17 @@ class DockerFileRender:
                             kwargs: typing.Dict[str, str]) -> pathlib.Path:
         """Creating of dockerfile based on templates and CLI parameters"""
 
-        main_stage = [f'{args.distribution}_env', 'python', args.distribution, 'cpu', 'gpu']
+        env = f'{args.distribution}_env'
+        pre_stage = [args.source, args.install_type, env]
+        main_stage = [env, 'python', args.distribution, 'cpu', 'gpu']
+        pre_commands = [self.get_template(arg, kwargs).render() for arg in pre_stage]
         commands = [self.get_template(arg, kwargs).render() for arg in main_stage]
         layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
         if not save_to_dir.exists():
             save_to_dir.mkdir()
         save_to = save_to_dir / args.dockerfile_name
-        self.get_base_template().stream(commands=commands, layers=layers,
-                                        **kwargs).dump(str(save_to))
+        self.get_base_template().stream(pre_commands=pre_commands, commands=commands,
+                                        layers=layers, **kwargs).dump(str(save_to))
         log.info('Dockerfile was generated successfully')
         log.info(f'Generated dockerfile location {str(save_to)}')
         return save_to
