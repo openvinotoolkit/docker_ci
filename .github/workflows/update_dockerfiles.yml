@@ -46,7 +46,7 @@ jobs:
               fi
               if [ "$image_os" == "rhel8" ]
               then
-                python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }} --rhel_platform=openshift
+                python docker_openvino.py gen_dockerfile -os "$image_os" -dist "$distr" -p ${{ github.event.inputs.product_version }}
               fi
             done
           done

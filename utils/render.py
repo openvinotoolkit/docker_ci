@@ -43,38 +43,15 @@ class DockerFileRender:
     def generate_dockerfile(self, args: argparse.Namespace, save_to_dir: pathlib.Path,
                             kwargs: typing.Dict[str, str]) -> pathlib.Path:
         """Creating of dockerfile based on templates and CLI parameters"""
-        pre_stage = []
-        main_stage = []
-        if 'win' in args.os:
-            if args.python == 'python38':
-                pre_stage.append(args.pre_stage_msbuild)
-                pre_stage.append('vs')
-                pre_stage.append('pre_python38')
-            if args.msbuild:
-                main_stage.append(args.msbuild)
-                main_stage.append(args.cmake)
-            main_stage.append('vs')
-            main_stage.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
-        else:
-            env = f'{args.distribution}_env'
-            pre_device_settings = []
-            pre_devices = ['vpu']
-            for device in pre_devices:
-                if device in args.device:
-                    pre_device_settings.append(f'pre_{device}')
-            pre_stage.extend([args.source, args.install_type, env, *pre_device_settings])
-            main_stage.extend([env, args.python, args.distribution, *args.device])
 
-        pre_commands = [self.get_template(arg, kwargs).render() for arg in pre_stage]
+        main_stage = [f'{args.distribution}_env', 'python', args.distribution, 'cpu', 'gpu']
         commands = [self.get_template(arg, kwargs).render() for arg in main_stage]
         layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
-        if args.rhel_platform != 'docker':
-            save_to_dir /= args.rhel_platform
         if not save_to_dir.exists():
             save_to_dir.mkdir()
         save_to = save_to_dir / args.dockerfile_name
-        self.get_base_template().stream(pre_commands=pre_commands, commands=commands,
-                                        layers=layers, **kwargs).dump(str(save_to))
+        self.get_base_template().stream(commands=commands, layers=layers,
+                                        **kwargs).dump(str(save_to))
         log.info('Dockerfile was generated successfully')
         log.info(f'Generated dockerfile location {str(save_to)}')
         return save_to

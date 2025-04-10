@@ -25,8 +25,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         "ubuntu20",
         "ubuntu22",
         "ubuntu24",
-        "winserver2019",
-        "windows20h2",
         "rhel8",
     ]
 
@@ -119,29 +117,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             "--python",
             choices=["python37", "python38", "python39", "python310", "python311", "python312"],
             help="Python interpreter for docker image, currently default is python38",
-        )
-
-        parser.add_argument(
-            "--cmake",
-            choices=["cmake34", "cmake314"],
-            default="cmake314",
-            help="CMake for Windows docker image, default CMake 3.14. For Linux images it is used default for OS.",
-        )
-
-        parser.add_argument(
-            "--msbuild",
-            choices=["msbuild2019", "msbuild2019_online"],
-            help="MSBuild Tools for Windows docker image."
-            "MSBuild Tools are licensed as a supplement your existing Visual Studio license. "
-            "Please don’t share the image with MSBuild 2019 on a public Docker Hub.",
-        )
-
-        parser.add_argument(
-            "--pre_stage_msbuild",
-            choices=["msbuild2019", "msbuild2019_online"],
-            help="MSBuild Tools for Windows docker image to use on the first stage. "
-            "Can be required to build some thirdparty dependencies from source code. "
-            "MSBuild Tools are licensed as a supplement your existing Visual Studio license. ",
         )
 
         parser.add_argument(
@@ -311,23 +286,6 @@ def parse_args(name: str, description: str):  # noqa
     parser.add_build_args(gen_dockerfile_subparser)
     parser.add_linter_check_args(gen_dockerfile_subparser)
     parser.add_dist_args(gen_dockerfile_subparser)
-    rhel_platform_group = gen_dockerfile_subparser.add_mutually_exclusive_group()
-    rhel_platform_group.add_argument(
-        "--rhel_platform",
-        choices=["docker", "openshift", "autobuild"],
-        default="docker",
-        help="Specify target platform to generate RHEL dockerfiles (default is docker). "
-        "Choose autobuild option for Red Hat portal Build System.",
-    )
-    rhel_platform_group.add_argument(
-        "--openshift",
-        action="store_const",
-        dest="rhel_platform",
-        const="openshift",
-        default=False,
-        help="Create a dockerfile intended to build on Red Hat OpenShift Container Platform (RHEL images only). "
-        "Alias for --rhel_platform=openshift",
-    )
 
     build_subparser = subparsers.add_parser("build", help="Build a docker image")
     parser.add_build_args(build_subparser)
@@ -483,14 +441,6 @@ def parse_args(name: str, description: str):  # noqa
         if not args.file.exists():
             parser.error(f"Cannot find specified Dockerfile: {str(args.file)}.")
 
-    if not hasattr(args, "rhel_platform"):
-        args.rhel_platform = "docker"
-    if args.rhel_platform != "docker" and args.os != "rhel8":
-        parser.error(
-            "Dockerfile generation intended for non-Docker platforms "
-            "is supported only for RHEL-based images"
-        )
-
     if hasattr(args, "product_version") and args.product_version:
         logger.info(f"Found product version {args.product_version} in arguments.")
         fail_if_product_version_not_supported(args.product_version, parser)
@@ -523,13 +473,6 @@ def parse_args(name: str, description: str):  # noqa
                 args.python = "python310"
             else:
                 args.python = "python39"
-
-        if args.python == "python38" and "win" in args.os:
-            if not hasattr(args, "pre_stage_msbuild") or not args.pre_stage_msbuild:
-                parser.error(
-                    "Option --pre_stage_msbuild is required for Windows images to build the latest version "
-                    "of Python 3.8"
-                )
 
         if not args.distribution and args.package_url:
             if "_runtime_" in args.package_url:
@@ -568,7 +511,7 @@ def parse_args(name: str, description: str):  # noqa
                     "Insufficient arguments. Provide --package_url "
                     "or --distribution (with optional --product_version) arguments"
                 )
-            if args.mode != "gen_dockerfile" or args.rhel_platform == "autobuild":
+            if args.mode != "gen_dockerfile":
                 dev_version = re.search(r"^\d{4}\.(?:\d\.){2,3}dev\d{8}$", args.product_version)
                 if dev_version:
                     args.product_version = dev_version.group()
@@ -608,13 +551,12 @@ def parse_args(name: str, description: str):  # noqa
         if not args.dockerfile_name:
             devices = "".join([d[0] for d in args.device])
             layers = "_".join(args.layers)
-            openshift = "openshift_" if args.rhel_platform == "openshift" else ""
             version = args.product_version
             if layers:
-                args.dockerfile_name = f"openvino_{openshift}{layers}_{version}.dockerfile"
+                args.dockerfile_name = f"openvino_{layers}_{version}.dockerfile"
             else:
                 args.dockerfile_name = (
-                    f"openvino_{devices}_{openshift}{args.distribution}_{version}.dockerfile"
+                    f"openvino_{devices}_{args.distribution}_{version}.dockerfile"
                 )
 
         if not hasattr(args, "wheels_version") or not args.wheels_version:
@@ -638,16 +580,6 @@ def parse_args(name: str, description: str):  # noqa
                 args.tags.append(
                     f"{args.os}_{layers}:{args.build_id if args.build_id else args.product_version}"
                     f"{tgl_postfix}{args.tag_postfix}"
-                )
-        elif args.distribution == "base":
-            args.tags = [
-                f"{args.os}_{args.distribution}_cpu:" f"{args.product_version}",
-                f"{args.os}_{args.distribution}_cpu:latest",
-            ]
-            if hasattr(args, "tag_postfix") and args.tag_postfix:
-                args.tags.append(
-                    f"{args.os}_{args.distribution}_cpu:"
-                    f"{args.product_version}{args.tag_postfix}"
                 )
         else:
             args.tags = [
