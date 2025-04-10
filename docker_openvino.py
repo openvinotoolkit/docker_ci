@@ -106,7 +106,6 @@ class Launcher:
             'build_id': self.args.build_id,
             'year': self.args.year,
             'distribution': self.args.distribution,
-            'rhel_platform': self.args.rhel_platform,
             'os': self.args.os,
             'OPENVINO_WHEELS_URL': self.args.wheels_url,
             'OPENVINO_WHEELS_VERSION': self.args.wheels_version,
