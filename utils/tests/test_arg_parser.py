@@ -21,7 +21,6 @@ default_args = {
     # 'mode':'build',
     'msbuild': None,
     'pre_stage_msbuild': None,
-    'rhel_platform': 'docker',
     'os': 'ubuntu18',
     'package_url': None,
     'product_version': None,
