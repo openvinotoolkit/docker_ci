@@ -491,10 +491,10 @@ def parse_args(name: str, description: str):  # noqa
         if not args.device and "win" not in args.os:
             if args.distribution == "base":
                 args.device = ["cpu"]
-            elif args.os == "rhel8":
+            elif args.os in ("rhel8", "ubuntu18", "ubuntu20"):
                 args.device = ["cpu", "gpu"]
             else:
-                args.device = ["cpu", "gpu"]  # 2022.3 v/h not supported
+                args.device = ["cpu", "gpu", "npu"]
         elif not args.device:
             args.device = ["cpu"]
 
