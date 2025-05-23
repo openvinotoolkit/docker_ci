@@ -419,6 +419,14 @@ def gpu_kwargs(request):
         return {'devices': ['/dev/dxg:/dev/dxg'], 'volumes': {'/usr/lib/wsl': {'bind': '/usr/lib/wsl'}}}
 
 
+@pytest.fixture(scope='session')
+def npu_kwargs(request):
+    if sys.platform.startswith('linux'):
+        return {'devices': ['/dev/accel/accel0']}
+    else:
+        return {'devices': ['/dev/accel/accel0'], 'volumes': {'/usr/lib/wsl': {'bind': '/usr/lib/wsl'}}}
+
+
 def switch_container_engine(engine):
     """Switch Windows docker Engine to -SwitchLinuxEngine or -SwitchWindowsEngine"""
     cmd_line = ['cmd', '/c', 'where', 'docker']
