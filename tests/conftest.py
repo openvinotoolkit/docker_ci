@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2022 Intel Corporation
+# Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import logging
 import os
@@ -32,10 +32,15 @@ def pytest_addoption(parser):
                                                           'openvino folder to search for OpenVINO wheels')
     parser.addoption('--product_version', action='store', help='Setup a product_version for check')
     parser.addoption('--wheels_version', action='store', help='Setup a version specifier for OpenVINO wheels')
-    parser.addoption('--omz_fork', action='store', help='Setup repo of Open Model Zoo repository')
     parser.addoption('--omz_rev', action='store', help='Setup a branch or commit hash in the Open Model Zoo repository '
                                                        'to download demos (default is the release branch corresponding '
                                                        'to product_version or master)')
+    parser.addoption(
+        '--omz_fork',
+        action='store',
+        help='Setup repo of Open Model Zoo repository',
+        default='openvinotoolkit',
+    )
 
 
 def pytest_configure(config):
@@ -302,12 +307,10 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
                 if distribution == 'runtime':
                     install_dependencies = install_dependencies + ' && apt install -y libopencv-dev python3-opencv'
             elif 'rhel' in image_os:
-                install_dependencies = 'yum install -y git make'
+                install_dependencies = 'rm -f /etc/rhsm-host'
                 if distribution == 'runtime':
-                    install_dependencies = (install_dependencies + ' &&'
-                                            'yum install -y opencv '
-                                            'https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/'
-                                            'opencv-devel-3.4.6-6.el8.x86_64.rpm'
+                    install_dependencies = (install_dependencies + ' && '
+                                            'yum install -y opencv git make'
                                             ' && pip3 install opencv-python')
 
             install_dev_wheel = install_openvino_dev_wheel('[caffe]') if distribution == 'runtime' else 'true'
@@ -319,7 +322,7 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
                              f'cd open_model_zoo && git checkout {omz_rev} && cd .. && '
                              'ln -s open_model_zoo/demos demos',
                              ),
-                        bash('python3 -m pip install --no-deps open_model_zoo/demos/common/python'),
+                        bash('python3 -m pip install open_model_zoo/demos/common/python'),
                         bash('open_model_zoo/demos/build_demos.sh || true')]
         else:
             commands = [bash('open_model_zoo/demos/build_demos.sh || true'),
@@ -331,9 +334,9 @@ def install_omz_commands(request, bash, image_os, distribution, install_openvino
 def install_openvino_dependencies(request):
     image_os = request.config.getoption('--image_os')
     if 'ubuntu' in image_os:
-        return '/bin/bash -ac "apt update && apt install -y build-essential curl cmake file"'
+        return '/bin/bash -ac "apt update && apt install -y build-essential curl cmake file libgl1"'
     elif 'rhel' in image_os:
-        return '/bin/bash -ac "yum install -y make file && pip3 install opencv-python"'
+        return 'bash -ac "rm -f /etc/rhsm-host && yum install -y make file mesa-libGL && pip3 install opencv-python"'
     return ''
 
 

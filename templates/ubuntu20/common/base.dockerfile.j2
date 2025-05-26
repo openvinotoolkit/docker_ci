@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2022 Intel Corporation
+# Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 FROM ubuntu:20.04 AS base
 
@@ -22,6 +22,8 @@ RUN rm -rf ${INTEL_OPENVINO_DIR}/.distribution && mkdir ${INTEL_OPENVINO_DIR}/.d
     touch ${INTEL_OPENVINO_DIR}/.distribution/docker
 # -----------------
 
+{% if distribution == 'dev' %}
+
 FROM base AS opencv
 
 LABEL description="This is the dev image for OpenCV building with OpenVINO Runtime backend"
@@ -33,7 +35,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 RUN apt-get update; \
     apt-get install -y --no-install-recommends \
         git \
-        python3-dev \
+        python3.9-dev \
         python3-pip \
         build-essential \
         cmake \
@@ -59,15 +61,14 @@ RUN apt-get update; \
         libgstreamer-plugins-base1.0-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --no-cache-dir numpy==1.19.5
-
-ARG OPENCV_BRANCH="4.6.0"
-
-
+RUN python3 -m pip install --no-cache-dir numpy==1.23.1
+ARG OPENCV_BRANCH="377be68d923e40900ac5526242bcf221e3f355e5" # 4.8 with a fix for building tests
 WORKDIR /opt/repo
-RUN git clone https://github.com/opencv/opencv.git --depth 1 -b ${OPENCV_BRANCH}
-
+RUN git clone https://github.com/opencv/opencv.git
+WORKDIR /opt/repo/opencv
+RUN git checkout ${OPENCV_BRANCH} 
 WORKDIR /opt/repo/opencv/build
+
 # hadolint ignore=SC1091
 RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     cmake -G Ninja \
@@ -84,6 +85,7 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D BUILD_TBB=OFF \
     -D BUILD_WEBP=OFF \
     -D BUILD_ZLIB=ON \
+    -D BUILD_TESTS=ON \
     -D WITH_1394=OFF \
     -D WITH_CUDA=OFF \
     -D WITH_EIGEN=OFF \
@@ -112,8 +114,8 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D ENABLE_PRECOMPILED_HEADERS=OFF \
     -D ENABLE_CXX11=ON \
     -D INSTALL_PDB=ON \
-    -D INSTALL_TESTS=ON \
-    -D INSTALL_C_EXAMPLES=ON \
+    -D INSTALL_TESTS=OFF \
+    -D INSTALL_C_EXAMPLES=OFF \
     -D INSTALL_PYTHON_EXAMPLES=OFF \
     -D CMAKE_INSTALL_PREFIX=install \
     -D OPENCV_SKIP_PKGCONFIG_GENERATION=ON \
@@ -132,6 +134,8 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D BUILD_opencv_world=OFF \
     -D BUILD_opencv_python2=OFF \
     -D BUILD_opencv_python3=ON \
+    -D BUILD_opencv_dnn=OFF \
+    -D BUILD_opencv_gapi=OFF \
     -D PYTHON3_PACKAGES_PATH=install/python/python3 \
     -D PYTHON3_LIMITED_API=ON \
     -D HIGHGUI_PLUGIN_LIST=all \
@@ -145,12 +149,13 @@ RUN . "${INTEL_OPENVINO_DIR}"/setupvars.sh; \
     -D VIDEOIO_PLUGIN_LIST=ffmpeg,gstreamer,mfx \
     -D CMAKE_EXE_LINKER_FLAGS=-Wl,--allow-shlib-undefined \
     -D CMAKE_BUILD_TYPE=Release /opt/repo/opencv && \
-    ninja && cmake --install . && \
+    ninja -j "$(nproc)" && cmake --install . && \
     rm -Rf install/bin install/etc/samples
 
 WORKDIR /opt/repo/opencv/build/install
 CMD ["/bin/bash"]
 # -------------------------------------------------------------------------------------------------
+{% endif %}
 
 FROM ubuntu:20.04 AS ov_base
 
@@ -182,26 +187,31 @@ ARG INSTALL_SOURCES="no"
 ARG DEPS="tzdata \
           curl"
 {% if 'runtime' == distribution %}
-ARG LGPL_DEPS="g++ \
-               gcc"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
+ARG LGPL_DEPS="python3.9-venv python3-pip"
+ARG INSTALL_PACKAGES="-c=python -c=core"
 {% elif 'dev' == distribution or 'dev_no_samples' == distribution %}
 ARG LGPL_DEPS="g++ \
                gcc \
-               libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler"
+               libc6-dev \
+               python3.9-venv \
+               python3-pip"
+ARG INSTALL_PACKAGES="-c=python -c=core -c=dev"
 {% else %}
 ARG LGPL_DEPS="g++ \
                gcc \
-               libc6-dev"
-ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=cl_compiler -c=opencv_opt -c=dlstreamer"
+               libc6-dev \
+               python3.9-venv \
+               python3-pip"
+ARG INSTALL_PACKAGES="-c=python"
 {% endif %}
 
 # hadolint ignore=DL3008
-RUN apt-get update && \
+RUN apt-get update && apt-get upgrade -y && \
     dpkg --get-selections | grep -v deinstall | awk '{print $1}' > base_packages.txt  && \
     apt-get install -y --no-install-recommends ${DEPS} && \
     rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get reinstall -y ca-certificates && rm -rf /var/lib/apt/lists/* && update-ca-certificates
 
 # hadolint ignore=DL3008, SC2012
 RUN apt-get update && \

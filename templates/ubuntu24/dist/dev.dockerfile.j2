@@ -1,0 +1,40 @@
+# dev package
+WORKDIR ${INTEL_OPENVINO_DIR}
+ARG OPENVINO_WHEELS_VERSION={{ product_version }}
+ARG OPENVINO_WHEELS_URL
+# hadolint ignore=SC2102
+RUN apt-get update && apt-get install -y --no-install-recommends cmake make git && rm -rf /var/lib/apt/lists/* && \
+    if [ -z "$OPENVINO_WHEELS_URL" ]; then \
+        python3 -m pip install --no-cache-dir openvino=="${OPENVINO_WHEELS_VERSION}" && \
+        python3 -m pip install --no-cache-dir openvino-tokenizers=="${OPENVINO_WHEELS_VERSION}" && \
+        python3 -m pip install --no-cache-dir openvino-genai=="${OPENVINO_WHEELS_VERSION}"; \
+    else \
+        python3 -m pip install --no-cache-dir --pre openvino=="${OPENVINO_WHEELS_VERSION}" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
+        python3 -m pip install --no-cache-dir --pre openvino-tokenizers=="${OPENVINO_WHEELS_VERSION}" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL" && \
+        python3 -m pip install --no-cache-dir --pre openvino-genai=="${OPENVINO_WHEELS_VERSION}" --trusted-host=* --find-links "$OPENVINO_WHEELS_URL"; \
+    fi
+
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+# Please use `third-party-programs-docker-dev.txt` short path to 3d party file if you use the Dockerfile directly from docker_ci/dockerfiles repo folder
+COPY dockerfiles/{{os}}/third-party-programs-docker-dev.txt ${INTEL_OPENVINO_DIR}/licensing
+COPY dockerfiles/{{os}}/third-party-programs-docker-runtime.txt ${INTEL_OPENVINO_DIR}/licensing
+
+COPY --from=opencv /opt/repo/opencv/build/install ${INTEL_OPENVINO_DIR}/extras/opencv
+RUN  echo "export OpenCV_DIR=${INTEL_OPENVINO_DIR}/extras/opencv/cmake" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"; \
+     echo "export LD_LIBRARY_PATH=${INTEL_OPENVINO_DIR}/extras/opencv/lib:\$LD_LIBRARY_PATH" | tee -a "${INTEL_OPENVINO_DIR}/extras/opencv/setupvars.sh"
+
+# Install dependencies for OV::RemoteTensor
+RUN apt-get update && apt-get install -y --no-install-recommends opencl-headers ocl-icd-opencl-dev && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
+
+# build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
+WORKDIR ${INTEL_OPENVINO_DIR}/samples/cpp
+RUN ./build_samples.sh -b /tmp/build -i ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin && \
+    rm -Rf /tmp/build
+
+# add Model API package
+# hadolint ignore=DL3013
+RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
+    sed -i '/opencv-python/d' open_model_zoo/demos/common/python/requirements.txt && \
+    pip3 --no-cache-dir install open_model_zoo/demos/common/python/ && \
+    rm -Rf open_model_zoo && \
+    python3 -c "from model_zoo import model_api"

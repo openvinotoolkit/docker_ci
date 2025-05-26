@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2022 Intel Corporation
+# Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import os
 import pathlib
@@ -8,7 +8,7 @@ import pytest
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_not_distribution')
-@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22', 'rhel8')], indirect=True)
 @pytest.mark.parametrize('_is_not_distribution', [('base', 'custom-no-cv', 'custom-full')], indirect=True)
 class TestSetupvarsChanges:
     def test_setupvars_changes_linux(self, tester, image, image_os, distribution):

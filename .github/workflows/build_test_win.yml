@@ -20,6 +20,8 @@ on:
         required: false
         default: ''
 
+permissions: read-all
+
 jobs:
   build_test_win:
     runs-on: windows-2019
@@ -39,7 +41,7 @@ jobs:
         run: docker images
       - name: Collecting artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: logs
           path: |

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2022 Intel Corporation
+# Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 """Main script of this framework, putting all the logic together"""
 import argparse
@@ -149,9 +149,6 @@ class Launcher:
         log.info('Preparing to build Docker image...')
         tmp_folder, self.args.old_package_url = '', ''
 
-        if self.args.ocl_release:
-            log.warning('The --ocl_release argument is deprecated since 2022.1.0 and no longer used.')
-
         if self.args.source == 'local' and self.args.package_url.startswith(('http://', 'https://', 'ftp://')):
             log.info('Downloading needed files...')
             self.args.old_package_url = self.args.package_url
@@ -176,7 +173,8 @@ class Launcher:
                                                      directory=str(self.location),
                                                      tag=self.image_name,
                                                      build_args=self.kwargs,
-                                                     logfile=self.logdir / 'image_build.log')
+                                                     logfile=self.logdir / 'image_build.log',
+                                                     no_cache=self.args.no_cache)
         log.info(f'Build time: {format_timedelta(timeit.default_timer() - curr_time)}')
 
         if not self.image:
@@ -268,7 +266,7 @@ class Launcher:
                 result = result_dive
         test_report = self.logdir / 'tests.html'
         curr_time = timeit.default_timer()
-        result_tests = pytest.main([  # noqa
+        params = [  # noqa
             f'{self.location / "tests" / "functional"}',
             '-k', self.args.test_expression,
             '-m', self.args.test_mark_expression,
@@ -286,7 +284,9 @@ class Launcher:
             '--self-contained-html',
             '--tb=short',
             '--color=yes',
-        ])
+        ]
+        log.info(f'Params passed to pytest: {params}')
+        result_tests = pytest.main(params)
         log.info(f'Testing time: {format_timedelta(timeit.default_timer() - curr_time)}')
         log.info(f'Testing report location: {test_report}')
         log.info(f'Testing detailed logs location: {test_report.parent}')

@@ -43,6 +43,7 @@ def load_variables(path: str, env_prefix: bool = False) -> typing.Dict[str, str]
                 return {}
             name = match.group(1)
             value = match.group(2)
+            value = re.sub(r"\/openvino_[0-9\.]*", "/openvino", value)  # remove build_id from path
             variables[name] = value
     return normalize_env_variables(variables)
 
@@ -115,6 +116,7 @@ def main() -> int:
     vars_created = {name: vars_after[name] for name in set(vars_after.keys()) - set(vars_before.keys())}
 
     vars_expected = load_variables(args.expected, True)
+
     vars_expected_updated = {name: vars_after[name] for name in vars_after if name in vars_expected}
     vars_current = {**vars_expected, **vars_created, **vars_expected_updated}
 
@@ -127,7 +129,9 @@ def main() -> int:
         vars_changed = extract_changed_environment_variables(vars_expected, vars_current)
         log.error('FAILED: changes detected')
         log.error(f'    after script launch {vars_changed_script}')
-        log.error(f'    with expected {vars_changed}')
+        log.error(f'    with changed {vars_changed}')
+        log.error(f'    expected {vars_expected}')
+        log.error(f'    current {vars_current}') 
 
         expected_vars_sorted_path = pathlib.Path(args.logs) / f'sorted_{os.path.basename(args.expected)}'
         save_env_template(expected_vars_sorted_path, vars_expected)

@@ -12,17 +12,19 @@ on:
         required: true
         default: 'dev'
       os:
-        description: 'OS for Docker image: ubuntu18, ubuntu20'
+        description: 'OS for Docker image: ubuntu20'
         required: true
-        default: 'ubuntu18'
+        default: 'ubuntu20'
       args:
         description: 'Additional arguments'
         required: false
         default: ''
 
+permissions: read-all
+
 jobs:
   build_test_lin:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Code checkout
         uses: actions/checkout@v2
@@ -39,7 +41,7 @@ jobs:
         run: docker images
       - name: Collecting artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: logs
           path: |

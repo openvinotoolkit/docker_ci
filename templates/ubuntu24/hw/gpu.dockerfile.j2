@@ -1,0 +1,18 @@
+# for GPU
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ocl-icd-libopencl1 && \
+    apt-get clean ; \
+    rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
+# hadolint ignore=DL3003
+# GFX driver version 24.48.31907.7
+RUN mkdir /tmp/gpu_deps && cd /tmp/gpu_deps && \
+    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/v2.2.3/intel-igc-core-2_2.2.3+18220_amd64.deb && \
+    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/v2.2.3/intel-igc-opencl-2_2.2.3+18220_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/intel-level-zero-gpu-dbgsym_1.6.31907.7_amd64.ddeb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/intel-level-zero-gpu_1.6.31907.7_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/intel-opencl-icd-dbgsym_24.48.31907.7_amd64.ddeb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/intel-opencl-icd_24.48.31907.7_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/libigdgmm12_22.5.4_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/ww48.sum && \
+    sha256sum -c ww48.sum && \
+    dpkg -i ./*.deb && rm -Rf /tmp/gpu_deps

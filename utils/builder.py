@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2022 Intel Corporation
+# Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 """Module handling Docker image building"""
 import logging
@@ -23,7 +23,8 @@ class DockerImageBuilder(DockerAPI):
                            tag: str,
                            directory: typing.Optional[str] = None,
                            build_args: typing.Optional[typing.Dict[str, str]] = None,
-                           logfile: typing.Optional[pathlib.Path] = None) -> typing.Optional[Image]:
+                           logfile: typing.Optional[pathlib.Path] = None,
+                           no_cache: typing.Optional[bool] = False) -> typing.Optional[Image]:
         """Build Docker image"""
         if not build_args:
             build_args = {}
@@ -46,7 +47,7 @@ class DockerImageBuilder(DockerAPI):
                                                   dockerfile=dockerfile,
                                                   rm=True,
                                                   use_config_proxy=True,
-                                                  nocache=True,
+                                                  nocache=no_cache,
                                                   pull=True,
                                                   buildargs=build_args,
                                                   decode=True)

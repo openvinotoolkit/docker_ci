@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2022 Intel Corporation
+# Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import pytest
 
@@ -20,18 +20,18 @@ class TestSamplesWindows:
              'cd C:\\\\intel\\\\openvino\\\\samples\\\\cpp && '
              'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
              'omz_downloader --name alexnet --precisions FP16 -o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\'
-             'Intel\\\\OpenVINO\\\\inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
+             'Intel\\\\OpenVINO\\\\openvino_cpp_samples_build\\\\intel64\\\\Release\\\\',
              'mo --output_dir C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\'
-             'OpenVINO\\\\inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public '
+             'OpenVINO\\\\openvino_cpp_samples_build\\\\intel64\\\\Release\\\\public '
              '--input_model C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet\\\\alexnet.caffemodel',
+             'openvino_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet\\\\alexnet.caffemodel',
              download_picture('car_1.bmp'),
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\intel\\\\openvino\\\\extras\\\\opencv\\\\build\\\\setup_vars_opencv4.cmd && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
+             'openvino_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet.xml '
+             'openvino_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet.xml '
              'C:\\\\intel\\\\openvino\\\\samples\\\\car_1.bmp CPU',
              ], self.test_hello_classification_cpp_cpu.__name__, **kwargs,
         )
@@ -46,14 +46,14 @@ class TestSamplesWindows:
                  'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
                  'omz_downloader --name vehicle-attributes-recognition-barrier-0039 --precisions FP16 '
                  '-o C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-                 'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
+                 'openvino_cpp_samples_build\\\\intel64\\\\Release\\\\',
                  download_picture('car.png'),
                  'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
                  'C:\\\\intel\\\\openvino\\\\extras\\\\opencv\\\\build\\\\setup_vars_opencv4.cmd && '
                  'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-                 'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
+                 'openvino_cpp_samples_build\\\\intel64\\\\Release\\\\hello_classification '
                  'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-                 'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\intel\\\\'
+                 'openvino_cpp_samples_build\\\\intel64\\\\Release\\\\intel\\\\'
                  'vehicle-attributes-recognition-barrier-0039\\\\FP16\\\\'
                  'vehicle-attributes-recognition-barrier-0039.xml '
                  'C:\\\\intel\\\\openvino\\\\samples\\\\car.png CPU',
@@ -73,11 +73,11 @@ class TestSamplesWindows:
              'C:\\\\intel\\\\openvino\\\\samples\\\\cpp\\\\build_samples_msvc.bat',
              'omz_downloader --name alexnet --precisions FP16 -o '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\'
-             'Intel\\\\OpenVINO\\\\inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\',
+             'Intel\\\\OpenVINO\\\\openvino_cpp_samples_build\\\\intel64\\\\Release\\\\',
              'mo --output_dir C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\'
-             'OpenVINO\\\\inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public '
+             'OpenVINO\\\\openvino_cpp_samples_build\\\\intel64\\\\Release\\\\public '
              '--input_model C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet\\\\alexnet.caffemodel',
+             'openvino_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet\\\\alexnet.caffemodel',
              download_picture('car_1.bmp'),
              'cmd /S /C python -c "import cv2; img = cv2.imread(\'C:\\\\intel\\\\openvino\\\\samples\\\\car_1.bmp\', '
              'cv2.IMREAD_UNCHANGED); res = cv2.resize(img, (227,227)); '
@@ -85,9 +85,9 @@ class TestSamplesWindows:
              'cmd /S /C  C:\\\\intel\\\\openvino\\\\setupvars.bat && '
              'C:\\\\intel\\\\openvino\\\\extras\\\\opencv\\\\build\\\\setup_vars_opencv4.cmd && '
              'C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\classification_sample_async '
+             'openvino_cpp_samples_build\\\\intel64\\\\Release\\\\classification_sample_async '
              '-m C:\\\\Users\\\\ContainerAdministrator\\\\Documents\\\\Intel\\\\OpenVINO\\\\'
-             'inference_engine_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet.xml '
+             'openvino_cpp_samples_build\\\\intel64\\\\Release\\\\public\\\\alexnet.xml '
              '-i C:\\\\intel\\\\openvino\\\\samples\\\\car_1_227.bmp -d CPU',
              ], self.test_classification_async_cpp_cpu.__name__, **kwargs,
         )

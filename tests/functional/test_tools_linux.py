@@ -6,7 +6,7 @@ import pytest
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution')
 class TestToolsLinux:
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_accuracy_checker(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
@@ -16,7 +16,7 @@ class TestToolsLinux:
             self.test_accuracy_checker.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_benchmark(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
@@ -26,7 +26,8 @@ class TestToolsLinux:
             self.test_benchmark.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20')], indirect=True)
+    @pytest.mark.skip(reason='cl_compiler is not present in 2022.3')
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev')], indirect=True)
     def test_cl_compiler(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
@@ -37,7 +38,8 @@ class TestToolsLinux:
             self.test_cl_compiler.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+    @pytest.mark.skip(reason='compiler tool deprecated in 2023.0')
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('runtime', 'dev')], indirect=True)
     def test_compile_tool(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
@@ -48,7 +50,7 @@ class TestToolsLinux:
             self.test_compile_tool.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_deployment_manager(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
@@ -59,7 +61,7 @@ class TestToolsLinux:
             self.test_deployment_manager.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_mo(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
@@ -69,7 +71,7 @@ class TestToolsLinux:
             self.test_mo.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_omz(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}
@@ -84,7 +86,7 @@ class TestToolsLinux:
             self.test_omz.__name__, **kwargs,
         )
 
-    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22', 'rhel8')], indirect=True)
     @pytest.mark.parametrize('_is_distribution', [('dev')], indirect=True)
     def test_pot(self, tester, image, bash):
         kwargs = {'mem_limit': '3g'}

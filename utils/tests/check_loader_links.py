@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2022 Intel Corporation
+# Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 """Utility to check URLs of the release packages embedded inside loader.py"""
 import argparse
@@ -41,7 +41,7 @@ def check_release_links(product_version: str) -> typing.Set[bool]:
             if product_version == '2020.1' and image_os == 'ubuntu18' and dist == 'dev':
                 results.add(check_and_print_error(url.count(major_version) == 1, f'{prefix} wrong release'))
                 results.add(check_and_print_error(dist in url, f'{prefix} wrong distribution in url'))
-            elif major_version == '2022.2':
+            elif major_version >= '2022.2':
                 # Staring from 2022.2 there is only one package per OS, without dev/runtime versions
                 results.add(check_and_print_error(url.count(major_version) == 2, f'{prefix} wrong * release'))
             elif dist != 'proprietary':
@@ -59,7 +59,8 @@ def check_release_links(product_version: str) -> typing.Set[bool]:
                 if dist != 'proprietary':
                     results.add(check_and_print_error(image_os in url,
                                                       f'{image_os} {dist}: {url} - wrong image_os'))
-                results.add(check_and_print_error('/l_' in url, f'{prefix} wrong os prefix'))
+                if 'genai' not in url and version < "2025":
+                    results.add(check_and_print_error('/l_' in url, f'{prefix} wrong os prefix'))
 
             # check package availability
             req = Request(url, method='HEAD')

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2022 Intel Corporation
+# Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import pathlib
 import subprocess  # nosec
@@ -40,7 +40,7 @@ class TestSDLImage:
     @pytest.mark.skipif(SNYK_TOKEN == '',  # noqa: S105 # nosec
                         reason='Missing snyk token to do test. Specify it in setup.py file')
     @pytest.mark.usefixtures('_is_image_os')
-    @pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20'], indirect=True)
+    @pytest.mark.parametrize('_is_image_os', ['ubuntu18', 'ubuntu20', 'ubuntu22'], indirect=True)
     def test_snyk_windows(self, image, dockerfile):
         location = pathlib.Path(__file__).parent
         snyk_file = location / 'snyk.exe'

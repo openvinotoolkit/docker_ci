@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2022 Intel Corporation
+# Copyright (C) 2019-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import pytest
 
@@ -7,7 +7,7 @@ from utils.exceptions import FailedTestError
 
 
 @pytest.mark.usefixtures('_is_image_os', '_is_distribution', '_is_package_url_specified')
-@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'rhel8')], indirect=True)
+@pytest.mark.parametrize('_is_image_os', [('ubuntu18', 'ubuntu20', 'ubuntu22', 'rhel8')], indirect=True)
 @pytest.mark.parametrize('_is_distribution', [('runtime')], indirect=True)
 class TestSamplesLinuxRuntime:
     @pytest.mark.xfail_log(pattern='Error: Download',
@@ -25,18 +25,19 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel('[caffe]'),
              bash('omz_downloader --name alexnet --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
-                  '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/openvino_cpp_samples_build/intel64/Release/public '
+                  '--input_model /root/openvino_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
              download_picture('car_1.bmp'),
-             bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
+             bash('/root/openvino_cpp_samples_build/intel64/Release/hello_classification '
+                  '/root/openvino_cpp_samples_build/intel64/Release/public/alexnet.xml '
                   '/opt/intel/openvino/samples/car_1.bmp CPU'),
              ], self.test_hello_classification_cpp_cpu.__name__, **kwargs,
         )
@@ -59,18 +60,19 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel('[caffe]'),
              bash('omz_downloader --name alexnet --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
-                  '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/openvino_cpp_samples_build/intel64/Release/public '
+                  '--input_model /root/openvino_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
              download_picture('car_1.bmp'),
-             bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
+             bash('/root/openvino_cpp_samples_build/intel64/Release/hello_classification '
+                  '/root/openvino_cpp_samples_build/intel64/Release/public/alexnet.xml '
                   '/opt/intel/openvino/samples/car_1.bmp GPU'),
              ], self.test_hello_classification_cpp_gpu.__name__, **kwargs,
         )
@@ -97,18 +99,19 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel('[caffe]'),
              bash('omz_downloader --name alexnet --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
-                  '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/openvino_cpp_samples_build/intel64/Release/public '
+                  '--input_model /root/openvino_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
              download_picture('car_1.bmp'),
-             bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
+             bash('/root/openvino_cpp_samples_build/intel64/Release/hello_classification '
+                  '/root/openvino_cpp_samples_build/intel64/Release/public/alexnet.xml '
                   '/opt/intel/openvino/samples/car_1.bmp MYRIAD'),
              ], self.test_hello_classification_cpp_vpu.__name__, **kwargs,
         )
@@ -134,19 +137,20 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel('[caffe]'),
              bash('omz_downloader --name alexnet --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
-                  '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/openvino_cpp_samples_build/intel64/Release/public '
+                  '--input_model /root/openvino_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
              download_picture('car_1.bmp'),
              bash('umask 0000 && '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
+                  '/root/openvino_cpp_samples_build/intel64/Release/hello_classification '
+                  '/root/openvino_cpp_samples_build/intel64/Release/public/alexnet.xml '
                   '/opt/intel/openvino/samples/car_1.bmp HDDL && rm -f /dev/shm/hddl_*'),
              ], self.test_hello_classification_cpp_hddl.__name__, **kwargs,
         )
@@ -165,15 +169,16 @@ class TestSamplesLinuxRuntime:
             tester.test_docker_image(
                 image,
                 [install_openvino_dependencies,
-                 bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+                 bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                      'python3 -m pip install --no-cache-dir cmake setuptools && '
                       'cd /opt/intel/openvino/samples/cpp && '
                       '/opt/intel/openvino/samples/cpp/build_samples.sh'),
                  install_openvino_dev_wheel('[caffe]'),
                  bash('omz_downloader --name vehicle-attributes-recognition-barrier-0039 --precisions FP32 '
-                      '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+                      '-o /root/openvino_cpp_samples_build/intel64/Release/'),
                  download_picture('car.png'),
-                 bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_classification '
-                      '/root/inference_engine_cpp_samples_build/intel64/Release/intel/'
+                 bash('/root/openvino_cpp_samples_build/intel64/Release/hello_classification '
+                      '/root/openvino_cpp_samples_build/intel64/Release/intel/'
                       'vehicle-attributes-recognition-barrier-0039/FP32/'
                       'vehicle-attributes-recognition-barrier-0039.xml '
                       '/opt/intel/openvino/samples/car.png CPU'),
@@ -195,15 +200,16 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel(),
              bash('omz_downloader --name vehicle-detection-adas-0002 --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
              download_picture('car_1.bmp'),
-             bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
+             bash('/root/openvino_cpp_samples_build/intel64/Release/hello_reshape_ssd '
+                  '/root/openvino_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
                   '/opt/intel/openvino/samples/car_1.bmp CPU'),
              ], self.test_hello_reshape_cpp_cpu.__name__, **kwargs,
@@ -225,15 +231,16 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel(),
              bash('omz_downloader --name vehicle-detection-adas-0002 --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
              download_picture('car_1.bmp'),
-             bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
+             bash('/root/openvino_cpp_samples_build/intel64/Release/hello_reshape_ssd '
+                  '/root/openvino_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
                   '/opt/intel/openvino/samples/car_1.bmp GPU'),
              ], self.test_hello_reshape_cpp_gpu.__name__, **kwargs,
@@ -259,15 +266,16 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel(),
              bash('open_model_zoo --name vehicle-detection-adas-0002 --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
              download_picture('car_1.bmp'),
-             bash('/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
+             bash('/root/openvino_cpp_samples_build/intel64/Release/hello_reshape_ssd '
+                  '/root/openvino_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
                   '/opt/intel/openvino/samples/car_1.bmp MYRIAD'),
              ], self.test_hello_reshape_cpp_vpu.__name__, **kwargs,
@@ -292,16 +300,17 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools opencv-python && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools opencv-python && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel(),
              bash('omz_downloader --name vehicle-detection-adas-0002 --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
              download_picture('car_1.bmp'),
              bash('umask 0000 && '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/hello_reshape_ssd '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
+                  '/root/openvino_cpp_samples_build/intel64/Release/hello_reshape_ssd '
+                  '/root/openvino_cpp_samples_build/intel64/Release/intel/vehicle-detection-adas-0002/FP16/'
                   'vehicle-detection-adas-0002.xml '
                   '/opt/intel/openvino/samples/car_1.bmp HDDL && rm -f /dev/shm/hddl_*'),
              ], self.test_hello_reshape_cpp_hddl.__name__, **kwargs,
@@ -322,22 +331,23 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools opencv-python && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools opencv-python && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel('[caffe]'),
              bash('omz_downloader --name alexnet --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
-                  '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/openvino_cpp_samples_build/intel64/Release/public '
+                  '--input_model /root/openvino_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
              download_picture('car_1.bmp'),
              bash('python3 -c \\"import cv2; '
                   "img = cv2.imread('/opt/intel/openvino/samples/car_1.bmp', cv2.IMREAD_UNCHANGED); "
                   'res = cv2.resize(img, (227,227)); '
                   'cv2.imwrite(\'/opt/intel/openvino/samples/car_1_227.bmp\', res)\\"'),
-             bash('/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
-                  '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
+             bash('/root/openvino_cpp_samples_build/intel64/Release/classification_sample_async '
+                  '-m /root/openvino_cpp_samples_build/intel64/Release/public/alexnet.xml '
                   '-i /opt/intel/openvino/samples/car_1_227.bmp -d CPU'),
              ], self.test_classification_async_cpp_cpu.__name__, **kwargs,
         )
@@ -360,22 +370,23 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel('[caffe]'),
              bash('omz_downloader --name alexnet --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
-                  '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/openvino_cpp_samples_build/intel64/Release/public '
+                  '--input_model /root/openvino_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
              download_picture('car_1.bmp'),
              bash('python3 -c \\"import cv2; '
                   "img = cv2.imread('/opt/intel/openvino/samples/car_1.bmp', cv2.IMREAD_UNCHANGED); "
                   'res = cv2.resize(img, (227,227)); '
                   'cv2.imwrite(\'/opt/intel/openvino/samples/car_1_227.bmp\', res)\\"'),
-             bash('/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
-                  '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
+             bash('/root/openvino_cpp_samples_build/intel64/Release/classification_sample_async '
+                  '-m /root/openvino_cpp_samples_build/intel64/Release/public/alexnet.xml '
                   '-i /opt/intel/openvino/samples/car_1_227.bmp -d GPU'),
              ], self.test_classification_async_cpp_gpu.__name__, **kwargs,
         )
@@ -402,22 +413,23 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel('[caffe]'),
              bash('omz_downloader --name alexnet --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
-                  '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/openvino_cpp_samples_build/intel64/Release/public '
+                  '--input_model /root/openvino_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel --data_type FP16'),
              download_picture('car_1.bmp'),
              bash('python3 -c \\"import cv2; '
                   "img = cv2.imread('/opt/intel/openvino/samples/car_1.bmp', cv2.IMREAD_UNCHANGED); "
                   'res = cv2.resize(img, (227,227)); '
                   'cv2.imwrite(\'/opt/intel/openvino/samples/car_1_227.bmp\', res)\\"'),
-             bash('/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
-                  '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
+             bash('/root/openvino_cpp_samples_build/intel64/Release/classification_sample_async '
+                  '-m /root/openvino_cpp_samples_build/intel64/Release/public/alexnet.xml '
                   '-i /opt/intel/openvino/samples/car_1_227.bmp -d MYRIAD'),
              ], self.test_classification_async_cpp_vpu.__name__, **kwargs,
         )
@@ -443,14 +455,15 @@ class TestSamplesLinuxRuntime:
         tester.test_docker_image(
             image,
             [install_openvino_dependencies,
-             bash('python3 -m pip install --no-cache-dir cmake setuptools && '
+             bash('/opt/intel/openvino/install_dependencies/install_openvino_dependencies.sh -y -c dev && '
+                  'python3 -m pip install --no-cache-dir cmake setuptools && '
                   'cd /opt/intel/openvino/samples/cpp && '
                   '/opt/intel/openvino/samples/cpp/build_samples.sh'),
              install_openvino_dev_wheel('[caffe]'),
              bash('omz_downloader --name alexnet --precisions FP16 '
-                  '-o /root/inference_engine_cpp_samples_build/intel64/Release/'),
-             bash('mo --output_dir /root/inference_engine_cpp_samples_build/intel64/Release/public '
-                  '--input_model /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet/'
+                  '-o /root/openvino_cpp_samples_build/intel64/Release/'),
+             bash('mo --output_dir /root/openvino_cpp_samples_build/intel64/Release/public '
+                  '--input_model /root/openvino_cpp_samples_build/intel64/Release/public/alexnet/'
                   'alexnet.caffemodel'),
              download_picture('car_1.bmp'),
              bash('python3 -c \\"import cv2; '
@@ -458,8 +471,8 @@ class TestSamplesLinuxRuntime:
                   'res = cv2.resize(img, (227,227)); '
                   'cv2.imwrite(\'/opt/intel/openvino/samples/car_1_227.bmp\', res)\\"'),
              bash('umask 0000 && '
-                  '/root/inference_engine_cpp_samples_build/intel64/Release/classification_sample_async '
-                  '-m /root/inference_engine_cpp_samples_build/intel64/Release/public/alexnet.xml '
+                  '/root/openvino_cpp_samples_build/intel64/Release/classification_sample_async '
+                  '-m /root/openvino_cpp_samples_build/intel64/Release/public/alexnet.xml '
                   '-i /opt/intel/openvino/samples/car_1_227.bmp -d HDDL && rm -f /dev/shm/hddl_*'),
              ], self.test_classification_async_cpp_hddl.__name__, **kwargs,
         )

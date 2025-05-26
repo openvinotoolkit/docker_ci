@@ -1,0 +1,5 @@
+# setup Python
+ENV PYTHON_VER python3.10
+
+# hadolint ignore=DL3013
+RUN ${PYTHON_VER} -m pip install --upgrade pip
