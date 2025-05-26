@@ -1,7 +1,7 @@
-bandit < 1.7.3 # workaround for https://github.com/tylerwince/flake8-bandit/issues/21
-flake8==4.0.1
+bandit==1.8.3
+flake8==7.2.0
 flake8-annotations-complexity
-flake8-bandit==2.1.2
+flake8-bandit==4.1.1
 flake8-broken-line
 flake8-bugbear
 flake8-comprehensions
@@ -17,7 +17,7 @@ flake8_coding
 flake8_commas
 flake8_pep3101
 flake8_quotes
-import-order
+# import-order
 naming
 radon
 flake8-rst-docstrings
