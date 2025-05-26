@@ -9,7 +9,7 @@ import requests
 from utils import exceptions, utilities
 
 
-@pytest.fixture()
+@pytest.fixture
 def temp_file(tmp_path):
     file_path = (tmp_path / 'file.txt')
     file_path.write_text('hello')
@@ -89,15 +89,21 @@ class TestDownloadFile:
 
     @mock.patch('requests.Session')
     def test_valid_proxy(self, mock_session, temp_file):
-        mock_session.return_value = mock.MagicMock(**{'get.side_effect': Exception('Proxy check')})
-        try:
+        class TestError(Exception):
+            pass
+
+        def get_mock(*args, **kwargs):
+            raise TestError(kwargs.get("proxies"))
+
+        mock_session.return_value = mock.MagicMock(get=get_mock)
+        testproxy = {'https': 'http://proxy.addr:1337'}
+        with pytest.raises(TestError) as exception:
             utilities.download_file(
                 url='https://www.google.com/test',
-                proxy={'https': 'https://www.google.com/test'},
+                proxy=testproxy,
                 filename=temp_file,
             )
-        except Exception as e:
-            assert str(e) == 'Proxy check'  # noqa: S101  # nosec
+        assert exception.value.args[0] == testproxy  # noqa: S101  # nosec
 
     @pytest.mark.parametrize(('proxy', 'exception'), [
         pytest.param(

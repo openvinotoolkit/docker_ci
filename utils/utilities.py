@@ -112,31 +112,22 @@ def download_file(url: str, filename: pathlib.Path,
 
 def unzip_file(file_path: str, target_dir: str):
     """Unpack ZIP-archive to specified directory"""
+    def safepath(path):
+        npath = os.path.normpath(path)
+        is_abspath = npath.startswith("/") or npath[1:3] == ":\\"
+        is_outside_current = npath.startswith("../") or npath.startswith("..\\")
+        if is_abspath or is_outside_current:
+            raise Exception(f"Unsafe path: '{path}' turns into '{npath}' "
+                            "which is outside of current directory.")
+        return path
+
     if file_path.endswith('tgz'):
         with tarfile.open(file_path, 'r') as tar_file:
-            def is_within_directory(directory, target):
-                
-                abs_directory = os.path.abspath(directory)
-                abs_target = os.path.abspath(target)
-            
-                prefix = os.path.commonprefix([abs_directory, abs_target])
-                
-                return prefix == abs_directory
-            
-            def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
-            
-                for member in tar.getmembers():
-                    member_path = os.path.join(path, member.name)
-                    if not is_within_directory(path, member_path):
-                        raise Exception("Attempted Path Traversal in Tar File")
-            
-                tar.extractall(path, members, numeric_owner=numeric_owner) 
-                
-            
-            safe_extract(tar_file, target_dir)
+            tar_file.extractall(target_dir, filter="data")
     elif file_path.endswith('zip'):
         with zipfile.ZipFile(file_path, 'r') as zip_file:
-            zip_file.extractall(target_dir)
+            names = filter(safepath, zip_file.namelist())
+            zip_file.extractall(target_dir, members=names)  # noqa: S202  # nosec B202:tarfile_unsafe_members
 
 
 def check_printable_utf8_chars(string: str) -> str:

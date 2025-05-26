@@ -38,8 +38,9 @@ COPY ./entitlement /etc/pki/entitlement
 COPY ./rhsm-conf /etc/rhsm
 {% endif %}
 RUN subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
-RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
-        https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm \
+RUN curl --insecure -LO https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
+    && curl --insecure -LO https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm \
+    && dnf install -y epel-release-latest-8.noarch.rpm rpmfusion-free-release-8.noarch.rpm \
     && dnf install -y \
         gtk3-devel \
         gstreamer1-devel \
