@@ -104,7 +104,7 @@ def pytest_configure(config):
                 raise FailedTestError(err_msg)
 
 
-@pytest.mark.hookwrapper()
+@pytest.mark.hookwrapper
 def pytest_runtest_makereport(item, call):
     """Mark test as xfailed if caplog contains the specified pattern"""
     outcome = yield
@@ -255,7 +255,7 @@ def omz_rev(request):
         if product_version:
             release_branch = f'releases/{"/".join(product_version.groups())}'
             url = f'https://github.com/openvinotoolkit/open_model_zoo/tree/{release_branch}'
-            if requests.get(url).status_code != 404:
+            if requests.get(url, timeout=30).status_code != 404:
                 omz_revision = release_branch
     return omz_revision
 
@@ -391,7 +391,7 @@ def bash(request):
     return _bash
 
 
-@pytest.fixture()
+@pytest.fixture
 def omz_python_demo_path(request):
     demo_name = request.param
     is_ssd = 'ssd' in request.node.name

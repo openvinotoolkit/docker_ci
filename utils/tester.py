@@ -77,7 +77,7 @@ class DockerImageTester(DockerImageTesterBase):
     def test_docker_image(self,
                           image: typing.Tuple[Image, str],
                           commands: typing.List[str], test_name: str,
-                          is_cached: bool = False, **kwargs: typing.Optional[typing.Dict]):
+                          is_cached: bool, **kwargs: typing.Optional[typing.Dict]):
         """Running list of commands inside the container, logging the output and handling possible exceptions"""
         if isinstance(image, Image):
             image_tag = image.tags[0]
