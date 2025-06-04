@@ -4,11 +4,11 @@ To use the NPU (Neural Processing Unit) Driver inside a container:
 - Ensure that the corresponding firmware package `intel-fw-npu` is installed on the host. 
 - Add NPU device to the container, for example, by using the argument `--device=/dev/accel/accel0` when running your container. 
 
-See [NPU driver release page](https://github.com/intel/linux-npu-driver/releases) for setup details.
+See [NPU Driver release page](https://github.com/intel/linux-npu-driver/releases) for setup details.
 
 ## NPU device recovery
 
-There is a known issue with NPU device recovery in the current NPU driver.
+There is a known issue with NPU device recovery in the current NPU Driver.
 Starting from NPU Linux driver release v1.13.0, a new NPU recovery behavior has been introduced. 
 Corresponding changes in Ubuntu kernels are expected with new kernel releases. 
 
