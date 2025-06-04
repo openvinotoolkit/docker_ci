@@ -27,8 +27,6 @@ sudo modprobe intel_vpu
 
 [Intel® NPU Driver GitHub](https://github.com/intel/linux-npu-driver)
 
-[Prebuilt images](#prebuilt-images)
-
-[Working with OpenVINO Containers](docs/containers.md)
+[Working with OpenVINO Containers](containers.md)
 
 [Install Intel® Distribution of OpenVINO™ Toolkit From a Docker Image](https://docs.openvino.ai/2025/get-started/install-openvino/install-openvino-docker-linux.html)
