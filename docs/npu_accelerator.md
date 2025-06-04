@@ -23,7 +23,7 @@ sudo rmmod intel_vpu
 sudo modprobe intel_vpu
 ```
 
-**See also**
+## See also
 
 [Intel® NPU Driver GitHub](https://github.com/intel/linux-npu-driver)
 
