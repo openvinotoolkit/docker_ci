@@ -69,6 +69,8 @@ COPY ./entitlement /etc/pki/entitlement
 COPY ./rhsm-conf /etc/rhsm
 
 RUN subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
+
+# hadolint ignore=DL3041
 RUN curl --insecure -LO https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
     && curl --insecure -LO https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm \
     && dnf install -y epel-release-latest-8.noarch.rpm rpmfusion-free-release-8.noarch.rpm \
@@ -335,8 +337,8 @@ RUN git clone https://github.com/openvinotoolkit/open_model_zoo && \
 
 # for GPU
 RUN groupmod -g 44 video
-# hadolint ignore=DL3041
 # GFX driver version 22.43.24595.35
+# hadolint ignore=DL3041
 RUN dnf install -y libedit ; \
     rpm -ivh https://repositories.intel.com/graphics/rhel/8.6/intel-gmmlib-22.3.1-i529.el8.x86_64.rpm ; \
     rpm -ivh https://repositories.intel.com/graphics/rhel/8.6/intel-igc-core-1.0.12504.6-i537.el8.x86_64.rpm ; \
