@@ -168,13 +168,30 @@ RUN apt-get update && \
     apt-get clean ; \
     rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 # hadolint ignore=DL3003
+# GFX driver version 24.48.31907.7
 RUN mkdir /tmp/gpu_deps && cd /tmp/gpu_deps && \
-    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.05.25593.11/libigdgmm12_22.3.0_amd64.deb && \
-    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-core_1.0.13700.14_amd64.deb && \
-    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.13700.14/intel-igc-opencl_1.0.13700.14_amd64.deb && \
-    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/intel-opencl-icd_23.13.26032.30_amd64.deb && \
-    curl -L -O https://github.com/intel/compute-runtime/releases/download/23.13.26032.30/libigdgmm12_22.3.0_amd64.deb && \
-    dpkg -i ./*.deb && rm -Rf /tmp/gpu_deps
+    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/v2.2.3/intel-igc-core-2_2.2.3+18220_amd64.deb && \
+    curl -L -O https://github.com/intel/intel-graphics-compiler/releases/download/v2.2.3/intel-igc-opencl-2_2.2.3+18220_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/intel-level-zero-gpu-dbgsym_1.6.31907.7_amd64.ddeb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/intel-level-zero-gpu_1.6.31907.7_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/intel-opencl-icd-dbgsym_24.48.31907.7_amd64.ddeb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/intel-opencl-icd_24.48.31907.7_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/libigdgmm12_22.5.4_amd64.deb && \
+    curl -L -O https://github.com/intel/compute-runtime/releases/download/24.48.31907.7/ww48.sum && \
+    sha256sum -c ww48.sum && \
+    dpkg -i *.deb && rm -Rf /tmp/gpu_deps
+
+# for NPU
+
+# from https://github.com/oneapi-src/level-zero/releases/tag/v1.20.2
+# from https://github.com/intel/linux-npu-driver/releases/tag/v1.16.0
+
+RUN mkdir /tmp/npu_deps && cd /tmp/npu_deps && \
+    curl -L -O https://github.com/oneapi-src/level-zero/releases/download/v1.21.9/level-zero_1.21.9+u22.04_amd64.deb && \
+    curl -L -O https://github.com/intel/linux-npu-driver/releases/download/v1.17.0/intel-level-zero-npu_1.17.0.20250508-14912879441_ubuntu22.04_amd64.deb && \
+    curl -L -O https://github.com/intel/linux-npu-driver/releases/download/v1.17.0/intel-driver-compiler-npu_1.17.0.20250508-14912879441_ubuntu22.04_amd64.deb && \
+    curl -L -O https://github.com/intel/linux-npu-driver/releases/download/v1.17.0/intel-fw-npu_1.17.0.20250508-14912879441_ubuntu22.04_amd64.deb && \
+    apt update && apt install -y ./*.deb && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/npu_deps
 
 
 # Post-installation cleanup and setting up OpenVINO environment variables
