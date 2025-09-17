@@ -4,12 +4,13 @@
 import argparse
 import pathlib
 from unittest import mock
+from typing import Any
 
 import pytest
 
 from utils.arg_parser import parse_args
 
-default_args = {
+default_args: dict[str, Any] = {
     'build_arg': [],
     'cmake': 'cmake314',
     'device': None,
