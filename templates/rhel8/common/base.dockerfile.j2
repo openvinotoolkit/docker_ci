@@ -51,16 +51,16 @@ RUN curl --insecure -LO https://dl.fedoraproject.org/pub/epel/epel-release-lates
         libmfx-devel \
         cmake \
         git \
-        python39-devel \
-        python39-pip \
+        python3.12-devel \
+        python3.12-numpy \
+        python3-pip \
+        python3-virtualenv \
         gcc-c++  \
         gcc \
     && dnf clean all
 
 RUN rm -rf /etc/pki/entitlement && rm -rf /etc/rhsm
 
-# hadolint ignore=DL3013
-RUN python3 -m pip install --no-cache-dir numpy==1.23.1
 ARG OPENCV_BRANCH=4.10.0
 WORKDIR /opt/repo
 RUN git clone https://github.com/opencv/opencv.git
@@ -190,14 +190,14 @@ COPY --from=base /opt/intel /opt/intel
 {% endif %}
 
 {% if 'runtime' == distribution %}
-ARG LGPL_DEPS="bash python39" # no new packages
+ARG LGPL_DEPS="bash python3.12" # no new packages
 ARG INSTALL_PACKAGES="-c=python -c=core"
 {% else %}
 ARG LGPL_DEPS="gcc-c++ \
                glibc \
                libstdc++ \
                libgcc \
-               python39"
+               python3.12"
 ARG INSTALL_PACKAGES="-c=opencv_req -c=python -c=opencv_opt -c=core -c=dev"
 {% endif %}
 ARG INSTALL_SOURCES="no"
