@@ -517,19 +517,10 @@ def parse_args(name: str, description: str):  # noqa
                 )
 
         if not args.python:
-            if args.os == "ubuntu24":
-                args.python = "python312"
-            elif args.os == "ubuntu22":
+            if args.os == "ubuntu22":
                 args.python = "python310"
             else:
-                args.python = "python39"
-
-        if args.python == "python38" and "win" in args.os:
-            if not hasattr(args, "pre_stage_msbuild") or not args.pre_stage_msbuild:
-                parser.error(
-                    "Option --pre_stage_msbuild is required for Windows images to build the latest version "
-                    "of Python 3.8"
-                )
+                args.python = "python312"
 
         if not args.distribution and args.package_url:
             if "_runtime_" in args.package_url:
