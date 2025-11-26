@@ -1,6 +1,6 @@
 # dev package
 WORKDIR ${INTEL_OPENVINO_DIR}
-ARG OPENVINO_WHEELS_VERSION={{ product_version }}
+ARG OPENVINO_WHEELS_VERSION={{ OPENVINO_WHEELS_VERSION }}
 ARG OPENVINO_WHEELS_URL
 # hadolint ignore=SC2102,DL3033
 RUN yum install -y cmake git && yum clean all && \

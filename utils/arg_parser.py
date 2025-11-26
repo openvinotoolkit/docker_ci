@@ -609,11 +609,11 @@ def parse_args(name: str, description: str):  # noqa
                 )
 
         if not hasattr(args, "wheels_version") or not args.wheels_version:
-            args.wheels_version = (
-                args.product_version
-                if args.build_id == args.product_version
-                else f"{args.product_version}.*"
-            )
+            version = args.product_version.split(".")[:3]
+            if args.build_id == args.product_version:
+                args.wheels_version = ".".join(version)
+            else:
+                args.wheels_version = ".".join([version[0], version[1], "*"])
 
     if not hasattr(args, "tags") or not args.tags:
         layers = "_".join(args.layers)
