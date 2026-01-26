@@ -1,12 +1,13 @@
 # for NPU
 
-# from https://github.com/oneapi-src/level-zero/releases/tag/v1.20.2
-# from https://github.com/intel/linux-npu-driver/releases/tag/v1.16.0
+ARG INTEL_NPU_DRIVER_URL=https://github.com/intel/linux-npu-driver/releases/download/v1.26.0/linux-npu-driver-v1.26.0.20251125-19665715237-ubuntu2204.tar.gz
+ARG INTEL_LEVEL_ZERO_URL=https://github.com/oneapi-src/level-zero/releases/download/v1.24.2/level-zero_1.24.2+u22.04_amd64.deb
 
 # hadolint ignore=DL3003
-RUN mkdir /tmp/npu_deps && cd /tmp/npu_deps && \
-    curl -L -O https://github.com/oneapi-src/level-zero/releases/download/v1.21.9/level-zero_1.21.9+u22.04_amd64.deb && \
-    curl -L -O https://github.com/intel/linux-npu-driver/releases/download/v1.17.0/intel-level-zero-npu_1.17.0.20250508-14912879441_ubuntu22.04_amd64.deb && \
-    curl -L -O https://github.com/intel/linux-npu-driver/releases/download/v1.17.0/intel-driver-compiler-npu_1.17.0.20250508-14912879441_ubuntu22.04_amd64.deb && \
-    curl -L -O https://github.com/intel/linux-npu-driver/releases/download/v1.17.0/intel-fw-npu_1.17.0.20250508-14912879441_ubuntu22.04_amd64.deb && \
-    apt-get update && apt-get install --no-install-recommends -y ./*.deb && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/npu_deps
+RUN mkdir /tmp/npu_deps \
+    && cd /tmp/npu_deps \
+    && curl -L ${INTEL_NPU_DRIVER_URL} | tar -xzf - \
+    && curl -L -O ${INTEL_LEVEL_ZERO_URL} \
+    && apt-get update \
+    && apt-get install --no-install-recommends -y ./*.deb \
+    && rm -rf /var/lib/apt/lists/* /tmp/npu_deps
