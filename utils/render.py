@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2024 Intel Corporation
+# Copyright (C) 2019-2026 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 """Module handling Dockerfile generating"""
 import argparse

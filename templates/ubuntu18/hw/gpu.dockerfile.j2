@@ -1,6 +1,0 @@
-# for GPU
-ARG TEMP_DIR=/tmp/opencl
-
-WORKDIR ${INTEL_OPENVINO_DIR}/install_dependencies
-RUN ./install_NEO_OCL_driver.sh --no_numa -y && \
-    rm -rf /var/lib/apt/lists/*

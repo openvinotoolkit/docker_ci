@@ -1,6 +1,0 @@
-# get product from local archive
-ARG package_url
-ARG TEMP_DIR=/tmp/openvino_installer
-
-WORKDIR ${TEMP_DIR}
-COPY ${package_url} ${TEMP_DIR}

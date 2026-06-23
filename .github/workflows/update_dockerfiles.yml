@@ -26,9 +26,7 @@ jobs:
         shell: bash
         run: |
           declare -A IMAGES=( ['ubuntu20']='runtime dev'
-                              ['rhel8']='runtime dev'
-                              ['winserver2019']='runtime dev'
-                              ['windows20h2']='runtime dev' )
+                              ['rhel8']='runtime dev' )
           for image_os in "${!IMAGES[@]}"
           do
             for distr in ${IMAGES[$image_os]}

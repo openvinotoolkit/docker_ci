@@ -12,11 +12,11 @@ on:
         required: true
         default: 'dev'
       os:
-        description: 'OS for Docker image: ubuntu20, winserver2019, windows20h2'
+        description: 'OS for Docker image: ubuntu20'
         required: true
         default: ''
       host_os:
-        description: 'OS for Host machine: ubuntu-20.04, windows-docker'
+        description: 'OS for Host machine: ubuntu-20.04'
         required: true
         default: ''
       tags:
@@ -34,7 +34,7 @@ jobs:
   manual_publish:
     strategy:
       matrix:
-        os: [ ubuntu-24.04, windows-docker ]
+        os: [ ubuntu-24.04 ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Code checkout
@@ -52,12 +52,6 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Docker login to registry (Windows)
-        if: ${{ matrix.os == 'windows-docker' }}
-        run: echo $Env:DOCKER_PASSWORD | docker login --username $Env:DOCKER_USERNAME --password-stdin
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and publish image on DockerHub
         if: ${{ matrix.os == github.event.inputs.host_os }}
         run: python docker_openvino.py all --dist ${{ github.event.inputs.distribution }} -os ${{ github.event.inputs.os }} --package_url ${{ github.event.inputs.package_url }} --nightly -r openvino ${{ github.event.inputs.tags }} ${{ github.event.inputs.args }}
@@ -66,12 +60,6 @@ jobs:
       - name: Docker login to Azure registry (Linux)
         if: ${{ matrix.os == 'ubuntu-20.04' && contains(github.event.inputs.os, 'ubuntu') }}
         run: echo $AZURE_PASSWORD | docker login --username $AZURE_USERNAME --password-stdin openvino.azurecr.io
-        env:
-          AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
-          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
-      - name: Docker login to Azure registry (Windows)
-        if: ${{ matrix.os == 'windows-docker' && contains(github.event.inputs.os, 'win') }}
-        run: echo $Env:AZURE_PASSWORD | docker login --username $Env:AZURE_USERNAME --password-stdin openvino.azurecr.io
         env:
           AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
           AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}

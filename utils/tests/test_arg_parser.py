@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2024 Intel Corporation
+# Copyright (C) 2019-2026 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import argparse
 import pathlib
@@ -398,7 +398,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
             'distribution': 'dev',
             'test_expression': 'cpu',
         },
-        "Options --tags and --distribution are mandatory. Image operation system is 'ubuntu18' by default.",
+        "Options --tags and --distribution are mandatory. Image operation system is 'ubuntu20' by default.",
         id='Test without --tags',
     ),
     pytest.param(
@@ -407,7 +407,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
             'test_expression': 'cpu',
             'tags': ['test:latest'],
         },
-        "Options --tags and --distribution are mandatory. Image operation system is 'ubuntu18' by default.",
+        "Options --tags and --distribution are mandatory. Image operation system is 'ubuntu20' by default.",
         id='Test without --distribution',
     ),
     pytest.param(
