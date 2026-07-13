@@ -9,13 +9,13 @@ In order to start using them you need to meet the following prerequisites:
 ## Pull a docker image
 
 ```
-docker pull openvino/ubuntu20_dev:latest
+docker pull openvino/ubuntu24_dev:latest
 ```
 
 ## Start the container with an interactive session
 
 ```bash
-export IMAGE=openvino/ubuntu20_dev:latest
+export IMAGE=openvino/ubuntu24_dev:latest
 docker run -it --rm $IMAGE /bin/bash
 ```
 

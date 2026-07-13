@@ -21,7 +21,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
     """CLI argument parser for this framework"""
 
     SUPPORTED_OS: typing.List = [
-        "ubuntu20",
         "ubuntu22",
         "ubuntu24",
         "rhel8",
@@ -230,7 +229,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             "-os",
             choices=cls.SUPPORTED_OS,
             default="",
-            help="Operation System for docker image.",
+            help="Operating system for docker image.",
         )
 
         parser.add_argument(
@@ -441,7 +440,7 @@ def parse_args(name: str, description: str):  # noqa
         and args.distribution == "dev_no_samples"
         and "ubuntu" not in args.os
     ):
-        parser.error("Distribution dev_no_samples is available only for Ubuntu operation system")
+        parser.error("Distribution dev_no_samples is available only for Ubuntu operating system")
 
     if args.mode == "gen_dockerfile" and args.distribution == "base":
         parser.error(
@@ -451,7 +450,7 @@ def parse_args(name: str, description: str):  # noqa
 
     if args.mode == "test" and not (args.tags and args.distribution):
         parser.error(
-            "Options --tags and --distribution are mandatory. Image operation system is 'ubuntu20'"
+            "Options --tags and --distribution are mandatory. Image operating system is 'ubuntu22'"
             " by default."
         )
 
@@ -536,7 +535,7 @@ def parse_args(name: str, description: str):  # noqa
         if not args.device and "win" not in args.os:
             if args.distribution == "base":
                 args.device = ["cpu"]
-            elif args.os in ("rhel8", "ubuntu20"):
+            elif args.os in ("rhel8",):
                 args.device = ["cpu", "gpu"]
             else:
                 args.device = ["cpu", "gpu", "npu"]
