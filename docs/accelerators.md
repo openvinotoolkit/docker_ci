@@ -19,8 +19,14 @@ While the host and preconfigured docker engine is up and running, use the docker
 
 The command below should report both CPU and GPU devices available for inference execution:
 ```
-export IMAGE=openvino/ubuntu20_dev:2023.0.0
-docker run -it --device /dev/dri --group-add=$(stat -c \"%g\" /dev/dri/render* ) $IMAGE ./samples/cpp/samples_bin/hello_query_device
+export IMAGE=openvino/ubuntu24_dev:2026.2.0
+docker run -it --device /dev/dri --group-add=$(stat -c %g /dev/dri/render* ) $IMAGE python samples/python/hello_query_device/hello_query_device.py
+```
+
+or if `podman` is installed:
+```
+export IMAGE=openvino/ubuntu24_dev:2026.2.0
+podman run -it --device /dev/dri --group-add=keep-groups $IMAGE python samples/python/hello_query_device/hello_query_device.py
 ```
 
 `--device /dev/dri` - it passes the GPU device to the container
@@ -31,8 +37,8 @@ docker run -it --device /dev/dri --group-add=$(stat -c \"%g\" /dev/dri/render* )
 On WSL2, use the command to start the container:
 
 ```
-export IMAGE=openvino/ubuntu20_dev:2023.0.0
-docker run -it --device=/dev/dxg -v /usr/lib/wsl:/usr/lib/wsl $IMAGE ./samples/cpp/samples_bin/hello_query_device
+export IMAGE=openvino/ubuntu24_dev:2026.2.0
+docker run -it --device=/dev/dxg -v /usr/lib/wsl:/usr/lib/wsl $IMAGE python samples/python/hello_query_device/hello_query_device.py
 ```
 `--device /dev/dri` - it passes the virtual GPU device to the container
 `-v /usr/lib/wsl:/usr/lib/wsl` - it mounts required WSL libs into the container

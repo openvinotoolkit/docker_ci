@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2024 Intel Corporation
+# Copyright (C) 2019-2026 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 """CLI arguments parser for this framework"""
 import argparse
@@ -21,12 +21,8 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
     """CLI argument parser for this framework"""
 
     SUPPORTED_OS: typing.List = [
-        "ubuntu18",
-        "ubuntu20",
         "ubuntu22",
         "ubuntu24",
-        "winserver2019",
-        "windows20h2",
         "rhel8",
     ]
 
@@ -233,7 +229,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
             "-os",
             choices=cls.SUPPORTED_OS,
             default="",
-            help="Operation System for docker image.",
+            help="Operating system for docker image.",
         )
 
         parser.add_argument(
@@ -444,7 +440,7 @@ def parse_args(name: str, description: str):  # noqa
         and args.distribution == "dev_no_samples"
         and "ubuntu" not in args.os
     ):
-        parser.error("Distribution dev_no_samples is available only for Ubuntu operation system")
+        parser.error("Distribution dev_no_samples is available only for Ubuntu operating system")
 
     if args.mode == "gen_dockerfile" and args.distribution == "base":
         parser.error(
@@ -454,7 +450,7 @@ def parse_args(name: str, description: str):  # noqa
 
     if args.mode == "test" and not (args.tags and args.distribution):
         parser.error(
-            "Options --tags and --distribution are mandatory. Image operation system is 'ubuntu18'"
+            "Options --tags and --distribution are mandatory. Image operating system is 'ubuntu22'"
             " by default."
         )
 
@@ -539,7 +535,7 @@ def parse_args(name: str, description: str):  # noqa
         if not args.device and "win" not in args.os:
             if args.distribution == "base":
                 args.device = ["cpu"]
-            elif args.os in ("rhel8", "ubuntu18", "ubuntu20"):
+            elif args.os in ("rhel8",):
                 args.device = ["cpu", "gpu"]
             else:
                 args.device = ["cpu", "gpu", "npu"]

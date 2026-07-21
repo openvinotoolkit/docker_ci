@@ -16,15 +16,6 @@ jobs:
         os: [ubuntu-24.04]
         image_os: [ubuntu24]
         image_distribution: [runtime]
-        exclude:
-          - os: ubuntu-24.04
-            image_os: winserver2019
-          - os: windows-2019
-            image_os: centos7
-          - os: windows-2019
-            image_os: ubuntu24
-          - os: windows-2019
-            image_os: ubuntu24
     runs-on: ${{ matrix.os }}
     steps:
       - name: Code checkout
@@ -39,9 +30,6 @@ jobs:
       - name: Build Linux image (runtime, latest release)
         if: ${{ matrix.os == 'ubuntu-24.04' && ! startsWith(matrix.image_os, 'win') }}
         run: python docker_openvino.py build --dist ${{ matrix.image_distribution }} -d cpu -d gpu -os ${{ matrix.image_os }}
-      - name: Build Windows image (runtime, latest release)
-        if: ${{ matrix.os == 'windows-2019' && startsWith(matrix.image_os, 'win') }}
-        run: python docker_openvino.py build --dist ${{ matrix.image_distribution }} -os ${{ matrix.image_os }}
       - name: Checking resulting image
         if: ${{ always() }}
         run: docker images

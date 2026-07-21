@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2019-2024 Intel Corporation
+# Copyright (C) 2019-2026 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 import argparse
 import pathlib
@@ -23,7 +23,7 @@ default_args: dict[str, Any] = {
     'msbuild': None,
     'pre_stage_msbuild': None,
     'rhel_platform': 'docker',
-    'os': 'ubuntu18',
+    'os': 'ubuntu22',
     'package_url': None,
     'product_version': None,
     'python': None,
@@ -93,42 +93,6 @@ default_args: dict[str, Any] = {
         },
         id='check tag postfix',
     ),
-    # pytest.param(
-    #     {
-    #         'mode': 'build',
-    #         'package_url': 'openvino_dev_p_2022.1.0.320.zip',
-    #         'source': 'local',
-    #         'os': 'winserver2019',
-    #         'pre_stage_msbuild': 'msbuild2019_online',
-    #     },
-    #     {
-    #         'device': ['cpu'],
-    #         'dockerfile_name': 'openvino_c_dev_2022.1.0.dockerfile',
-    #         'python': 'python310',
-    #         'tags': ['winserver2019_dev:2022.1.0.320', 'winserver2019_dev:latest'],
-    #         'distribution': 'dev',
-    #         'product_version': '2022.1.0',
-    #     },
-    #     id='winserver2019',
-    # ),
-    # pytest.param(
-    #     {
-    #         'mode': 'build',
-    #         'package_url': 'openvino_dev_p_2022.1.0.320.zip',
-    #         'distribution': 'base',
-    #         'file': 'openvino_c_base_2022.1.dockerfile',
-    #         'source': 'local',
-    #     },
-    #     {
-    #         'device': ['cpu'],
-    #         'dockerfile_name': 'openvino_c_base_2022.1.0.dockerfile',
-    #         'python': 'python310',
-    #         'tags': ['ubuntu18_base_cpu:2022.1.0', 'ubuntu18_base_cpu:latest'],
-    #         'distribution': 'base',
-    #         'product_version': '2022.1.0',
-    #     },
-    #     id='ubuntu base',
-    # ),
     pytest.param(
         {
             'mode': 'build',
@@ -398,7 +362,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
             'distribution': 'dev',
             'test_expression': 'cpu',
         },
-        "Options --tags and --distribution are mandatory. Image operation system is 'ubuntu18' by default.",
+        "Options --tags and --distribution are mandatory. Image operating system is 'ubuntu22' by default.",
         id='Test without --tags',
     ),
     pytest.param(
@@ -407,7 +371,7 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
             'test_expression': 'cpu',
             'tags': ['test:latest'],
         },
-        "Options --tags and --distribution are mandatory. Image operation system is 'ubuntu18' by default.",
+        "Options --tags and --distribution are mandatory. Image operating system is 'ubuntu22' by default.",
         id='Test without --distribution',
     ),
     pytest.param(
