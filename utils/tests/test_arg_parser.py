@@ -20,8 +20,6 @@ default_args: dict[str, Any] = {
     'layers': [],
     'linter_check': [],
     # 'mode':'build',
-    'msbuild': None,
-    'pre_stage_msbuild': None,
     'rhel_platform': 'docker',
     'os': 'ubuntu22',
     'package_url': None,
@@ -237,25 +235,7 @@ default_args: dict[str, Any] = {
         {
         },
         id='Successful deploy',
-    ),
-    pytest.param(
-        {
-            'mode': 'test',
-            'tags': ['custom:no-cv'],
-            'distribution': 'custom',
-            'product_version': '2024.3.0',
-            'package_url': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.3/linux/'
-                           'l_openvino_toolkit_ubuntu22_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz',
-        },
-        {
-            'distribution': 'custom-no-cv',
-            'product_version': '2024.3.0',
-            'package_url': 'https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.3/linux/'
-                           'l_openvino_toolkit_ubuntu22_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz',
-        },
-        id='Successful test custom image',
-    ),
-
+    )
 ])
 @mock.patch('utils.arg_parser.DockerCIArgumentParser.parse_args')
 @mock.patch('pathlib.Path.exists')
@@ -273,22 +253,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
 
 
 @pytest.mark.parametrize(('args', 'parser_out'), [
-    pytest.param(
-        {
-            'mode': 'gen_dockerfile',
-            'distribution': 'base',
-        },
-        'Generating dockerfile for base distribution is not available',
-        id='gen_dockerfile base error',
-    ),
-    pytest.param(
-        {
-            'mode': 'all',
-            'distribution': 'base',
-        },
-        'The following argument is required: -f/--file',
-        id='Build base image without --file',
-    ),
     pytest.param(
         {
             'mode': 'build',
@@ -329,14 +293,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         },
         'Provided local path of the package should be relative to',
         id='Local package path with --source local',
-    ),
-    pytest.param(
-        {
-            'mode': 'build',
-            'package_url': 'openvino_dev_p_2020.1.314.zip',
-        },
-        'Provided URL is not supported, use http://, https:// or ftp:// access scheme',
-        id='Local package path with --source url',
     ),
     pytest.param(
         {
@@ -398,15 +354,6 @@ def test_arg_parser_success(mock_exists, mock_parser, args, res):
         },
         'Option --registry is mandatory for this mode.',
         id='All without --registry',
-    ),
-    pytest.param(
-        {
-            'mode': 'build',
-            'tags': ['custom:no-cv'],
-            'distribution': 'custom',
-        },
-        'For a custom distribution, only test and deploy modes are available.',
-        id='Use custom image in not test or deploy mode',
     ),
     pytest.param(
         {

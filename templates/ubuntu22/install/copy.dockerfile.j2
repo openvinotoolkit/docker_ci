@@ -15,6 +15,6 @@ RUN find "${TEMP_DIR}" \( -name "*.tgz" -o -name "*.tar.gz" \) -exec tar -xzf {}
     ln --symbolic /opt/intel/openvino_"$OV_BUILD"/ /opt/intel/openvino_"$OV_YEAR" && \
     rm -rf "${TEMP_DIR}" && \
     chown -R openvino /opt/intel/openvino_"$OV_BUILD"
-{% if no_samples is defined or 'dev_no_samples' == distribution %}
+{% if no_samples is defined %}
 RUN rm -rf "${INTEL_OPENVINO_DIR}/samples"
 {% endif %}

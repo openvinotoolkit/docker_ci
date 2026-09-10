@@ -1,0 +1,131 @@
+# Copyright (C) 2019-2026 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+FROM docker.io/library/ubuntu:26.04
+
+LABEL description="This is the {{ distribution }} image for Intel(R) Distribution of OpenVINO(TM) toolkit on Ubuntu 26.04 LTS"
+LABEL vendor="Intel Corporation"
+
+SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
+
+# setup render group and openvino user
+RUN groupadd -f render \
+    && useradd -ms /bin/bash -G users,render openvino
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# install apt packages
+{% if distribution == 'dev' %}
+ARG LGPL_DEPS="g++ gcc libc6-dev cmake make"
+{% else %}
+ARG LGPL_DEPS=""
+{% endif %}
+
+{% if distribution == 'dev' %}
+ARG INSTALL_PACKAGES="-c=python -c=core -c=dev"
+{% else %}
+ARG INSTALL_PACKAGES="-c=python -c=core"
+{% endif %}
+ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
+WORKDIR $INTEL_OPENVINO_DIR
+
+# copy openvino
+ARG package_url={{ package_url }}
+{% if source == "local" %}
+COPY $package_url /openvino.tgz
+{% endif %}
+
+# hadolint ignore=DL3008
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        curl tzdata ca-certificates python3-venv python3-pip git $LGPL_DEPS \
+{%- if device_gpu %}
+    && apt-get install -y --no-install-recommends opencl-headers ocl-icd-opencl-dev ocl-icd-libopencl1 libze1 \
+    {% for url in resources.gpu_package_urls -%}
+    && curl -L -O "{{ url }}" \
+    {% endfor -%}
+    && apt-get install -y --no-install-recommends ./*.deb \
+    && rm -rf * \
+{%- endif %}
+{%- if False and device_npu %}
+    && curl -L "{{ resources.npu_archive_url }}" | tar -xzf - \
+    && apt-get install -y --no-install-recommends libze1 ./*.deb \
+    && rm -rf * \
+{%- endif %}
+{%- if source == "local" %}
+    && tar -xzf /openvino.tgz --strip-components=1 --no-same-owner \
+    && rm /openvino.tgz \
+{%- elif source == "url" %}
+    && curl -L "${package_url}" | tar -xzf - --strip-components=1 --no-same-owner \
+{%- endif %}
+    && chown -R openvino . \
+    && rm -rf .distribution \
+    && mkdir .distribution \
+    && touch .distribution/docker \
+    && ${INTEL_OPENVINO_DIR}/install_dependencies/install_openvino_dependencies.sh -y ${INSTALL_PACKAGES} \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# install onetbb
+ARG TBB_PACKAGE=https://github.com/oneapi-src/oneTBB/releases/download/v2021.9.0/oneapi-tbb-2021.9.0-lin.tgz
+RUN curl -L $TBB_PACKAGE | tar -xzf - \
+    --wildcards --strip-components=4 -C $INTEL_OPENVINO_DIR/runtime/lib/intel64/ \
+    "oneapi-tbb-2021.9.0/lib/intel64/gcc4.8/libtbb.so*"
+
+
+ENV InferenceEngine_DIR=/opt/intel/openvino/runtime/cmake
+ENV LD_LIBRARY_PATH=/opt/intel/openvino/runtime/3rdparty/tbb/lib:/opt/intel/openvino/runtime/lib/intel64:/opt/intel/openvino/tools/compile_tool
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PYTHONPATH=/opt/intel/openvino/python:/opt/intel/openvino/python/python3
+ENV TBB_DIR=/opt/intel/openvino/runtime/3rdparty/tbb/cmake
+ENV ngraph_DIR=/opt/intel/openvino/runtime/cmake
+ENV OpenVINO_DIR=/opt/intel/openvino/runtime/cmake
+ENV OV_TOKENIZER_PREBUILD_EXTENSION_PATH=/opt/intel/openvino/runtime/lib/intel64/libopenvino_tokenizers.so
+ENV PKG_CONFIG_PATH=/opt/intel/openvino/runtime/lib/intel64/pkgconfig
+ENV LIBVA_DRIVER_NAME=iHD
+ENV GST_VAAPI_ALL_DRIVERS=1
+ENV LIBVA_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri
+
+WORKDIR ${INTEL_OPENVINO_DIR}/licensing
+COPY templates/ubuntu26/third-party-programs-docker-dev.txt .
+COPY templates/ubuntu26/third-party-programs-docker-runtime.txt .
+RUN echo "This image doesn't contain source for 3d party components under LGPL/GPL licenses. They are stored in " \
+    "https://storage.openvinotoolkit.org/repositories/openvino/ci_dependencies/container_gpl_sources/." > DockerImage_readme.txt
+
+# setup python
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH=$VIRTUAL_ENV/bin:$PATH
+
+# hadolint ignore=DL3013
+RUN python3 -m pip install --no-cache-dir --upgrade pip
+# dev package
+WORKDIR ${INTEL_OPENVINO_DIR}
+{% if OPENVINO_WHEELS_URL %}
+RUN python -m pip install --no-cache-dir --pre \
+    "openvino=={{ OPENVINO_WHEELS_VERSION }}" \
+    "openvino-tokenizers=={{ OPENVINO_WHEELS_VERSION }}" \
+    "openvino-genai=={{ OPENVINO_WHEELS_VERSION }}" \
+    --trusted-host=* --find-links "{{ OPENVINO_WHEELS_URL }}"
+{% else %}
+RUN python -m pip install --no-cache-dir \
+    "openvino=={{ OPENVINO_WHEELS_VERSION }}" \
+    "openvino-tokenizers=={{ OPENVINO_WHEELS_VERSION }}" \
+    "openvino-genai=={{ OPENVINO_WHEELS_VERSION }}"
+{% endif %}
+
+{% if distribution == "dev" %}
+# build samples into ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin
+WORKDIR ${INTEL_OPENVINO_DIR}/samples/cpp
+RUN ./build_samples.sh -b /tmp/build -i ${INTEL_OPENVINO_DIR}/samples/cpp/samples_bin && \
+    rm -Rf /tmp/build
+{% endif %}
+
+# Post-installation cleanup and setting up OpenVINO environment variables
+RUN echo '#!/bin/sh' >> /usr/bin/entrypoint \
+    && echo 'umask 0000; exec "$@"' >> /usr/bin/entrypoint \
+    && chmod +x /usr/bin/entrypoint
+USER openvino
+WORKDIR ${INTEL_OPENVINO_DIR}
+
+CMD [ "/bin/bash" ]
+ENTRYPOINT [ "/usr/bin/entrypoint" ]

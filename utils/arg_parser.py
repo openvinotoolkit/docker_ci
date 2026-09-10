@@ -6,7 +6,6 @@ import argparse
 import contextlib
 import pathlib
 import re
-import subprocess  # nosec
 import sys
 import typing
 import logging
@@ -23,6 +22,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
     SUPPORTED_OS: typing.List = [
         "ubuntu22",
         "ubuntu24",
+        "ubuntu26",
         "rhel8",
     ]
 
@@ -125,22 +125,6 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         )
 
         parser.add_argument(
-            "--msbuild",
-            choices=["msbuild2019", "msbuild2019_online"],
-            help="MSBuild Tools for Windows docker image."
-            "MSBuild Tools are licensed as a supplement your existing Visual Studio license. "
-            "Please don’t share the image with MSBuild 2019 on a public Docker Hub.",
-        )
-
-        parser.add_argument(
-            "--pre_stage_msbuild",
-            choices=["msbuild2019", "msbuild2019_online"],
-            help="MSBuild Tools for Windows docker image to use on the first stage. "
-            "Can be required to build some thirdparty dependencies from source code. "
-            "MSBuild Tools are licensed as a supplement your existing Visual Studio license. ",
-        )
-
-        parser.add_argument(
             "-l",
             "--layers",
             metavar="NAME",
@@ -235,7 +219,7 @@ class DockerCIArgumentParser(argparse.ArgumentParser):
         parser.add_argument(
             "-dist",
             "--distribution",
-            choices=["base", "runtime", "dev", "dev_no_samples", "custom"],
+            choices=["runtime", "dev"],
             required=" test" in parser.prog,
             help="Distribution type: dev, dev_no_samples, runtime or "
             "base (with CPU only and without installing dependencies). "
@@ -391,13 +375,6 @@ def parse_args(name: str, description: str):  # noqa
         args.package_url = str(pathlib.Path(args.package_url).as_posix())
 
     if (
-        args.mode not in ("test", "deploy")
-        and hasattr(args, "distribution")
-        and args.distribution == "custom"
-    ):
-        parser.error("For a custom distribution, only test and deploy modes are available.")
-
-    if (
         hasattr(args, "sdl_check")
         and args.sdl_check
         and ("snyk" not in args.sdl_check and "bench_security" not in args.sdl_check)
@@ -410,13 +387,6 @@ def parse_args(name: str, description: str):  # noqa
         and ("hadolint" not in args.linter_check and "dive" not in args.linter_check)
     ):
         parser.error("Incorrect arguments for --linter_check. Available tests: hadolint, dive")
-
-    if (
-        args.mode in ("build", "build_test", "all")
-        and args.distribution == "base"
-        and not args.file
-    ):
-        parser.error("The following argument is required: -f/--file")
 
     if args.mode == "deploy" and not args.tags:
         parser.error("The following argument is required: -t/--tags")
@@ -434,19 +404,6 @@ def parse_args(name: str, description: str):  # noqa
             parser.error(
                 "Can not get image OS from package URL or tags. " "Please specify -os directly"
             )
-
-    if (
-        args.mode in ("gen_dockerfile", "build", "build_test", "all")
-        and args.distribution == "dev_no_samples"
-        and "ubuntu" not in args.os
-    ):
-        parser.error("Distribution dev_no_samples is available only for Ubuntu operating system")
-
-    if args.mode == "gen_dockerfile" and args.distribution == "base":
-        parser.error(
-            "Generating dockerfile for base distribution is not available. "
-            "Use generated base dockerfiles are stored in <repository_root>/dockerfiles/<os_image> folder"
-        )
 
     if args.mode == "test" and not (args.tags and args.distribution):
         parser.error(
@@ -502,10 +459,6 @@ def parse_args(name: str, description: str):  # noqa
                     "Provided local path of the package should be relative to <root_project> folder "
                     f"or should be an http/https/ftp access scheme: {args.package_url}"
                 )
-            elif args.source == "url" and args.distribution != "base":
-                parser.error(
-                    "Provided URL is not supported, use http://, https:// or ftp:// access scheme"
-                )
             elif args.source == "local" and pathlib.Path(args.package_url).is_symlink():
                 parser.error(
                     "Do not use symlink and hard link to specify local package url. "
@@ -532,15 +485,11 @@ def parse_args(name: str, description: str):  # noqa
         args.install_type = "copy"
 
         # workaround for https://bugs.python.org/issue16399 issue
-        if not args.device and "win" not in args.os:
-            if args.distribution == "base":
-                args.device = ["cpu"]
-            elif args.os in ("rhel8",):
+        if not args.device:
+            if args.os in ("rhel8",):
                 args.device = ["cpu", "gpu"]
             else:
                 args.device = ["cpu", "gpu", "npu"]
-        elif not args.device:
-            args.device = ["cpu"]
 
         if not args.package_url and not args.product_version:
             latest_public_version = max(INTEL_OPENVINO_VERSION.__iter__())
@@ -626,16 +575,6 @@ def parse_args(name: str, description: str):  # noqa
                     f"{args.os}_{layers}:{args.build_id if args.build_id else args.product_version}"
                     f"{tgl_postfix}{args.tag_postfix}"
                 )
-        elif args.distribution == "base":
-            args.tags = [
-                f"{args.os}_{args.distribution}_cpu:" f"{args.product_version}",
-                f"{args.os}_{args.distribution}_cpu:latest",
-            ]
-            if hasattr(args, "tag_postfix") and args.tag_postfix:
-                args.tags.append(
-                    f"{args.os}_{args.distribution}_cpu:"
-                    f"{args.product_version}{args.tag_postfix}"
-                )
         else:
             args.tags = [
                 f"{args.os}_{args.distribution}:"
@@ -664,11 +603,6 @@ def parse_args(name: str, description: str):  # noqa
         if match:
             # save product version YYYY.U.V
             args.product_version = match.group(1)
-        elif args.distribution == "custom":
-            latest_public_version = list(INTEL_OPENVINO_VERSION.keys())[-1]
-            args.product_version = (
-                "2022.2.0" if latest_public_version <= "2022.2.0" else latest_public_version
-            )
         else:
             parser.error(
                 "Cannot get product_version from the package URL and docker image. "
@@ -687,26 +621,4 @@ def parse_args(name: str, description: str):  # noqa
     if hasattr(args, "product_version"):
         fail_if_product_version_not_supported(args.product_version, parser)
 
-    if hasattr(args, "distribution") and args.distribution == "custom":
-        if (
-            subprocess.call(  # nosec B603 B607
-                ["docker", "run", "--rm", args.tags[0], "ls", "extras/opencv"],  # nosec B603 B607
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            )
-            != 0
-        ):
-            args.distribution = "custom-no-cv"
-        else:
-            args.distribution = "custom-full"
-
-    if hasattr(args, "distribution"):
-        if not args.package_url and args.mode == "test" and args.distribution == "custom-no-cv":
-            if args.product_version in INTEL_OPENVINO_VERSION:
-                args.package_url = INTEL_OPENVINO_VERSION[args.product_version][args.os]["dev"]
-            else:
-                parser.error(
-                    f"Cannot find URL to package with test dependencies for {args.product_version} release. "
-                    f"Please specify --package_url directly"
-                )
     return args

@@ -7,6 +7,6 @@ RUN chmod +x l_openvino*.sh && \
     mv /opt/intel/openvino/installer /opt/intel/openvino_installer && rmdir /opt/intel/openvino && \
     OV_BUILD="$(find /opt/intel -maxdepth 1 -type d -name "*openvino*" | grep -oP '(?<=_)\d+.\d+.\d+.\d+')" && \
     ln --symbolic /opt/intel/openvino_"$OV_BUILD" /opt/intel/openvino && rm -rf ${TEMP_DIR}
-{% if no_samples is defined or 'dev_no_samples' == distribution %}
+{% if no_samples is defined %}
 RUN rm -rf ${INTEL_OPENVINO_DIR}/samples
 {% endif %}

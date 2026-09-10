@@ -7,6 +7,7 @@ import logging
 import os
 import pathlib
 import typing
+import json
 
 import jinja2
 
@@ -23,9 +24,16 @@ class DockerFileRender:
         self.log = jinja2.make_logging_undefined(logger=log)
         self.location = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.os_target = os_target
-        self.templates_folders = get_folder_structure_recursively(os.path.join(self.location, 'templates', os_target),
-                                                                  ('.*j2',))
+        self.templates_path = os.path.join(self.location, 'templates', os_target)
+        self.templates_folders = get_folder_structure_recursively(
+            self.templates_path, ('.*\\.j2', '.*\\.json', '.*\\.txt'))
         self.env = jinja2.Environment(loader=jinja2.FileSystemLoader(self.templates_folders), autoescape=True)
+
+    def get_new_base_template(self) -> typing.Optional[jinja2.environment.Template]:
+        try:
+            return self.env.get_template('dockerfile.j2')
+        except jinja2.exceptions.TemplateNotFound:
+            return None
 
     def get_base_template(self) -> jinja2.environment.Template:
         """Getting base template, above which all additional layers will be applied"""
@@ -43,38 +51,39 @@ class DockerFileRender:
     def generate_dockerfile(self, args: argparse.Namespace, save_to_dir: pathlib.Path,
                             kwargs: typing.Dict[str, str]) -> pathlib.Path:
         """Creating of dockerfile based on templates and CLI parameters"""
-        pre_stage = []
-        main_stage = []
-        if 'win' in args.os:
-            if args.python == 'python38':
-                pre_stage.append(args.pre_stage_msbuild)
-                pre_stage.append('vs')
-                pre_stage.append('pre_python38')
-            if args.msbuild:
-                main_stage.append(args.msbuild)
-                main_stage.append(args.cmake)
-            main_stage.append('vs')
-            main_stage.extend([args.python, args.source, args.install_type, *args.device, args.distribution])
-        else:
-            env = f'{args.distribution}_env'
-            pre_device_settings = []
-            pre_devices = ['vpu']
-            for device in pre_devices:
-                if device in args.device:
-                    pre_device_settings.append(f'pre_{device}')
-            pre_stage.extend([args.source, args.install_type, env, *pre_device_settings])
-            main_stage.extend([env, args.python, args.distribution, *args.device])
 
-        pre_commands = [self.get_template(arg, kwargs).render() for arg in pre_stage]
-        commands = [self.get_template(arg, kwargs).render() for arg in main_stage]
-        layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
         if args.rhel_platform != 'docker':
             save_to_dir /= args.rhel_platform
-        if not save_to_dir.exists():
-            save_to_dir.mkdir()
+        save_to_dir.mkdir(parents=True, exist_ok=True)
         save_to = save_to_dir / args.dockerfile_name
-        self.get_base_template().stream(pre_commands=pre_commands, commands=commands,
-                                        layers=layers, **kwargs).dump(str(save_to))
+
+        new_base_template = self.get_new_base_template()
+        if new_base_template:
+            params: dict[str, typing.Any] = kwargs.copy()
+            try:
+                with open(f"{self.templates_path}/resources.json") as resfile:
+                    resources = json.load(resfile)
+            except Exception:
+                resources = {}
+            params["resources"] = resources
+            params["devices"] = args.device
+            params["source"] = args.source
+            for device in args.device:
+                params[f"device_{device}"] = True
+            log.debug(f"TEMPLATE ENV: {params}")
+            new_base_template.stream(**params).dump(str(save_to))
+        else:
+            pre_stage = []
+            main_stage = []
+            env = f'{args.distribution}_env'
+            pre_stage.extend([args.source, args.install_type, env])
+            main_stage.extend([env, args.python, args.distribution, *args.device])
+            pre_commands = [self.get_template(arg, kwargs).render() for arg in pre_stage]
+            commands = [self.get_template(arg, kwargs).render() for arg in main_stage]
+            layers = [self.get_template(arg, kwargs).render() for arg in args.layers]
+            self.get_base_template().stream(
+                pre_commands=pre_commands, commands=commands,
+                layers=layers, **kwargs).dump(str(save_to))
         log.info('Dockerfile was generated successfully')
         log.info(f'Generated dockerfile location {str(save_to)}')
         return save_to

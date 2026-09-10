@@ -39,16 +39,11 @@ ARG DEPS="tzdata \
 {% if 'runtime' == distribution %}
 ARG LGPL_DEPS=""
 ARG INSTALL_PACKAGES="-c=python -c=core"
-{% elif 'dev' == distribution or 'dev_no_samples' == distribution %}
+{% elif 'dev' == distribution %}
 ARG LGPL_DEPS="g++ \
                gcc \
                libc6-dev"
 ARG INSTALL_PACKAGES="-c=python -c=core -c=dev"
-{% else %}
-ARG LGPL_DEPS="g++ \
-               gcc \
-               libc6-dev"
-ARG INSTALL_PACKAGES="-c=python"
 {% endif %}
 
 # hadolint ignore=DL3008
