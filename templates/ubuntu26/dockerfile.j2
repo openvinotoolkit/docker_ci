@@ -38,17 +38,22 @@ COPY $package_url /openvino.tgz
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         curl tzdata ca-certificates python3-venv python3-pip git $LGPL_DEPS \
+{%- if device_gpu or device_npu %}
+    && curl -L -O "{{ resources.libze_url }}" \
+    && apt-get install -y --no-install-recommends ./*.deb \
+    && rm -rf * \
+{%- endif %}
 {%- if device_gpu %}
-    && apt-get install -y --no-install-recommends opencl-headers ocl-icd-opencl-dev ocl-icd-libopencl1 libze1 \
+    && apt-get install -y --no-install-recommends opencl-headers ocl-icd-opencl-dev ocl-icd-libopencl1 \
     {% for url in resources.gpu_package_urls -%}
     && curl -L -O "{{ url }}" \
     {% endfor -%}
     && apt-get install -y --no-install-recommends ./*.deb \
     && rm -rf * \
 {%- endif %}
-{%- if False and device_npu %}
+{%- if device_npu %}
     && curl -L "{{ resources.npu_archive_url }}" | tar -xzf - \
-    && apt-get install -y --no-install-recommends libze1 ./*.deb \
+    && apt-get install -y --no-install-recommends ./*.deb \
     && rm -rf * \
 {%- endif %}
 {%- if source == "local" %}
