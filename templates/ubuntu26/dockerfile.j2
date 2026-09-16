@@ -7,6 +7,8 @@ LABEL vendor="Intel Corporation"
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
+RUN rm /usr/bin/pebble
+
 # setup render group and openvino user
 RUN groupadd -f render \
     && useradd -ms /bin/bash -G users,render openvino
@@ -36,6 +38,7 @@ COPY $package_url /openvino.tgz
 
 # hadolint ignore=DL3008
 RUN apt-get update \
+    && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
         curl tzdata ca-certificates python3-venv python3-pip git $LGPL_DEPS \
 {%- if device_gpu or device_npu %}
