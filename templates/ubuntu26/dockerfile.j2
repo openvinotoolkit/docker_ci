@@ -31,9 +31,11 @@ ENV INTEL_OPENVINO_DIR=/opt/intel/openvino
 WORKDIR $INTEL_OPENVINO_DIR
 
 # copy openvino
-ARG package_url={{ package_url }}
 {% if source == "local" %}
+ARG package_url
 COPY $package_url /openvino.tgz
+{% else %}
+ARG package_url={{ package_url }}
 {% endif %}
 
 # hadolint ignore=DL3008
